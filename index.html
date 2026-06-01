@@ -423,27 +423,27 @@
                             </div>
                         </div>
 
-                        <div class="flex space-x-3">
+                        <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
                             <!-- Visit Date -->
-                            <div class="flex-1 w-1/2">
-                                <label class="block text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Дата визита</label>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Дата визита</label>
                                 <div class="relative">
-                                    <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                                    <input type="date" id="visitDate" class="w-full pl-9 pr-2 py-3 concept-input text-xs sm:text-sm" />
+                                    <i class="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                                    <input type="date" id="visitDate" class="w-full pl-11 pr-4 py-3 concept-input text-sm" />
                                 </div>
-                                <p id="dateWarning" class="text-[10px] text-red-500 font-semibold mt-1.5 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Тариф не найден</p>
+                                <p id="dateWarning" class="text-xs text-red-500 font-semibold mt-1.5 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Тариф не найден</p>
                             </div>
                             
                             <!-- Tariff Type -->
-                            <div class="flex-1 w-1/2">
-                                <label class="block text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Тариф</label>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Категория тарифа</label>
                                 <div class="relative">
-                                    <i class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                                    <select id="tariffType" class="w-full pl-9 pr-6 py-3 concept-input text-xs sm:text-sm appearance-none cursor-pointer">
-                                        <option value="day">Дневной</option>
-                                        <option value="evening">Вечерний</option>
+                                    <i class="fa-solid fa-clock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                                    <select id="tariffType" class="w-full pl-11 pr-8 py-3 concept-input text-sm appearance-none cursor-pointer">
+                                        <option value="day">Дневной тариф</option>
+                                        <option value="evening">Вечерний тариф</option>
                                     </select>
-                                    <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] pointer-events-none"></i>
+                                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                                 </div>
                             </div>
                         </div>
