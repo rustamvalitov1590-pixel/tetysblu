@@ -471,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">ФИО (Рус/Каз)</label>
                     <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
                         onchange="updateTourist('${t.id}', 'fullName', this.value)"
-                        class="w-full bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors">
+                        class="w-full text-left bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors">
                 </div>
                 
                 <!-- DOB -->
