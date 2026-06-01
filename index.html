@@ -41,25 +41,27 @@
     <style>
         /* Modern, Clean & High-End Coastal Styling */
         body {
-            background-color: #f8fafc !important;
+            background-color: #03182f !important;
+            background-image: 
+                radial-gradient(circle at 100% 0%, rgba(0, 180, 216, 0.4) 0%, transparent 60%),
+                radial-gradient(circle at 0% 100%, rgba(0, 118, 186, 0.6) 0%, transparent 60%) !important;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #334155;
+            color: #f1f5f9;
             overflow-x: hidden;
+            background-attachment: fixed;
         }
 
         /* Glassmorphism panels that look like the concept cards */
         .concept-card {
-            background: rgba(255, 255, 255, 0.9) !important;
-            backdrop-filter: blur(12px) !important;
-            -webkit-backdrop-filter: blur(12px) !important;
-            border: 1px solid #e2e8f0 !important;
-            box-shadow: 0 10px 25px -5px rgba(0, 118, 186, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.02) !important;
-            border-radius: 20px !important;
+            background: #ffffff !important;
+            border: none !important;
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.4), 0 4px 15px -5px rgba(0, 20, 40, 0.2) !important;
+            border-radius: 24px !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
 
         .concept-card:hover {
-            box-shadow: 0 20px 35px -8px rgba(0, 118, 186, 0.08), 0 12px 16px -8px rgba(0, 0, 0, 0.03) !important;
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.5) !important;
             transform: translateY(-2px);
         }
 
@@ -103,7 +105,7 @@
 
         /* Background Wavy Paths */
         .wave-bg {
-            position: absolute;
+            position: fixed;
             width: 100%;
             height: 100%;
             top: 0;
@@ -156,70 +158,200 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        /* ==================================================
+           UNDERWATER LOGIN SCREEN (Marine Glassmorphism)
+           ================================================== */
+
+        .underwater-bg {
+            background: radial-gradient(circle at 50% -20%, rgba(0, 180, 216, 0.6) 0%, rgba(3, 40, 77, 1) 70%, rgba(1, 15, 33, 1) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .light-rays {
+            position: absolute;
+            top: -50%; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                10deg,
+                rgba(255, 255, 255, 0.05) 0px,
+                rgba(255, 255, 255, 0.05) 100px,
+                transparent 100px,
+                transparent 200px
+            );
+            filter: blur(40px);
+            opacity: 0.6;
+            animation: wave-light 15s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+
+        .glass-orb {
+            background: radial-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.03) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 0 50px rgba(0, 220, 255, 0.2), 
+                inset 0 0 40px rgba(255, 255, 255, 0.1),
+                inset 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-bubble {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.2),
+                inset 0 2px 10px rgba(255, 255, 255, 0.15);
+            animation: float 6s infinite ease-in-out;
+        }
+
+        .underwater-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        .underwater-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .underwater-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-coral {
+            background: linear-gradient(135deg, #ff7a59 0%, #ff5252 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 82, 82, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .btn-coral:hover {
+            background: linear-gradient(135deg, #ff8a6c 0%, #ff6b6b 100%);
+            box-shadow: 0 12px 35px rgba(255, 82, 82, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 220, 255, 0.4);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+        @keyframes float-delay-1 {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+        @keyframes float-delay-2 {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes wave-light {
+            0% { transform: translateX(-5%) skewX(-5deg); opacity: 0.4; }
+            100% { transform: translateX(5%) skewX(5deg); opacity: 0.7; }
+        }
+        @keyframes bubble-rise {
+            0% { transform: translateY(100px) scale(0.5); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
+        }
     </style>
 </head>
 <body class="min-h-screen relative pb-12">
 
-    <!-- Wavy Background Illustrations (Aktau Sand & Caspian Sea Blend) -->
+    <!-- Dashboard Deep Ocean Wavy Background -->
     <div class="wave-bg">
-        <!-- Top Wave (Light Blue) -->
-        <svg class="absolute top-0 right-0 w-[60vw] h-[60vh] text-sky-100/40 opacity-70" viewBox="0 0 100 100" preserveAspectRatio="none" fill="currentColor">
-            <path d="M0 0 L100 0 L100 80 C80 65, 60 90, 40 75 C20 60, 10 75, 0 70 Z"/>
+        <!-- Giant Bottom Left Wave -->
+        <svg class="absolute bottom-0 left-0 w-[90vw] h-[50vh] text-sky-400/20" viewBox="0 0 100 100" preserveAspectRatio="none" fill="currentColor">
+            <path d="M0 100 L100 100 L100 50 C70 80, 40 20, 0 60 Z"/>
         </svg>
-        <!-- Bottom Wave (Golden Sand) -->
-        <svg class="absolute bottom-0 left-0 w-[50vw] h-[45vh] text-amber-50/40 opacity-70" viewBox="0 0 100 100" preserveAspectRatio="none" fill="currentColor">
-            <path d="M0 100 L100 100 L100 40 C80 30, 60 50, 40 35 C20 20, 10 35, 0 30 Z"/>
+        <!-- Giant Bottom Right Wave -->
+        <svg class="absolute -bottom-10 -right-10 w-[70vw] h-[70vh] text-cyan-300/10" viewBox="0 0 100 100" preserveAspectRatio="none" fill="currentColor">
+            <path d="M0 100 L100 100 L100 20 C60 0, 30 80, 0 40 Z"/>
         </svg>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#021831] via-transparent to-transparent opacity-80"></div>
     </div>
 
-    <!-- Auth Screen (Beautiful Soft Glass Login in Center) -->
-    <div id="authScreen" class="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-slate-900/10 backdrop-blur-md transition-opacity duration-300">
-        <div class="concept-card p-8 w-full max-w-md border-2 border-white relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-blue to-brand-sky"></div>
-            
-            <div class="text-center mb-8">
-                <!-- Official Tetys Blu Logo inside Auth Screen -->
-                <div class="mb-5">
-                    <img src="https://tetysblu.com/content/images/logo.png" alt="Tetys Blu" class="h-12 mx-auto drop-shadow-sm">
+    <!-- Underwater Auth Screen (Marine Glassmorphism) -->
+    <div id="authScreen" class="fixed inset-0 z-[5000] flex items-center justify-center p-4 underwater-bg transition-opacity duration-300">
+        <!-- Floating Light Rays -->
+        <div class="light-rays"></div>
+        
+        <!-- Random tiny background bubbles -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden">
+            <div class="absolute w-3 h-3 bg-white/20 rounded-full left-1/4 bottom-0" style="animation: bubble-rise 4s infinite ease-in;"></div>
+            <div class="absolute w-5 h-5 bg-white/10 rounded-full left-1/2 bottom-10" style="animation: bubble-rise 6s infinite ease-in 1s;"></div>
+            <div class="absolute w-2 h-2 bg-white/20 rounded-full right-1/4 bottom-20" style="animation: bubble-rise 5s infinite ease-in 2s;"></div>
+        </div>
+
+        <!-- Floating Decorative Bubbles (Left Side) -->
+        <div class="absolute left-4 md:left-20 top-1/4 glass-bubble rounded-full p-4 hidden sm:flex items-center justify-center text-cyan-300" style="width: 80px; height: 80px; animation-delay: 0s;">
+            <i class="fa-solid fa-ticket text-3xl opacity-80"></i>
+        </div>
+        <div class="absolute left-10 md:left-32 bottom-1/4 glass-bubble rounded-full p-3 hidden sm:flex items-center justify-center text-cyan-300" style="width: 100px; height: 100px; animation: float-delay-1 7s infinite ease-in-out; animation-delay: 1s;">
+            <i class="fa-solid fa-tornado text-4xl opacity-80"></i>
+        </div>
+        
+        <!-- Floating Decorative Bubbles (Right Side) -->
+        <div class="absolute right-10 md:right-32 top-1/3 glass-bubble rounded-full flex flex-col items-center justify-center text-white hidden sm:flex" style="width: 110px; height: 110px; animation: float-delay-2 8s infinite ease-in-out;">
+            <span class="text-[8px] uppercase tracking-widest opacity-80">Park Capacity</span>
+            <div class="relative mt-1">
+                <svg class="w-12 h-12 transform -rotate-90">
+                    <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"></circle>
+                    <circle cx="24" cy="24" r="20" stroke="#ff5252" stroke-width="3" fill="none" stroke-dasharray="125" stroke-dashoffset="30"></circle>
+                </svg>
+                <span class="absolute inset-0 flex items-center justify-center text-sm font-bold">78%</span>
+            </div>
+        </div>
+
+        <!-- Central Glowing Glass Orb -->
+        <div class="glass-orb relative z-10 w-[90vw] max-w-[420px] aspect-square rounded-full flex flex-col items-center justify-center p-8 md:p-10">
+            <div class="text-center mb-6 w-full">
+                <!-- Tetys Blue Logo Area -->
+                <div class="mb-2 relative flex justify-center">
+                    <i class="fa-solid fa-dolphin absolute -top-4 -left-2 text-cyan-300 text-xl transform -rotate-12 opacity-80"></i>
+                    <i class="fa-solid fa-dolphin absolute -top-2 -right-1 text-cyan-300 text-lg transform rotate-45 opacity-80 scale-x-[-1]"></i>
+                    <h2 class="text-3xl md:text-4xl font-black text-white tracking-wider text-glow mt-2">TETYS BLUE</h2>
                 </div>
-                <h2 class="text-2xl font-bold text-slate-800 tracking-wide">Tetys Blue</h2>
-                <p class="text-xs font-semibold text-brand-blue uppercase tracking-widest mt-1">Панель расчетов</p>
+                <p class="text-[9px] md:text-[10px] font-bold text-cyan-100 uppercase tracking-widest mt-1 opacity-90">Панель расчетов</p>
+                <p class="text-[8px] font-medium text-cyan-200 uppercase tracking-widest opacity-70">Сезон 2026</p>
             </div>
             
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Логин</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" id="authLogin" placeholder="Введите логин" 
-                            class="w-full pl-11 pr-4 py-3 concept-input" autocomplete="off">
-                    </div>
+            <div class="w-full max-w-[280px] space-y-4">
+                <div class="relative">
+                    <input type="text" id="authLogin" placeholder="ЛОГИН" 
+                        class="w-full pl-6 pr-10 py-3 rounded-full underwater-input text-xs font-bold tracking-widest" autocomplete="off">
+                    <i class="fa-solid fa-fish absolute right-4 top-1/2 -translate-y-1/2 text-cyan-200 text-sm opacity-80"></i>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Пароль</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="password" id="authPin" placeholder="Введите пароль" 
-                            class="w-full pl-11 pr-4 py-3 concept-input">
-                    </div>
+                <div class="relative">
+                    <input type="password" id="authPin" placeholder="ПАРОЛЬ" 
+                        class="w-full pl-6 pr-10 py-3 rounded-full underwater-input text-xs font-bold tracking-widest">
+                    <i class="fa-solid fa-key absolute right-4 top-1/2 -translate-y-1/2 text-cyan-200 text-sm opacity-80"></i>
                 </div>
                 
-                <div id="authFormBody">
-                    <p id="authError" class="text-red-500 text-xs font-semibold hidden transition-opacity duration-300 text-center pb-3">Неверный логин или пароль</p>
-                    
-                    <button id="authBtn" class="w-full btn-concept-primary py-3.5 text-base shadow-lg shadow-brand-blue/15">
+                <div id="authFormBody" class="pt-2 w-full text-center">
+                    <p id="authError" class="text-red-400 text-xs font-semibold hidden transition-opacity duration-300 text-center pb-2 text-glow">Неверный логин или пароль</p>
+                    <button id="authBtn" class="w-full btn-coral rounded-full py-3 text-sm font-bold tracking-widest uppercase">
                         Войти в систему
                     </button>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 
     <!-- Main Dashboard Container -->
     <div id="appContent" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         
-        <!-- Premium Navigation Header (Identical to Concept Image) -->
-        <header class="flex items-center justify-between bg-white/80 border border-slate-200/80 p-4 rounded-2xl shadow-sm backdrop-blur-md">
+        <!-- Premium Navigation Header -->
+        <header class="flex items-center justify-between bg-white border-none p-4 rounded-2xl shadow-2xl backdrop-blur-md">
             <div class="flex items-center space-x-8">
                 <!-- Caspian Dream Park Brand Logo -->
                 <div class="flex items-center space-x-3">
@@ -229,13 +361,6 @@
                     </div>
                 </div>
 
-                <!-- Navigation Tabs (Concept Design style) -->
-                <nav class="hidden lg:flex items-center space-x-1">
-                    <a href="#" class="px-4 py-2 text-sm font-semibold rounded-xl bg-brand-blue text-white shadow-sm transition-all">Панель</a>
-                    <a href="#" class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all">Тарифы</a>
-                    <a href="#" class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all">Активности</a>
-                    <a href="#" class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all">Группы</a>
-                </nav>
             </div>
 
             <!-- Profile Info & Exit -->
@@ -252,11 +377,6 @@
                 </div>
 
                 <div class="flex items-center space-x-3">
-                    <!-- Notification Bell -->
-                    <button class="relative p-2 text-slate-400 hover:text-slate-600 transition-colors">
-                        <i class="fa-regular fa-bell text-lg"></i>
-                        <span class="absolute top-1 right-1 w-2 h-2 bg-brand-sky rounded-full"></span>
-                    </button>
                     <!-- Logout -->
                     <button id="logoutBtn" class="bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 px-4 py-2 rounded-xl text-sm font-bold transition-all border border-slate-200/50 flex items-center group">
                         <i class="fa-solid fa-arrow-right-from-bracket mr-2 group-hover:translate-x-0.5 transition-transform"></i>
@@ -269,15 +389,8 @@
         <!-- Dynamic Title Section -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-                <h1 class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">Калькулятор билетов</h1>
-                <p class="text-sm text-slate-400 mt-1">Официальная форма расчетов для сотрудников продаж</p>
-            </div>
-            
-            <!-- Floating Quick Search Decoration -->
-            <div class="relative w-full md:w-72">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                <input type="text" placeholder="Быстрый поиск..." readonly
-                    class="w-full pl-10 pr-4 py-2.5 bg-white/70 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none cursor-not-allowed opacity-80" />
+                <h1 class="text-2xl md:text-3xl font-black text-white tracking-tight">Калькулятор билетов</h1>
+                <p class="text-sm text-cyan-200 mt-1 opacity-90">Официальная форма расчетов для сотрудников продаж</p>
             </div>
         </div>
 
@@ -297,16 +410,6 @@
                     </h2>
                     
                     <div class="space-y-4">
-                        <!-- Visit Date -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Дата визита</label>
-                            <div class="relative">
-                                <i class="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                                <input type="date" id="visitDate" class="w-full pl-11 pr-4 py-3 concept-input text-sm" />
-                            </div>
-                            <p id="dateWarning" class="text-xs text-red-500 font-semibold mt-1.5 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Тариф не найден на эту дату</p>
-                        </div>
-                        
                         <!-- Client Type -->
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Тип клиента</label>
@@ -318,6 +421,16 @@
                                 </select>
                                 <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                             </div>
+                        </div>
+
+                        <!-- Visit Date -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Дата визита</label>
+                            <div class="relative">
+                                <i class="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                                <input type="date" id="visitDate" class="w-full pl-11 pr-4 py-3 concept-input text-sm" />
+                            </div>
+                            <p id="dateWarning" class="text-xs text-red-500 font-semibold mt-1.5 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Тариф не найден на эту дату</p>
                         </div>
                         
                         <!-- Tariff Type -->
@@ -332,61 +445,26 @@
                                 <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                             </div>
                         </div>
-
-                        <!-- Concept Optional Extras -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Дополнительные опции</label>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="px-3 py-1.5 text-xs font-bold rounded-full bg-blue-50 text-brand-blue border border-blue-200">
-                                    <i class="fa-solid fa-circle-check mr-1 text-brand-sky"></i> Аквапарк
-                                </span>
-                                <span class="px-3 py-1.5 text-xs font-bold rounded-full bg-blue-50 text-brand-blue border border-blue-200">
-                                    <i class="fa-solid fa-circle-check mr-1 text-brand-sky"></i> Аттракционы
-                                </span>
-                                <span class="px-3 py-1.5 text-xs font-medium rounded-full bg-slate-50 text-slate-400 border border-slate-200/60 opacity-60">
-                                    Fast-Track
-                                </span>
-                                <span class="px-3 py-1.5 text-xs font-medium rounded-full bg-slate-50 text-slate-400 border border-slate-200/60 opacity-60">
-                                    Обед
-                                </span>
-                            </div>
-                        </div>
                     </div>
                 </section>
                 
-                <!-- Dynamic Stats Summary Panel -->
-                <section class="concept-card p-6 border border-slate-200 bg-white">
-                    <h2 class="text-base font-bold text-slate-800 mb-5 flex items-center">
-                        <i class="fa-solid fa-chart-simple text-brand-blue mr-2"></i>
-                        Сводная статистика
-                    </h2>
+                <!-- Bulk Add Form (Текстовый ввод) -->
+                <section class="concept-card p-6 border border-slate-200 bg-white relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-blue to-brand-sky"></div>
                     
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="concept-stat-box p-3">
-                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Взрослые (ADL)</span>
-                            <span class="text-xl font-extrabold text-slate-800 mt-1 block" id="statAdl">0</span>
-                        </div>
-                        <div class="concept-stat-box p-3">
-                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Дети (CHLD)</span>
-                            <span class="text-xl font-extrabold text-slate-800 mt-1 block" id="statChld">0</span>
-                        </div>
-                        <div class="concept-stat-box p-3">
-                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Младенцы (INF)</span>
-                            <span class="text-xl font-extrabold text-slate-800 mt-1 block" id="statInf">0</span>
-                        </div>
-                        <div class="concept-stat-box p-3">
-                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Пенсионеры</span>
-                            <span class="text-xl font-extrabold text-slate-800 mt-1 block" id="statPens">0</span>
-                        </div>
-                        <div class="concept-stat-box p-3 border-l-2 border-l-amber-500 bg-amber-50/20">
-                            <span class="text-[10px] font-extrabold text-amber-600/80 uppercase tracking-wider block">Именинники</span>
-                            <span class="text-xl font-extrabold text-amber-600 mt-1 block" id="statBday">0</span>
-                        </div>
-                        <div class="concept-stat-box p-3 border-l-2 border-l-emerald-500 bg-emerald-50/20">
-                            <span class="text-[10px] font-extrabold text-emerald-600/80 uppercase tracking-wider block">Инвалидность</span>
-                            <span class="text-xl font-extrabold text-emerald-600 mt-1 block" id="statDis">0</span>
-                        </div>
-                    </div>
+                    <h2 class="text-base font-bold text-slate-800 mb-3 flex items-center">
+                        <i class="fa-solid fa-file-text text-brand-blue mr-2"></i>
+                        Текстовый ввод гостей
+                    </h2>
+                    <p class="text-[11px] text-slate-500 mb-3">
+                        Вставьте список гостей. Автоматический парсер извлечет имена и даты рождения.<br>
+                        <span class="font-semibold text-brand-blue">Пример:</span> Ivanov Ivan 15.04.1988 adl
+                    </p>
+                    <textarea id="bulkText" class="w-full h-36 concept-input p-3 text-xs resize-none mb-3" 
+                        placeholder="Тетис на 06.06&#10;Kossymov Dias 15.04.2017 chld&#10;Otemissova Meruert 18.05.1998 adl"></textarea>
+                    <button id="parseBulkBtn" class="w-full btn-concept-primary py-2.5 rounded-xl text-xs font-bold shadow-md">
+                        Распознать и добавить
+                    </button>
                 </section>
             </div>
             
@@ -404,11 +482,19 @@
                             <p class="text-xs text-slate-400 mt-0.5">Добавьте гостей или загрузите текстовый реестр</p>
                         </div>
                         
-                        <div class="flex items-center space-x-2.5 w-full sm:w-auto">
-                            <button id="openBulkBtn" class="flex-1 sm:flex-none justify-center bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold flex items-center transition-all border border-slate-200/70">
-                                <i class="fa-solid fa-file-text mr-1.5 text-slate-400"></i> Текстовый ввод
+                        <div class="flex flex-wrap items-center justify-end gap-2 w-full sm:w-auto">
+                            <!-- Quick add buttons -->
+                            <button onclick="window.quickAdd('1990')" class="px-2.5 py-2 text-[10px] font-bold text-slate-500 bg-slate-50 hover:bg-brand-blue hover:text-white rounded-lg transition-colors border border-slate-200 hover:border-brand-blue flex items-center shadow-sm">
+                                + Взрослый
                             </button>
-                            <button id="addTouristBtn" class="flex-1 sm:flex-none justify-center btn-concept-primary px-4 py-2.5 rounded-xl text-xs font-bold flex items-center transition-all">
+                            <button onclick="window.quickAdd('2016')" class="px-2.5 py-2 text-[10px] font-bold text-slate-500 bg-slate-50 hover:bg-teal-500 hover:text-white rounded-lg transition-colors border border-slate-200 hover:border-teal-500 flex items-center shadow-sm">
+                                + Ребенок
+                            </button>
+                            <button onclick="window.quickAdd('1960')" class="px-2.5 py-2 text-[10px] font-bold text-slate-500 bg-slate-50 hover:bg-brand-blue hover:text-white rounded-lg transition-colors border border-slate-200 hover:border-brand-blue flex items-center shadow-sm">
+                                + Пенсионер
+                            </button>
+                            <!-- Main button -->
+                            <button id="addTouristBtn" class="w-full sm:w-auto justify-center btn-concept-primary px-4 py-2.5 rounded-xl text-xs font-bold flex items-center transition-all shadow-md">
                                 <i class="fa-solid fa-user-plus mr-1.5"></i> Добавить гостя
                             </button>
                         </div>
@@ -416,13 +502,12 @@
                     
                     <!-- Table-Style Header for Row Data -->
                     <div class="w-full">
-                        <div class="hidden md:grid grid-cols-12 gap-3 mb-3 px-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
-                            <div class="col-span-3">ФИО туриста</div>
+                        <div class="hidden md:grid grid-cols-12 gap-3 mb-2 px-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                            <div class="col-span-5">ФИО туриста</div>
                             <div class="col-span-2">Дата рождения</div>
-                            <div class="col-span-2">Инвалидность</div>
                             <div class="col-span-1 text-center">Возраст</div>
                             <div class="col-span-1 text-center">Тип</div>
-                            <div class="col-span-2 text-right pr-4">Стоимость</div>
+                            <div class="col-span-2 text-right pr-2">Стоимость</div>
                             <div class="col-span-1 text-center"></div>
                         </div>
                         
@@ -443,7 +528,7 @@
                 </section>
                 
                 <!-- Calculated Estimate Summary (Matches Right Box in Concept) -->
-                <section class="p-6 rounded-2xl bg-[#0076ba] text-white shadow-xl shadow-brand-blue/15 relative overflow-hidden">
+                <section class="p-3 md:p-2.5 rounded-xl bg-[#0076ba] text-white shadow-md shadow-brand-blue/10 relative overflow-hidden">
                     <!-- Concept Background Waves Inside Card -->
                     <svg class="absolute inset-0 w-full h-full text-white/5 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
                         <path d="M0 80 Q 25 50 50 80 T 100 80 L 100 100 L 0 100 Z" fill="currentColor"/>
@@ -451,27 +536,29 @@
                     </svg>
 
                     <!-- Early Booking Pulse Badge -->
-                    <div id="earlyBookingBadge" class="hidden absolute top-4 right-4 bg-amber-400 text-slate-900 text-[10px] font-extrabold px-3 py-1 rounded-full shadow-md animate-pulse">
+                    <div id="earlyBookingBadge" class="hidden absolute top-2.5 right-2.5 bg-amber-400 text-slate-900 text-[8px] font-extrabold px-2 py-0.5 rounded-full shadow-md animate-pulse">
                         <i class="fa-solid fa-bolt mr-1"></i> Раннее бронирование (-15%)
                     </div>
                     
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-10">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 relative z-10">
                         <div>
-                            <span class="text-blue-100 text-xs font-bold uppercase tracking-widest block">Итоговый расчет</span>
-                            <div class="flex items-baseline space-x-2 mt-2">
-                                <span class="text-4xl font-extrabold text-white tracking-tight" id="totalPrice">0</span>
-                                <span class="text-2xl font-black text-amber-300">₸</span>
+                            <span class="text-blue-100 text-[9px] font-bold uppercase tracking-widest block">Итоговый расчет</span>
+                            <div class="flex items-baseline space-x-1.5 mt-0.5">
+                                <span class="text-lg md:text-xl font-extrabold text-white tracking-tight" id="totalPrice">0</span>
+                                <span class="text-sm font-black text-amber-300">₸</span>
                             </div>
-                            <p class="text-[10px] text-blue-200 mt-1">Включает все скидки именинникам, инвалидности и раннее бронирование</p>
                         </div>
                         
-                        <div class="flex items-center space-x-2 w-full sm:w-auto">
+                        <div class="flex items-center space-x-1.5 w-full sm:w-auto">
                             <!-- Receipt Action Buttons -->
-                            <button id="downloadReceiptBtn" class="flex-1 sm:flex-none justify-center bg-white hover:bg-slate-50 text-brand-blue font-bold px-4 py-3 rounded-xl text-xs flex items-center transition-all shadow-md">
-                                <i class="fa-solid fa-cloud-arrow-down mr-2 text-brand-sky"></i> Скачать чек
+                            <button id="downloadReceiptBtn" class="flex-1 sm:flex-none justify-center bg-white hover:bg-slate-50 text-brand-blue font-bold px-3 py-1.5 rounded-lg text-[10px] flex items-center transition-all shadow-sm">
+                                <i class="fa-solid fa-cloud-arrow-down mr-1 text-brand-sky"></i> Чек
                             </button>
-                            <button id="copyBtn" class="flex-1 sm:flex-none justify-center bg-[#005f96] hover:bg-[#004f7c] text-white font-bold px-4 py-3 rounded-xl text-xs flex items-center transition-all border border-blue-400/20 shadow-md">
-                                <i class="fa-solid fa-copy mr-2"></i> Скопировать
+                            <button id="whatsappBtn" class="flex-1 sm:flex-none justify-center bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold px-3 py-1.5 rounded-lg text-[10px] flex items-center transition-all shadow-sm">
+                                <i class="fa-brands fa-whatsapp mr-1 text-sm leading-none"></i> Отправить
+                            </button>
+                            <button id="copyBtn" class="flex-1 sm:flex-none justify-center bg-[#005f96] hover:bg-[#004f7c] text-white font-bold px-3 py-1.5 rounded-lg text-[10px] flex items-center transition-all border border-blue-400/20 shadow-sm">
+                                <i class="fa-solid fa-copy mr-1"></i> Копировать
                             </button>
                         </div>
                     </div>
@@ -486,42 +573,40 @@
                     <textarea id="exportData" readonly 
                         class="w-full h-24 concept-input p-3 text-xs font-mono resize-none focus:border-slate-200 bg-slate-50/50 cursor-text select-all" 
                         placeholder="Тут появится текст для экспорта в CRM..."></textarea>
+                <!-- Dynamic Stats Summary Panel -->
+                <section class="concept-card p-5 border border-slate-200 bg-white">
+                    <h2 class="text-sm font-bold text-slate-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-chart-simple text-brand-blue mr-2"></i>
+                        Сводная статистика
+                    </h2>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                        <div class="concept-stat-box p-3 text-center">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Взрослые (ADL)</span>
+                            <span class="text-xl font-extrabold text-slate-800 mt-1 block" id="statAdl">0</span>
+                        </div>
+                        <div class="concept-stat-box p-3 text-center">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Дети (CHLD)</span>
+                            <span class="text-xl font-extrabold text-slate-800 mt-1 block" id="statChld">0</span>
+                        </div>
+                        <div class="concept-stat-box p-3 text-center">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Младенцы (INF)</span>
+                            <span class="text-xl font-extrabold text-slate-800 mt-1 block" id="statInf">0</span>
+                        </div>
+                        <div class="concept-stat-box p-3 text-center">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Пенсионеры</span>
+                            <span class="text-xl font-extrabold text-slate-800 mt-1 block" id="statPens">0</span>
+                        </div>
+                        <div class="concept-stat-box p-3 text-center border-l-2 border-l-amber-500 bg-amber-50/20">
+                            <span class="text-[10px] font-extrabold text-amber-600/80 uppercase tracking-wider block">Именинники</span>
+                            <span class="text-xl font-extrabold text-amber-600 mt-1 block" id="statBday">0</span>
+                        </div>
+                    </div>
                 </section>
-
             </div>
         </div>
     </div>
     
-    <!-- Modal for Bulk Add (Glassmorphism Overlay) -->
-    <div id="bulkModal" class="fixed inset-0 z-[6000] hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="concept-card w-full max-w-lg p-6 border border-white shadow-2xl relative overflow-hidden bg-white">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-blue to-brand-sky"></div>
-            
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-slate-800">Массовое добавление</h3>
-                <button id="closeModalBtn" class="text-slate-400 hover:text-slate-600 transition-colors">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            
-            <p class="text-xs text-slate-500 mb-4">
-                Вставьте список гостей. Автоматический парсер извлечет имена и даты рождения.<br>
-                <span class="font-semibold text-brand-blue">Пример формата:</span> Ivanov Ivan 15.04.1988 adl
-            </p>
-            
-            <textarea id="bulkText" class="w-full h-40 concept-input p-3 text-sm resize-none mb-5" 
-                placeholder="Тетис на 06.06&#10;Kossymov Dias 15.04.2017 chld&#10;Otemissova Meruert 18.05.1998 adl"></textarea>
-            
-            <div class="flex justify-end space-x-3">
-                <button id="cancelBulkBtn" class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-all">
-                    Отмена
-                </button>
-                <button id="parseBulkBtn" class="btn-concept-primary px-5 py-2.5 rounded-xl text-xs font-bold shadow-md">
-                    Распознать и добавить
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- Hidden Receipt Template for Capture -->
     <div id="receiptContainer" class="fixed top-[-9999px] left-[-9999px] opacity-0 pointer-events-none">
