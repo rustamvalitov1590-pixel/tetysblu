@@ -135,10 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const dateWarning = document.getElementById('dateWarning');
     const touristListEl = document.getElementById('touristList');
     const addTouristBtn = document.getElementById('addTouristBtn');
-    const openBulkBtn = document.getElementById('openBulkBtn');
-    const bulkModal = document.getElementById('bulkModal');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const cancelBulkBtn = document.getElementById('cancelBulkBtn');
     const parseBulkBtn = document.getElementById('parseBulkBtn');
     const bulkText = document.getElementById('bulkText');
     const emptyState = document.getElementById('emptyState');
@@ -146,14 +142,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportDataEl = document.getElementById('exportData');
     const copyBtn = document.getElementById('copyBtn');
 
+    // Dummy auth logic removed to prevent conflicts with checkAuth
+
     // Статистика
     const stats = {
         adl: document.getElementById('statAdl'),
         chld: document.getElementById('statChld'),
         inf: document.getElementById('statInf'),
         pens: document.getElementById('statPens'),
-        bday: document.getElementById('statBday'),
-        dis: document.getElementById('statDis')
+        bday: document.getElementById('statBday')
     };
 
     // Устанавливаем сегодняшнюю дату по умолчанию
@@ -169,11 +166,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Слушатели событий
-    visitDateInput.addEventListener('change', render);
-    clientTypeInput.addEventListener('change', render);
-    tariffTypeInput.addEventListener('change', render);
-    addTouristBtn.addEventListener('click', addTourist);
-    copyBtn.addEventListener('click', copyExportData);
+    if (visitDateInput) visitDateInput.addEventListener('change', render);
+    if (clientTypeInput) clientTypeInput.addEventListener('change', render);
+    if (tariffTypeInput) tariffTypeInput.addEventListener('change', render);
+    if (addTouristBtn) addTouristBtn.addEventListener('click', addTourist);
+    if (copyBtn) copyBtn.addEventListener('click', copyExportData);
 
     // Загрузка черновика (Авто-сохранение)
     const draft = localStorage.getItem('tetisBluDraft');
@@ -199,17 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Первичный рендер если данные загружены
     if (tourists.length > 0) render();
 
-    // Modal Events
-    openBulkBtn.addEventListener('click', () => {
-        bulkModal.classList.remove('hidden');
-        bulkText.value = '';
-        bulkText.focus();
-    });
-
-    const closeBulkModal = () => bulkModal.classList.add('hidden');
-    closeModalBtn.addEventListener('click', closeBulkModal);
-    cancelBulkBtn.addEventListener('click', closeBulkModal);
-
+    // Parse Bulk Text Input
     parseBulkBtn.addEventListener('click', () => {
         const text = bulkText.value.trim();
         if (!text) return;
@@ -238,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                     
-                    visitDateInput.value = `${currentYear}-${month}-${day}`;
+                    if (visitDateInput) visitDateInput.value = `${currentYear}-${month}-${day}`;
                     
                     // Skip if the line only contains the header
                     if (line.replace(headerDateMatch[0], '').replace(/тетис|дата\s*посещения/ig, '').trim().length < 5) return;
@@ -290,12 +277,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         render();
-        closeBulkModal();
+        bulkText.value = ''; // Clear textarea after parsing successfully
     });
 
     function createId() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2);
     }
+
+    // Быстрое добавление туриста с заданным годом (например, для кнопок '+ Взрослый')
+    window.quickAdd = function(year) {
+        tourists.push({
+            id: createId(),
+            fullName: '',
+            dob: year + '-01-01',
+            disability: 'none'
+        });
+        render();
+    };
 
     function addTourist() {
         tourists.push({
@@ -392,23 +390,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function render() {
-        const visitDate = visitDateInput.value;
-        const clientType = clientTypeInput.value;
-        const tariffType = tariffTypeInput.value;
+        const visitDate = visitDateInput ? visitDateInput.value : '';
+        const clientType = clientTypeInput ? clientTypeInput.value : 'tourist';
+        const tariffType = tariffTypeInput ? tariffTypeInput.value : 'day';
 
-        touristListEl.innerHTML = '';
+        if (touristListEl) touristListEl.innerHTML = '';
         
-        if (tourists.length === 0) {
-            emptyState.classList.remove('hidden');
-        } else {
-            emptyState.classList.add('hidden');
+        if (emptyState) {
+            if (tourists.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
         }
 
         let totalSum = 0;
         let isTariffFound = true;
 
         // Для статистики
-        let counts = { adl: 0, chld: 0, inf: 0, pens: 0, bday: 0, dis: 0 };
+        let counts = { adl: 0, chld: 0, inf: 0, pens: 0, bday: 0 };
         let exportLines = [];
 
         tourists.forEach((t, index) => {
@@ -439,7 +439,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (category === 'INF') counts.inf++;
             if (discountInfo.isPensioner) counts.pens++;
             if (discountInfo.isBirthday) counts.bday++;
-            if (t.disability !== 'none') counts.dis++;
 
             totalSum += finalPrice;
 
@@ -447,77 +446,66 @@ document.addEventListener('DOMContentLoaded', () => {
             if (t.fullName && t.dob) {
                 const translitName = transliterate(t.fullName);
                 const formattedDob = formatDate(t.dob);
-                exportLines.push(`${index + 1}. ${translitName} (${category}) - DOB: ${formattedDob}`);
+                exportLines.push(`${index + 1}. ${translitName} (${category}) - дата рожд: ${formattedDob}`);
             }
 
-            // Создание DOM элемента строки
+            // Динамический бейдж с микро-анимацией (свечение)
+            let catBadgeClass = 'bg-slate-100 text-slate-500 border-slate-200';
+            if (category === 'ADL') catBadgeClass = 'bg-blue-50 text-blue-600 border-blue-200 shadow-[0_0_8px_rgba(37,99,235,0.4)] animate-[pulse_2s_ease-in-out_infinite]';
+            if (category === 'CHLD') catBadgeClass = 'bg-teal-50 text-teal-600 border-teal-200 shadow-[0_0_8px_rgba(13,148,136,0.4)] animate-[pulse_2s_ease-in-out_infinite]';
+            if (category === 'INF') catBadgeClass = 'bg-green-50 text-green-600 border-green-200 shadow-[0_0_8px_rgba(22,163,74,0.4)] animate-[pulse_2s_ease-in-out_infinite]';
 
-            
+            // Создание DOM элемента строки
             const row = document.createElement('div');
-            row.className = 'tourist-row p-4 md:p-3 flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-2 items-start md:items-center transition-all relative';
+            row.className = 'tourist-row p-1.5 md:p-1 flex flex-col md:grid md:grid-cols-12 gap-1.5 md:gap-1 items-start md:items-center transition-all relative hover:bg-slate-50';
             row.innerHTML = `
                 <!-- Mobile Label: Delete Button -->
-                <div class="absolute top-2 right-2 md:static md:col-span-1 md:w-full flex justify-end md:order-last">
-                    <button onclick="removeTourist('${t.id}')" class="btn-danger p-2 rounded-lg" title="Удалить">
-                        <i class="fa-solid fa-trash-can"></i>
+                <div class="absolute top-1.5 right-1.5 md:static md:col-span-1 md:w-full flex justify-end md:order-last">
+                    <button onclick="removeTourist('${t.id}')" class="btn-danger p-0.5 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="Удалить">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
                     </button>
                 </div>
                 
                 <!-- Full Name -->
-                <div class="col-span-12 md:col-span-3 w-full pr-8 md:pr-0">
-                    <label class="md:hidden text-[10px] text-slate-400 uppercase font-semibold mb-1 block">ФИО (Рус/Каз)</label>
+                <div class="col-span-12 md:col-span-5 w-full pr-6 md:pr-0">
+                    <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">ФИО (Рус/Каз)</label>
                     <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
                         onchange="updateTourist('${t.id}', 'fullName', this.value)"
-                        class="w-full input-field rounded-lg p-3 md:p-2 text-base md:text-sm">
+                        class="w-full bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors">
                 </div>
                 
-                <!-- DOB & Disability Container (Mobile) -->
-                <div class="col-span-12 grid grid-cols-2 gap-3 md:contents w-full">
-                    <!-- DOB -->
-                    <div class="col-span-1 w-full md:col-span-2">
-                        <label class="md:hidden text-[10px] text-slate-400 uppercase font-semibold mb-1 block">Дата рождения</label>
-                        <input type="date" value="${t.dob}" 
-                            onchange="updateTourist('${t.id}', 'dob', this.value)"
-                            class="w-full input-field rounded-lg p-3 md:p-2 text-base md:text-sm">
-                    </div>
-                    
-                    <!-- Disability -->
-                    <div class="col-span-1 w-full md:col-span-2">
-                        <label class="md:hidden text-[10px] text-slate-400 uppercase font-semibold mb-1 block">Инвалидность</label>
-                        <select onchange="updateTourist('${t.id}', 'disability', this.value)"
-                            class="w-full input-field rounded-lg p-3 md:p-2 text-base md:text-sm appearance-none">
-                            <option value="none" ${t.disability === 'none' ? 'selected' : ''}>Нет инвал.</option>
-                            <option value="1" ${t.disability === '1' ? 'selected' : ''}>1 категория</option>
-                            <option value="2" ${t.disability === '2' ? 'selected' : ''}>2 категория</option>
-                            <option value="3" ${t.disability === '3' ? 'selected' : ''}>3 категория</option>
-                        </select>
-                    </div>
+                <!-- DOB -->
+                <div class="col-span-12 md:col-span-2 w-full">
+                    <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">Дата рождения</label>
+                    <input type="date" value="${t.dob}" 
+                        onchange="updateTourist('${t.id}', 'dob', this.value)"
+                        class="w-full bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-1.5 py-1 text-xs font-medium transition-colors">
                 </div>
                 
                 <!-- Stats Row (Age, Category, Price) -->
-                <div class="col-span-12 w-full flex justify-between items-center mt-1 md:mt-0 md:contents border-t border-slate-200 md:border-0 pt-3 md:pt-0">
+                <div class="col-span-12 w-full flex justify-between items-center mt-1 md:mt-0 md:contents border-t border-slate-100 md:border-0 pt-1.5 md:pt-0">
                     <div class="flex space-x-6 md:contents">
                         <!-- Age -->
                         <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center">
-                            <label class="md:hidden text-[10px] text-slate-400 uppercase font-semibold mb-0.5">Возраст</label>
-                            <span class="text-base md:text-sm font-bold ${age === null ? 'text-slate-500' : 'text-[#0076ba]'}">
+                            <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Возраст</label>
+                            <span class="text-xs font-bold ${age === null ? 'text-slate-400' : 'text-[#0076ba]'}">
                                 ${age !== null ? age : '-'}
                             </span>
                         </div>
                         
                         <!-- Category -->
                         <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center">
-                            <label class="md:hidden text-[10px] text-slate-400 uppercase font-semibold mb-0.5">Тип</label>
-                            <span class="text-xs font-bold px-2 py-1 rounded bg-slate-100 text-brand-accent border border-brand-accent/30 shadow-inner">
+                            <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Тип</label>
+                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded border ${catBadgeClass} transition-all duration-300">
                                 ${category}
                             </span>
                         </div>
                     </div>
                     
                     <!-- Price -->
-                    <div class="md:col-span-2 text-right flex flex-col items-end justify-center">
-                        ${discountPercent > 0 ? `<span class="badge-discount text-[10px] px-2 py-0.5 rounded-full mb-1 leading-none shadow-sm font-semibold">-${discountPercent}%</span>` : ''}
-                        <span class="text-lg md:text-base font-bold ${finalPrice > 0 ? 'text-slate-900' : 'text-slate-500'}">
+                    <div class="md:col-span-2 text-right flex flex-col items-end justify-center pr-2">
+                        ${discountPercent > 0 ? `<span class="badge-discount text-[8px] px-1.5 py-0.5 rounded-full mb-0.5 leading-none font-bold">-${discountPercent}%</span>` : ''}
+                        <span class="text-xs font-bold ${finalPrice > 0 ? 'text-slate-900' : 'text-slate-400'}">
                             ${basePrice === -1 ? 'Нет тарифа' : Math.round(finalPrice).toLocaleString('ru-RU')} ₸
                         </span>
                     </div>
@@ -542,7 +530,6 @@ document.addEventListener('DOMContentLoaded', () => {
         stats.inf.textContent = counts.inf;
         stats.pens.textContent = counts.pens;
         stats.bday.textContent = counts.bday;
-        stats.dis.textContent = counts.dis;
 
         // Экспорт данных
         exportDataEl.value = exportLines.join('\n');
@@ -557,9 +544,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveDraft() {
         const data = {
-            visitDate: visitDateInput.value,
-            clientType: clientTypeInput.value,
-            tariffType: tariffTypeInput.value,
+            visitDate: visitDateInput ? visitDateInput.value : '',
+            clientType: clientTypeInput ? clientTypeInput.value : 'tourist',
+            tariffType: tariffTypeInput ? tariffTypeInput.value : 'day',
             tourists: tourists
         };
         localStorage.setItem('tetisBluDraft', JSON.stringify(data));
@@ -588,6 +575,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (downloadReceiptBtn) {
         downloadReceiptBtn.addEventListener('click', generateReceiptImage);
     }
+    
+    // --- ЛОГИКА WHATSAPP ---
+    const whatsappBtn = document.getElementById('whatsappBtn');
+    if (whatsappBtn) {
+        whatsappBtn.addEventListener('click', () => {
+            const text = exportDataEl.value;
+            if (!text) return;
+            // Форматируем текст для ватсапа (можно добавить звездочки для жирности)
+            const waText = `*Расчет Tetys Blu*\n\n${text}`;
+            const url = `https://wa.me/?text=${encodeURIComponent(waText)}`;
+            window.open(url, '_blank');
+        });
+    }
 
     function generateReceiptImage() {
         const container = document.getElementById('receiptContainer');
@@ -597,10 +597,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalEl = document.getElementById('receiptTotal');
         
         // Сбор данных
-        const dateParts = visitDateInput.value.split('-');
-        const formattedDate = dateParts.length === 3 ? `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}` : visitDateInput.value;
-        const clientText = clientTypeInput.options[clientTypeInput.selectedIndex].text;
-        const tariffText = tariffTypeInput.options[tariffTypeInput.selectedIndex].text;
+        const dateParts = visitDateInput ? visitDateInput.value.split('-') : [];
+        const visitDateStr = visitDateInput ? visitDateInput.value : '';
+        const formattedDate = dateParts.length === 3 ? `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}` : visitDateStr;
+        const clientText = clientTypeInput ? clientTypeInput.options[clientTypeInput.selectedIndex].text : 'Турист';
+        const tariffText = tariffTypeInput ? tariffTypeInput.options[tariffTypeInput.selectedIndex].text : 'Дневной тариф';
+        const clientType = clientTypeInput ? clientTypeInput.value : 'tourist';
+        const tariffType = tariffTypeInput ? tariffTypeInput.value : 'day';
         
         metaEl.innerHTML = `
             <div class="flex justify-between items-center"><span class="text-brand-blue">Дата:</span> <span class="font-bold text-slate-900">${formattedDate}</span></div>
@@ -611,14 +614,14 @@ document.addEventListener('DOMContentLoaded', () => {
         touristsEl.innerHTML = '';
         tourists.forEach((t, i) => {
             if (!t.fullName && !t.dob) return; // Пропуск пустых строк
-            const age = calculateAge(t.dob, visitDateInput.value);
+            const age = calculateAge(t.dob, visitDateStr);
             const cat = getPassengerCategory(age);
-            const basePrice = getBasePrice(visitDateInput.value, clientTypeInput.value, tariffTypeInput.value, cat);
+            const basePrice = getBasePrice(visitDateStr, clientType, tariffType, cat);
             
             const today = new Date();
-            const visitD = new Date(visitDateInput.value);
-            const earlyBookingEnabled = visitDateInput.value && ((visitD.getFullYear() > today.getFullYear()) || (visitD.getFullYear() === today.getFullYear() && visitD.getMonth() > today.getMonth()));
-            let discInfo = calculateDiscount(t.dob, visitDateInput.value, t.disability, age);
+            const visitD = new Date(visitDateStr);
+            const earlyBookingEnabled = visitDateStr && ((visitD.getFullYear() > today.getFullYear()) || (visitD.getFullYear() === today.getFullYear() && visitD.getMonth() > today.getMonth()));
+            let discInfo = calculateDiscount(t.dob, visitDateStr, t.disability, age);
             if (typeof discInfo === 'number') discInfo = { percent: 0, isBirthday: false };
             
             let disc = discInfo.percent || 0;
