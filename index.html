@@ -262,6 +262,22 @@
             50% { opacity: 0.8; }
             100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
         }
+
+        /* iOS Safari Native Date Input Override to fix centering */
+        input[type="date"] {
+            text-align: left !important;
+        }
+        input[type="date"]::-webkit-date-and-time-value {
+            text-align: left !important;
+            margin: 0;
+            padding: 0;
+        }
+        input[type="date"]::-webkit-datetime-edit {
+            text-align: left !important;
+            display: block;
+            padding: 0;
+            margin: 0;
+        }
     </style>
 </head>
 <body class="min-h-screen relative flex flex-col">
