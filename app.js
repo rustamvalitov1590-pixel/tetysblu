@@ -473,20 +473,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                 </div>
                 
-                <!-- Full Name -->
-                <div class="col-span-12 md:col-span-5 w-full pr-6 md:pr-0">
-                    <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">ФИО (Рус/Каз)</label>
-                    <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
-                        onchange="updateTourist('${t.id}', 'fullName', this.value)"
-                        class="w-full text-left bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors">
-                </div>
-                
-                <!-- DOB -->
-                <div class="col-span-12 md:col-span-2 w-full">
-                    <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">Дата рождения</label>
-                    <input type="date" value="${t.dob}" 
-                        onchange="updateTourist('${t.id}', 'dob', this.value)"
-                        class="w-full text-left date-left-align bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-1.5 py-1 text-xs font-medium transition-colors">
+                <div class="w-full flex gap-2 pr-6 md:pr-0 md:contents">
+                    <!-- Full Name -->
+                    <div class="flex-1 md:col-span-5 w-full">
+                        <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">ФИО (Рус/Каз)</label>
+                        <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
+                            onchange="updateTourist('${t.id}', 'fullName', this.value)"
+                            class="w-full text-left bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors">
+                    </div>
+                    
+                    <!-- DOB -->
+                    <div class="w-[110px] shrink-0 md:w-full md:col-span-2">
+                        <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">Дата рожд.</label>
+                        <input type="date" value="${t.dob}" 
+                            onchange="updateTourist('${t.id}', 'dob', this.value)"
+                            class="w-full text-left date-left-align bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-0.5 py-1 text-xs font-medium transition-colors">
+                    </div>
                 </div>
                 
                 <!-- Stats Row (Age, Category, Price) -->
