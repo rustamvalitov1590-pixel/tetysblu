@@ -295,6 +295,13 @@ document.addEventListener('DOMContentLoaded', () => {
         render();
     };
 
+    window.clearAllTourists = function() {
+        if (confirm('Вы уверены, что хотите удалить всех гостей?')) {
+            tourists = [];
+            render();
+        }
+    };
+
     function addTourist() {
         tourists.push({
             id: createId(),
