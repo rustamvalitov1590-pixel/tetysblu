@@ -88,6 +88,15 @@ body {
     background: rgba(0, 118, 186, 0.4);
 }
 
+/* iOS Safari Native Date Input Override */
+input[type="date"]::-webkit-date-and-time-value {
+    text-align: left !important;
+}
+input[type="date"]::-webkit-datetime-edit {
+    text-align: left !important;
+    display: block;
+    padding: 0;
+}
 /* ==================================================
    UNDERWATER LOGIN SCREEN (Marine Glassmorphism)
    ================================================== */
