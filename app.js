@@ -479,7 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">Дата рождения</label>
                     <input type="date" value="${t.dob}" 
                         onchange="updateTourist('${t.id}', 'dob', this.value)"
-                        class="w-full text-left bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-1.5 py-1 text-xs font-medium transition-colors">
+                        class="w-full text-left date-left-align bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-1.5 py-1 text-xs font-medium transition-colors">
                 </div>
                 
                 <!-- Stats Row (Age, Category, Price) -->
