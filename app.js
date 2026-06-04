@@ -29,6 +29,11 @@ const CONFIG = {
 // ======================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Регистрация Service Worker для PWA
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(err => console.error('SW registration failed', err));
+    }
+
     // --- АВТОРИЗАЦИЯ ---
     const authScreen = document.getElementById('authScreen');
     const appContent = document.getElementById('appContent');
@@ -165,12 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSeasonYearEl.textContent = `Сезон ${today.getFullYear()}`;
     }
 
-    // Слушатели событий
     if (visitDateInput) visitDateInput.addEventListener('change', render);
     if (clientTypeInput) clientTypeInput.addEventListener('change', render);
     if (tariffTypeInput) tariffTypeInput.addEventListener('change', render);
     if (addTouristBtn) addTouristBtn.addEventListener('click', addTourist);
-    if (copyBtn) copyBtn.addEventListener('click', copyExportData);
 
     // Загрузка черновика (Авто-сохранение)
     const draft = localStorage.getItem('tetisBluDraft');
@@ -253,8 +256,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Remove categories like adl, chld, inf
                 namePart = namePart.replace(/\b(?:adl|chld|inf|взр|реб)\b/ig, '');
                 
+                // Remove CRM labels like "Дата Рожд" or "д.р."
+                namePart = namePart.replace(/дата\s*рожд[а-яА-Я]*/ig, '');
+                namePart = namePart.replace(/\bд\.?р\.?\b/ig, '');
+                
                 // Clean up name (remove extra spaces and non-alphabet chars except dash)
                 namePart = namePart.replace(/[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\s\-]/g, ' ').trim();
+                
+                // Remove trailing or leading dashes that might have been left over
+                namePart = namePart.replace(/^-+|-+$/g, '').trim();
+                
                 namePart = namePart.replace(/\s+/g, ' ');
 
                 // Capitalize first letters of name
@@ -283,17 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function createId() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2);
     }
-
-    // Быстрое добавление туриста с заданным годом (например, для кнопок '+ Взрослый')
-    window.quickAdd = function(year) {
-        tourists.push({
-            id: createId(),
-            fullName: '',
-            dob: year + '-01-01',
-            disability: 'none'
-        });
-        render();
-    };
 
     window.clearAllTourists = function() {
         if (confirm('Вы уверены, что хотите удалить всех гостей?')) {
@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Создание DOM элемента строки
             const row = document.createElement('div');
-            row.className = 'tourist-row p-1.5 md:p-1 flex flex-col md:grid md:grid-cols-12 gap-1.5 md:gap-1 items-start md:items-center transition-all relative hover:bg-slate-50';
+            row.className = 'tourist-row p-1.5 md:p-1 flex flex-col md:grid md:grid-cols-12 gap-1.5 md:gap-1 items-start md:items-center transition-all relative hover:bg-slate-50 animate-row-in';
             row.innerHTML = `
                 <!-- Mobile Label: Delete Button -->
                 <div class="absolute top-1.5 right-1.5 md:static md:col-span-1 md:w-full flex justify-end md:order-last">
@@ -479,7 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">ФИО (Рус/Каз)</label>
                         <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
                             onchange="updateTourist('${t.id}', 'fullName', this.value)"
-                            class="w-full text-left bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors">
+                            class="w-full text-left bg-transparent text-slate-800 border ${!t.fullName ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors">
                     </div>
                     
                     <!-- DOB -->
@@ -487,7 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">Дата рожд.</label>
                         <input type="date" value="${t.dob}" 
                             onchange="updateTourist('${t.id}', 'dob', this.value)"
-                            class="w-full text-left date-left-align bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-0.5 py-1 text-xs font-medium transition-colors">
+                            class="w-full text-left date-left-align bg-transparent text-slate-800 border ${!t.dob ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-0.5 py-1 text-xs font-medium transition-colors">
                     </div>
                 </div>
                 
@@ -540,8 +540,15 @@ document.addEventListener('DOMContentLoaded', () => {
         stats.pens.textContent = counts.pens;
         stats.bday.textContent = counts.bday;
 
+        let exportText = `📅 Дата визита: ${visitDate ? formatDate(visitDate) : 'Не указана'}\n`;
+        exportText += `👤 Клиент: ${clientType === 'agent' ? 'Турагент' : 'Турист'}\n`;
+        exportText += `🎟 Тариф: ${tariffType === 'evening' ? 'Вечерний' : 'Дневной'}\n\n`;
+        exportText += `Список гостей:\n`;
+        exportText += exportLines.length > 0 ? exportLines.join('\n') : 'Пусто';
+        exportText += `\n\n💳 ИТОГО К ОПЛАТЕ: ${Math.round(totalSum).toLocaleString('ru-RU')} ₸`;
+
         // Экспорт данных
-        exportDataEl.value = exportLines.join('\n');
+        exportDataEl.value = exportText;
         exportDataEl.style.height = 'auto';
         exportDataEl.style.height = exportDataEl.scrollHeight + 'px';
 
@@ -587,39 +594,116 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadReceiptBtn.addEventListener('click', generateReceiptImage);
     }
     
-    // --- ЛОГИКА WHATSAPP ---
+    // --- ЛОГИКА ОТПРАВКИ (SHARE / WHATSAPP) ---
     const whatsappBtn = document.getElementById('whatsappBtn');
     if (whatsappBtn) {
-        whatsappBtn.addEventListener('click', () => {
-            const text = exportDataEl.value;
-            if (!text) return;
-            // Форматируем текст для ватсапа (можно добавить звездочки для жирности)
-            const waText = `*Расчет Tetys Blu*\n\n${text}`;
-            const url = `https://wa.me/?text=${encodeURIComponent(waText)}`;
-            window.open(url, '_blank');
+        whatsappBtn.addEventListener('click', async () => {
+            saveToHistory(); // Сохраняем перед отправкой
+            const originalHtml = whatsappBtn.innerHTML;
+            whatsappBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Подготовка...';
+            
+            try {
+                // Если браузер поддерживает шаринг файлов (мобилки Safari/Chrome)
+                if (navigator.share && navigator.canShare) {
+                    await prepareAndShareImage();
+                } else {
+                    // Фолбэк на старый текстовый способ
+                    sendTextToWhatsApp();
+                }
+            } catch (err) {
+                console.error('Ошибка при шаринге', err);
+                // Если шаринг отменили или произошла ошибка, отправляем хотя бы текст
+                if (err.name !== 'AbortError') {
+                    sendTextToWhatsApp();
+                }
+            } finally {
+                whatsappBtn.innerHTML = originalHtml;
+            }
         });
     }
 
-    function generateReceiptImage() {
-        const container = document.getElementById('receiptContainer');
-        const content = document.getElementById('receiptContent');
+    function sendTextToWhatsApp() {
+        const text = exportDataEl.value;
+        if (!text) return;
+        const waText = `*Официальный расчет Tetys Blu*\n\n${text}`;
+        const url = `https://wa.me/?text=${encodeURIComponent(waText)}`;
+        window.open(url, '_blank');
+    }
+
+    async function prepareAndShareImage() {
+        return new Promise((resolve, reject) => {
+            const container = document.getElementById('receiptContainer');
+            const content = document.getElementById('receiptContent');
+            
+            // Заполняем данные перед рендером
+            fillReceiptData();
+            
+            // Временно достаем блок для рендера
+            content.classList.remove('opacity-0', 'pointer-events-none');
+            document.body.appendChild(content); 
+            content.style.position = 'fixed';
+            content.style.top = '0';
+            content.style.left = '0';
+            content.style.zIndex = '-9999';
+            
+            html2canvas(content, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
+                // Возвращаем элемент на место
+                content.style.position = '';
+                content.style.top = '';
+                content.style.left = '';
+                content.style.zIndex = '';
+                content.classList.add('opacity-0', 'pointer-events-none');
+                container.appendChild(content);
+                
+                canvas.toBlob(async (blob) => {
+                    if (!blob) return reject(new Error('Не удалось создать blob'));
+                    
+                    const formattedDate = visitDateInput ? visitDateInput.value : 'date';
+                    const file = new File([blob], `TetysBlu_Check_${formattedDate}.png`, { type: 'image/png' });
+                    
+                    const shareData = {
+                        files: [file],
+                        title: 'Чек Tetys Blu',
+                        text: exportDataEl.value // Прикладываем текст к картинке (некоторые мессенджеры подхватят как подпись)
+                    };
+                    
+                    if (navigator.canShare({ files: [file] })) {
+                        await navigator.share(shareData);
+                        resolve();
+                    } else {
+                        reject(new Error('Файлы не поддерживаются для шаринга'));
+                    }
+                }, 'image/png');
+            }).catch(err => {
+                // Возврат элемента на место в случае ошибки
+                content.style.position = '';
+                content.style.top = '';
+                content.style.left = '';
+                content.classList.add('opacity-0', 'pointer-events-none');
+                container.appendChild(content);
+                reject(err);
+            });
+        });
+    }
+
+    function fillReceiptData() {
         const metaEl = document.getElementById('receiptMeta');
         const touristsEl = document.getElementById('receiptTourists');
         const totalEl = document.getElementById('receiptTotal');
         
-        // Сбор данных
         const dateParts = visitDateInput ? visitDateInput.value.split('-') : [];
         const visitDateStr = visitDateInput ? visitDateInput.value : '';
         const formattedDate = dateParts.length === 3 ? `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}` : visitDateStr;
-        const clientText = clientTypeInput ? clientTypeInput.options[clientTypeInput.selectedIndex].text : 'Турист';
-        const tariffText = tariffTypeInput ? tariffTypeInput.options[tariffTypeInput.selectedIndex].text : 'Дневной тариф';
         const clientType = clientTypeInput ? clientTypeInput.value : 'tourist';
         const tariffType = tariffTypeInput ? tariffTypeInput.value : 'day';
         
+        const clientText = clientType === 'agent' ? 'Турагент' : 'Турист';
+        const tariffText = tariffTypeInput ? tariffTypeInput.options[tariffTypeInput.selectedIndex].text : 'Дневной тариф';
+        
         metaEl.innerHTML = `
-            <div class="flex justify-between items-center"><span class="text-brand-blue">Дата:</span> <span class="font-bold text-slate-900">${formattedDate}</span></div>
-            <div class="flex justify-between items-center"><span class="text-brand-blue">Клиент:</span> <span class="font-bold text-slate-900">${clientText}</span></div>
-            <div class="flex justify-between items-center"><span class="text-brand-blue">Тариф:</span> <span class="font-bold text-slate-900">${tariffText}</span></div>
+            <div class="flex justify-between items-center"><span class="text-[#0076ba]">Дата:</span> <span class="font-bold text-[#1e293b]">${formattedDate}</span></div>
+            <div class="flex justify-between items-center"><span class="text-[#0076ba]">Клиент:</span> <span class="font-bold text-[#1e293b]">${clientText}</span></div>
+            <div class="flex justify-between items-center"><span class="text-[#0076ba]">Тариф:</span> <span class="font-bold text-[#1e293b]">${tariffText}</span></div>
         `;
         
         touristsEl.innerHTML = '';
@@ -642,12 +726,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const finalP = basePrice > 0 ? basePrice * (1 - disc / 100) : 0;
             
             touristsEl.innerHTML += `
-                <div class="flex justify-between items-center text-sm bg-slate-100 p-3 rounded-xl border border-slate-200 mb-2">
+                <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3">
                     <div class="pr-2 w-2/3">
-                        <div class="font-semibold text-slate-900 truncate">${t.fullName || 'Гость ' + (i+1)} ${discInfo.isBirthday ? '🎂' : ''}</div>
-                        <div class="text-[11px] text-slate-400 mt-0.5">${cat} ${age !== null ? `(${age} лет)` : ''} ${disc > 0 ? `<span class="bg-brand-accent/20 text-brand-accent px-1.5 py-0.5 rounded ml-1">-${disc}%</span>` : ''}</div>
+                        <div class="font-bold text-[#1e293b] text-[15px] leading-relaxed break-words">${t.fullName || 'Гость ' + (i+1)} ${discInfo.isBirthday ? '🎂' : ''}</div>
+                        <div class="text-[12px] text-slate-400 mt-0.5 leading-normal">${cat} ${age !== null ? `(${age} лет)` : ''} ${disc > 0 ? `<span class="ml-1 font-bold">-${disc}%</span>` : ''}</div>
                     </div>
-                    <div class="font-bold text-slate-900 whitespace-nowrap text-right">
+                    <div class="font-bold text-[#1e293b] text-[16px] whitespace-nowrap text-right">
                         ${basePrice === -1 ? 'Нет тарифа' : Math.round(finalP).toLocaleString('ru-RU')} ₸
                     </div>
                 </div>
@@ -655,6 +739,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         totalEl.textContent = totalPriceEl.textContent;
+    }
+
+    function generateReceiptImage() {
+        saveToHistory(); // Сохраняем перед генерацией чека
+        const container = document.getElementById('receiptContainer');
+        const content = document.getElementById('receiptContent');
+        const formattedDate = visitDateInput ? visitDateInput.value : 'date';
+        
+        // Сбор данных вынесен в отдельную функцию, чтобы переиспользовать в share
+        fillReceiptData();
         
         // Временно достаем блок для рендера
         content.classList.remove('opacity-0', 'pointer-events-none');
@@ -683,12 +777,12 @@ document.addEventListener('DOMContentLoaded', () => {
             link.href = canvas.toDataURL('image/png');
             link.click();
             
-            downloadReceiptBtn.innerHTML = '<i class="fa-solid fa-check mr-1.5"></i> Сохранено';
-            setTimeout(() => { downloadReceiptBtn.innerHTML = originalBtnHtml; }, 2000);
+            downloadReceiptBtn.innerHTML = originalBtnHtml;
+            window.showToast('Чек успешно сохранен!', 'fa-circle-check');
         }).catch(err => {
             console.error('Ошибка создания чека', err);
-            downloadReceiptBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Ошибка';
-            setTimeout(() => { downloadReceiptBtn.innerHTML = originalBtnHtml; }, 2000);
+            downloadReceiptBtn.innerHTML = originalBtnHtml;
+            window.showToast('Ошибка при создании чека', 'fa-triangle-exclamation', 'bg-red-500');
             
             // Возврат элемента на место в случае ошибки
             content.style.position = '';
@@ -698,6 +792,115 @@ document.addEventListener('DOMContentLoaded', () => {
             container.appendChild(content);
         });
     }
+
+    // --- TOAST NOTIFICATIONS ---
+    window.showToast = function(message, icon = 'fa-check', bgClass = 'bg-[#1ebd5a]') {
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${bgClass} text-white px-5 py-3 rounded-2xl shadow-xl flex items-center font-bold text-sm`;
+        toast.innerHTML = `<i class="fa-solid ${icon} mr-2.5 text-lg"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => { 
+            if (toast.parentNode) toast.parentNode.removeChild(toast); 
+        }, 3000);
+    };
+
+    // --- ИСТОРИЯ РАСЧЕТОВ ---
+    const historyBtn = document.getElementById('historyBtn');
+    const closeHistoryBtn = document.getElementById('closeHistoryBtn');
+    const historyModal = document.getElementById('historyModal');
+    const historyModalContent = document.getElementById('historyModalContent');
+    const historyList = document.getElementById('historyList');
+
+    function saveToHistory() {
+        if (tourists.length === 0 || (!tourists[0].fullName && !tourists[0].dob)) return;
+        const total = parseInt(totalPriceEl.textContent.replace(/\D/g, '')) || 0;
+        
+        const record = {
+            id: Date.now(),
+            timestamp: new Date().toISOString(),
+            visitDate: visitDateInput ? visitDateInput.value : '',
+            clientType: clientTypeInput ? clientTypeInput.value : 'tourist',
+            tariffType: tariffTypeInput ? tariffTypeInput.value : 'day',
+            totalSum: total,
+            tourists: JSON.parse(JSON.stringify(tourists))
+        };
+        
+        let history = JSON.parse(localStorage.getItem('tetysBluHistory') || '[]');
+        if (history.length > 0) {
+            const last = history[0];
+            if (JSON.stringify(last.tourists) === JSON.stringify(record.tourists) && last.visitDate === record.visitDate) {
+                return; // Пропуск дубликата
+            }
+        }
+        
+        history.unshift(record);
+        if (history.length > 20) history = history.slice(0, 20); // Храним только 20 последних
+        localStorage.setItem('tetysBluHistory', JSON.stringify(history));
+    }
+
+    if (historyBtn) {
+        historyBtn.addEventListener('click', () => {
+            renderHistory();
+            historyModal.classList.remove('hidden');
+            setTimeout(() => {
+                historyModal.classList.remove('opacity-0');
+                historyModalContent.classList.remove('translate-x-full');
+            }, 10);
+        });
+    }
+    
+    if (closeHistoryBtn) {
+        closeHistoryBtn.addEventListener('click', () => {
+            historyModal.classList.add('opacity-0');
+            historyModalContent.classList.add('translate-x-full');
+            setTimeout(() => {
+                historyModal.classList.add('hidden');
+            }, 300);
+        });
+    }
+
+    function renderHistory() {
+        if (!historyList) return;
+        const history = JSON.parse(localStorage.getItem('tetysBluHistory') || '[]');
+        if (history.length === 0) {
+            historyList.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Архив пуст</p></div>';
+            return;
+        }
+        
+        historyList.innerHTML = '';
+        history.forEach(item => {
+            const date = new Date(item.timestamp);
+            const timeStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')} в ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+            
+            const card = document.createElement('div');
+            card.className = 'bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col space-y-2 relative';
+            card.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">${timeStr}</span>
+                    <span class="text-xs font-black text-[#1e293b]">${item.totalSum.toLocaleString('ru-RU')} ₸</span>
+                </div>
+                <div class="text-sm font-bold text-slate-800">Гостей: ${item.tourists.length}</div>
+                <div class="text-[11px] font-semibold text-slate-500">Визит: ${item.visitDate} • ${item.clientType === 'agent' ? 'Турагент' : 'Турист'}</div>
+                <button class="mt-2 w-full bg-blue-50 text-brand-blue hover:bg-brand-blue hover:text-white py-2 rounded-xl text-xs font-bold transition-colors">
+                    <i class="fa-solid fa-download mr-1.5"></i>Загрузить расчет
+                </button>
+            `;
+            
+            const loadBtn = card.querySelector('button');
+            loadBtn.addEventListener('click', () => {
+                if (visitDateInput) visitDateInput.value = item.visitDate;
+                if (clientTypeInput) clientTypeInput.value = item.clientType;
+                if (tariffTypeInput) tariffTypeInput.value = item.tariffType;
+                tourists = item.tourists;
+                render();
+                window.showToast('Расчет успешно загружен', 'fa-folder-open', 'bg-brand-blue');
+                closeHistoryBtn.click();
+            });
+            
+            historyList.appendChild(card);
+        });
+    }
+
 });
 
 
