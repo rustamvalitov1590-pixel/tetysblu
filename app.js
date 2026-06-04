@@ -596,6 +596,44 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- ЛОГИКА ОТПРАВКИ (SHARE / WHATSAPP) ---
     const whatsappBtn = document.getElementById('whatsappBtn');
+    
+    // Элементы модалки шаринга
+    const shareModal = document.getElementById('shareModal');
+    const shareModalContent = document.getElementById('shareModalContent');
+    const closeShareBtn = document.getElementById('closeShareBtn');
+    const sharePreviewImg = document.getElementById('sharePreviewImg');
+    const finalShareBtn = document.getElementById('finalShareBtn');
+    let currentShareData = null;
+
+    if (closeShareBtn) {
+        closeShareBtn.addEventListener('click', closeShareModal);
+    }
+    
+    function closeShareModal() {
+        if (!shareModal) return;
+        shareModal.classList.add('opacity-0');
+        shareModalContent.classList.remove('scale-100');
+        shareModalContent.classList.add('scale-95');
+        setTimeout(() => shareModal.classList.add('hidden'), 300);
+    }
+
+    if (finalShareBtn) {
+        finalShareBtn.addEventListener('click', async () => {
+            if (!currentShareData) return;
+            try {
+                if (navigator.canShare && navigator.canShare(currentShareData)) {
+                    await navigator.share(currentShareData);
+                } else {
+                    await navigator.share(currentShareData);
+                }
+                closeShareModal();
+            } catch (err) {
+                console.error('Ошибка нативного шаринга', err);
+                if (err.name !== 'AbortError') sendTextToWhatsApp(true);
+            }
+        });
+    }
+
     if (whatsappBtn) {
         whatsappBtn.addEventListener('click', async () => {
             saveToHistory(); // Сохраняем перед отправкой
@@ -604,16 +642,28 @@ document.addEventListener('DOMContentLoaded', () => {
             
             try {
                 if (navigator.share) {
-                    await prepareAndShareImage();
+                    const result = await generateImageForShare();
+                    currentShareData = result.shareData;
+                    sharePreviewImg.src = result.dataUrl;
+                    
+                    // Показываем модалку предпросмотра
+                    if (shareModal) {
+                        shareModal.classList.remove('hidden');
+                        setTimeout(() => {
+                            shareModal.classList.remove('opacity-0');
+                            shareModalContent.classList.remove('scale-95');
+                            shareModalContent.classList.add('scale-100');
+                        }, 10);
+                    } else {
+                        // Фолбэк, если модалка почему-то не найдена
+                        await navigator.share(currentShareData);
+                    }
                 } else {
                     sendTextToWhatsApp();
                 }
             } catch (err) {
-                console.error('Ошибка при шаринге', err);
-                if (err.name !== 'AbortError') {
-                    // Используем location.href, так как после async задержки Safari блокирует window.open (Popup Blocker)
-                    sendTextToWhatsApp(true);
-                }
+                console.error('Ошибка при подготовке чека', err);
+                sendTextToWhatsApp(true);
             } finally {
                 whatsappBtn.innerHTML = originalHtml;
             }
@@ -632,12 +682,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function prepareAndShareImage() {
+    async function generateImageForShare() {
         return new Promise((resolve, reject) => {
             const container = document.getElementById('receiptContainer');
             const content = document.getElementById('receiptContent');
             
-            // Заполняем данные перед рендером
             fillReceiptData();
             
             // Временно достаем блок для рендера
@@ -657,6 +706,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 content.classList.add('opacity-0', 'pointer-events-none');
                 container.appendChild(content);
                 
+                const dataUrl = canvas.toDataURL('image/png');
+                
                 canvas.toBlob(async (blob) => {
                     if (!blob) return reject(new Error('Не удалось создать blob'));
                     
@@ -664,23 +715,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const file = new File([blob], `TetysBlu_Check_${formattedDate}.png`, { type: 'image/png' });
                     
                     // ВАЖНО: Для iOS Safari мы передаем ТОЛЬКО файл. 
-                    // Если передать text и file одновременно, Safari может молча заблокировать шаринг.
                     const shareData = {
                         files: [file]
                     };
                     
-                    try {
-                        if (navigator.canShare && navigator.canShare(shareData)) {
-                            await navigator.share(shareData);
-                            resolve();
-                        } else {
-                            // Попытка без проверки canShare на случай старых версий
-                            await navigator.share(shareData);
-                            resolve();
-                        }
-                    } catch (shareErr) {
-                        reject(shareErr);
-                    }
+                    resolve({ shareData, dataUrl });
                 }, 'image/png');
             }).catch(err => {
                 // Возврат элемента на место в случае ошибки
