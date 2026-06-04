@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#03182f">
+    <link rel="manifest" href="manifest.json">
     <title>Tetys Blue | Caspian Dream Park Calculator</title>
     
     <!-- Tetysblu Favicons -->
@@ -271,6 +273,31 @@
             text-align: left !important;
             padding: 0;
         }
+
+        /* Micro-Animations & Toasts */
+        @keyframes toast-slide-up {
+            0% { transform: translate(-50%, 20px) scale(0.95); opacity: 0; }
+            15% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+            85% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, 20px) scale(0.95); opacity: 0; }
+        }
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            pointer-events: none;
+            animation: toast-slide-up 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes row-fade-in {
+            from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-row-in {
+            animation: row-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body class="min-h-screen relative flex flex-col">
@@ -385,11 +412,16 @@
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <!-- History -->
+                    <button id="historyBtn" class="bg-blue-50 hover:bg-blue-100 text-brand-blue px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border border-blue-200 flex items-center shadow-sm">
+                        <i class="fa-solid fa-clock-rotate-left sm:mr-2"></i>
+                        <span class="hidden sm:inline">Архив</span>
+                    </button>
                     <!-- Logout -->
-                    <button id="logoutBtn" class="bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 px-4 py-2 rounded-xl text-sm font-bold transition-all border border-slate-200/50 flex items-center group">
-                        <i class="fa-solid fa-arrow-right-from-bracket mr-2 group-hover:translate-x-0.5 transition-transform"></i>
-                        <span>Выйти</span>
+                    <button id="logoutBtn" class="bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border border-slate-200/50 flex items-center group">
+                        <i class="fa-solid fa-arrow-right-from-bracket sm:mr-2 group-hover:translate-x-0.5 transition-transform"></i>
+                        <span class="hidden sm:inline">Выйти</span>
                     </button>
                 </div>
             </div>
@@ -482,7 +514,8 @@
             <div class="lg:col-span-8 space-y-6">
                 
                 <!-- Main Tourist List Card -->
-                <section class="concept-card p-6 border border-slate-200 bg-white">
+                <section class="concept-card p-6 border border-slate-200 bg-white relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-blue to-brand-sky"></div>
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                         <div>
                             <h2 class="text-base font-bold text-slate-800 flex items-center">
@@ -493,16 +526,6 @@
                         </div>
                         
                         <div class="flex flex-wrap items-center justify-end gap-2 w-full sm:w-auto">
-                            <!-- Quick add buttons -->
-                            <button onclick="window.quickAdd('1990')" class="px-2.5 py-2 text-[10px] font-bold text-slate-500 bg-slate-50 hover:bg-brand-blue hover:text-white rounded-lg transition-colors border border-slate-200 hover:border-brand-blue flex items-center shadow-sm">
-                                + Взрослый
-                            </button>
-                            <button onclick="window.quickAdd('2016')" class="px-2.5 py-2 text-[10px] font-bold text-slate-500 bg-slate-50 hover:bg-teal-500 hover:text-white rounded-lg transition-colors border border-slate-200 hover:border-teal-500 flex items-center shadow-sm">
-                                + Ребенок
-                            </button>
-                            <button onclick="window.quickAdd('1960')" class="px-2.5 py-2 text-[10px] font-bold text-slate-500 bg-slate-50 hover:bg-brand-blue hover:text-white rounded-lg transition-colors border border-slate-200 hover:border-brand-blue flex items-center shadow-sm">
-                                + Пенсионер
-                            </button>
                             <!-- Main buttons -->
                             <button id="addTouristBtn" class="w-full sm:w-auto justify-center btn-concept-primary px-4 py-2.5 rounded-xl text-xs font-bold flex items-center transition-all shadow-md">
                                 <i class="fa-solid fa-user-plus mr-1.5"></i> Добавить гостя
@@ -564,21 +587,19 @@
                         
                         <div class="flex items-center space-x-1.5 w-full sm:w-auto">
                             <!-- Receipt Action Buttons -->
-                            <button id="downloadReceiptBtn" class="flex-1 sm:flex-none justify-center bg-white hover:bg-slate-50 text-brand-blue font-bold px-3 py-1.5 rounded-lg text-[10px] flex items-center transition-all shadow-sm">
-                                <i class="fa-solid fa-cloud-arrow-down mr-1 text-brand-sky"></i> Чек
+                            <button id="downloadReceiptBtn" class="flex-1 sm:flex-none justify-center bg-white hover:bg-slate-50 text-brand-blue font-bold px-4 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm">
+                                <i class="fa-solid fa-cloud-arrow-down mr-1.5 text-brand-sky text-sm"></i> Скачать чек
                             </button>
-                            <button id="whatsappBtn" class="flex-1 sm:flex-none justify-center bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold px-3 py-1.5 rounded-lg text-[10px] flex items-center transition-all shadow-sm">
-                                <i class="fa-brands fa-whatsapp mr-1 text-sm leading-none"></i> Отправить
-                            </button>
-                            <button id="copyBtn" class="flex-1 sm:flex-none justify-center bg-[#005f96] hover:bg-[#004f7c] text-white font-bold px-3 py-1.5 rounded-lg text-[10px] flex items-center transition-all border border-blue-400/20 shadow-sm">
-                                <i class="fa-solid fa-copy mr-1"></i> Копировать
+                            <button id="whatsappBtn" class="flex-1 sm:flex-none justify-center bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold px-4 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm">
+                                <i class="fa-brands fa-whatsapp mr-1.5 text-base leading-none"></i> Поделиться
                             </button>
                         </div>
                     </div>
                 </section>
                 
                 <!-- Text Area for Data Export (Styled Cleanly) -->
-                <section class="concept-card p-6 border border-slate-200 bg-white">
+                <section class="concept-card p-6 border border-slate-200 bg-white relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-blue to-brand-sky"></div>
                     <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center">
                         <i class="fa-solid fa-code text-slate-400 mr-2"></i>
                         Сгенерированный текст отчета
@@ -587,7 +608,8 @@
                         class="w-full min-h-[60px] overflow-hidden concept-input p-3 text-xs font-mono resize-none focus:border-slate-200 bg-slate-50/50 cursor-text select-all" 
                         placeholder="Тут появится текст для экспорта в CRM..."></textarea>
                 <!-- Dynamic Stats Summary Panel -->
-                <section class="concept-card p-5 border border-slate-200 bg-white">
+                <section class="concept-card p-5 border border-slate-200 bg-white relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-blue to-brand-sky"></div>
                     <h2 class="text-sm font-bold text-slate-800 mb-4 flex items-center">
                         <i class="fa-solid fa-chart-simple text-brand-blue mr-2"></i>
                         Сводная статистика
@@ -625,34 +647,47 @@
     </footer>
     
 
-    <!-- Hidden Receipt Template for Capture -->
     <div id="receiptContainer" class="fixed top-[-9999px] left-[-9999px] opacity-0 pointer-events-none">
-        <div id="receiptContent" class="w-[400px] text-slate-800 p-6 rounded-2xl shadow-2xl font-sans" style="background: #ffffff; border: 2px solid #e2e8f0;">
-            <div class="text-center mb-6">
-                <!-- Receipt Custom Logo -->
-                <div class="mb-3">
-                    <img src="https://tetysblu.com/content/images/logo.png" alt="Tetys Blu" class="h-8 mx-auto drop-shadow-sm">
+        <div id="receiptContent" class="w-[420px] text-slate-800 p-8 rounded-3xl font-sans bg-white relative">
+            <div class="text-center mb-8 mt-2">
+                <h1 class="text-[32px] font-black text-[#1e293b] tracking-wider mb-1">TETYS BLU</h1>
+                <p class="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-bold">Официальный расчет</p>
+            </div>
+            
+            <div class="mb-6 space-y-2.5 text-[14px]" id="receiptMeta">
+                <!-- Filled in JS -->
+            </div>
+            
+            <div class="space-y-3 mb-8" id="receiptTourists">
+                <!-- Filled in JS -->
+            </div>
+            
+            <div class="mt-6 flex justify-between items-end">
+                <span class="text-[13px] font-bold text-slate-400 uppercase pb-1.5">Итого к оплате:</span>
+                <h3 class="text-[32px] font-extrabold text-[#1e293b] leading-none"><span id="receiptTotal">0</span> <span class="text-2xl text-brand-blue">₸</span></h3>
+            </div>
+            
+            <div class="mt-8 text-center text-[11px] text-slate-500 border-t border-dashed border-slate-300 pt-5 relative">
+                <div class="absolute right-0 -top-5 bg-white pl-3 text-[#1e293b]">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5a2 2 0 0 1 2-2h2"></path><path d="M4 17v2a2 2 0 0 0 2 2h2"></path><path d="M16 3h2a2 2 0 0 1 2 2v2"></path><path d="M16 21h2a2 2 0 0 0 2-2v-2"></path><line x1="7" y1="12" x2="17" y2="12"></line><line x1="12" y1="7" x2="12" y2="17"></line></svg>
                 </div>
-                <h1 class="text-2xl font-black text-slate-800 tracking-wider">TETYS BLU</h1>
-                <p class="text-[9px] text-slate-400 uppercase tracking-[0.25em] font-bold">Официальный расчет</p>
+                <p class="font-semibold">Ждем вас в тематическом парке Tetys Blu!</p>
+                <p class="text-[#0076ba] mt-1 font-bold">tetysblu.com</p>
             </div>
-            
-            <div class="border-t border-b border-slate-100 py-3 mb-4 space-y-1.5 text-xs" id="receiptMeta">
-                <!-- Filled in JS -->
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="fixed inset-0 z-[6000] hidden bg-slate-900/40 backdrop-blur-sm flex justify-end transition-opacity duration-300 opacity-0">
+        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300" id="historyModalContent">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h2 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-clock-rotate-left text-brand-blue mr-2"></i> Недавние расчеты</h2>
+                <button id="closeHistoryBtn" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
             </div>
-            
-            <div class="space-y-2 mb-5" id="receiptTourists">
-                <!-- Filled in JS -->
-            </div>
-            
-            <div class="border-t border-slate-200 pt-4 flex justify-between items-center">
-                <span class="text-xs font-bold text-slate-400 uppercase">Итого к оплате:</span>
-                <h3 class="text-2xl font-extrabold text-slate-800 leading-none"><span id="receiptTotal">0</span> <span class="text-lg text-brand-blue">₸</span></h3>
-            </div>
-            
-            <div class="mt-6 text-center text-[10px] text-slate-400 border-t border-dashed border-slate-200 pt-4">
-                <p class="font-bold">Ждем вас в тематическом парке Tetys Blu!</p>
-                <p class="text-brand-blue mt-0.5 font-semibold">tetysblu.com</p>
+            <div class="flex-1 overflow-y-auto p-5 space-y-3 bg-slate-50/50" id="historyList">
+                <!-- Injected via JS -->
             </div>
         </div>
     </div>
