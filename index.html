@@ -692,6 +692,27 @@
         </div>
     </div>
 
+    <!-- Share Preview Modal (Fix for iOS Safari Async Gesture Block) -->
+    <div id="shareModal" class="fixed inset-0 z-[7000] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 opacity-0 p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl flex flex-col overflow-hidden transform scale-95 transition-transform duration-300" id="shareModalContent">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h2 class="text-base font-bold text-slate-800">Предпросмотр чека</h2>
+                <button id="closeShareBtn" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-4 bg-slate-100/50 flex justify-center items-center">
+                <img id="sharePreviewImg" src="" class="max-h-[50vh] object-contain shadow-lg rounded-xl border border-slate-200">
+            </div>
+            <div class="p-5">
+                <button id="finalShareBtn" class="w-full justify-center bg-[#25D366] hover:bg-[#1ebd5a] text-white py-3.5 rounded-xl text-[15px] font-bold flex items-center transition-all shadow-md">
+                    <i class="fa-brands fa-whatsapp mr-2 text-xl leading-none"></i> Отправить картинку
+                </button>
+                <p class="text-[10px] text-slate-400 text-center mt-3">Нажмите кнопку, чтобы открыть WhatsApp</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Script Import -->
     <script src="app.js?v=4"></script>
 </body>
