@@ -603,18 +603,16 @@ document.addEventListener('DOMContentLoaded', () => {
             whatsappBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Подготовка...';
             
             try {
-                // Если браузер поддерживает шаринг файлов (мобилки Safari/Chrome)
-                if (navigator.share && navigator.canShare) {
+                if (navigator.share) {
                     await prepareAndShareImage();
                 } else {
-                    // Фолбэк на старый текстовый способ
                     sendTextToWhatsApp();
                 }
             } catch (err) {
                 console.error('Ошибка при шаринге', err);
-                // Если шаринг отменили или произошла ошибка, отправляем хотя бы текст
                 if (err.name !== 'AbortError') {
-                    sendTextToWhatsApp();
+                    // Используем location.href, так как после async задержки Safari блокирует window.open (Popup Blocker)
+                    sendTextToWhatsApp(true);
                 }
             } finally {
                 whatsappBtn.innerHTML = originalHtml;
@@ -622,12 +620,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function sendTextToWhatsApp() {
+    function sendTextToWhatsApp(useLocation = false) {
         const text = exportDataEl.value;
         if (!text) return;
         const waText = `*Официальный расчет Tetys Blu*\n\n${text}`;
         const url = `https://wa.me/?text=${encodeURIComponent(waText)}`;
-        window.open(url, '_blank');
+        if (useLocation) {
+            window.location.href = url;
+        } else {
+            window.open(url, '_blank');
+        }
     }
 
     async function prepareAndShareImage() {
@@ -646,7 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
             content.style.left = '0';
             content.style.zIndex = '-9999';
             
-            html2canvas(content, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
+            html2canvas(content, { scale: 2, backgroundColor: '#ffffff', logging: false }).then(canvas => {
                 // Возвращаем элемент на место
                 content.style.position = '';
                 content.style.top = '';
@@ -661,17 +663,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     const formattedDate = visitDateInput ? visitDateInput.value : 'date';
                     const file = new File([blob], `TetysBlu_Check_${formattedDate}.png`, { type: 'image/png' });
                     
+                    // ВАЖНО: Для iOS Safari мы передаем ТОЛЬКО файл. 
+                    // Если передать text и file одновременно, Safari может молча заблокировать шаринг.
                     const shareData = {
-                        files: [file],
-                        title: 'Чек Tetys Blu',
-                        text: exportDataEl.value // Прикладываем текст к картинке (некоторые мессенджеры подхватят как подпись)
+                        files: [file]
                     };
                     
-                    if (navigator.canShare({ files: [file] })) {
-                        await navigator.share(shareData);
-                        resolve();
-                    } else {
-                        reject(new Error('Файлы не поддерживаются для шаринга'));
+                    try {
+                        if (navigator.canShare && navigator.canShare(shareData)) {
+                            await navigator.share(shareData);
+                            resolve();
+                        } else {
+                            // Попытка без проверки canShare на случай старых версий
+                            await navigator.share(shareData);
+                            resolve();
+                        }
+                    } catch (shareErr) {
+                        reject(shareErr);
                     }
                 }, 'image/png');
             }).catch(err => {
