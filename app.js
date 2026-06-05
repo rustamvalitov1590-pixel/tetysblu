@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const emptyState = document.getElementById('emptyState');
     const totalPriceEl = document.getElementById('totalPrice');
     const exportDataEl = document.getElementById('exportData');
-    const copyBtn = document.getElementById('copyBtn');
+    const copyExportBtn = document.getElementById('copyExportBtn');
 
     // Dummy auth logic removed to prevent conflicts with checkAuth
 
@@ -180,7 +180,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (draft) {
         try {
             const data = JSON.parse(draft);
-            if (data.visitDate) visitDateInput.value = data.visitDate;
+            // Мы больше не загружаем сохраненную дату визита из черновика, 
+            // чтобы она ВСЕГДА по умолчанию была сегодняшним днем.
+            // if (data.visitDate) visitDateInput.value = data.visitDate;
             if (data.clientType) clientTypeInput.value = data.clientType;
             if (data.tariffType) tariffTypeInput.value = data.tariffType;
             if (data.tourists && Array.isArray(data.tourists) && data.tourists.length > 0) {
@@ -210,10 +212,23 @@ document.addEventListener('DOMContentLoaded', () => {
             line = line.trim();
             if (!line) return;
 
-            // Check if this is a header line like "Тетис на 06.06" or "Дата посещения 03.06.26"
+            // Check if this is a header line like "Тетис на 06.06", "Дата посещения 03.06.26" or "05.06.2026 Qub Tour"
             if (index === 0) {
                 const headerDateMatch = line.match(/(?:на\s+|дата\s*посещения\s*)?(\d{1,2})[\.\-\/](\d{1,2})(?:[\.\-\/](\d{2}|\d{4}))?/i);
-                if (headerDateMatch && (line.toLowerCase().includes('на ') || line.toLowerCase().includes('дата') || line.toLowerCase().includes('тетис'))) {
+                
+                const lowerLine = line.toLowerCase();
+                const isHeader = headerDateMatch && (
+                    lowerLine.includes('на ') || 
+                    lowerLine.includes('дата') || 
+                    lowerLine.includes('тетис') ||
+                    lowerLine.includes('tour') ||
+                    lowerLine.includes('тур') ||
+                    lowerLine.includes('бронь') ||
+                    lowerLine.includes('заявка') ||
+                    lowerLine.includes('групп')
+                );
+
+                if (isHeader) {
                     const day = headerDateMatch[1].padStart(2, '0');
                     const month = headerDateMatch[2].padStart(2, '0');
                     let currentYear = new Date().getFullYear();
@@ -230,8 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     if (visitDateInput) visitDateInput.value = `${currentYear}-${month}-${day}`;
                     
-                    // Skip if the line only contains the header
-                    if (line.replace(headerDateMatch[0], '').replace(/тетис|дата\s*посещения/ig, '').trim().length < 5) return;
+                    // Unconditionally skip parsing this header line as a tourist
+                    return;
                 }
             }
 
@@ -256,9 +271,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Remove categories like adl, chld, inf
                 namePart = namePart.replace(/\b(?:adl|chld|inf|взр|реб)\b/ig, '');
                 
-                // Remove CRM labels like "Дата Рожд" or "д.р."
+                // Remove CRM labels like "Дата Рожд" or "д.р." (Cyrillic and Latin)
                 namePart = namePart.replace(/дата\s*рожд[а-яА-Я]*/ig, '');
+                namePart = namePart.replace(/data\s*rozhd[a-zA-Z]*/ig, '');
                 namePart = namePart.replace(/\bд\.?р\.?\b/ig, '');
+                namePart = namePart.replace(/\bd\.?r\.?\b/ig, '');
                 
                 // Clean up name (remove extra spaces and non-alphabet chars except dash)
                 namePart = namePart.replace(/[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\s\-]/g, ' ').trim();
@@ -296,8 +313,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.clearAllTourists = function() {
-        if (confirm('Вы уверены, что хотите удалить всех гостей?')) {
+        if (confirm('Вы уверены, что хотите удалить всех гостей и начать заново?')) {
             tourists = [];
+            
+            // Сбрасываем дату визита на сегодня
+            const today = new Date();
+            const todayStr = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+            if (visitDateInput) visitDateInput.value = todayStr;
+            
             render();
         }
     };
@@ -416,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Для статистики
         let counts = { adl: 0, chld: 0, inf: 0, pens: 0, bday: 0 };
-        let exportLines = [];
+        let exportDataList = [];
 
         tourists.forEach((t, index) => {
             const age = calculateAge(t.dob, visitDate);
@@ -441,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Накопление статистики
-            if (category === 'ADL') counts.adl++;
+            if (category === 'ADL' && !discountInfo.isPensioner) counts.adl++;
             if (category === 'CHLD') counts.chld++;
             if (category === 'INF') counts.inf++;
             if (discountInfo.isPensioner) counts.pens++;
@@ -449,11 +472,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             totalSum += finalPrice;
 
-            // Строка для экспорта
+            // Строка для экспорта (подготовка данных)
             if (t.fullName && t.dob) {
-                const translitName = transliterate(t.fullName);
-                const formattedDob = formatDate(t.dob);
-                exportLines.push(`${index + 1}. ${translitName} (${category}) - дата рожд: ${formattedDob}`);
+                let tags = [];
+                if (discountInfo.isBirthday) tags.push("ДР");
+                if (discountInfo.isPensioner) tags.push("Пенс");
+                if (t.disability === '1') tags.push("Инв 100%");
+                if (t.disability === '2') tags.push("Инв 15%");
+                if (t.disability === '3') tags.push("Инв 10%");
+
+                exportDataList.push({
+                    translitName: transliterate(t.fullName),
+                    category: category,
+                    formattedDob: formatDate(t.dob),
+                    tags: tags,
+                    isBirthday: discountInfo.isBirthday
+                });
             }
 
             // Динамический бейдж с микро-анимацией (свечение)
@@ -475,18 +509,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 <div class="w-full flex gap-2 pr-6 md:pr-0 md:contents">
                     <!-- Full Name -->
-                    <div class="flex-1 md:col-span-5 w-full">
+                    <div class="flex-1 md:col-span-5 w-full relative">
                         <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">ФИО (Рус/Каз)</label>
                         <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
-                            onchange="updateTourist('${t.id}', 'fullName', this.value)"
-                            class="w-full text-left bg-transparent text-slate-800 border ${!t.fullName ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors">
+                            onblur="updateTourist('${t.id}', 'fullName', this.value)"
+                            class="w-full text-left bg-transparent text-slate-800 border ${!t.fullName ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors ${discountInfo.isBirthday ? 'pr-7' : ''}">
+                        ${discountInfo.isBirthday ? '<div class="absolute right-2 top-[calc(50%+4px)] md:top-1/2 -translate-y-1/2 text-amber-500 text-[10px]" title="Именинник"><i class="fa-solid fa-cake-candles"></i></div>' : ''}
                     </div>
                     
                     <!-- DOB -->
                     <div class="w-[110px] shrink-0 md:w-full md:col-span-2">
                         <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">Дата рожд.</label>
                         <input type="date" value="${t.dob}" 
-                            onchange="updateTourist('${t.id}', 'dob', this.value)"
+                            onblur="updateTourist('${t.id}', 'dob', this.value)"
                             class="w-full text-left date-left-align bg-transparent text-slate-800 border ${!t.dob ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-0.5 py-1 text-xs font-medium transition-colors">
                     </div>
                 </div>
@@ -540,12 +575,26 @@ document.addEventListener('DOMContentLoaded', () => {
         stats.pens.textContent = counts.pens;
         stats.bday.textContent = counts.bday;
 
+        // Сортируем: у кого ДР - в самый конец списка
+        exportDataList.sort((a, b) => {
+            if (a.isBirthday && !b.isBirthday) return 1;
+            if (!a.isBirthday && b.isBirthday) return -1;
+            return 0;
+        });
+
+        // Формируем финальные строки
+        let exportLines = exportDataList.map((item, idx) => {
+            let line = `${idx + 1}. ${item.translitName} (${item.category}) - дата рожд: ${item.formattedDob}`;
+            if (item.tags.length > 0) {
+                line += ` - ${item.tags.join(', ')}`;
+            }
+            return line;
+        });
+
         let exportText = `📅 Дата визита: ${visitDate ? formatDate(visitDate) : 'Не указана'}\n`;
-        exportText += `👤 Клиент: ${clientType === 'agent' ? 'Турагент' : 'Турист'}\n`;
         exportText += `🎟 Тариф: ${tariffType === 'evening' ? 'Вечерний' : 'Дневной'}\n\n`;
         exportText += `Список гостей:\n`;
         exportText += exportLines.length > 0 ? exportLines.join('\n') : 'Пусто';
-        exportText += `\n\n💳 ИТОГО К ОПЛАТЕ: ${Math.round(totalSum).toLocaleString('ru-RU')} ₸`;
 
         // Экспорт данных
         exportDataEl.value = exportText;
@@ -574,17 +623,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!exportDataEl.value) return;
         
         navigator.clipboard.writeText(exportDataEl.value).then(() => {
-            const originalHTML = copyBtn.innerHTML;
-            copyBtn.innerHTML = '<i class="fa-solid fa-check mr-1.5"></i> Скопировано';
-            copyBtn.classList.add('bg-emerald-600');
-            copyBtn.classList.remove('bg-slate-200');
+            const originalHTML = copyExportBtn.innerHTML;
+            copyExportBtn.innerHTML = '<i class="fa-solid fa-check mr-1.5"></i> Скопировано';
+            copyExportBtn.classList.add('bg-emerald-600', 'text-white');
+            copyExportBtn.classList.remove('bg-blue-50', 'text-brand-blue');
             
             setTimeout(() => {
-                copyBtn.innerHTML = originalHTML;
-                copyBtn.classList.remove('bg-emerald-600');
-                copyBtn.classList.add('bg-slate-200');
+                copyExportBtn.innerHTML = originalHTML;
+                copyExportBtn.classList.remove('bg-emerald-600', 'text-white');
+                copyExportBtn.classList.add('bg-blue-50', 'text-brand-blue');
             }, 2000);
         });
+    }
+
+    if (copyExportBtn) {
+        copyExportBtn.addEventListener('click', copyExportData);
     }
 
     // --- ЛОГИКА ДНЯ РОЖДЕНИЯ ---
