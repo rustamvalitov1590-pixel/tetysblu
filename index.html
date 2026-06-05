@@ -453,7 +453,7 @@
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Дата визита</label>
                             <div class="relative w-full overflow-hidden rounded-xl">
                                 <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                                <input type="date" id="visitDate" class="w-full pl-9 pr-2 py-3 concept-input text-xs sm:text-sm appearance-none" style="max-width: 100%; box-sizing: border-box;" />
+                                <input type="date" id="visitDate" autocomplete="off" class="w-full pl-9 pr-2 py-3 concept-input text-xs sm:text-sm appearance-none" style="max-width: 100%; box-sizing: border-box;" />
                             </div>
                             <p id="dateWarning" class="text-xs text-red-500 font-semibold mt-1.5 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Тариф не найден на эту дату</p>
                         </div>
@@ -485,9 +485,14 @@
                     </p>
                     <textarea id="bulkText" class="w-full h-36 concept-input p-3 text-xs resize-none mb-3" 
                         placeholder="Тетис на 06.06&#10;Kossymov Dias 15.04.2017 chld&#10;Otemissova Meruert 18.05.1998 adl"></textarea>
-                    <button id="parseBulkBtn" class="w-full btn-concept-primary py-2.5 rounded-xl text-xs font-bold shadow-md">
-                        Распознать и добавить
-                    </button>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <button id="parseBulkBtn" class="w-full sm:flex-1 btn-concept-primary py-2.5 rounded-xl text-xs font-bold shadow-md order-1 sm:order-2">
+                            Распознать и добавить
+                        </button>
+                        <button id="clearBulkTextBtn" onclick="document.getElementById('bulkText').value=''" class="w-full sm:w-auto justify-center px-4 py-2.5 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-500 hover:text-white rounded-xl transition-colors border border-red-200 hover:border-red-500 flex items-center shadow-sm order-2 sm:order-1 whitespace-nowrap">
+                            <i class="fa-solid fa-trash-can mr-1.5"></i> Очистить текст
+                        </button>
+                    </div>
                 </section>
                 
                 </div> <!-- End sticky left column wrapper -->
@@ -572,8 +577,8 @@
                             <button id="downloadReceiptBtn" class="flex-1 sm:flex-none justify-center bg-white hover:bg-slate-50 text-brand-blue font-bold px-4 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm">
                                 <i class="fa-solid fa-cloud-arrow-down mr-1.5 text-brand-sky text-sm"></i> Скачать чек
                             </button>
-                            <button id="whatsappBtn" class="flex-1 sm:flex-none justify-center bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold px-4 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm">
-                                <i class="fa-brands fa-whatsapp mr-1.5 text-base leading-none"></i> Поделиться
+                            <button id="whatsappBtn" class="flex-1 bg-brand-blue hover:bg-blue-600 text-white py-3 rounded-xl text-[13px] font-bold flex items-center justify-center transition-all shadow-sm">
+                                <i class="fa-solid fa-share-nodes mr-2 text-lg"></i> Поделиться чеком
                             </button>
                         </div>
                     </div>
@@ -612,10 +617,15 @@
 
                 <!-- Text Area for Data Export -->
                 <section class="concept-card p-6 border border-slate-200 bg-white">
-                    <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center">
-                        <i class="fa-solid fa-code text-slate-400 mr-2"></i>
-                        Сгенерированный текст отчета
-                    </h2>
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-sm font-bold text-slate-800 flex items-center">
+                            <i class="fa-solid fa-code text-slate-400 mr-2"></i>
+                            Текст для почты / CRM
+                        </h2>
+                        <button id="copyExportBtn" class="text-[10px] font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors flex items-center">
+                            <i class="fa-regular fa-copy mr-1.5"></i> Копировать
+                        </button>
+                    </div>
                     <textarea id="exportData" readonly 
                         class="w-full min-h-[60px] overflow-hidden concept-input p-3 text-xs font-mono resize-none focus:border-slate-200 bg-slate-50/50 cursor-text select-all" 
                         placeholder="Тут появится текст для экспорта в CRM..."></textarea>
@@ -687,10 +697,10 @@
                 <img id="sharePreviewImg" src="" class="max-h-[50vh] object-contain shadow-lg rounded-xl border border-slate-200">
             </div>
             <div class="p-5">
-                <button id="finalShareBtn" class="w-full justify-center bg-[#25D366] hover:bg-[#1ebd5a] text-white py-3.5 rounded-xl text-[15px] font-bold flex items-center transition-all shadow-md">
-                    <i class="fa-brands fa-whatsapp mr-2 text-xl leading-none"></i> Отправить картинку
+                <button id="finalShareBtn" class="w-full justify-center bg-brand-blue hover:bg-blue-600 text-white py-3.5 rounded-xl text-[15px] font-bold flex items-center transition-all shadow-md">
+                    <i class="fa-solid fa-share-nodes mr-2 text-xl leading-none"></i> Выбрать способ отправки
                 </button>
-                <p class="text-[10px] text-slate-400 text-center mt-3">Нажмите кнопку, чтобы открыть WhatsApp</p>
+                <p class="text-[10px] text-slate-400 text-center mt-3">WhatsApp, Почта, Telegram и другие приложения</p>
             </div>
         </div>
     </div>
