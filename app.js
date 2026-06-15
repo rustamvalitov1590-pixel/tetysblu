@@ -268,8 +268,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Remove the DOB from the line to get the name
                 let namePart = line.replace(dobMatch[0], '');
                 
-                // Remove categories like adl, chld, inf
-                namePart = namePart.replace(/\b(?:adl|chld|inf|взр|реб)\b/ig, '');
+                // Remove categories like adl, chld, inf, взрослый, ребенок, пенсионер
+                namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁ])(?:adl|chld|inf|взр[а-я]*|реб[а-я]*|дети|млад[а-я]*|пенс[а-я]*)(?=$|\s|[^a-zA-Zа-яА-ЯёЁ])/ig, ' ');
                 
                 // Remove CRM labels like "Дата Рожд" or "д.р." (Cyrillic and Latin)
                 namePart = namePart.replace(/дата\s*рожд[а-яА-Я]*/ig, '');
