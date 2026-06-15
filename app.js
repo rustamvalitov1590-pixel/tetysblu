@@ -362,6 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getPassengerCategory(age) {
         if (age === null) return '-';
+        if (age >= 60) return 'SNR';
         if (age >= 12) return 'ADL';
         if (age >= 4) return 'CHLD';
         return 'INF';
@@ -386,7 +387,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (passengerCategory === 'INF') return 0; // Младенцы всегда бесплатно по базе
         
-        return activePeriod[clientType][passengerCategory] || 0;
+        const priceCategory = passengerCategory === 'SNR' ? 'ADL' : passengerCategory;
+        return activePeriod[clientType][priceCategory] || 0;
     }
 
     function calculateDiscount(dobStr, visitDateStr, disability, age) {
@@ -464,10 +466,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Накопление статистики
-            if (category === 'ADL' && !discountInfo.isPensioner) counts.adl++;
+            if (category === 'ADL') counts.adl++;
             if (category === 'CHLD') counts.chld++;
             if (category === 'INF') counts.inf++;
-            if (discountInfo.isPensioner) counts.pens++;
+            if (category === 'SNR') counts.pens++;
             if (discountInfo.isBirthday) counts.bday++;
 
             totalSum += finalPrice;
@@ -493,6 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Динамический бейдж с микро-анимацией (свечение)
             let catBadgeClass = 'bg-slate-100 text-slate-500 border-slate-200';
             if (category === 'ADL') catBadgeClass = 'bg-blue-50 text-blue-600 border-blue-200 shadow-[0_0_8px_rgba(37,99,235,0.4)] animate-[pulse_2s_ease-in-out_infinite]';
+            if (category === 'SNR') catBadgeClass = 'bg-purple-50 text-purple-600 border-purple-200 shadow-[0_0_8px_rgba(147,51,234,0.4)] animate-[pulse_2s_ease-in-out_infinite]';
             if (category === 'CHLD') catBadgeClass = 'bg-teal-50 text-teal-600 border-teal-200 shadow-[0_0_8px_rgba(13,148,136,0.4)] animate-[pulse_2s_ease-in-out_infinite]';
             if (category === 'INF') catBadgeClass = 'bg-green-50 text-green-600 border-green-200 shadow-[0_0_8px_rgba(22,163,74,0.4)] animate-[pulse_2s_ease-in-out_infinite]';
 
