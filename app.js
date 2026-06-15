@@ -583,12 +583,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Формируем финальные строки
-        let exportLines = exportDataList.map((item, idx) => {
-            let line = `${idx + 1}. ${item.translitName} (${item.category}) - дата рожд: ${item.formattedDob}`;
-            if (item.tags.length > 0) {
-                line += ` - ${item.tags.join(', ')}`;
-            }
-            return line;
+        let exportLines = exportDataList.map((item) => {
+            return `${item.translitName.toUpperCase()} (${item.category}) ${item.formattedDob}`;
         });
 
         let exportText = `📅 Дата визита: ${visitDate ? formatDate(visitDate) : 'Не указана'}\n`;
@@ -789,7 +785,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function fillReceiptData() {
         const metaEl = document.getElementById('receiptMeta');
         const touristsEl = document.getElementById('receiptTourists');
-        const totalEl = document.getElementById('receiptTotal');
         
         const dateParts = visitDateInput ? visitDateInput.value.split('-') : [];
         const visitDateStr = visitDateInput ? visitDateInput.value : '';
@@ -811,34 +806,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!t.fullName && !t.dob) return; // Пропуск пустых строк
             const age = calculateAge(t.dob, visitDateStr);
             const cat = getPassengerCategory(age);
-            const basePrice = getBasePrice(visitDateStr, clientType, tariffType, cat);
-            
-            const today = new Date();
-            const visitD = new Date(visitDateStr);
-            const earlyBookingEnabled = visitDateStr && ((visitD.getFullYear() > today.getFullYear()) || (visitD.getFullYear() === today.getFullYear() && visitD.getMonth() > today.getMonth()));
-            let discInfo = calculateDiscount(t.dob, visitDateStr, t.disability, age);
-            if (typeof discInfo === 'number') discInfo = { percent: 0, isBirthday: false };
-            
-            let disc = discInfo.percent || 0;
-            if (earlyBookingEnabled && disc < 100 && age >= 4) {
-                disc = Math.max(disc, CONFIG.discounts.earlyBooking);
-            }
-            const finalP = basePrice > 0 ? basePrice * (1 - disc / 100) : 0;
             
             touristsEl.innerHTML += `
                 <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3">
-                    <div class="pr-2 w-2/3">
-                        <div class="font-bold text-[#1e293b] text-[15px] leading-relaxed break-words">${t.fullName || 'Гость ' + (i+1)} ${discInfo.isBirthday ? '🎂' : ''}</div>
-                        <div class="text-[12px] text-slate-400 mt-0.5 leading-normal">${cat} ${age !== null ? `(${age} лет)` : ''} ${disc > 0 ? `<span class="ml-1 font-bold">-${disc}%</span>` : ''}</div>
-                    </div>
-                    <div class="font-bold text-[#1e293b] text-[16px] whitespace-nowrap text-right">
-                        ${basePrice === -1 ? 'Нет тарифа' : Math.round(finalP).toLocaleString('ru-RU')} ₸
+                    <div class="w-full">
+                        <div class="font-bold text-[#1e293b] text-[15px] leading-relaxed break-words">${(t.fullName || 'Гость ' + (i+1)).toUpperCase()} (${cat}) ${formatDate(t.dob)}</div>
                     </div>
                 </div>
             `;
         });
-        
-        totalEl.textContent = totalPriceEl.textContent;
     }
 
     function generateReceiptImage() {
