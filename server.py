@@ -1,11 +1,226 @@
-import http.server
-import socketserver
-import os
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-PORT = 8080
-os.chdir('c:\\Users\\rusta\\.antigravity\\aktau-tourists\\tetis-blue-calc')
-Handler = http.server.SimpleHTTPRequestHandler
+/* 
+ * Aktau Coastal Theme (Caspian Sea Vibe)
+ * Light, airy, maritime aesthetic with brand blue accents.
+ */
 
-with socketserver.TCPServer(("", PORT), Handler) as httpd:
-    print("Serving at port", PORT)
-    httpd.serve_forever()
+body {
+    background-color: #f4f7f6 !important;
+    background-image: 
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E"),
+        radial-gradient(at 0% 0%, rgba(224, 242, 254, 0.4) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(240, 249, 255, 0.8) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(0, 118, 186, 0.05) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(250, 243, 224, 0.4) 0px, transparent 50%) !important; /* Subtle sand tint */
+    background-attachment: fixed;
+}
+
+/* Glass Panels with a coastal feel */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 30px -10px rgba(0, 118, 186, 0.08), 0 4px 6px -4px rgba(0, 118, 186, 0.05);
+}
+
+/* Primary Button (Sea Wave Gradient) */
+.btn-primary {
+    background: linear-gradient(135deg, #0076ba 0%, #0ea5e9 100%);
+    box-shadow: 0 4px 15px rgba(0, 118, 186, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #02649c 0%, #0284c7 100%);
+    box-shadow: 0 6px 20px rgba(0, 118, 186, 0.4);
+    transform: translateY(-1px);
+}
+
+/* Input Fields (Clean & Sandy) */
+.input-field {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 118, 186, 0.15);
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #0076ba;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(0, 118, 186, 0.15);
+}
+
+/* Danger Button (Delete) */
+.btn-danger {
+    color: #ef4444;
+    transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+    color: #dc2626;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Discount Badge */
+.badge-discount {
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Custom scrollbar for coastal vibe */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 118, 186, 0.2);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 118, 186, 0.4);
+}
+
+/* iOS Safari Native Date Input Override */
+input[type="date"]::-webkit-date-and-time-value {
+    text-align: left !important;
+}
+input[type="date"]::-webkit-datetime-edit {
+    text-align: left !important;
+    display: block;
+    padding: 0;
+}
+/* ==================================================
+   UNDERWATER LOGIN SCREEN (Marine Glassmorphism)
+   ================================================== */
+
+.underwater-bg {
+    background: radial-gradient(circle at 50% -20%, rgba(0, 180, 216, 0.6) 0%, rgba(3, 40, 77, 1) 70%, rgba(1, 15, 33, 1) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Light rays coming from the surface */
+.light-rays {
+    position: absolute;
+    top: -50%; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+        10deg,
+        rgba(255, 255, 255, 0.05) 0px,
+        rgba(255, 255, 255, 0.05) 100px,
+        transparent 100px,
+        transparent 200px
+    );
+    filter: blur(40px);
+    opacity: 0.6;
+    animation: wave-light 15s infinite alternate ease-in-out;
+    pointer-events: none;
+}
+
+/* Central Glowing Orb (Auth Form Container) */
+.glass-orb {
+    background: radial-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.03) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+        0 0 50px rgba(0, 220, 255, 0.2), 
+        inset 0 0 40px rgba(255, 255, 255, 0.1),
+        inset 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Floating Small Bubbles */
+.glass-bubble {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.2),
+        inset 0 2px 10px rgba(255, 255, 255, 0.15);
+    animation: float 6s infinite ease-in-out;
+}
+
+/* Capsule Input Fields */
+.underwater-input {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+.underwater-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+.underwater-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Coral Neon Button */
+.btn-coral {
+    background: linear-gradient(135deg, #ff7a59 0%, #ff5252 100%);
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 82, 82, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+.btn-coral:hover {
+    background: linear-gradient(135deg, #ff8a6c 0%, #ff6b6b 100%);
+    box-shadow: 0 12px 35px rgba(255, 82, 82, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Glowing text */
+.text-glow {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 220, 255, 0.4);
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(2deg); }
+}
+@keyframes float-delay-1 {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-20px) scale(1.05); }
+}
+@keyframes float-delay-2 {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+@keyframes wave-light {
+    0% { transform: translateX(-5%) skewX(-5deg); opacity: 0.4; }
+    100% { transform: translateX(5%) skewX(5deg); opacity: 0.7; }
+}
+@keyframes bubble-rise {
+    0% { transform: translateY(100px) scale(0.5); opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
+}
+
+/* Mac-style Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.5);
+}
