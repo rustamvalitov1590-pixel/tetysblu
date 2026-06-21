@@ -546,10 +546,9 @@
                         <div class="hidden md:grid grid-cols-12 gap-3 mb-2 px-3 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">
                             <div class="col-span-4">ФИО туриста</div>
                             <div class="col-span-2">Дата рождения</div>
-                            <div class="col-span-2 text-center">Пол</div>
                             <div class="col-span-1 text-center">Возраст</div>
-                            <div class="col-span-1 text-center">Тип</div>
-                            <div class="col-span-1 text-right pr-2">Стоимость</div>
+                            <div class="col-span-2 text-center">Тип</div>
+                            <div class="col-span-2 text-right pr-2">Стоимость</div>
                             <div class="col-span-1 text-center"></div>
                         </div>
                         
@@ -625,6 +624,22 @@
                                     <button onclick="changeQuickCount('inf', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
                                 </div>
                             </div>
+
+                            <!-- Inv Counter -->
+                            <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-150 rounded-2xl">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-sm">ИНВ</div>
+                                    <div>
+                                        <div class="text-xs font-bold text-slate-800">Инвалиды (INV)</div>
+                                        <div class="text-[10px] text-slate-400">Скидка 100%</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button onclick="changeQuickCount('inv', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
+                                    <input type="number" id="quick_inv" value="0" min="0" onchange="updateQuickCount('inv', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                                    <button onclick="changeQuickCount('inv', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -679,7 +694,7 @@
                         Сводная статистика
                     </h2>
                     
-                    <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5 sm:gap-3">
+                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-3">
                         <div class="concept-stat-box p-1.5 sm:p-3 text-center">
                             <span class="text-[8px] sm:text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block truncate">Взр (ADL)</span>
                             <span class="text-base sm:text-xl font-extrabold text-slate-800 mt-0.5 sm:mt-1 block" id="statAdl">0</span>
@@ -695,6 +710,10 @@
                         <div class="concept-stat-box p-1.5 sm:p-3 text-center">
                             <span class="text-[8px] sm:text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block truncate">Пенсионеры</span>
                             <span class="text-base sm:text-xl font-extrabold text-slate-800 mt-0.5 sm:mt-1 block" id="statPens">0</span>
+                        </div>
+                        <div class="concept-stat-box p-1.5 sm:p-3 text-center">
+                            <span class="text-[8px] sm:text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block truncate">Инвалиды</span>
+                            <span class="text-base sm:text-xl font-extrabold text-slate-800 mt-0.5 sm:mt-1 block" id="statInv">0</span>
                         </div>
                         <div class="concept-stat-box p-1.5 sm:p-3 text-center border-l-2 border-l-amber-500 bg-amber-50/20 col-span-2 sm:col-span-1">
                             <span class="text-[8px] sm:text-[10px] font-extrabold text-amber-600/80 uppercase tracking-wider block truncate">Именинники</span>
@@ -731,7 +750,6 @@
         <div id="receiptContent" class="w-[420px] text-slate-800 p-8 rounded-3xl font-sans bg-white relative">
             <div class="text-center mb-8 mt-2">
                 <h1 class="text-[32px] font-black text-[#1e293b] tracking-wider mb-1">TETYS BLU</h1>
-                <p class="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-bold">Официальный расчет</p>
             </div>
             
             <div class="mb-6 space-y-2.5 text-[14px]" id="receiptMeta">
@@ -752,7 +770,6 @@
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5a2 2 0 0 1 2-2h2"></path><path d="M4 17v2a2 2 0 0 0 2 2h2"></path><path d="M16 3h2a2 2 0 0 1 2 2v2"></path><path d="M16 21h2a2 2 0 0 0 2-2v-2"></path><line x1="7" y1="12" x2="17" y2="12"></line><line x1="12" y1="7" x2="12" y2="17"></line></svg>
                 </div>
                 <p class="font-semibold">Ждем вас в тематическом парке Tetys Blu!</p>
-                <p class="text-[#0076ba] mt-1 font-bold">tetysblu.com</p>
             </div>
         </div>
     </div>
