@@ -34,6 +34,52 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.serviceWorker.register('sw.js').catch(err => console.error('SW registration failed', err));
     }
 
+    // Вспомогательная функция для всплывающих уведомлений (Toast)
+    window.showToast = function(message, icon = '', bgColor = 'bg-blue-600') {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'fixed bottom-5 right-5 z-[9999] flex flex-col gap-2.5';
+            document.body.appendChild(container);
+        }
+        
+        const toast = document.createElement('div');
+        toast.className = `flex items-center gap-3 px-4 py-3 rounded-lg text-white shadow-lg transition-all duration-300 transform translate-y-5 opacity-0 ${bgColor}`;
+        toast.style.minWidth = '280px';
+        toast.style.maxWidth = '400px';
+        
+        let iconHtml = '';
+        if (icon) {
+            if (icon.startsWith('fa-')) {
+                iconHtml = `<i class="fa-solid ${icon}"></i>`;
+            } else {
+                iconHtml = icon;
+            }
+        }
+        
+        toast.innerHTML = `
+            ${iconHtml ? `<div class="text-lg">${iconHtml}</div>` : ''}
+            <div class="flex-1 font-sans text-sm">${message}</div>
+        `;
+        
+        container.appendChild(toast);
+        
+        // Trigger reflow
+        toast.offsetHeight;
+        
+        // Animate in
+        toast.classList.remove('translate-y-5', 'opacity-0');
+        
+        setTimeout(() => {
+            // Animate out
+            toast.classList.add('-translate-y-5', 'opacity-0');
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }, 4000);
+    };
+
     // --- АВТОРИЗАЦИЯ ---
     const authScreen = document.getElementById('authScreen');
     const appContent = document.getElementById('appContent');
@@ -133,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Состояние приложения
     let tourists = [];
     let currentCalcMode = 'detailed';
-    let quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0 };
+    let quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0 };
     
     // Элементы DOM
     const visitDateInput = document.getElementById('visitDate');
@@ -157,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chld: document.getElementById('statChld'),
         inf: document.getElementById('statInf'),
         pens: document.getElementById('statPens'),
+        inv: document.getElementById('statInv'),
         bday: document.getElementById('statBday')
     };
 
@@ -217,18 +264,167 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = bulkText.value.trim();
         if (!text) return;
         
+        // Check if the input represents quantities instead of names with dates of birth
+        const dobRegex = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b|\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{4}|\d{2})\b/;
+        
+        // Function to parse quantity descriptions like "2 взрослых и 1 ребенок"
+        function parseQuantityDescription(inputText) {
+            if (dobRegex.test(inputText)) {
+                return null; // Contains DOBs, so it's a detailed list, not just counts
+            }
+
+            const cleanText = inputText.toLowerCase();
+            
+            // Regex patterns to detect counts of different guest categories.
+            const adlRegex = /(\d+)\s*(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)/g;
+            // Map "ребенок", "ребенка", "реб", "inf", "младенец", "мл" to INF by default, as requested ("по умолчанию написать ADL, INF")
+            // But also check for "дети", "дет", "chld", "child" which can map to CHLD.
+            const infRegex = /(\d+)\s*(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)/g;
+            const chldRegex = /(\d+)\s*(?:дети|дет[ямнска]*|chld|child(?:ren)?|бала(?:лар)?)/g;
+            const snrRegex = /(\d+)\s*(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)/g;
+            const invRegex = /(\d+)\s*(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)/g;
+            
+            let adlCount = 0;
+            let chldCount = 0;
+            let infCount = 0;
+            let snrCount = 0;
+            let invCount = 0;
+            
+            let matched = false;
+            let match;
+            
+            while ((match = adlRegex.exec(cleanText)) !== null) {
+                adlCount += parseInt(match[1], 10);
+                matched = true;
+            }
+            while ((match = chldRegex.exec(cleanText)) !== null) {
+                chldCount += parseInt(match[1], 10);
+                matched = true;
+            }
+            while ((match = infRegex.exec(cleanText)) !== null) {
+                infCount += parseInt(match[1], 10);
+                matched = true;
+            }
+            while ((match = snrRegex.exec(cleanText)) !== null) {
+                snrCount += parseInt(match[1], 10);
+                matched = true;
+            }
+            while ((match = invRegex.exec(cleanText)) !== null) {
+                invCount += parseInt(match[1], 10);
+                matched = true;
+            }
+            
+            if (!matched) {
+                // If no numbers were matched, check if there are keywords present (meaning singular, like "взрослый и ребенок" -> 1 adult, 1 child)
+                const hasAdl = /(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)/i.test(cleanText);
+                const hasChld = /(?:дети|дет[ямнска]*|chld|child(?:ren)?|бала(?:лар)?)/i.test(cleanText);
+                const hasInf = /(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)/i.test(cleanText);
+                const hasSnr = /(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)/i.test(cleanText);
+                const hasInv = /(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)/i.test(cleanText);
+                
+                if (hasAdl || hasChld || hasInf || hasSnr || hasInv) {
+                    if (hasAdl) adlCount = 1;
+                    if (hasChld) chldCount = 1;
+                    if (hasInf) infCount = 1;
+                    if (hasSnr) snrCount = 1;
+                    if (hasInv) invCount = 1;
+                    matched = true;
+                }
+            }
+            
+            if (!matched) return null;
+            
+            return { adl: adlCount, chld: chldCount, inf: infCount, snr: snrCount, inv: invCount };
+        }
+
+        const quantityData = parseQuantityDescription(text);
+        if (quantityData) {
+            const today = new Date();
+            const visitDateStr = visitDateInput ? visitDateInput.value : '';
+            const visitYear = visitDateStr ? new Date(visitDateStr).getFullYear() : today.getFullYear();
+            
+            tourists = []; // Clear existing list
+            
+            // Add Adults (ADL)
+            for (let i = 0; i < quantityData.adl; i++) {
+                tourists.push({
+                    id: createId(),
+                    fullName: `Гость ${tourists.length + 1}`,
+                    dob: `${visitYear - 25}-06-15`,
+                    gender: 'male',
+                    genderManuallySet: false,
+                    disability: 'none'
+                });
+            }
+            // Add Children (CHLD)
+            for (let i = 0; i < quantityData.chld; i++) {
+                tourists.push({
+                    id: createId(),
+                    fullName: `Гость ${tourists.length + 1}`,
+                    dob: `${visitYear - 8}-06-15`,
+                    gender: 'male',
+                    genderManuallySet: false,
+                    disability: 'none'
+                });
+            }
+            // Add Pensioners (SNR)
+            for (let i = 0; i < quantityData.snr; i++) {
+                tourists.push({
+                    id: createId(),
+                    fullName: `Гость ${tourists.length + 1}`,
+                    dob: `${visitYear - 65}-06-15`,
+                    gender: 'male',
+                    genderManuallySet: false,
+                    disability: 'none'
+                });
+            }
+            // Add Infants (INF)
+            for (let i = 0; i < quantityData.inf; i++) {
+                tourists.push({
+                    id: createId(),
+                    fullName: `Гость ${tourists.length + 1}`,
+                    dob: `${visitYear - 1}-06-15`,
+                    gender: 'male',
+                    genderManuallySet: false,
+                    disability: 'none'
+                });
+            }
+            // Add Disabled (INV)
+            for (let i = 0; i < quantityData.inv; i++) {
+                tourists.push({
+                    id: createId(),
+                    fullName: `Гость ${tourists.length + 1}`,
+                    dob: `${visitYear - 30}-06-15`,
+                    gender: 'male',
+                    genderManuallySet: false,
+                    disability: '1',
+                    category: 'INV',
+                    categoryManuallySet: true
+                });
+            }
+            
+            render();
+            bulkText.value = '';
+            return;
+        }
+
         // 1. Предобработка: разбиваем на строки по датам рождения перед именами
-        const dobSplitRegex = /(?:\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b|\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{4}|\d{2})\b)([\.\s\-\/]+)(?=[a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/g;
+        const dobSplitRegex = /(?:\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s\,])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b|\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{4}|\d{2})\b)([\.\s\-\/\,]+)(?=[a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/g;
         let normalizedText = text.replace(dobSplitRegex, '$&\n');
         
         // 2. Убираем нумерацию строк (например, "1. ", "2) ", "3 ") в начале каждой строки
         normalizedText = normalizedText.replace(/(?:^|\n)\s*\d+[\.\)\s\-]+\s*(?=[a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/g, '\n');
         
         const lines = normalizedText.split('\n');
+        const unrecognizedLines = [];
         
         lines.forEach((line, index) => {
+            const originalLine = line;
             line = line.trim();
             if (!line) return;
+
+            let tAge = undefined;
+            let tYear = undefined;
 
             // Проверяем, не заголовок ли это
             if (index === 0) {
@@ -265,13 +461,79 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
+            // Детекция категории из исходного текста
+            let parsedCategory = null;
+            const lowerLineForCat = line.toLowerCase();
+            if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:adl|adults?|взросл[ыеяйах]*|взр|үлкен)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
+                parsedCategory = 'ADL';
+            } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:chld|child(?:ren)?|дети|дет[ямнска]*|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
+                parsedCategory = 'CHLD';
+            } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:inf(?:ants?)?|младен[ецаы]*|мл[ад]*|ребен[окац]*|реб|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
+                parsedCategory = 'INF';
+            } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:snr|pensioners?|пенсионер[ыов]*|пенс|зейнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
+                parsedCategory = 'SNR';
+            } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:inv|инвалид[ыов]*|инв|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
+                parsedCategory = 'INV';
+            }
+
+            // Перевод месяцев на трех языках в числовой формат перед распознаванием дат
+            const monthMap = {
+                'января': '01', 'январь': '01', 'янв': '01',
+                'февраля': '02', 'февраль': '02', 'фев': '02',
+                'марта': '03', 'март': '03', 'мар': '03',
+                'апреля': '04', 'апрель': '04', 'апр': '04',
+                'мая': '05', 'май': '05',
+                'июня': '06', 'июнь': '06', 'июн': '06',
+                'июля': '07', 'июль': '07', 'июл': '07',
+                'августа': '08', 'август': '08', 'авг': '08',
+                'сентября': '09', 'сентябрь': '09', 'сен': '09',
+                'октября': '10', 'октябрь': '10', 'окт': '10',
+                'ноября': '11', 'ноябрь': '11', 'ноя': '11',
+                'декабря': '12', 'декабрь': '12', 'дек': '12',
+                'қаңтар': '01', 'кантар': '01', 'қаң': '01',
+                'ақпан': '02', 'акпан': '02', 'ақп': '02',
+                'наурыз': '03', 'нау': '03',
+                'сәуір': '04', 'сэуір': '04', 'сәу': '04',
+                'мамыр': '05', 'мам': '05',
+                'маусым': '06', 'мау': '06',
+                'шілде': '07', 'шилде': '07', 'шіл': '07',
+                'тамыз': '08', 'там': '08',
+                'қыркүйек': '09', 'кыркуйек': '09', 'қыр': '09',
+                'қазан': '10', 'казан': '10', 'қаз': '10',
+                'қараша': '11', 'караша': '11', 'қар': '11',
+                'желтоқсан': '12', 'желтоксан': '12', 'жел': '12',
+                'january': '01', 'jan': '01',
+                'february': '02', 'feb': '02',
+                'march': '03', 'mar': '03',
+                'april': '04', 'apr': '04',
+                'may': '05',
+                'june': '06', 'jun': '06',
+                'july': '07', 'jul': '07',
+                'august': '08', 'aug': '08',
+                'september': '09', 'sep': '09',
+                'october': '10', 'oct': '10',
+                'november': '11', 'nov': '11',
+                'december': '12', 'dec': '12'
+            };
+
+            const monthKeys = Object.keys(monthMap).sort((a, b) => b.length - a.length);
+            for (let key of monthKeys) {
+                const regex = new RegExp(`(?<![a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])${key}(?![a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])`, 'gi');
+                if (regex.test(line)) {
+                    line = line.replace(regex, monthMap[key]);
+                }
+            }
+
             // Ищем дату рождения по нашему улучшенному regex (день 1-31, месяц 1-12, год 2 или 4 цифры)
-            const dobRegex = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b|\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{4}|\d{2})\b/;
+            const dobRegex = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s\,])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b|\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{4}|\d{2})\b/;
             const dobMatch = line.match(dobRegex);
             
+            let dobIso = '';
+            let matchedStr = '';
+            
             if (dobMatch) {
-                const matchedDateStr = dobMatch[0];
-                const parts = matchedDateStr.split(/[\.\-\/\s]+/);
+                matchedStr = dobMatch[0];
+                const parts = matchedStr.split(/[\.\-\/\s\,]+/);
                 
                 let day = '';
                 let month = '';
@@ -287,10 +549,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     month = parts[1].slice(0, 2).padStart(2, '0');
                     year = parts[1].slice(2);
                 } else {
-                    // Нет разделителей вовсе, например "16081997" или "160897"
-                    day = matchedDateStr.slice(0, 2);
-                    month = matchedDateStr.slice(2, 4);
-                    year = matchedDateStr.slice(4);
+                    // Нет разделителей вовсе, например "16081997" or "160897"
+                    day = matchedStr.slice(0, 2);
+                    month = matchedStr.slice(2, 4);
+                    year = matchedStr.slice(4);
                 }
                 
                 if (year.length === 2) {
@@ -298,43 +560,105 @@ document.addEventListener('DOMContentLoaded', () => {
                     year = (yInt > 50 ? 1900 + yInt : 2000 + yInt).toString();
                 }
 
-                const dobIso = `${year}-${month}-${day}`;
-                
-                // Вырезаем дату из строки
-                let namePart = line.replace(matchedDateStr, '');
-                
-                // Убираем указание возраста типа "(29 жас)", "29 жас", "(7 лет)", "7 лет"
-                namePart = namePart.replace(/\(?\b\d+\s*(?:жас|лет|год[а-я]*|yo|y\.o\.|years?|old)(?![a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ0-9])\)?/ig, '');
-                namePart = namePart.replace(/\(\s*\d+\s*\)/g, ''); // числа в круглых скобках
-                
-                // Убираем категории: adl, chld, inf, взрослый, ребенок, пенсионер
-                namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:adl|chld|inf|взр[а-я]*|реб[а-я]*|дети|млад[а-я]*|пенс[а-я]*)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/ig, ' ');
-                
-                // Убираем CRM-метки
-                namePart = namePart.replace(/дата\s*рожд[а-яА-Я]*/ig, '');
-                namePart = namePart.replace(/data\s*rozhd[a-zA-Z]*/ig, '');
-                namePart = namePart.replace(/\bд\.?р\.?\b/ig, '');
-                namePart = namePart.replace(/\bd\.?r\.?\b/ig, '');
-                
-                // Очищаем имя от лишних символов (оставляем только буквы трех языков и дефисы)
-                namePart = namePart.replace(/[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\s\-]/g, ' ').trim();
-                namePart = namePart.replace(/^-+|-+$/g, '').trim();
-                namePart = namePart.replace(/\s+/g, ' ');
+                dobIso = `${year}-${month}-${day}`;
+            } else {
+                // Ищем указание возраста, например "35 лет", "5 жас", "12 years", "2 года"
+                const ageRegex = /(?<!\d)(\d{1,2})\s*(?:лет|года|год|жаста|жас|yo|y\.o\.|years?(?:\s+old)?|old)(?![a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ0-9_])/i;
+                const ageMatch = line.match(ageRegex);
+                if (ageMatch) {
+                    matchedStr = ageMatch[0];
+                    const age = parseInt(ageMatch[1], 10);
+                    dobIso = '';
+                    tAge = age;
+                } else {
+                    // Ищем только четырехзначный год рождения, например "1995", "2018 г.", "2015 г.р."
+                    const yearRegex = /(?<!\d)(19\d{2}|20[0-2]\d)(?![0-9])(?:\s*(?:г\.|г|года|г\.р\.|гр))?/i;
+                    const yearMatch = line.match(yearRegex);
+                    if (yearMatch) {
+                        matchedStr = yearMatch[0];
+                        const birthYear = parseInt(yearMatch[1], 10);
+                        dobIso = '';
+                        tYear = birthYear;
+                    }
+                }
+            }
+            
+            // Вырезаем дату/возраст/год из строки если найдено
+            let namePart = line;
+            if (matchedStr) {
+                namePart = line.replace(matchedStr, '');
+            }
+            
+            // Убираем указание возраста типа "(29 жас)", "29 жас", "(7 лет)", "7 лет"
+            namePart = namePart.replace(/\(?\b\d+\s*(?:жас|лет|год[а-я]*|yo|y\.o\.|years?|old)(?![a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ0-9])\)?/ig, '');
+            namePart = namePart.replace(/\(\s*\d+\s*\)/g, ''); // числа в круглых скобках
+            
+            // Убираем обращения (MR, MRS, MS, CHD, INF, ADL, SNR, INV, PAX и т.д.)
+            namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:mr|mrs|ms|chd|inf|adl|snr|inv|pax|adults?|pensioners?|children|infants?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/ig, ' ');
+            
+            // Убираем категории на трех языках
+            namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:взр[а-я]*|реб[а-я]*|дети|дет[а-я]*|млад[а-я]*|пенс[а-я]*|инв[а-я]*|зейнеткер[а-я]*|мүгедек[а-я]*|бала[а-я]*|үлкен[а-я]*)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/ig, ' ');
+            
+            // Убираем CRM-метки и мусорные слова
+            namePart = namePart.replace(/дата\s*рожд[а-яА-Я]*/ig, '');
+            namePart = namePart.replace(/data\s*rozhd[a-zA-Z]*/ig, '');
+            namePart = namePart.replace(/\bд\.?р\.?\b/ig, '');
+            namePart = namePart.replace(/\bd\.?r\.?\b/ig, '');
+            namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:билет|пассажир|итого|сумма|заявка|бронь|турист|тур|пакс)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/ig, ' ');
+            
+            // ПРОВЕРКА НА СТРАННЫЕ ДАННЫЕ (непонятные цифры)
+            // Исключаем слово "Гость N", которое генерируется самим приложением
+            let checkName = namePart.replace(/гость\s*\d+/ig, '');
+            const hasStrayNumbers = /\d/.test(checkName);
 
+            // Очищаем имя от лишних символов (оставляем только буквы трех языков, дефисы и апострофы)
+            namePart = namePart.replace(/[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\s\-\']/g, ' ').trim();
+            namePart = namePart.replace(/^-+|-+$|^\'+|\'+$/g, '').trim();
+            namePart = namePart.replace(/\s+/g, ' ');
+
+            if (namePart.length >= 2 && !hasStrayNumbers) {
                 // Делаем первые буквы заглавными
                 namePart = namePart.split(' ').map(word => 
                     word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
                 ).join(' ');
 
                 const guessed = guessGender(namePart);
-                tourists.push({
+                const touristObj = {
                     id: createId(),
                     fullName: namePart,
                     dob: dobIso,
                     gender: guessed,
                     genderManuallySet: false,
                     disability: 'none'
-                });
+                };
+                if (tAge !== undefined) touristObj.age = tAge;
+                if (tYear !== undefined) touristObj.year = tYear;
+                
+                // Если категория определена из текста
+                if (parsedCategory) {
+                    touristObj.category = parsedCategory;
+                    touristObj.categoryManuallySet = true;
+                } else if (!dobIso && tAge === undefined && tYear === undefined) {
+                    // Дефолтная категория, если нет дат
+                    touristObj.category = 'ADL';
+                    touristObj.categoryManuallySet = false;
+                }
+                
+                // Проверка на дубликат (полное совпадение имени и даты/возраста)
+                const isDuplicate = tourists.some(t => 
+                    t.fullName.toLowerCase() === touristObj.fullName.toLowerCase() && 
+                    t.dob === touristObj.dob && 
+                    t.age === touristObj.age && 
+                    t.year === touristObj.year
+                );
+
+                if (!isDuplicate) {
+                    tourists.push(touristObj);
+                } else {
+                    unrecognizedLines.push(originalLine + " (Дубликат)");
+                }
+            } else {
+                unrecognizedLines.push(originalLine);
             }
         });
         
@@ -344,7 +668,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         render();
-        bulkText.value = '';
+        
+        if (unrecognizedLines.length > 0) {
+            bulkText.value = unrecognizedLines.join('\n');
+            window.showToast(`Часть гостей не распознана (${unrecognizedLines.length} строк)`, 'fa-triangle-exclamation', 'bg-amber-500');
+        } else {
+            bulkText.value = '';
+        }
     });
 
     function createId() {
@@ -389,10 +719,96 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!tourist.genderManuallySet) {
                     tourist.gender = guessGender(value);
                 }
+                delete tourist.category;
+                delete tourist.categoryManuallySet;
             }
             if (field === 'gender') {
                 tourist.genderManuallySet = true;
             }
+            if (field === 'dob') {
+                delete tourist.age;
+                delete tourist.year;
+                delete tourist.category;
+                delete tourist.categoryManuallySet;
+            }
+            render();
+        }
+    }
+    function updateTouristDobDirect(id, value) {
+        const tourist = tourists.find(t => t.id === id);
+        if (!tourist) return;
+        
+        value = value.trim();
+        if (!value) {
+            tourist.dob = '';
+            delete tourist.age;
+            delete tourist.year;
+            delete tourist.category;
+            delete tourist.categoryManuallySet;
+            render();
+            return;
+        }
+        
+        // 1. Проверяем, полная ли это дата (например, 15.06.1990)
+        const dobRegex = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b/;
+        const match = value.match(dobRegex);
+        if (match) {
+            const parts = match[0].split(/[\.\-\/\s]+/);
+            let day = parts[0].padStart(2, '0');
+            let month = parts[1].padStart(2, '0');
+            let year = parts[2];
+            if (year.length === 2) {
+                const yInt = parseInt(year);
+                year = (yInt > 50 ? 1900 + yInt : 2000 + yInt).toString();
+            }
+            tourist.dob = `${year}-${month}-${day}`;
+            delete tourist.age;
+            delete tourist.year;
+            delete tourist.category;
+            delete tourist.categoryManuallySet;
+            render();
+            return;
+        }
+        
+        // 2. Проверяем, только ли это год (например, 4 цифры типа 2018)
+        const yearRegex = /\b(19\d{2}|20[0-2]\d)\b/;
+        const yearMatch = value.match(yearRegex);
+        if (yearMatch) {
+            tourist.year = parseInt(yearMatch[1], 10);
+            tourist.dob = '';
+            delete tourist.age;
+            delete tourist.category;
+            delete tourist.categoryManuallySet;
+            render();
+            return;
+        }
+        
+        // 3. Проверяем, только ли это возраст (например, 1 или 2 цифры типа 35)
+        const ageRegex = /\b(\d{1,2})\b/;
+        const ageMatch = value.match(ageRegex);
+        if (ageMatch) {
+            tourist.age = parseInt(ageMatch[1], 10);
+            tourist.dob = '';
+            delete tourist.year;
+            delete tourist.category;
+            delete tourist.categoryManuallySet;
+            render();
+            return;
+        }
+        
+        // Если не распознали, записываем как dob
+        tourist.dob = value;
+        delete tourist.age;
+        delete tourist.year;
+        delete tourist.category;
+        delete tourist.categoryManuallySet;
+        render();
+    }
+    function updateTouristCategory(id, value) {
+        const tourist = tourists.find(t => t.id === id);
+        if (tourist) {
+            tourist.category = value;
+            tourist.categoryManuallySet = true;
             render();
         }
     }
@@ -468,12 +884,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!dobStr || !visitDateStr) return null;
         const dob = new Date(dobStr);
         const visit = new Date(visitDateStr);
-        let age = visit.getFullYear() - dob.getFullYear();
-        const m = visit.getMonth() - dob.getMonth();
-        if (m < 0 || (m === 0 && visit.getDate() < dob.getDate())) {
-            age--;
-        }
-        return age;
+        return visit.getFullYear() - dob.getFullYear();
     }
 
     function getPassengerCategory(age, gender, visitDateStr) {
@@ -504,21 +915,24 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (passengerCategory === 'INF') return 0; // Младенцы всегда бесплатно по базе
         
-        const priceCategory = passengerCategory === 'SNR' ? 'ADL' : passengerCategory;
+        const priceCategory = (passengerCategory === 'SNR' || passengerCategory === 'INV') ? 'ADL' : passengerCategory;
         return activePeriod[clientType][priceCategory] || 0;
     }
 
     function calculateDiscount(dobStr, visitDateStr, disability, age, gender) {
-        if (!dobStr || !visitDateStr || age === null) return 0;
-        const dob = new Date(dobStr);
-        const visit = new Date(visitDateStr);
+        if (age === null || !visitDateStr) return 0;
         
         let maxDiscount = 0;
         
         if (age <= 3) maxDiscount = Math.max(maxDiscount, 100);
         if (disability === '1') maxDiscount = Math.max(maxDiscount, 100);
         
-        const isBirthday = dob.getDate() === visit.getDate() && dob.getMonth() === visit.getMonth();
+        let isBirthday = false;
+        if (dobStr) {
+            const dob = new Date(dobStr);
+            const visit = new Date(visitDateStr);
+            isBirthday = dob.getDate() === visit.getDate() && dob.getMonth() === visit.getMonth();
+        }
         if (isBirthday) maxDiscount = Math.max(maxDiscount, 50);
         
         const retirementAge = getRetirementAge(gender, visitDateStr);
@@ -566,7 +980,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!t.gender) t.gender = 'male';
             if (t.genderManuallySet === undefined) t.genderManuallySet = false;
 
-            const age = calculateAge(t.dob, visitDate);
+            let age = null;
+            let displayDob = '';
+            if (t.age !== undefined) {
+                age = t.age;
+                const visitYear = visitDate ? new Date(visitDate).getFullYear() : new Date().getFullYear();
+                displayDob = (visitYear - t.age).toString();
+            } else if (t.year !== undefined) {
+                age = (visitDate ? new Date(visitDate).getFullYear() : new Date().getFullYear()) - t.year;
+                displayDob = t.year.toString();
+            } else {
+                age = calculateAge(t.dob, visitDate);
+                if (t.dob) {
+                    displayDob = formatDate(t.dob);
+                }
+            }
+
             const category = getPassengerCategory(age, t.gender, visitDate);
             const basePrice = getBasePrice(visitDate, clientType, tariffType, category);
             
@@ -577,6 +1006,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const earlyBookingEnabled = vDate && ((vDate.getFullYear() > today.getFullYear()) || (vDate.getFullYear() === today.getFullYear() && vDate.getMonth() > today.getMonth()));
             const discountInfo = calculateDiscount(t.dob, visitDate, t.disability, age, t.gender);
             let discountPercent = discountInfo.percent || 0;
+            
+            if (category === 'INV') {
+                discountPercent = 100;
+            }
             
             if (earlyBookingEnabled && discountPercent < 100 && age >= 4) {
                 discountPercent = Math.max(discountPercent, CONFIG.discounts.earlyBooking);
@@ -592,34 +1025,46 @@ document.addEventListener('DOMContentLoaded', () => {
             if (category === 'CHLD') counts.chld++;
             if (category === 'INF') counts.inf++;
             if (category === 'SNR') counts.pens++;
+            if (category === 'INV') counts.inv = (counts.inv || 0) + 1;
             if (discountInfo.isBirthday) counts.bday++;
 
             totalSum += finalPrice;
 
             // Строка для экспорта (подготовка данных)
-            if (t.fullName && t.dob) {
+            if (t.fullName && (t.dob || t.age !== undefined || t.year !== undefined)) {
                 let tags = [];
                 if (discountInfo.isBirthday) tags.push("ДР");
-                if (discountInfo.isPensioner) tags.push("Пенс");
                 if (t.disability === '1') tags.push("Инв 100%");
                 if (t.disability === '2') tags.push("Инв 15%");
                 if (t.disability === '3') tags.push("Инв 10%");
 
+                let formattedDob = '';
+                if (t.dob) {
+                    formattedDob = formatDate(t.dob);
+                } else if (t.year !== undefined) {
+                    formattedDob = `${t.year} г.`;
+                } else if (t.age !== undefined) {
+                    formattedDob = `${t.age} лет`;
+                }
+
                 exportDataList.push({
                     translitName: transliterate(t.fullName),
                     category: category,
-                    formattedDob: formatDate(t.dob),
+                    formattedDob: formattedDob,
                     tags: tags,
+                    gender: t.gender === 'female' ? 'F' : 'M',
                     isBirthday: discountInfo.isBirthday
                 });
             }
 
             // Динамический бейдж с микро-анимацией (свечение)
-            let catBadgeClass = 'bg-slate-100 text-slate-500 border-slate-200';
-            if (category === 'ADL') catBadgeClass = 'bg-blue-50 text-blue-600 border-blue-200 shadow-[0_0_8px_rgba(37,99,235,0.4)] animate-[pulse_2s_ease-in-out_infinite]';
-            if (category === 'SNR') catBadgeClass = 'bg-purple-50 text-purple-600 border-purple-200 shadow-[0_0_8px_rgba(147,51,234,0.4)] animate-[pulse_2s_ease-in-out_infinite]';
-            if (category === 'CHLD') catBadgeClass = 'bg-teal-50 text-teal-600 border-teal-200 shadow-[0_0_8px_rgba(13,148,136,0.4)] animate-[pulse_2s_ease-in-out_infinite]';
-            if (category === 'INF') catBadgeClass = 'bg-green-50 text-green-600 border-green-200 shadow-[0_0_8px_rgba(22,163,74,0.4)] animate-[pulse_2s_ease-in-out_infinite]';
+            // Динамический стиль для выпадающего списка типа (бейдж)
+            let catSelectClass = 'border-slate-200 text-slate-700 bg-white';
+            if (category === 'ADL') catSelectClass = 'bg-blue-50 text-blue-600 border-blue-200';
+            if (category === 'SNR') catSelectClass = 'bg-purple-50 text-purple-600 border-purple-200';
+            if (category === 'CHLD') catSelectClass = 'bg-teal-50 text-teal-600 border-teal-200';
+            if (category === 'INF') catSelectClass = 'bg-green-50 text-green-600 border-green-200';
+            if (category === 'INV') catSelectClass = 'bg-rose-50 text-rose-600 border-rose-200';
 
             // Создание DOM элемента строки
             const row = document.createElement('div');
@@ -645,19 +1090,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <!-- DOB -->
                     <div class="w-[100px] shrink-0 md:w-full md:col-span-2">
                         <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">Дата рожд.</label>
-                        <input type="date" value="${t.dob}" 
-                            onblur="updateTourist('${t.id}', 'dob', this.value)"
-                            class="w-full text-left date-left-align bg-transparent text-slate-800 border ${!t.dob ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-0.5 py-1 text-xs font-medium transition-colors">
-                    </div>
-
-                    <!-- Gender -->
-                    <div class="w-[80px] shrink-0 md:w-full md:col-span-2">
-                        <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">Пол</label>
-                        <select onchange="updateTourist('${t.id}', 'gender', this.value)"
-                            class="w-full text-left md:text-center bg-transparent text-slate-800 border border-transparent hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-1 py-1 text-xs font-medium transition-colors cursor-pointer">
-                            <option value="male" ${t.gender === 'male' ? 'selected' : ''}>Мужской</option>
-                            <option value="female" ${t.gender === 'female' ? 'selected' : ''}>Женский</option>
-                        </select>
+                        <input type="text" value="${displayDob}" 
+                            placeholder="дд.мм.гггг или гггг"
+                            onblur="updateTouristDobDirect('${t.id}', this.value)"
+                            class="w-full text-left bg-transparent text-slate-800 border ${(!t.dob && t.age === undefined && t.year === undefined) ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-0.5 py-1 text-xs font-medium transition-colors">
                     </div>
                 </div>
                 
@@ -673,16 +1109,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         
                         <!-- Category -->
-                        <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center">
+                        <div class="md:col-span-2 text-left md:text-center flex flex-col items-start md:items-center w-full md:w-auto">
                             <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Тип</label>
-                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded border ${catBadgeClass} transition-all duration-300">
-                                ${category}
-                            </span>
+                            <select onchange="updateTouristCategory('${t.id}', this.value)"
+                                class="text-[9px] font-bold px-1.5 py-0.5 rounded border ${catSelectClass} focus:outline-none transition-all duration-300 cursor-pointer text-center w-full md:w-auto">
+                                <option value="ADL" ${category === 'ADL' ? 'selected' : ''}>ADL</option>
+                                <option value="CHLD" ${category === 'CHLD' ? 'selected' : ''}>CHLD</option>
+                                <option value="INF" ${category === 'INF' ? 'selected' : ''}>INF</option>
+                                <option value="SNR" ${category === 'SNR' ? 'selected' : ''}>SNR</option>
+                                <option value="INV" ${category === 'INV' ? 'selected' : ''}>INV</option>
+                            </select>
                         </div>
                     </div>
                     
                     <!-- Price -->
-                    <div class="md:col-span-1 text-right flex flex-col items-end justify-center pr-2">
+                    <div class="md:col-span-2 text-right flex flex-col items-end justify-center pr-2">
                         ${discountPercent > 0 ? `<span class="badge-discount text-[8px] px-1.5 py-0.5 rounded-full mb-0.5 leading-none font-bold">-${discountPercent}%</span>` : ''}
                         <span class="text-xs font-bold ${finalPrice > 0 ? 'text-slate-900' : 'text-slate-400'}">
                             ${basePrice === -1 ? 'Нет тарифа' : Math.round(finalPrice).toLocaleString('ru-RU')} ₸
@@ -708,18 +1149,20 @@ document.addEventListener('DOMContentLoaded', () => {
         stats.chld.textContent = counts.chld;
         stats.inf.textContent = counts.inf;
         stats.pens.textContent = counts.pens;
+        if (stats.inv) stats.inv.textContent = counts.inv || 0;
         stats.bday.textContent = counts.bday;
 
-        let exportText = `📅 Дата визита: ${visitDate ? formatDate(visitDate) : 'Не указана'}\n`;
-        exportText += `🎟 Тариф: ${tariffType === 'evening' ? 'Вечерний' : 'Дневной'}\n\n`;
+        let exportText = `Дата посещения: ${visitDate ? formatDate(visitDate) : 'Не указана'}\n`;
+        exportText += `Тариф: ${tariffType === 'evening' ? 'Вечерний' : 'Дневной'}\n\n`;
 
         if (currentCalcMode === 'quick') {
             exportText += `Состав гостей:\n`;
             let hasQuickGuests = false;
-            if (quickCounts.adl > 0) { exportText += `• Взрослые (ADL): ${quickCounts.adl}\n`; hasQuickGuests = true; }
-            if (quickCounts.chld > 0) { exportText += `• Дети (CHLD): ${quickCounts.chld}\n`; hasQuickGuests = true; }
-            if (quickCounts.pens > 0) { exportText += `• Пенсионеры (SNR): ${quickCounts.pens}\n`; hasQuickGuests = true; }
-            if (quickCounts.inf > 0) { exportText += `• Младенцы (INF): ${quickCounts.inf}\n`; hasQuickGuests = true; }
+            if (quickCounts.adl > 0) { exportText += `Взрослые ADL: ${quickCounts.adl}\n`; hasQuickGuests = true; }
+            if (quickCounts.chld > 0) { exportText += `Дети CHLD: ${quickCounts.chld}\n`; hasQuickGuests = true; }
+            if (quickCounts.pens > 0) { exportText += `Пенсионеры SNR: ${quickCounts.pens}\n`; hasQuickGuests = true; }
+            if (quickCounts.inf > 0) { exportText += `Младенцы INF: ${quickCounts.inf}\n`; hasQuickGuests = true; }
+            if (quickCounts.inv > 0) { exportText += `Инвалиды INV: ${quickCounts.inv}\n`; hasQuickGuests = true; }
             if (!hasQuickGuests) {
                 exportText += 'Пусто\n';
             }
@@ -733,7 +1176,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Формируем финальные строки
             let exportLines = exportDataList.map((item) => {
-                return `${item.translitName.toUpperCase()} (${item.category}) ${item.formattedDob}`;
+                const tagsStr = item.tags.length > 0 ? ` (${item.tags.join(', ')})` : '';
+                return `${item.translitName.toUpperCase()} ${item.formattedDob}${tagsStr} ${item.category}`;
             });
 
             exportText += `Список гостей:\n`;
@@ -751,6 +1195,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Для доступа из HTML
         window.updateTourist = updateTourist;
         window.removeTourist = removeTourist;
+        window.updateTouristDobDirect = updateTouristDobDirect;
+        window.updateTouristCategory = updateTouristCategory;
     }
 
     function saveDraft() {
@@ -766,15 +1212,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function syncDetailedToQuick() {
-        let counts = { adl: 0, chld: 0, pens: 0, inf: 0 };
+        let counts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0 };
         const visitDate = visitDateInput ? visitDateInput.value : '';
         tourists.forEach(t => {
-            const age = calculateAge(t.dob, visitDate);
+            let age = null;
+            if (t.age !== undefined) {
+                age = t.age;
+            } else if (t.year !== undefined) {
+                const visitYear = visitDate ? new Date(visitDate).getFullYear() : new Date().getFullYear();
+                age = visitYear - t.year;
+            } else {
+                age = calculateAge(t.dob, visitDate);
+            }
             const category = getPassengerCategory(age, t.gender, visitDate);
             if (category === 'ADL') counts.adl++;
             if (category === 'CHLD') counts.chld++;
             if (category === 'SNR') counts.pens++;
             if (category === 'INF') counts.inf++;
+            if (category === 'INV') counts.inv++;
         });
         quickCounts = counts;
         updateQuickInputsDOM();
@@ -830,6 +1285,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 disability: 'none'
             });
         }
+        // Add Disabled (INV)
+        for (let i = 0; i < quickCounts.inv; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 30}-06-15`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: '1',
+                category: 'INV',
+                categoryManuallySet: true
+            });
+        }
     }
 
     function updateQuickInputsDOM() {
@@ -837,10 +1305,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const chldEl = document.getElementById('quick_chld');
         const pensEl = document.getElementById('quick_pens');
         const infEl = document.getElementById('quick_inf');
+        const invEl = document.getElementById('quick_inv');
         if (adlEl) adlEl.value = quickCounts.adl;
         if (chldEl) chldEl.value = quickCounts.chld;
         if (pensEl) pensEl.value = quickCounts.pens;
         if (infEl) infEl.value = quickCounts.inf;
+        if (invEl) invEl.value = quickCounts.inv;
     }
 
     function switchCalcMode(mode) {
@@ -866,7 +1336,7 @@ document.addEventListener('DOMContentLoaded', () => {
             detailedActionButtons.classList.remove('hidden');
             resetQuickBtn.classList.add('hidden');
             
-            if (tourists.length === 0 && (quickCounts.adl > 0 || quickCounts.chld > 0 || quickCounts.pens > 0 || quickCounts.inf > 0)) {
+            if (tourists.length === 0 && (quickCounts.adl > 0 || quickCounts.chld > 0 || quickCounts.pens > 0 || quickCounts.inf > 0 || quickCounts.inv > 0)) {
                 syncQuickToDetailed();
             }
         } else {
@@ -881,7 +1351,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resetQuickBtn.classList.remove('hidden');
             emptyState.classList.add('hidden');
             
-            if (quickCounts.adl === 0 && quickCounts.chld === 0 && quickCounts.pens === 0 && quickCounts.inf === 0) {
+            if (quickCounts.adl === 0 && quickCounts.chld === 0 && quickCounts.pens === 0 && quickCounts.inf === 0 && quickCounts.inv === 0) {
                 syncDetailedToQuick();
             }
         }
@@ -904,7 +1374,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetQuickCounts() {
-        quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0 };
+        quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0 };
         updateQuickInputsDOM();
         syncQuickToDetailed();
         render();
@@ -1116,21 +1586,77 @@ document.addEventListener('DOMContentLoaded', () => {
             if (quickCounts.inf > 0) {
                 listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">МЛАДЕНЦЫ (INF): ${quickCounts.inf}</div></div>`;
             }
+            if (quickCounts.inv > 0) {
+                listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">ИНВАЛИДЫ (INV): ${quickCounts.inv}</div></div>`;
+            }
             if (!listHtml) {
                 listHtml = `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-slate-400 text-[15px]">СПИСОК ПУСТ</div></div>`;
             }
             touristsEl.innerHTML = listHtml;
         } else {
             tourists.forEach((t, i) => {
-                if (!t.fullName && !t.dob) return; // Пропуск пустых строк
-                const age = calculateAge(t.dob, visitDateStr);
-                const cat = getPassengerCategory(age, t.gender, visitDateStr);
-                const genderLabel = t.gender === 'female' ? 'Ж' : 'М';
+                if (!t.fullName && !t.dob && t.age === undefined && t.year === undefined) return; // Пропуск пустых строк
                 
+                // Рассчитываем возраст
+                let age = null;
+                if (t.age !== undefined) {
+                    age = t.age;
+                } else if (t.year !== undefined) {
+                    const visitYear = visitDateStr ? new Date(visitDateStr).getFullYear() : new Date().getFullYear();
+                    age = visitYear - t.year;
+                } else {
+                    age = calculateAge(t.dob, visitDateStr);
+                }
+
+                let category = t.category;
+                if (!t.categoryManuallySet || !category) {
+                    category = getPassengerCategory(age, t.gender, visitDateStr);
+                }
+
+                const basePrice = getBasePrice(visitDateStr, clientType, tariffType, category);
+                const discountInfo = calculateDiscount(t.dob, visitDateStr, t.disability, age, t.gender);
+                let discountPercent = discountInfo.percent || 0;
+                
+                const today = new Date();
+                const vDate = visitDateStr ? new Date(visitDateStr) : null;
+                const earlyBookingEnabled = vDate && ((vDate.getFullYear() > today.getFullYear()) || (vDate.getFullYear() === today.getFullYear() && vDate.getMonth() > today.getMonth()));
+                
+                if (category === 'INV') {
+                    discountPercent = 100;
+                }
+                
+                if (earlyBookingEnabled && discountPercent < 100 && age >= 4) {
+                    discountPercent = Math.max(discountPercent, CONFIG.discounts.earlyBooking);
+                }
+                
+                let finalPrice = 0;
+                if (basePrice > 0) {
+                    finalPrice = basePrice * (1 - discountPercent / 100);
+                }
+
+                // Форматируем ДР/возраст/год
+                let formattedDob = '';
+                if (t.dob) {
+                    formattedDob = formatDate(t.dob);
+                } else if (t.year !== undefined) {
+                    formattedDob = `${t.year} г.`;
+                } else if (t.age !== undefined) {
+                    formattedDob = `${t.age} лет`;
+                }
+
+                const priceStr = basePrice === -1 ? 'Нет тарифа' : `${Math.round(finalPrice).toLocaleString('ru-RU')} ₸`;
+
                 touristsEl.innerHTML += `
                     <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3">
-                        <div class="w-full">
-                            <div class="font-bold text-[#1e293b] text-[15px] leading-relaxed break-words">${(t.fullName || 'Гость ' + (i+1)).toUpperCase()} (${cat}) ${formatDate(t.dob)} [${genderLabel}]</div>
+                        <div class="flex-1 pr-4">
+                            <div class="font-bold text-[#1e293b] text-[15px] leading-relaxed break-words">
+                                ${(t.fullName || 'Гость ' + (i+1)).toUpperCase()} 
+                                ${formattedDob ? '- ' + formattedDob : ''} 
+                                <span class="text-xs text-slate-500 font-medium ml-1">(${category})</span>
+                            </div>
+                        </div>
+                        <div class="text-right font-bold text-[#0076ba] text-[15px] shrink-0">
+                            ${priceStr}
                         </div>
                     </div>
                 `;
