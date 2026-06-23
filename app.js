@@ -259,10 +259,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Первичный рендер если данные загружены
     if (tourists.length > 0) render();
 
+    let lastAttemptedText = '';
+
     // Parse Bulk Text Input
     parseBulkBtn.addEventListener('click', () => {
         const text = bulkText.value.trim();
         if (!text) return;
+        
+        const isForced = (text === lastAttemptedText);
+        lastAttemptedText = text;
         
         // Check if the input represents quantities instead of names with dates of birth
         const dobRegex = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b|\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{4}|\d{2})\b/;
@@ -276,13 +281,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const cleanText = inputText.toLowerCase();
             
             // Regex patterns to detect counts of different guest categories.
-            const adlRegex = /(\d+)\s*(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)/g;
-            // Map "ребенок", "ребенка", "реб", "inf", "младенец", "мл" to INF by default, as requested ("по умолчанию написать ADL, INF")
-            // But also check for "дети", "дет", "chld", "child" which can map to CHLD.
-            const infRegex = /(\d+)\s*(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)/g;
-            const chldRegex = /(\d+)\s*(?:дети|дет[ямнска]*|chld|child(?:ren)?|бала(?:лар)?)/g;
-            const snrRegex = /(\d+)\s*(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)/g;
-            const invRegex = /(\d+)\s*(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)/g;
+            const adlRegex = /(\d+)\s*(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
+            const infRegex = /(\d+)\s*(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
+            const chldRegex = /(\d+)\s*(?:дети|дет(?:и|ям|ей|ях)?|chld|child(?:ren)?|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
+            const snrRegex = /(\d+)\s*(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
+            const invRegex = /(\d+)\s*(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
             
             let adlCount = 0;
             let chldCount = 0;
@@ -316,11 +319,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (!matched) {
                 // If no numbers were matched, check if there are keywords present (meaning singular, like "взрослый и ребенок" -> 1 adult, 1 child)
-                const hasAdl = /(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)/i.test(cleanText);
-                const hasChld = /(?:дети|дет[ямнска]*|chld|child(?:ren)?|бала(?:лар)?)/i.test(cleanText);
-                const hasInf = /(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)/i.test(cleanText);
-                const hasSnr = /(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)/i.test(cleanText);
-                const hasInv = /(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)/i.test(cleanText);
+                const hasAdl = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
+                const hasChld = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:дети|дет(?:и|ям|ей|ях)?|chld|child(?:ren)?|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
+                const hasInf = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
+                const hasSnr = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
+                const hasInv = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                 
                 if (hasAdl || hasChld || hasInf || hasSnr || hasInv) {
                     if (hasAdl) adlCount = 1;
@@ -597,7 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
             namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:mr|mrs|ms|chd|inf|adl|snr|inv|pax|adults?|pensioners?|children|infants?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/ig, ' ');
             
             // Убираем категории на трех языках
-            namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:взр[а-я]*|реб[а-я]*|дети|дет[а-я]*|млад[а-я]*|пенс[а-я]*|инв[а-я]*|зейнеткер[а-я]*|мүгедек[а-я]*|бала[а-я]*|үлкен[а-я]*)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/ig, ' ');
+            namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:взр(?:осл[а-я]*)?|реб(?:ен[окац]+)?|дети|дет(?:и|ям|ей|ях)?|млад(?:ен[а-я]*)?|пенс(?:ионер[а-я]*)?|инв(?:алид[а-я]*)?|зейнеткер(?:лер)?|мүгедек(?:тер)?|бала(?:лар)?|үлкен(?:дер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/ig, ' ');
             
             // Убираем CRM-метки и мусорные слова
             namePart = namePart.replace(/дата\s*рожд[а-яА-Я]*/ig, '');
@@ -616,7 +619,11 @@ document.addEventListener('DOMContentLoaded', () => {
             namePart = namePart.replace(/^-+|-+$|^\'+|\'+$/g, '').trim();
             namePart = namePart.replace(/\s+/g, ' ');
 
-            if (namePart.length >= 2 && !hasStrayNumbers) {
+            const wordsCount = namePart.split(' ').length;
+            const hasDateOrAge = dobIso || tAge !== undefined || tYear !== undefined || parsedCategory;
+            const isSuspicious = !hasDateOrAge && wordsCount < 2;
+
+            if (namePart.length >= 2 && !hasStrayNumbers && (!isSuspicious || isForced)) {
                 // Делаем первые буквы заглавными
                 namePart = namePart.split(' ').map(word => 
                     word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
@@ -671,9 +678,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (unrecognizedLines.length > 0) {
             bulkText.value = unrecognizedLines.join('\n');
-            window.showToast(`Часть гостей не распознана (${unrecognizedLines.length} строк)`, 'fa-triangle-exclamation', 'bg-amber-500');
+            if (!isForced) {
+                window.showToast(`Часть строк подозрительна (нет дат или одно слово). Если всё верно, нажмите еще раз.`, 'fa-triangle-exclamation', 'bg-amber-500');
+            } else {
+                window.showToast(`Часть гостей не распознана (${unrecognizedLines.length} строк)`, 'fa-triangle-exclamation', 'bg-amber-500');
+                lastAttemptedText = '';
+            }
         } else {
             bulkText.value = '';
+            lastAttemptedText = '';
         }
     });
 
@@ -706,7 +719,19 @@ document.addEventListener('DOMContentLoaded', () => {
         render();
     }
 
-    function removeTourist(id) {
+    function removeTourist(id, btnElement) {
+        if (btnElement) {
+            const row = btnElement.closest('.tourist-row');
+            if (row) {
+                row.classList.remove('animate-row-in');
+                row.classList.add('animate-row-out');
+                setTimeout(() => {
+                    tourists = tourists.filter(t => t.id !== id);
+                    render();
+                }, 250);
+                return;
+            }
+        }
         tourists = tourists.filter(t => t.id !== id);
         render();
     }
@@ -884,7 +909,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!dobStr || !visitDateStr) return null;
         const dob = new Date(dobStr);
         const visit = new Date(visitDateStr);
-        return visit.getFullYear() - dob.getFullYear();
+        let age = visit.getFullYear() - dob.getFullYear();
+        
+        if (visit.getMonth() < dob.getMonth() || (visit.getMonth() === dob.getMonth() && visit.getDate() < dob.getDate())) {
+            age--;
+        }
+        
+        return age;
     }
 
     function getPassengerCategory(age, gender, visitDateStr) {
@@ -996,7 +1027,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            const category = getPassengerCategory(age, t.gender, visitDate);
+            let category = getPassengerCategory(age, t.gender, visitDate);
+            if (t.categoryManuallySet && t.category) {
+                category = t.category;
+            } else if (age === null && t.category) {
+                category = t.category;
+            }
+            t.category = category;
+            
             const basePrice = getBasePrice(visitDate, clientType, tariffType, category);
             
             if (basePrice === -1) isTariffFound = false;
@@ -1072,8 +1110,8 @@ document.addEventListener('DOMContentLoaded', () => {
             row.innerHTML = `
                 <!-- Mobile Label: Delete Button -->
                 <div class="absolute top-1.5 right-1.5 md:static md:col-span-1 md:w-full flex justify-end md:order-last">
-                    <button onclick="removeTourist('${t.id}')" class="btn-danger p-0.5 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="Удалить">
-                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    <button onclick="removeTourist('${t.id}', this)" class="btn-danger p-0.5 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="Удалить">
+                        <i class="fa-solid fa-trash-can text-xs pointer-events-none"></i>
                     </button>
                 </div>
                 
@@ -1764,6 +1802,10 @@ document.addEventListener('DOMContentLoaded', () => {
         history.unshift(record);
         if (history.length > 20) history = history.slice(0, 20); // Храним только 20 последних
         localStorage.setItem('tetysBluHistory', JSON.stringify(history));
+        
+        if (window.showToast) {
+            window.showToast('Сохранено в архив', 'fa-check', 'bg-emerald-500');
+        }
     }
 
     if (historyBtn) {
