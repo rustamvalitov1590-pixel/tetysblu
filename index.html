@@ -772,14 +772,8 @@
                                 <i class="fa-solid fa-cloud-arrow-down sm:mr-1.5 text-brand-sky text-sm"></i> <span class="hidden sm:inline">Скачать</span>
                             </button>
                             <!-- Share Actions -->
-                            <button id="whatsappShareBtn" class="w-10 h-10 sm:h-auto sm:w-auto sm:px-3 sm:py-2 bg-[#25D366] hover:bg-[#1ebd5a] text-white rounded-xl text-[11px] font-bold flex items-center justify-center transition-all shadow-sm flex-shrink-0" title="В WhatsApp">
-                                <i class="fa-brands fa-whatsapp text-lg sm:text-base sm:mr-1.5"></i> <span class="hidden sm:inline">WhatsApp</span>
-                            </button>
-                            <button id="telegramShareBtn" class="w-10 h-10 sm:h-auto sm:w-auto sm:px-3 sm:py-2 bg-[#0088cc] hover:bg-[#0077b5] text-white rounded-xl text-[11px] font-bold flex items-center justify-center transition-all shadow-sm flex-shrink-0" title="В Telegram">
-                                <i class="fa-brands fa-telegram text-lg sm:text-base sm:mr-1.5"></i> <span class="hidden sm:inline">Telegram</span>
-                            </button>
-                            <button id="emailShareBtn" class="w-10 h-10 sm:h-auto sm:w-auto sm:px-3 sm:py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-[11px] font-bold flex items-center justify-center transition-all shadow-sm flex-shrink-0" title="На почту">
-                                <i class="fa-solid fa-envelope text-lg sm:text-base sm:mr-1.5"></i> <span class="hidden sm:inline">Email</span>
+                            <button id="nativeShareBtn" class="flex-1 sm:flex-none justify-center bg-white/20 hover:bg-white/30 text-white font-bold px-4 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm backdrop-blur-sm border border-white/10" title="Поделиться чеком">
+                                <i class="fa-solid fa-share-nodes sm:mr-1.5 text-sm"></i> <span class="hidden sm:inline">Поделиться</span>
                             </button>
                         </div>
                     </div>
@@ -822,16 +816,16 @@
 
                 <!-- Text Area for Data Export -->
                 <section class="concept-card p-6 border border-slate-200 bg-white">
-                    <div class="flex justify-between items-center mb-3">
-                        <h2 class="text-sm font-bold text-slate-800 flex items-center">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-3">
+                        <h2 class="text-sm font-bold text-slate-800 flex items-center whitespace-nowrap">
                             <i class="fa-solid fa-code text-slate-400 mr-2"></i>
                             Текст для почты / CRM
                         </h2>
-                        <div class="flex items-center gap-1.5">
-                            <button id="emailExportBtn" class="text-[10px] font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg transition-colors flex items-center">
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <button id="emailExportBtn" class="flex-1 sm:flex-none justify-center text-[11px] font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl transition-colors flex items-center whitespace-nowrap">
                                 <i class="fa-solid fa-envelope mr-1.5"></i> На почту
                             </button>
-                            <button id="copyExportBtn" class="text-[10px] font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors flex items-center">
+                            <button id="copyExportBtn" class="flex-1 sm:flex-none justify-center text-[11px] font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-xl transition-colors flex items-center whitespace-nowrap">
                                 <i class="fa-regular fa-copy mr-1.5"></i> Копировать
                             </button>
                         </div>
