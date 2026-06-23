@@ -314,7 +314,7 @@
             border-color: #334155 !important;
             color: #f1f5f9 !important;
         }
-        body.dark-mode .text-slate-800, body.dark-mode .text-slate-700 {
+        body.dark-mode .text-slate-900, body.dark-mode .text-slate-800, body.dark-mode .text-slate-700 {
             color: #f1f5f9 !important;
         }
         body.dark-mode .text-slate-500, body.dark-mode .text-slate-400 {
@@ -451,6 +451,11 @@
                 </div>
 
                 <div class="flex items-center space-x-2 sm:space-x-3">
+                    <!-- PWA Install -->
+                    <button id="installPwaBtn" class="hidden bg-emerald-50 hover:bg-emerald-100 text-emerald-600 px-3 py-2 rounded-xl text-sm font-bold transition-all border border-emerald-200/50 flex items-center shadow-sm" title="Установить приложение">
+                        <i class="fa-solid fa-mobile-screen sm:mr-1.5"></i>
+                        <span class="hidden sm:inline">Установить</span>
+                    </button>
                     <!-- Theme Toggle -->
                     <button id="themeToggleBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-2 rounded-xl text-sm font-bold transition-all border border-slate-200/50 flex items-center" title="Переключить тему">
                         <i id="themeIcon" class="fa-solid fa-moon"></i>
@@ -529,6 +534,21 @@
                                 <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                             </div>
                         </div>
+
+                        <!-- Early Booking Toggle (Hidden by default) -->
+                        <div id="earlyBookingContainer" class="hidden bg-blue-50 border border-blue-100 rounded-xl p-3 flex items-center justify-between transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-percent text-brand-blue bg-white w-8 h-8 rounded-full flex items-center justify-center shadow-sm"></i>
+                                <div>
+                                    <p class="text-xs font-bold text-slate-800">Раннее бронирование</p>
+                                    <p class="text-[10px] text-slate-500">Скидка -15% (акция июля)</p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="earlyBookingToggle" class="sr-only peer">
+                                <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-blue"></div>
+                            </label>
+                        </div>
                     </div>
                 </section>
                 
@@ -592,14 +612,22 @@
                         </div>
                     </div>
                     
-                    <!-- Mode Switcher Tabs -->
-                    <div class="flex border-b border-slate-100 mb-6">
-                        <button id="tabDetailed" onclick="switchCalcMode('detailed')" class="py-2.5 px-4 text-xs font-bold border-b-2 border-blue-500 text-blue-600 transition-all flex items-center gap-2">
-                            <i class="fa-solid fa-list-ul"></i> Посписочный ввод
-                        </button>
-                        <button id="tabQuick" onclick="switchCalcMode('quick')" class="py-2.5 px-4 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-all flex items-center gap-2">
-                            <i class="fa-solid fa-calculator"></i> Быстрый расчет количества
-                        </button>
+                    <!-- Mode Switcher Tabs & Search -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 border-b border-slate-100 mb-6">
+                        <div class="flex">
+                            <button id="tabDetailed" onclick="switchCalcMode('detailed')" class="py-2.5 px-4 text-xs font-bold border-b-2 border-blue-500 text-blue-600 transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-list-ul"></i> Посписочный ввод
+                            </button>
+                            <button id="tabQuick" onclick="switchCalcMode('quick')" class="py-2.5 px-4 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-calculator"></i> Быстрый расчет
+                            </button>
+                        </div>
+                        <div id="searchContainer" class="w-full sm:w-64 pb-2 sm:pb-1">
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="guestSearchInput" placeholder="Поиск гостя..." oninput="filterGuests(this.value)" class="w-full pl-8 pr-3 py-1.5 concept-input text-xs rounded-lg bg-slate-50 focus:bg-white transition-colors border-slate-200">
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Detailed Mode Container -->
@@ -723,14 +751,15 @@
                         <path d="M0 60 Q 30 75 60 55 T 100 65 L 100 100 L 0 100 Z" fill="currentColor" opacity="0.5"/>
                     </svg>
 
-                    <!-- Early Booking Pulse Badge -->
-                    <div id="earlyBookingBadge" class="hidden absolute top-2.5 right-2.5 bg-amber-400 text-slate-900 text-[8px] font-extrabold px-2 py-0.5 rounded-full shadow-md animate-pulse">
-                        <i class="fa-solid fa-bolt mr-1"></i> Раннее бронирование (-15%)
-                    </div>
-                    
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 relative z-10">
                         <div>
-                            <span class="text-blue-100 text-[9px] font-bold uppercase tracking-widest block">Итоговый расчет</span>
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <span class="text-blue-100 text-[9px] font-bold uppercase tracking-widest block">Итоговый расчет</span>
+                                <!-- Early Booking Pulse Badge -->
+                                <div id="earlyBookingBadge" class="hidden bg-amber-400 text-slate-900 text-[8px] font-extrabold px-1.5 py-0.5 rounded-full shadow-md animate-pulse">
+                                    <i class="fa-solid fa-bolt mr-0.5"></i> Раннее бронирование (-15%)
+                                </div>
+                            </div>
                             <div class="flex items-baseline space-x-1.5 mt-0.5">
                                 <span class="text-lg md:text-xl font-extrabold text-white tracking-tight" id="totalPrice">0</span>
                                 <span class="text-sm font-black text-amber-300">₸</span>
@@ -738,12 +767,19 @@
                         </div>
                         
                         <div class="flex items-center space-x-1.5 w-full sm:w-auto">
-                            <!-- Receipt Action Buttons -->
-                            <button id="downloadReceiptBtn" class="flex-1 sm:flex-none justify-center bg-white hover:bg-slate-50 text-brand-blue font-bold px-4 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm">
-                                <i class="fa-solid fa-cloud-arrow-down mr-1.5 text-brand-sky text-sm"></i> Скачать чек
+                            <!-- Download Action -->
+                            <button id="downloadReceiptBtn" class="flex-1 sm:flex-none justify-center bg-white hover:bg-slate-50 text-brand-blue font-bold px-3 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm" title="Скачать PDF чек">
+                                <i class="fa-solid fa-cloud-arrow-down sm:mr-1.5 text-brand-sky text-sm"></i> <span class="hidden sm:inline">Скачать</span>
                             </button>
-                            <button id="whatsappBtn" class="flex-1 bg-brand-blue hover:bg-blue-600 text-white py-3 rounded-xl text-[13px] font-bold flex items-center justify-center transition-all shadow-sm">
-                                <i class="fa-solid fa-share-nodes mr-2 text-lg"></i> Поделиться чеком
+                            <!-- Share Actions -->
+                            <button id="whatsappShareBtn" class="w-10 h-10 sm:h-auto sm:w-auto sm:px-3 sm:py-2 bg-[#25D366] hover:bg-[#1ebd5a] text-white rounded-xl text-[11px] font-bold flex items-center justify-center transition-all shadow-sm flex-shrink-0" title="В WhatsApp">
+                                <i class="fa-brands fa-whatsapp text-lg sm:text-base sm:mr-1.5"></i> <span class="hidden sm:inline">WhatsApp</span>
+                            </button>
+                            <button id="telegramShareBtn" class="w-10 h-10 sm:h-auto sm:w-auto sm:px-3 sm:py-2 bg-[#0088cc] hover:bg-[#0077b5] text-white rounded-xl text-[11px] font-bold flex items-center justify-center transition-all shadow-sm flex-shrink-0" title="В Telegram">
+                                <i class="fa-brands fa-telegram text-lg sm:text-base sm:mr-1.5"></i> <span class="hidden sm:inline">Telegram</span>
+                            </button>
+                            <button id="emailShareBtn" class="w-10 h-10 sm:h-auto sm:w-auto sm:px-3 sm:py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-[11px] font-bold flex items-center justify-center transition-all shadow-sm flex-shrink-0" title="На почту">
+                                <i class="fa-solid fa-envelope text-lg sm:text-base sm:mr-1.5"></i> <span class="hidden sm:inline">Email</span>
                             </button>
                         </div>
                     </div>
@@ -791,9 +827,14 @@
                             <i class="fa-solid fa-code text-slate-400 mr-2"></i>
                             Текст для почты / CRM
                         </h2>
-                        <button id="copyExportBtn" class="text-[10px] font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors flex items-center">
-                            <i class="fa-regular fa-copy mr-1.5"></i> Копировать
-                        </button>
+                        <div class="flex items-center gap-1.5">
+                            <button id="emailExportBtn" class="text-[10px] font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg transition-colors flex items-center">
+                                <i class="fa-solid fa-envelope mr-1.5"></i> На почту
+                            </button>
+                            <button id="copyExportBtn" class="text-[10px] font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors flex items-center">
+                                <i class="fa-regular fa-copy mr-1.5"></i> Копировать
+                            </button>
+                        </div>
                     </div>
                     <textarea id="exportData" readonly 
                         class="w-full min-h-[60px] overflow-hidden concept-input p-3 text-xs font-mono resize-none focus:border-slate-200 bg-slate-50/50 cursor-text select-all" 
