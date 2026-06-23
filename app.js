@@ -1513,10 +1513,8 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadReceiptBtn.addEventListener('click', generateReceiptImage);
     }
     
-    // --- ЛОГИКА ОТПРАВКИ (SHARE TEXT) ---
-    const whatsappShareBtn = document.getElementById('whatsappShareBtn');
-    const telegramShareBtn = document.getElementById('telegramShareBtn');
-    const emailShareBtn = document.getElementById('emailShareBtn');
+    // --- ЛОГИКА ОТПРАВКИ (SHARE TEXT / IMAGE) ---
+    const nativeShareBtn = document.getElementById('nativeShareBtn');
 
     function getShareText() {
         saveToHistory();
@@ -1529,30 +1527,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalHtml = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin sm:mr-1.5"></i> <span class="hidden sm:inline">Подождите...</span>';
         try {
-            const { shareData } = await generateImageForShare();
+            const { shareData, dataUrl } = await generateImageForShare();
+            
             if (navigator.canShare && navigator.canShare(shareData)) {
                 await navigator.share(shareData);
             } else {
-                window.showToast('Ваш браузер не поддерживает прямую отправку файлов. Воспользуйтесь кнопкой "Скачать".', 'fa-triangle-exclamation', 'bg-amber-500');
+                throw new Error('ShareNotSupported');
             }
         } catch (e) {
             if (e.name !== 'AbortError') {
-                console.error(e);
-                window.showToast('Ошибка при отправке чека', 'fa-triangle-exclamation', 'bg-red-500');
+                console.error('Share Error:', e);
+                // Из-за ограничений безопасности Safari (iOS) и некоторых Android, 
+                // если генерация картинки заняла время, браузер блокирует окно "Поделиться".
+                // В качестве запасного плана - просто скачиваем картинку!
+                window.showToast('Браузер заблокировал окно. Чек автоматически скачан!', 'fa-download', 'bg-[#0076ba]');
+                
+                // Эмулируем нажатие "Скачать"
+                const downloadBtn = document.getElementById('downloadReceiptBtn');
+                if (downloadBtn) {
+                    downloadBtn.click();
+                }
             }
         } finally {
             btn.innerHTML = originalHtml;
         }
     }
 
-    if (whatsappShareBtn) {
-        whatsappShareBtn.addEventListener('click', function() {
-            shareReceiptImage(this);
-        });
-    }
-
-    if (telegramShareBtn) {
-        telegramShareBtn.addEventListener('click', function() {
+    if (nativeShareBtn) {
+        nativeShareBtn.addEventListener('click', function() {
             shareReceiptImage(this);
         });
     }
@@ -1582,12 +1584,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const subject = `${dateStr} | ${tariffStr}`;
         window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
-    }
-
-    if (emailShareBtn) {
-        emailShareBtn.addEventListener('click', function() {
-            shareReceiptImage(this);
-        });
     }
     
     const emailExportBtn = document.getElementById('emailExportBtn');
