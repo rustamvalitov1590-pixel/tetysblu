@@ -90,6 +90,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const authFormBody = document.getElementById('authFormBody');
     const logoutBtn = document.getElementById('logoutBtn');
 
+    // --- ПОИСК ПО ГОСТЯМ ---
+    window.filterGuests = function(query) {
+        query = query.toLowerCase().trim();
+        const list = document.getElementById('touristList');
+        if (!list) return;
+        const rows = list.querySelectorAll('.tourist-row');
+        rows.forEach(row => {
+            const nameInput = row.querySelector('input[placeholder="ФИО туриста"]');
+            if (nameInput) {
+                const name = nameInput.value.toLowerCase();
+                if (name.includes(query) || query === '') {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+    };
+
     // Изменили ключ, чтобы сбросить старую сессию без пароля
     if (localStorage.getItem('tetysAuthV2') === 'true') {
         authScreen.classList.add('hidden');
@@ -177,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Состояние приложения
+
     let tourists = [];
     let currentCalcMode = 'detailed';
     let quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0 };
@@ -223,6 +243,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (clientTypeInput) clientTypeInput.addEventListener('change', render);
     if (tariffTypeInput) tariffTypeInput.addEventListener('change', render);
     if (addTouristBtn) addTouristBtn.addEventListener('click', addTourist);
+    
+    const earlyBookingToggle = document.getElementById('earlyBookingToggle');
+    const earlyBookingContainer = document.getElementById('earlyBookingContainer');
+    const earlyBookingBadge = document.getElementById('earlyBookingBadge'); // Из шапки
+    
+    if (earlyBookingToggle) earlyBookingToggle.addEventListener('change', render);
 
     // Загрузка черновика (Авто-сохранение)
     const draft = localStorage.getItem('tetisBluDraft');
@@ -990,6 +1016,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const clientType = clientTypeInput ? clientTypeInput.value : 'tourist';
         const tariffType = tariffTypeInput ? tariffTypeInput.value : 'day';
 
+        // Управление видимостью кнопки Раннего Бронирования
+        if (visitDate && earlyBookingContainer) {
+            const vDate = new Date(visitDate);
+            const today = new Date();
+            // Акция действует СТРОГО 28, 29, 30 июня
+            const isPromoDays = today.getMonth() === 5 && (today.getDate() >= 28 && today.getDate() <= 30);
+            
+            // Месяц июль (0-индексация, значит 6)
+            if (vDate.getMonth() === 6 && isPromoDays) {
+                earlyBookingContainer.classList.remove('hidden');
+            } else {
+                earlyBookingContainer.classList.add('hidden');
+                if (earlyBookingToggle) earlyBookingToggle.checked = false;
+            }
+        }
+
+        // Управление бейджом "Раннее бронирование" в итоге
+        if (earlyBookingBadge && earlyBookingToggle) {
+            if (earlyBookingToggle.checked) {
+                earlyBookingBadge.classList.remove('hidden');
+            } else {
+                earlyBookingBadge.classList.add('hidden');
+            }
+        }
+
         if (touristListEl) touristListEl.innerHTML = '';
         
         if (emptyState) {
@@ -1041,7 +1092,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const today = new Date();
             const vDate = visitDate ? new Date(visitDate) : null;
-            const earlyBookingEnabled = vDate && ((vDate.getFullYear() > today.getFullYear()) || (vDate.getFullYear() === today.getFullYear() && vDate.getMonth() > today.getMonth()));
+            // Акция применяется, если галочка включена (а галочка доступна только для июля)
+            const earlyBookingEnabled = earlyBookingToggle ? earlyBookingToggle.checked : false;
             const discountInfo = calculateDiscount(t.dob, visitDate, t.disability, age, t.gender);
             let discountPercent = discountInfo.percent || 0;
             
@@ -1049,7 +1101,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 discountPercent = 100;
             }
             
-            if (earlyBookingEnabled && discountPercent < 100 && age >= 4) {
+            // Акция Раннего Бронирования (15%) не действует на инвалидов, именинников и пенсионеров
+            const hasOtherDiscounts = discountInfo.isBirthday || discountInfo.isPensioner || (t.disability && t.disability !== '0' && t.disability !== 'none');
+            if (earlyBookingEnabled && !hasOtherDiscounts && discountPercent < 100 && age >= 4) {
                 discountPercent = Math.max(discountPercent, CONFIG.discounts.earlyBooking);
             }
             
@@ -1226,6 +1280,14 @@ document.addEventListener('DOMContentLoaded', () => {
         exportDataEl.value = exportText;
         exportDataEl.style.height = 'auto';
         exportDataEl.style.height = exportDataEl.scrollHeight + 'px';
+
+        // Применяем поиск, если он активен
+        const searchInput = document.getElementById('guestSearchInput');
+        if (searchInput && searchInput.value) {
+            if (window.filterGuests) {
+                window.filterGuests(searchInput.value);
+            }
+        }
 
         // Авто-сохранение
         saveDraft();
@@ -1451,92 +1513,86 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadReceiptBtn.addEventListener('click', generateReceiptImage);
     }
     
-    // --- ЛОГИКА ОТПРАВКИ (SHARE / WHATSAPP) ---
-    const whatsappBtn = document.getElementById('whatsappBtn');
-    
-    // Элементы модалки шаринга
-    const shareModal = document.getElementById('shareModal');
-    const shareModalContent = document.getElementById('shareModalContent');
-    const closeShareBtn = document.getElementById('closeShareBtn');
-    const sharePreviewImg = document.getElementById('sharePreviewImg');
-    const finalShareBtn = document.getElementById('finalShareBtn');
-    let currentShareData = null;
+    // --- ЛОГИКА ОТПРАВКИ (SHARE TEXT) ---
+    const whatsappShareBtn = document.getElementById('whatsappShareBtn');
+    const telegramShareBtn = document.getElementById('telegramShareBtn');
+    const emailShareBtn = document.getElementById('emailShareBtn');
 
-    if (closeShareBtn) {
-        closeShareBtn.addEventListener('click', closeShareModal);
-    }
-    
-    function closeShareModal() {
-        if (!shareModal) return;
-        shareModal.classList.add('opacity-0');
-        shareModalContent.classList.remove('scale-100');
-        shareModalContent.classList.add('scale-95');
-        setTimeout(() => shareModal.classList.add('hidden'), 300);
+    function getShareText() {
+        saveToHistory();
+        const text = exportDataEl.value;
+        return `*Официальный расчет Tetys Blu*\n\n${text}`;
     }
 
-    if (finalShareBtn) {
-        finalShareBtn.addEventListener('click', async () => {
-            if (!currentShareData) return;
-            try {
-                if (navigator.canShare && navigator.canShare(currentShareData)) {
-                    await navigator.share(currentShareData);
-                } else {
-                    await navigator.share(currentShareData);
-                }
-                closeShareModal();
-            } catch (err) {
-                console.error('Ошибка нативного шаринга', err);
-                if (err.name !== 'AbortError') sendTextToWhatsApp(true);
+    // Общая функция для шаринга картинки чека
+    async function shareReceiptImage(btn) {
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin sm:mr-1.5"></i> <span class="hidden sm:inline">Подождите...</span>';
+        try {
+            const { shareData } = await generateImageForShare();
+            if (navigator.canShare && navigator.canShare(shareData)) {
+                await navigator.share(shareData);
+            } else {
+                window.showToast('Ваш браузер не поддерживает прямую отправку файлов. Воспользуйтесь кнопкой "Скачать".', 'fa-triangle-exclamation', 'bg-amber-500');
             }
+        } catch (e) {
+            if (e.name !== 'AbortError') {
+                console.error(e);
+                window.showToast('Ошибка при отправке чека', 'fa-triangle-exclamation', 'bg-red-500');
+            }
+        } finally {
+            btn.innerHTML = originalHtml;
+        }
+    }
+
+    if (whatsappShareBtn) {
+        whatsappShareBtn.addEventListener('click', function() {
+            shareReceiptImage(this);
         });
     }
 
-    if (whatsappBtn) {
-        whatsappBtn.addEventListener('click', async () => {
-            saveToHistory(); // Сохраняем перед отправкой
-            const originalHtml = whatsappBtn.innerHTML;
-            whatsappBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Подготовка...';
-            
-            try {
-                if (navigator.share) {
-                    const result = await generateImageForShare();
-                    currentShareData = result.shareData;
-                    sharePreviewImg.src = result.dataUrl;
-                    
-                    // Показываем модалку предпросмотра
-                    if (shareModal) {
-                        shareModal.classList.remove('hidden');
-                        setTimeout(() => {
-                            shareModal.classList.remove('opacity-0');
-                            shareModalContent.classList.remove('scale-95');
-                            shareModalContent.classList.add('scale-100');
-                        }, 10);
-                    } else {
-                        // Фолбэк, если модалка почему-то не найдена
-                        await navigator.share(currentShareData);
-                    }
-                } else {
-                    sendTextToWhatsApp();
-                }
-            } catch (err) {
-                console.error('Ошибка при подготовке чека', err);
-                sendTextToWhatsApp(true);
-            } finally {
-                whatsappBtn.innerHTML = originalHtml;
-            }
+    if (telegramShareBtn) {
+        telegramShareBtn.addEventListener('click', function() {
+            shareReceiptImage(this);
         });
     }
 
-    function sendTextToWhatsApp(useLocation = false) {
+    function sendToEmail() {
+        saveToHistory();
         const text = exportDataEl.value;
         if (!text) return;
-        const waText = `*Официальный расчет Tetys Blu*\n\n${text}`;
-        const url = `https://wa.me/?text=${encodeURIComponent(waText)}`;
-        if (useLocation) {
-            window.location.href = url;
-        } else {
-            window.open(url, '_blank');
+        
+        // Парсим текст для темы и тела
+        const lines = text.split('\n');
+        let dateStr = '';
+        let tariffStr = '';
+        let bodyText = '';
+        
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].startsWith('Дата посещения:')) {
+                dateStr = lines[i].trim();
+            } else if (lines[i].startsWith('Тариф:')) {
+                tariffStr = lines[i].trim();
+            } else if (lines[i].startsWith('Список гостей:') || lines[i].startsWith('Состав гостей:')) {
+                // Все оставшиеся строки — это тело
+                bodyText = lines.slice(i).join('\n').trim();
+                break;
+            }
         }
+        
+        const subject = `${dateStr} | ${tariffStr}`;
+        window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+    }
+
+    if (emailShareBtn) {
+        emailShareBtn.addEventListener('click', function() {
+            shareReceiptImage(this);
+        });
+    }
+    
+    const emailExportBtn = document.getElementById('emailExportBtn');
+    if (emailExportBtn) {
+        emailExportBtn.addEventListener('click', sendToEmail);
     }
 
     async function generateImageForShare() {
@@ -1655,15 +1711,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const discountInfo = calculateDiscount(t.dob, visitDateStr, t.disability, age, t.gender);
                 let discountPercent = discountInfo.percent || 0;
                 
-                const today = new Date();
-                const vDate = visitDateStr ? new Date(visitDateStr) : null;
-                const earlyBookingEnabled = vDate && ((vDate.getFullYear() > today.getFullYear()) || (vDate.getFullYear() === today.getFullYear() && vDate.getMonth() > today.getMonth()));
+                const earlyBookingEnabled = earlyBookingToggle ? earlyBookingToggle.checked : false;
                 
                 if (category === 'INV') {
                     discountPercent = 100;
                 }
                 
-                if (earlyBookingEnabled && discountPercent < 100 && age >= 4) {
+                // Акция Раннего Бронирования (15%) не действует на инвалидов, именинников и пенсионеров
+                const hasOtherDiscounts = discountInfo.isBirthday || discountInfo.isPensioner || (t.disability && t.disability !== '0' && t.disability !== 'none');
+                if (earlyBookingEnabled && !hasOtherDiscounts && discountPercent < 100 && age >= 4) {
                     discountPercent = Math.max(discountPercent, CONFIG.discounts.earlyBooking);
                 }
                 
@@ -1685,7 +1741,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const priceStr = basePrice === -1 ? 'Нет тарифа' : `${Math.round(finalPrice).toLocaleString('ru-RU')} ₸`;
 
                 touristsEl.innerHTML += `
-                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3">
+                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3 tourist-row">
                         <div class="flex-1 pr-4">
                             <div class="font-bold text-[#1e293b] text-[15px] leading-relaxed break-words">
                                 ${(t.fullName || 'Гость ' + (i+1)).toUpperCase()} 
@@ -1870,6 +1926,37 @@ document.addEventListener('DOMContentLoaded', () => {
             historyList.appendChild(card);
         });
     }
+
+    // --- PWA INSTALLATION LOGIC ---
+    let deferredPrompt;
+    const installPwaBtn = document.getElementById('installPwaBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installPwaBtn) installPwaBtn.classList.remove('hidden');
+    });
+
+    if (installPwaBtn) {
+        installPwaBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installPwaBtn.classList.add('hidden');
+                }
+                deferredPrompt = null;
+            }
+        });
+    }
+
+    window.addEventListener('appinstalled', () => {
+        if (installPwaBtn) installPwaBtn.classList.add('hidden');
+        if (window.showToast) window.showToast('Приложение установлено!', 'fa-check', 'bg-emerald-500');
+    });
+
+    // Инициализация при загрузке
+    initApp();
 
 });
 
