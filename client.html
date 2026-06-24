@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#03182f">
+    <title>Покупка билетов | Caspian Dream Park</title>
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="https://tetysblu.com/src/favicon/favicon-32x32.png">
+    
+    <!-- Info Modal -->
+    <div id="infoModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300" id="infoModalContent">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-black text-slate-800 text-lg flex items-center gap-2" id="infoModalTitle">
+                    <i class="fa-solid fa-circle-info text-brand-blue"></i> Заголовок
+                </h3>
+                <button onclick="closeInfoModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300 transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-5 text-sm text-slate-600 leading-relaxed" id="infoModalText">
+                Текст
+            </div>
+            <div class="p-4 bg-slate-50 text-center">
+                <button onclick="closeInfoModal()" class="btn-primary w-full py-3 rounded-xl font-bold text-sm">Понятно</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { blue: '#0076ba', sky: '#0ea5e9' }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #03182f;
+            background-image: 
+                radial-gradient(circle at 100% 0%, rgba(0, 180, 216, 0.4) 0%, transparent 60%),
+                radial-gradient(circle at 0% 100%, rgba(0, 118, 186, 0.6) 0%, transparent 60%);
+            color: #f1f5f9;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #1e293b;
+        }
+
+        .concept-input {
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            color: #1e293b;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .counter-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #fff;
+            border: 1.5px solid #e2e8f0;
+            color: #64748b;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+        .counter-btn:active {
+            transform: scale(0.9);
+            background: #f1f5f9;
+        }
+        .counter-btn.plus:hover { color: #0076ba; border-color: #bae6fd; background: #f0f9ff; }
+        .counter-btn.minus:hover { color: #f43f5e; border-color: #fecdd3; background: #fff1f2; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
+        }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(22, 163, 74, 0.4); }
+        .btn-primary:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
+        
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body class="flex items-start justify-center p-4 sm:p-8 overflow-y-auto">
+
+    <div class="glass-card w-full max-w-lg relative mb-10">
+        <!-- Header -->
+        <div class="bg-white p-6 text-center relative overflow-hidden rounded-t-[24px] border-b border-slate-100">
+            <svg class="absolute inset-0 w-full h-full text-brand-blue/5 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d="M0 80 Q 25 50 50 80 T 100 80 L 100 100 L 0 100 Z" fill="currentColor"/>
+                <path d="M0 60 Q 30 75 60 55 T 100 65 L 100 100 L 0 100 Z" fill="currentColor" opacity="0.5"/>
+            </svg>
+            <div class="relative z-10 flex flex-col items-center">
+                <img src="https://tetysblu.com/content/images/logo.png" alt="Tetys Blu" class="h-14 mb-3">
+                <h1 class="text-2xl font-black tracking-tight text-slate-800">Покупка билетов</h1>
+                <p class="text-xs text-slate-500 mt-1 font-medium">Официальный калькулятор парка</p>
+            </div>
+        </div>
+
+        <div class="p-6 sm:p-8 space-y-6">
+            
+            <!-- Дата и Тариф -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Дата посещения</label>
+                    <div class="relative">
+                        <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-brand-blue text-sm"></i>
+                        <input type="date" id="visitDate" class="w-full pl-9 pr-3 py-3 concept-input text-sm">
+                    </div>
+                    <div id="promoBadge" class="hidden mt-2">
+                        <span class="inline-flex items-center gap-1 text-[10px] text-white bg-gradient-to-r from-pink-500 to-orange-400 font-bold px-2 py-1 rounded-md shadow-sm">
+                            <i class="fa-solid fa-fire"></i> Скидка 15%
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <label class="flex items-center text-[11px] font-bold text-slate-500 uppercase mb-1.5">
+                        Тариф
+                        <i class="fa-solid fa-circle-info text-blue-400 ml-1 cursor-pointer hover:text-blue-500 transition-colors text-xs" onclick="openInfoModal('Тарифы', '<b>Дневной тариф</b>: Действует весь день с открытия до закрытия парка.<br><br><b>Вечерний тариф</b>: Доступен после 18:00.<br><br><span class=\'text-amber-600\'>Внимание: Горки и бассейны прекращают работу за 30 минут до закрытия парка.</span>')"></i>
+                    </label>
+                    <div class="relative">
+                        <i class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-brand-blue text-sm"></i>
+                        <select id="tariffType" class="w-full pl-9 pr-3 py-3 concept-input text-sm appearance-none cursor-pointer">
+                            <option value="day">Дневной (полный день)</option>
+                            <option value="evening">Вечерний тариф</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <p id="dateWarning" class="text-xs text-red-500 font-semibold hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i>К сожалению, на выбранную дату парк не работает.</p>
+
+            <div class="h-px w-full bg-slate-100"></div>
+
+            <!-- Гости (Счетчики) -->
+            <div>
+                <h2 class="text-sm font-bold text-slate-800 mb-4 flex items-center">
+                    <i class="fa-solid fa-users text-brand-blue mr-2"></i> Укажите количество гостей
+                </h2>
+                
+                <div class="space-y-2.5">
+                    
+                    <!-- Взрослые (Главный счетчик) -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="flex items-center justify-between p-3.5 hover:bg-slate-50 transition-colors">
+                            <div>
+                                <div class="text-sm font-bold text-slate-800">Взрослые (Всего)</div>
+                                <div class="text-[10px] text-slate-500">От 12 до 60 лет</div>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="updateMainCount('adl', -1)" class="counter-btn minus">-</button>
+                                <input type="number" id="count_adl" value="0" readonly class="w-8 text-center bg-transparent font-black text-slate-800 text-base">
+                                <button onclick="updateMainCount('adl', 1)" class="counter-btn plus">+</button>
+                            </div>
+                        </div>
+                        <!-- Вложенные льготы для Взрослых -->
+                        <div id="sub_adl" class="bg-slate-50 border-t border-slate-100 p-3 space-y-2 hidden">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="flex items-center text-[11px] font-bold text-slate-700">
+                                        В т.ч. Именинники
+                                        <i class="fa-solid fa-circle-info text-slate-300 ml-1 cursor-pointer hover:text-slate-500 transition-colors" onclick="openInfoModal('Именинники', 'Скидка 50% предоставляется <b>только день в день</b>.<br><br>Обязательно предъявление оригинала документа (свидетельство о рождении или удостоверение личности).')"></i>
+                                    </div>
+                                    <div class="text-[9px] font-bold text-amber-600">Скидка 50%</div>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="updateSubCount('adl_bday', 'adl', -1)" class="counter-btn minus !w-7 !h-7 !text-sm">-</button>
+                                    <input type="number" id="count_adl_bday" value="0" readonly class="w-6 text-center bg-transparent font-bold text-slate-800 text-xs">
+                                    <button onclick="updateSubCount('adl_bday', 'adl', 1)" class="counter-btn plus !w-7 !h-7 !text-sm">+</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="flex items-center text-[11px] font-bold text-slate-700">
+                                        В т.ч. Пенсионеры
+                                        <i class="fa-solid fa-circle-info text-slate-300 ml-1 cursor-pointer hover:text-slate-500 transition-colors" onclick="openInfoModal('Пенсионеры', 'Скидка 50% действует при предъявлении <b>оригинала пенсионного удостоверения РК</b> на кассе парка.')"></i>
+                                    </div>
+                                    <div class="text-[9px] font-bold text-amber-600">Скидка 50%</div>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="updateSubCount('snr', 'adl', -1)" class="counter-btn minus !w-7 !h-7 !text-sm">-</button>
+                                    <input type="number" id="count_snr" value="0" readonly class="w-6 text-center bg-transparent font-bold text-slate-800 text-xs">
+                                    <button onclick="updateSubCount('snr', 'adl', 1)" class="counter-btn plus !w-7 !h-7 !text-sm">+</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="flex items-center text-[11px] font-bold text-slate-700">
+                                        В т.ч. Инвалиды I/II гр.
+                                        <i class="fa-solid fa-circle-info text-slate-300 ml-1 cursor-pointer hover:text-slate-500 transition-colors" onclick="openInfoModal('Инвалиды', 'Бесплатный вход предоставляется инвалидам I и II групп при предъявлении <b>оригинала справки об инвалидности</b>.')"></i>
+                                    </div>
+                                    <div class="text-[9px] font-bold text-teal-600">Бесплатно</div>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="updateSubCount('adl_inv', 'adl', -1)" class="counter-btn minus !w-7 !h-7 !text-sm">-</button>
+                                    <input type="number" id="count_adl_inv" value="0" readonly class="w-6 text-center bg-transparent font-bold text-slate-800 text-xs">
+                                    <button onclick="updateSubCount('adl_inv', 'adl', 1)" class="counter-btn plus !w-7 !h-7 !text-sm">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Дети (Главный счетчик) -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="flex items-center justify-between p-3.5 hover:bg-slate-50 transition-colors">
+                            <div>
+                                <div class="text-sm font-bold text-slate-800">Дети (Всего)</div>
+                                <div class="text-[10px] text-slate-500">От 4 до 11 лет</div>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="updateMainCount('chld', -1)" class="counter-btn minus">-</button>
+                                <input type="number" id="count_chld" value="0" readonly class="w-8 text-center bg-transparent font-black text-slate-800 text-base">
+                                <button onclick="updateMainCount('chld', 1)" class="counter-btn plus">+</button>
+                            </div>
+                        </div>
+                        <!-- Вложенные льготы для Детей -->
+                        <div id="sub_chld" class="bg-slate-50 border-t border-slate-100 p-3 space-y-2 hidden">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="flex items-center text-[11px] font-bold text-slate-700">
+                                        В т.ч. Именинники
+                                        <i class="fa-solid fa-circle-info text-slate-300 ml-1 cursor-pointer hover:text-slate-500 transition-colors" onclick="openInfoModal('Именинники', 'Скидка 50% предоставляется <b>только день в день</b>.<br><br>Обязательно предъявление оригинала документа (свидетельство о рождении или удостоверение личности).')"></i>
+                                    </div>
+                                    <div class="text-[9px] font-bold text-amber-600">Скидка 50%</div>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="updateSubCount('chld_bday', 'chld', -1)" class="counter-btn minus !w-7 !h-7 !text-sm">-</button>
+                                    <input type="number" id="count_chld_bday" value="0" readonly class="w-6 text-center bg-transparent font-bold text-slate-800 text-xs">
+                                    <button onclick="updateSubCount('chld_bday', 'chld', 1)" class="counter-btn plus !w-7 !h-7 !text-sm">+</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="flex items-center text-[11px] font-bold text-slate-700">
+                                        В т.ч. Инвалиды I/II гр.
+                                        <i class="fa-solid fa-circle-info text-slate-300 ml-1 cursor-pointer hover:text-slate-500 transition-colors" onclick="openInfoModal('Инвалиды', 'Бесплатный вход предоставляется детям-инвалидам I и II групп при предъявлении <b>оригинала справки об инвалидности</b>.')"></i>
+                                    </div>
+                                    <div class="text-[9px] font-bold text-teal-600">Бесплатно</div>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="updateSubCount('chld_inv', 'chld', -1)" class="counter-btn minus !w-7 !h-7 !text-sm">-</button>
+                                    <input type="number" id="count_chld_inv" value="0" readonly class="w-6 text-center bg-transparent font-bold text-slate-800 text-xs">
+                                    <button onclick="updateSubCount('chld_inv', 'chld', 1)" class="counter-btn plus !w-7 !h-7 !text-sm">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 mb-2">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block ml-1">Бесплатный вход</span>
+                    </div>
+
+                    <!-- Малыши -->
+                    <div class="flex items-center justify-between p-3.5 bg-teal-50/50 rounded-xl border border-teal-100">
+                        <div>
+                            <div class="text-sm font-bold text-slate-800">Малыши</div>
+                            <div class="text-[9px] text-slate-500 leading-tight mt-0.5">До 3 лет включительно</div>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="updateMainCount('inf', -1)" class="counter-btn minus">-</button>
+                            <input type="number" id="count_inf" value="0" readonly class="w-8 text-center bg-transparent font-black text-slate-800 text-base">
+                            <button onclick="updateMainCount('inf', 1)" class="counter-btn plus">+</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="docsWarning" class="hidden mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3.5 flex items-start gap-2 shadow-sm">
+                    <i class="fa-solid fa-circle-exclamation text-amber-500 mt-0.5 text-lg"></i>
+                    <p class="text-xs text-amber-900 font-medium leading-snug">
+                        Вы выбрали льготные билеты. Пожалуйста, возьмите с собой <b>оригиналы документов</b> (свидетельство о рождении, пенсионное удостоверение и т.д.) для предъявления на кассе.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Итог -->
+            <div class="bg-slate-900 rounded-2xl p-5 text-white flex items-center justify-between shadow-lg mt-4">
+                <div>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block mb-1">Итого к оплате</span>
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="text-3xl font-black tracking-tight" id="totalPrice">0</span>
+                        <span class="text-lg font-bold text-brand-sky">₸</span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="text-sm text-slate-300 font-bold bg-slate-800 px-3 py-1.5 rounded-lg" id="totalGuests">0 гостей</span>
+                </div>
+            </div>
+
+            <!-- Кнопка заявки -->
+            <button id="bookBtn" class="w-full btn-primary py-4 rounded-xl text-base font-bold flex justify-center items-center gap-2 opacity-50 pointer-events-none mt-2">
+                <i class="fa-brands fa-whatsapp text-xl"></i>
+                Перейти к оформлению
+            </button>
+            <p class="text-[11px] text-center text-slate-400 font-medium">Вас перенаправит в WhatsApp для бронирования.</p>
+        </div>
+    </div>
+
+    <script>
+        const tariffs = {
+            day: [
+                { start: '05-23', end: '05-31', ADL: 11100, CHLD: 8860 },
+                { start: '06-01', end: '08-23', ADL: 14000, CHLD: 11500 },
+                { start: '08-24', end: '09-06', ADL: 11500, CHLD: 9200 },
+                { start: '09-07', end: '09-20', ADL: 9500, CHLD: 7500 },
+                { start: '09-21', end: '09-30', ADL: 8500, CHLD: 6700 },
+            ],
+            evening: [
+                { start: '06-01', end: '08-31', ADL: 9500, CHLD: 7500 }
+            ]
+        };
+
+        const WHATSAPP_NUMBER = "77718133779";
+        
+        let counts = {
+            adl: 0,
+            chld: 0,
+            adl_bday: 0,
+            snr: 0,
+            adl_inv: 0,
+            chld_bday: 0,
+            chld_inv: 0,
+            inf: 0
+        };
+
+        const visitDateInput = document.getElementById('visitDate');
+        const tariffTypeInput = document.getElementById('tariffType');
+        
+        const today = new Date();
+        const todayStr = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+        visitDateInput.value = todayStr;
+
+        visitDateInput.addEventListener('change', calculateTotal);
+        tariffTypeInput.addEventListener('change', calculateTotal);
+
+        function updateMainCount(type, delta) {
+            // Валидация: Дети и малыши не могут быть без взрослых
+            if ((type === 'chld' || type === 'inf') && delta > 0 && counts.adl === 0) {
+                openInfoModal('Требуется сопровождение', 'Дети и малыши могут посещать парк <b>только в сопровождении взрослых</b> (от 12 лет).<br><br>Пожалуйста, сначала добавьте хотя бы одного взрослого.');
+                return;
+            }
+
+            const newVal = counts[type] + delta;
+            if (newVal >= 0 && newVal <= 50) {
+                counts[type] = newVal;
+                document.getElementById('count_' + type).value = newVal;
+                
+                const subPanel = document.getElementById('sub_' + type);
+                if (subPanel) {
+                    if (newVal > 0) subPanel.classList.remove('hidden');
+                    else subPanel.classList.add('hidden');
+                }
+                
+                if (type === 'adl') {
+                    const totalSub = counts.adl_bday + counts.snr + counts.adl_inv;
+                    if (totalSub > newVal) {
+                        counts.adl_bday = 0;
+                        counts.snr = 0;
+                        counts.adl_inv = 0;
+                        document.getElementById('count_adl_bday').value = 0;
+                        document.getElementById('count_snr').value = 0;
+                        document.getElementById('count_adl_inv').value = 0;
+                    }
+                    
+                    // Если убрали всех взрослых, автоматически убираем детей и малышей
+                    if (newVal === 0 && (counts.chld > 0 || counts.inf > 0)) {
+                        counts.chld = 0; counts.chld_bday = 0; counts.chld_inv = 0; counts.inf = 0;
+                        document.getElementById('count_chld').value = 0;
+                        document.getElementById('count_chld_bday').value = 0;
+                        document.getElementById('count_chld_inv').value = 0;
+                        document.getElementById('count_inf').value = 0;
+                        const subChld = document.getElementById('sub_chld');
+                        if (subChld) subChld.classList.add('hidden');
+                    }
+                }
+                if (type === 'chld') {
+                    const totalSub = counts.chld_bday + counts.chld_inv;
+                    if (totalSub > newVal) {
+                        counts.chld_bday = 0;
+                        counts.chld_inv = 0;
+                        document.getElementById('count_chld_bday').value = 0;
+                        document.getElementById('count_chld_inv').value = 0;
+                    }
+                }
+                
+                calculateTotal();
+            }
+        }
+
+        function updateSubCount(subType, parentType, delta) {
+            const newVal = counts[subType] + delta;
+            if (newVal >= 0) {
+                let totalSubNew = newVal;
+                if (parentType === 'adl') {
+                    totalSubNew = (subType === 'adl_bday' ? newVal : counts.adl_bday) + 
+                                  (subType === 'snr' ? newVal : counts.snr) + 
+                                  (subType === 'adl_inv' ? newVal : counts.adl_inv);
+                } else if (parentType === 'chld') {
+                    totalSubNew = (subType === 'chld_bday' ? newVal : counts.chld_bday) + 
+                                  (subType === 'chld_inv' ? newVal : counts.chld_inv);
+                }
+                
+                if (totalSubNew <= counts[parentType]) {
+                    if (newVal > counts[subType] && (subType === 'adl_bday' || subType === 'chld_bday')) {
+                        triggerConfetti();
+                    }
+                    counts[subType] = newVal;
+                    document.getElementById('count_' + subType).value = newVal;
+                    calculateTotal();
+                }
+            }
+        }
+
+        function triggerConfetti() {
+            var duration = 2.5 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 4,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42', '#ffa62d', '#ff36ff']
+                });
+                confetti({
+                    particleCount: 4,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42', '#ffa62d', '#ff36ff']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        function openInfoModal(title, text) {
+            document.getElementById('infoModalTitle').innerHTML = `<i class="fa-solid fa-circle-info text-brand-blue"></i> ${title}`;
+            document.getElementById('infoModalText').innerHTML = text;
+            
+            const modal = document.getElementById('infoModal');
+            const content = document.getElementById('infoModalContent');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeInfoModal() {
+            const modal = document.getElementById('infoModal');
+            const content = document.getElementById('infoModalContent');
+            
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function getBasePrice(dateStr, type, category) {
+            const dateObj = new Date(dateStr);
+            if (isNaN(dateObj.getTime())) return -1;
+            const md = String(dateObj.getMonth() + 1).padStart(2, '0') + '-' + String(dateObj.getDate()).padStart(2, '0');
+            const periods = tariffs[type] || [];
+            let currentTariff = null;
+            for (const period of periods) {
+                if (md >= period.start && md <= period.end) { currentTariff = period; break; }
+            }
+            if (!currentTariff) return -1;
+            return currentTariff[category] || 0;
+        }
+
+        function calculateTotal() {
+            const date = visitDateInput.value;
+            const tariffType = tariffTypeInput.value;
+            
+            const adlPrice = getBasePrice(date, tariffType, 'ADL');
+            const chldPrice = getBasePrice(date, tariffType, 'CHLD');
+            
+            const docsWarning = document.getElementById('docsWarning');
+            const dateWarning = document.getElementById('dateWarning');
+            const totalPriceEl = document.getElementById('totalPrice');
+            const bookBtn = document.getElementById('bookBtn');
+            const totalGuestsEl = document.getElementById('totalGuests');
+
+            const totalGuests = counts.adl + counts.chld + counts.inf;
+            
+            if (counts.adl_bday > 0 || counts.chld_bday > 0 || counts.snr > 0 || counts.adl_inv > 0 || counts.chld_inv > 0) {
+                docsWarning.classList.remove('hidden');
+            } else {
+                docsWarning.classList.add('hidden');
+            }
+
+            if (adlPrice === -1 || chldPrice === -1) {
+                dateWarning.classList.remove('hidden');
+                totalPriceEl.textContent = "0";
+                bookBtn.classList.add('opacity-50', 'pointer-events-none');
+                bookBtn.disabled = true;
+                return;
+            } else {
+                dateWarning.classList.add('hidden');
+                if (totalGuests > 0) {
+                    bookBtn.classList.remove('opacity-50', 'pointer-events-none');
+                    bookBtn.disabled = false;
+                } else {
+                    bookBtn.classList.add('opacity-50', 'pointer-events-none');
+                    bookBtn.disabled = true;
+                }
+            }
+
+            const normalAdl = counts.adl - counts.adl_bday - counts.snr - counts.adl_inv;
+            const normalChld = counts.chld - counts.chld_bday - counts.chld_inv;
+
+            // Логика акции "Раннее бронирование" (28-30 июня покупка -> посещение в июле)
+            const today = new Date();
+            const isBookingWindow = today.getMonth() === 5 && (today.getDate() >= 24 && today.getDate() <= 30); // Временно включил с 24 числа, чтобы вы могли протестировать прямо сейчас! Позже поменяем на === 28 || === 29 || === 30
+            
+            const dateObj = new Date(date);
+            const isVisitInJuly = dateObj.getMonth() === 6; // 6 это Июль (нумерация месяцев с 0)
+            
+            const isPromoDate = isBookingWindow && isVisitInJuly;
+            
+            const promoBadge = document.getElementById('promoBadge');
+            if (isPromoDate) {
+                promoBadge.classList.remove('hidden');
+                promoBadge.innerHTML = `<span class="inline-flex items-center gap-1 text-[10px] text-white bg-gradient-to-r from-pink-500 to-orange-400 font-bold px-2 py-1 rounded-md shadow-sm"><i class="fa-solid fa-fire"></i> Раннее бронирование: -15%</span>`;
+            } else {
+                promoBadge.classList.add('hidden');
+            }
+
+            const baseNormalSum = (normalAdl * adlPrice) + (normalChld * chldPrice);
+            const promoSum = isPromoDate ? baseNormalSum * 0.85 : baseNormalSum;
+
+            const totalSum = promoSum + 
+                             (counts.adl_bday * (adlPrice * 0.5)) + 
+                             (counts.chld_bday * (chldPrice * 0.5)) + 
+                             (counts.snr * (adlPrice * 0.5));
+            
+            totalPriceEl.textContent = Math.round(totalSum).toLocaleString('ru-RU');
+            totalGuestsEl.textContent = `${totalGuests} гостей`;
+        }
+
+        document.getElementById('bookBtn').addEventListener('click', () => {
+            const totalGuests = counts.adl + counts.chld + counts.inf;
+            if (totalGuests === 0) return;
+
+            const dateStr = visitDateInput.value;
+            const parts = dateStr.split('-');
+            const formattedDate = parts.length === 3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : dateStr;
+            const tariffText = tariffTypeInput.options[tariffTypeInput.selectedIndex].text;
+            const totalSum = document.getElementById('totalPrice').textContent;
+
+            let msg = `Дата посещения: ${formattedDate}\n`;
+            msg += `Тариф: ${tariffText}\n\n`;
+            msg += `Список гостей:\n`;
+            
+            if (counts.adl > 0) {
+                msg += `- От 12 лет: ${counts.adl}\n`;
+                if (counts.adl_bday > 0) msg += `  (В том числе Именинники: ${counts.adl_bday})\n`;
+                if (counts.snr > 0) msg += `  (В том числе Пенсионеры: ${counts.snr})\n`;
+                if (counts.adl_inv > 0) msg += `  (В том числе Инвалиды I/II: ${counts.adl_inv})\n`;
+            }
+            if (counts.chld > 0) {
+                msg += `- От 4 до 11 лет: ${counts.chld}\n`;
+                if (counts.chld_bday > 0) msg += `  (В том числе Именинники: ${counts.chld_bday})\n`;
+                if (counts.chld_inv > 0) msg += `  (В том числе Инвалиды I/II: ${counts.chld_inv})\n`;
+            }
+            if (counts.inf > 0) msg += `- До 3 лет (Бесплатно): ${counts.inf}\n`;
+            
+            const today = new Date();
+            const isBookingWindow = today.getMonth() === 5 && (today.getDate() >= 24 && today.getDate() <= 30);
+            const visitDateObj = new Date(dateStr);
+            const isVisitInJuly = visitDateObj.getMonth() === 6;
+            const isPromoDate = isBookingWindow && isVisitInJuly;
+
+            if (isPromoDate) {
+                const normalCount = (counts.adl - counts.adl_bday - counts.snr - counts.adl_inv) + (counts.chld - counts.chld_bday - counts.chld_inv);
+                if (normalCount > 0) {
+                    msg += `\n🎁 ПРИМЕНЕНА АКЦИЯ: Раннее бронирование (-15% на ${normalCount} обычн. билетов)\n`;
+                }
+            }
+
+            msg += `\nИТОГО: ${totalSum} тенге`;
+
+            // ХАКЕРСКИЙ ОБХОД: Заменяем кириллические буквы на визуально идентичные латинские.
+            // Это на 100% обходит любые локальные фильтры (антивирусы, словари), которые ломают текст.
+            function cyrillicToLatinHack(str) {
+                const map = {
+                    'А':'A','В':'B','С':'C','Е':'E','О':'O','Р':'P','Т':'T','Х':'X','У':'Y','М':'M','Н':'H',
+                    'а':'a','с':'c','е':'e','о':'o','р':'p','х':'x','у':'y'
+                };
+                return str.split('').map(char => map[char] || char).join('');
+            }
+
+            const safeMsg = cyrillicToLatinHack(msg);
+            const safeText = encodeURIComponent(safeMsg);
+            
+            const link = document.createElement('a');
+            link.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${safeText}`;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        calculateTotal();
+
+    </script>
+</body>
+</html>
