@@ -412,12 +412,15 @@
                 
                 <div id="authFormBody" class="pt-2 w-full text-center">
                     <p id="authError" class="text-red-400 text-xs font-semibold hidden transition-opacity duration-300 text-center pb-2 text-glow">Неверный логин или пароль</p>
-                    <button id="authBtn" class="w-full btn-coral rounded-full py-3 text-sm font-bold tracking-widest uppercase">
+                    <button id="authBtn" class="w-full btn-coral rounded-full py-3 text-sm font-bold tracking-widest uppercase mb-4">
                         Войти в систему
                     </button>
+                    
+                    <a href="client.html" class="inline-block mt-2 text-xs font-bold text-cyan-200 hover:text-white transition-colors pb-0.5 border-b border-transparent hover:border-cyan-200">
+                        Я клиент. Перейти к покупке билетов <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
+                    </a>
                 </div>
             </div>
-        </div>
         </div>
     </div>
 
@@ -439,6 +442,13 @@
 
             <!-- Profile Info & Exit -->
             <div class="flex items-center space-x-6">
+                
+                <!-- Client Version Link -->
+                <a href="client.html" target="_blank" class="hidden sm:flex items-center space-x-2 px-4 py-2 bg-slate-100 text-brand-blue rounded-xl font-bold text-xs hover:bg-slate-200 transition-colors">
+                    <i class="fa-solid fa-up-right-from-square"></i>
+                    <span>Клиентская версия</span>
+                </a>
+
                 <!-- Active User Badge -->
                 <div class="hidden md:flex items-center space-x-3 border-r border-slate-200 pr-5">
                     <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-brand-blue font-bold text-sm">
@@ -766,13 +776,17 @@
                             </div>
                         </div>
                         
-                        <div class="flex items-center space-x-1.5 w-full sm:w-auto">
+                        <div class="flex flex-wrap items-center gap-1.5 justify-end w-full sm:w-auto mt-2 sm:mt-0">
+                            <!-- WhatsApp Action (Copy + Open) -->
+                            <button id="whatsappShareBtn" class="flex-1 sm:flex-none justify-center bg-green-500 hover:bg-green-600 text-white font-bold px-3 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm border border-green-400" title="Отправить в WhatsApp">
+                                <i class="fa-brands fa-whatsapp sm:mr-1.5 text-sm text-white"></i> <span class="hidden sm:inline">WhatsApp</span>
+                            </button>
                             <!-- Download Action -->
                             <button id="downloadReceiptBtn" class="flex-1 sm:flex-none justify-center bg-white hover:bg-slate-50 text-brand-blue font-bold px-3 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm" title="Скачать PDF чек">
                                 <i class="fa-solid fa-cloud-arrow-down sm:mr-1.5 text-brand-sky text-sm"></i> <span class="hidden sm:inline">Скачать</span>
                             </button>
                             <!-- Share Actions -->
-                            <button id="nativeShareBtn" class="flex-1 sm:flex-none justify-center bg-white/20 hover:bg-white/30 text-white font-bold px-4 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm backdrop-blur-sm border border-white/10" title="Поделиться чеком">
+                            <button id="nativeShareBtn" class="flex-1 sm:flex-none justify-center bg-white/20 hover:bg-white/30 text-white font-bold px-3 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm backdrop-blur-sm border border-white/10" title="Поделиться чеком">
                                 <i class="fa-solid fa-share-nodes sm:mr-1.5 text-sm"></i> <span class="hidden sm:inline">Поделиться</span>
                             </button>
                         </div>
