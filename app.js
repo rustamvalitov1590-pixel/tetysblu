@@ -1460,14 +1460,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function changeQuickCount(category, delta) {
+        // Валидация: Дети и малыши не могут быть без взрослых (adl) или пенсионеров (pens)
+        if ((category === 'chld' || category === 'inf') && delta > 0 && quickCounts.adl === 0 && quickCounts.pens === 0) {
+            if (window.showToast) {
+                window.showToast('Дети могут посещать парк только в сопровождении взрослых', 'fa-triangle-exclamation', 'bg-amber-500');
+            }
+            return;
+        }
+
         quickCounts[category] = Math.max(0, quickCounts[category] + delta);
+        
+        // Авто-сброс детей, если убрали взрослых
+        if ((category === 'adl' || category === 'pens') && quickCounts.adl === 0 && quickCounts.pens === 0) {
+            quickCounts.chld = 0;
+            quickCounts.inf = 0;
+        }
+
         updateQuickInputsDOM();
         syncQuickToDetailed();
         render();
     }
 
     function updateQuickCount(category, val) {
-        quickCounts[category] = Math.max(0, parseInt(val) || 0);
+        const newVal = Math.max(0, parseInt(val) || 0);
+        
+        if ((category === 'chld' || category === 'inf') && newVal > quickCounts[category] && quickCounts.adl === 0 && quickCounts.pens === 0) {
+            if (window.showToast) {
+                window.showToast('Дети могут посещать парк только в сопровождении взрослых', 'fa-triangle-exclamation', 'bg-amber-500');
+            }
+            updateQuickInputsDOM(); // вернуть старое значение в инпут
+            return;
+        }
+
+        quickCounts[category] = newVal;
+        
+        if ((category === 'adl' || category === 'pens') && quickCounts.adl === 0 && quickCounts.pens === 0) {
+            quickCounts.chld = 0;
+            quickCounts.inf = 0;
+        }
+
         updateQuickInputsDOM();
         syncQuickToDetailed();
         render();
@@ -1485,7 +1516,23 @@ document.addEventListener('DOMContentLoaded', () => {
     window.updateQuickCount = updateQuickCount;
     window.resetQuickCounts = resetQuickCounts;
 
+    function validateAccompaniment() {
+        const adlStat = parseInt(document.getElementById('statAdl').textContent) || 0;
+        const pensStat = parseInt(document.getElementById('statPens').textContent) || 0;
+        const chldStat = parseInt(document.getElementById('statChld').textContent) || 0;
+        const infStat = parseInt(document.getElementById('statInf').textContent) || 0;
+        
+        if ((chldStat > 0 || infStat > 0) && adlStat === 0 && pensStat === 0) {
+            if (window.showToast) {
+                window.showToast('Внимание! Дети не могут быть в чеке без взрослых.', 'fa-triangle-exclamation', 'bg-red-500');
+            }
+            return false;
+        }
+        return true;
+    }
+
     function copyExportData() {
+        if (!validateAccompaniment()) return;
         if (!exportDataEl.value) return;
         
         navigator.clipboard.writeText(exportDataEl.value).then(() => {
@@ -1517,6 +1564,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nativeShareBtn = document.getElementById('nativeShareBtn');
 
     function getShareText() {
+        if (!validateAccompaniment()) return '';
         saveToHistory();
         const text = exportDataEl.value;
         return `*Официальный расчет Tetys Blu*\n\n${text}`;
@@ -1524,6 +1572,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Общая функция для шаринга картинки чека
     async function shareReceiptImage(btn) {
+        if (!validateAccompaniment()) return;
         const originalHtml = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin sm:mr-1.5"></i> <span class="hidden sm:inline">Подождите...</span>';
         try {
@@ -1559,7 +1608,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const whatsappShareBtn = document.getElementById('whatsappShareBtn');
+    if (whatsappShareBtn) {
+        whatsappShareBtn.addEventListener('click', async function() {
+            if (!validateAccompaniment()) return;
+            const originalHtml = this.innerHTML;
+            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin sm:mr-1.5 text-white"></i> <span class="hidden sm:inline">Отправка...</span>';
+            try {
+                saveToHistory();
+                const { shareData } = await generateImageForShare();
+                const file = shareData.files[0];
+                let copied = false;
+                
+                // Пробуем скопировать картинку в буфер
+                if (navigator.clipboard && navigator.clipboard.write) {
+                    await navigator.clipboard.write([
+                        new ClipboardItem({
+                            [file.type]: file
+                        })
+                    ]);
+                    copied = true;
+                }
+                
+                // Открываем WhatsApp без приветственного текста
+                window.open('https://wa.me/', '_blank');
+                
+                if (copied) {
+                    window.showToast('Картинка скопирована! В WhatsApp нажмите "Вставить" (Paste)', 'fa-check', 'bg-green-600');
+                }
+            } catch (err) {
+                console.error('Ошибка копирования:', err);
+                // Если не удалось скопировать картинку (ограничения браузера), просто отправляем текстовую версию
+                const text = getShareText();
+                if (text) {
+                    const encodedText = encodeURIComponent(text);
+                    window.open(`https://wa.me/?text=${encodedText}`, '_blank');
+                    window.showToast('Браузер запретил копировать картинку. Отправлен текстовый чек.', 'fa-info-circle', 'bg-amber-500');
+                }
+            } finally {
+                this.innerHTML = originalHtml;
+            }
+        });
+    }
+
     function sendToEmail() {
+        if (!validateAccompaniment()) return;
         saveToHistory();
         const text = exportDataEl.value;
         if (!text) return;
@@ -1583,7 +1676,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const subject = `${dateStr} | ${tariffStr}`;
-        window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+        
+        // Проверяем, мобильное ли это устройство
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            // На смартфоне открываем нативное приложение почты (Mail, Gmail app и т.д.)
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+        } else {
+            // На ПК открываем Gmail в браузере в новой вкладке
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+            window.open(gmailUrl, '_blank');
+        }
     }
     
     const emailExportBtn = document.getElementById('emailExportBtn');
@@ -1760,6 +1864,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function generateReceiptImage() {
+        if (!validateAccompaniment()) return;
         saveToHistory(); // Сохраняем перед генерацией чека
         const container = document.getElementById('receiptContainer');
         const content = document.getElementById('receiptContent');
