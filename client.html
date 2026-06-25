@@ -216,8 +216,8 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="flex items-center text-[11px] font-bold text-slate-700">
-                                        В т.ч. Инвалиды I/II гр.
-                                        <i class="fa-solid fa-circle-info text-slate-300 ml-1 cursor-pointer hover:text-slate-500 transition-colors" onclick="openInfoModal('Инвалиды', 'Бесплатный вход предоставляется инвалидам I и II групп при предъявлении <b>оригинала справки об инвалидности</b>.')"></i>
+                                        В т.ч. Инв 1 кат.
+                                        <i class="fa-solid fa-circle-info text-slate-300 ml-1 cursor-pointer hover:text-slate-500 transition-colors" onclick="openInfoModal('Инвалиды', 'Бесплатный вход предоставляется инвалидам I группы при предъявлении <b>оригинала справки об инвалидности</b>.')"></i>
                                     </div>
                                     <div class="text-[9px] font-bold text-teal-600">Бесплатно</div>
                                 </div>
@@ -225,6 +225,32 @@
                                     <button onclick="updateSubCount('adl_inv', 'adl', -1)" class="counter-btn minus !w-7 !h-7 !text-sm">-</button>
                                     <input type="number" id="count_adl_inv" value="0" readonly class="w-6 text-center bg-transparent font-bold text-slate-800 text-xs">
                                     <button onclick="updateSubCount('adl_inv', 'adl', 1)" class="counter-btn plus !w-7 !h-7 !text-sm">+</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="flex items-center text-[11px] font-bold text-slate-700">
+                                        В т.ч. Инв 2 кат.
+                                    </div>
+                                    <div class="text-[9px] font-bold text-amber-600">Скидка 15%</div>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="updateSubCount('adl_inv2', 'adl', -1)" class="counter-btn minus !w-7 !h-7 !text-sm">-</button>
+                                    <input type="number" id="count_adl_inv2" value="0" readonly class="w-6 text-center bg-transparent font-bold text-slate-800 text-xs">
+                                    <button onclick="updateSubCount('adl_inv2', 'adl', 1)" class="counter-btn plus !w-7 !h-7 !text-sm">+</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="flex items-center text-[11px] font-bold text-slate-700">
+                                        В т.ч. Инв 3 кат.
+                                    </div>
+                                    <div class="text-[9px] font-bold text-amber-600">Скидка 10%</div>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="updateSubCount('adl_inv3', 'adl', -1)" class="counter-btn minus !w-7 !h-7 !text-sm">-</button>
+                                    <input type="number" id="count_adl_inv3" value="0" readonly class="w-6 text-center bg-transparent font-bold text-slate-800 text-xs">
+                                    <button onclick="updateSubCount('adl_inv3', 'adl', 1)" class="counter-btn plus !w-7 !h-7 !text-sm">+</button>
                                 </div>
                             </div>
                         </div>
@@ -262,10 +288,10 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="flex items-center text-[11px] font-bold text-slate-700">
-                                        В т.ч. Инвалиды I/II гр.
-                                        <i class="fa-solid fa-circle-info text-slate-300 ml-1 cursor-pointer hover:text-slate-500 transition-colors" onclick="openInfoModal('Инвалиды', 'Бесплатный вход предоставляется детям-инвалидам I и II групп при предъявлении <b>оригинала справки об инвалидности</b>.')"></i>
+                                        В т.ч. Дети-инвалиды
+                                        <i class="fa-solid fa-circle-info text-slate-300 ml-1 cursor-pointer hover:text-slate-500 transition-colors" onclick="openInfoModal('Инвалиды', 'Детям с инвалидностью предоставляется скидка 10% по умолчанию (без разделения на категории).')"></i>
                                     </div>
-                                    <div class="text-[9px] font-bold text-teal-600">Бесплатно</div>
+                                    <div class="text-[9px] font-bold text-amber-600">Скидка 10%</div>
                                 </div>
                                 <div class="flex items-center gap-1">
                                     <button onclick="updateSubCount('chld_inv', 'chld', -1)" class="counter-btn minus !w-7 !h-7 !text-sm">-</button>
@@ -348,6 +374,8 @@
             adl_bday: 0,
             snr: 0,
             adl_inv: 0,
+            adl_inv2: 0,
+            adl_inv3: 0,
             chld_bday: 0,
             chld_inv: 0,
             inf: 0
@@ -382,14 +410,18 @@
                 }
                 
                 if (type === 'adl') {
-                    const totalSub = counts.adl_bday + counts.snr + counts.adl_inv;
+                    const totalSub = counts.adl_bday + counts.snr + counts.adl_inv + counts.adl_inv2 + counts.adl_inv3;
                     if (totalSub > newVal) {
                         counts.adl_bday = 0;
                         counts.snr = 0;
                         counts.adl_inv = 0;
+                        counts.adl_inv2 = 0;
+                        counts.adl_inv3 = 0;
                         document.getElementById('count_adl_bday').value = 0;
                         document.getElementById('count_snr').value = 0;
                         document.getElementById('count_adl_inv').value = 0;
+                        document.getElementById('count_adl_inv2').value = 0;
+                        document.getElementById('count_adl_inv3').value = 0;
                     }
                     
                     // Если убрали всех взрослых, автоматически убираем детей и малышей
@@ -424,7 +456,9 @@
                 if (parentType === 'adl') {
                     totalSubNew = (subType === 'adl_bday' ? newVal : counts.adl_bday) + 
                                   (subType === 'snr' ? newVal : counts.snr) + 
-                                  (subType === 'adl_inv' ? newVal : counts.adl_inv);
+                                  (subType === 'adl_inv' ? newVal : counts.adl_inv) +
+                                  (subType === 'adl_inv2' ? newVal : counts.adl_inv2) +
+                                  (subType === 'adl_inv3' ? newVal : counts.adl_inv3);
                 } else if (parentType === 'chld') {
                     totalSubNew = (subType === 'chld_bday' ? newVal : counts.chld_bday) + 
                                   (subType === 'chld_inv' ? newVal : counts.chld_inv);
@@ -521,7 +555,7 @@
 
             const totalGuests = counts.adl + counts.chld + counts.inf;
             
-            if (counts.adl_bday > 0 || counts.chld_bday > 0 || counts.snr > 0 || counts.adl_inv > 0 || counts.chld_inv > 0) {
+            if (counts.adl_bday > 0 || counts.chld_bday > 0 || counts.snr > 0 || counts.adl_inv > 0 || counts.chld_inv > 0 || counts.adl_inv2 > 0 || counts.adl_inv3 > 0) {
                 docsWarning.classList.remove('hidden');
             } else {
                 docsWarning.classList.add('hidden');
@@ -544,7 +578,7 @@
                 }
             }
 
-            const normalAdl = counts.adl - counts.adl_bday - counts.snr - counts.adl_inv;
+            const normalAdl = counts.adl - counts.adl_bday - counts.snr - counts.adl_inv - counts.adl_inv2 - counts.adl_inv3;
             const normalChld = counts.chld - counts.chld_bday - counts.chld_inv;
 
             // Логика акции "Раннее бронирование" (28-30 июня покупка -> посещение в июле)
@@ -570,7 +604,10 @@
             const totalSum = promoSum + 
                              (counts.adl_bday * (adlPrice * 0.5)) + 
                              (counts.chld_bday * (chldPrice * 0.5)) + 
-                             (counts.snr * (adlPrice * 0.5));
+                             (counts.snr * (adlPrice * 0.5)) +
+                             (counts.adl_inv2 * (adlPrice * 0.85)) +
+                             (counts.adl_inv3 * (adlPrice * 0.90)) +
+                             (counts.chld_inv * (chldPrice * 0.90));
             
             totalPriceEl.textContent = Math.round(totalSum).toLocaleString('ru-RU');
             totalGuestsEl.textContent = `${totalGuests} гостей`;
@@ -594,12 +631,14 @@
                 msg += `- От 12 лет: ${counts.adl}\n`;
                 if (counts.adl_bday > 0) msg += `  (В том числе Именинники: ${counts.adl_bday})\n`;
                 if (counts.snr > 0) msg += `  (В том числе Пенсионеры: ${counts.snr})\n`;
-                if (counts.adl_inv > 0) msg += `  (В том числе Инвалиды I/II: ${counts.adl_inv})\n`;
+                if (counts.adl_inv > 0) msg += `  (В том числе Инв 1 кат.: ${counts.adl_inv})\n`;
+                if (counts.adl_inv2 > 0) msg += `  (В том числе Инв 2 кат.: ${counts.adl_inv2})\n`;
+                if (counts.adl_inv3 > 0) msg += `  (В том числе Инв 3 кат.: ${counts.adl_inv3})\n`;
             }
             if (counts.chld > 0) {
                 msg += `- От 4 до 11 лет: ${counts.chld}\n`;
                 if (counts.chld_bday > 0) msg += `  (В том числе Именинники: ${counts.chld_bday})\n`;
-                if (counts.chld_inv > 0) msg += `  (В том числе Инвалиды I/II: ${counts.chld_inv})\n`;
+                if (counts.chld_inv > 0) msg += `  (В том числе Дети-инвалиды: ${counts.chld_inv})\n`;
             }
             if (counts.inf > 0) msg += `- До 3 лет (Бесплатно): ${counts.inf}\n`;
             
@@ -610,7 +649,7 @@
             const isPromoDate = isBookingWindow && isVisitInJuly;
 
             if (isPromoDate) {
-                const normalCount = (counts.adl - counts.adl_bday - counts.snr - counts.adl_inv) + (counts.chld - counts.chld_bday - counts.chld_inv);
+                const normalCount = (counts.adl - counts.adl_bday - counts.snr - counts.adl_inv - counts.adl_inv2 - counts.adl_inv3) + (counts.chld - counts.chld_bday - counts.chld_inv);
                 if (normalCount > 0) {
                     msg += `\n🎁 ПРИМЕНЕНА АКЦИЯ: Раннее бронирование (-15% на ${normalCount} обычн. билетов)\n`;
                 }
