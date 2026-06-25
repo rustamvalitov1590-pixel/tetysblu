@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let tourists = [];
     let currentCalcMode = 'detailed';
-    let quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0 };
+    let quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0, inv2: 0, inv3: 0, chld_inv: 0 };
     
     // Элементы DOM
     const visitDateInput = document.getElementById('visitDate');
@@ -214,6 +214,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalPriceEl = document.getElementById('totalPrice');
     const exportDataEl = document.getElementById('exportData');
     const copyExportBtn = document.getElementById('copyExportBtn');
+
+    // --- Цензура ---
+    function sanitizeProfanity(text) {
+        if (!text) return text;
+        const badWords = [
+            'хуй', 'хуя', 'хуе', 'нахуй', 'похуй', 'дохуя', 'пизда', 'пизде', 'пизду', 'пизды', 'пиздец', 'ебать', 'ебан', 'ебану', 'долбоеб', 'долбоёб', 'уебан', 'бля', 'блять', 'блядь', 'сука', 'суку', 'суки', 'пидор', 'пидарас', 'пидорас', 'гандон', 'шлюха', 'шлюхи', 'шалава', 'шалавы', 'шмара', 'курва', 'залупа', 'говно', 'мразь', 'ублюдок', 'чмо', 'хуесос', 'хуйло', 'педик', 'пиздюк',
+            'қотақ', 'котак', 'қотағым', 'котагым', 'қотақбас', 'котакбас', 'ам', 'амы', 'сігіс', 'сигис', 'шешең', 'шешен', 'шешеңді', 'шешенди', 'көт', 'көті', 'коти', 'жалеп', 'амшык', 'амшық',
+            'fuck', 'fucker', 'fucking', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'cock', 'pussy', 'whore', 'slut'
+        ];
+        let sanitized = text;
+        badWords.forEach(word => {
+            const regex = new RegExp('(^|[^\\\\p{L}])(' + word + ')($|[^\\\\p{L}])', 'giu');
+            sanitized = sanitized.replace(regex, '$1***$3');
+            sanitized = sanitized.replace(regex, '$1***$3'); // second pass for overlaps
+        });
+        return sanitized;
+    }
+    // ---------------
+
 
     // Dummy auth logic removed to prevent conflicts with checkAuth
 
@@ -608,6 +627,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         const birthYear = parseInt(yearMatch[1], 10);
                         dobIso = '';
                         tYear = birthYear;
+                    } else {
+                        // Ищем просто цифру от 1 до 99 (скорее всего это возраст), даже если она слитно с именем
+                        const simpleAgeRegex = /(?<!\\d)(\\d{1,2})(?=$|\\s|,)/;
+                        const simpleAgeMatch = line.match(simpleAgeRegex);
+                        if (simpleAgeMatch) {
+                            matchedStr = simpleAgeMatch[1]; // берем саму группу цифр
+                            const age = parseInt(simpleAgeMatch[1], 10);
+                            dobIso = '';
+                            tAge = age;
+                        }
                     }
                 }
             }
@@ -644,6 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
             namePart = namePart.replace(/[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\s\-\']/g, ' ').trim();
             namePart = namePart.replace(/^-+|-+$|^\'+|\'+$/g, '').trim();
             namePart = namePart.replace(/\s+/g, ' ');
+            namePart = sanitizeProfanity(namePart);
 
             const wordsCount = namePart.split(' ').length;
             const hasDateOrAge = dobIso || tAge !== undefined || tYear !== undefined || parsedCategory;
@@ -678,6 +708,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Проверка на дубликат (полное совпадение имени и даты/возраста)
+                const isCleanState = Object.values(quickCounts).every(v => v === 0);
                 const isDuplicate = tourists.some(t => 
                     t.fullName.toLowerCase() === touristObj.fullName.toLowerCase() && 
                     t.dob === touristObj.dob && 
@@ -765,6 +796,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateTourist(id, field, value) {
         const tourist = tourists.find(t => t.id === id);
         if (tourist) {
+            if (field === 'fullName') value = sanitizeProfanity(value);
             tourist[field] = value;
             if (field === 'fullName') {
                 if (!tourist.genderManuallySet) {
@@ -860,6 +892,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tourist) {
             tourist.category = value;
             tourist.categoryManuallySet = true;
+            if (value !== 'INV') {
+                tourist.disability = 'none';
+            } else if (tourist.disability === 'none' || !tourist.disability) {
+                const visitDate = visitDateInput ? visitDateInput.value : '';
+                const age = tourist.age !== undefined ? tourist.age : calculateAge(tourist.dob, visitDate);
+                if (age !== null && age >= 4 && age <= 11) {
+                    tourist.disability = '3';
+                } else {
+                    tourist.disability = '1';
+                }
+            }
             render();
         }
     }
@@ -1094,10 +1137,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const vDate = visitDate ? new Date(visitDate) : null;
             // Акция применяется, если галочка включена (а галочка доступна только для июля)
             const earlyBookingEnabled = earlyBookingToggle ? earlyBookingToggle.checked : false;
-            const discountInfo = calculateDiscount(t.dob, visitDate, t.disability, age, t.gender);
+            const discountInfo = calculateDiscount(t.dob, visitDate, category === 'INV' ? t.disability : 'none', age, t.gender);
             let discountPercent = discountInfo.percent || 0;
             
-            if (category === 'INV') {
+            if (category === 'INV' && t.disability !== '2' && t.disability !== '3') {
                 discountPercent = 100;
             }
             
@@ -1117,7 +1160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (category === 'CHLD') counts.chld++;
             if (category === 'INF') counts.inf++;
             if (category === 'SNR') counts.pens++;
-            if (category === 'INV') counts.inv = (counts.inv || 0) + 1;
+            if (category === 'INV' || t.disability === '1' || t.disability === '2' || t.disability === '3') counts.inv = (counts.inv || 0) + 1;
             if (discountInfo.isBirthday) counts.bday++;
 
             totalSum += finalPrice;
@@ -1171,7 +1214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 <div class="w-full flex gap-2 pr-6 md:pr-0 md:contents">
                     <!-- Full Name -->
-                    <div class="flex-1 md:col-span-4 w-full relative">
+                    <div class="flex-1 md:col-span-3 w-full relative">
                         <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">ФИО (Рус/Каз)</label>
                         <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
                             onblur="updateTourist('${t.id}', 'fullName', this.value)"
@@ -1190,8 +1233,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 
                 <!-- Stats Row (Age, Category, Price) -->
-                <div class="col-span-12 w-full flex justify-between items-center mt-1 md:mt-0 md:contents border-t border-slate-100 md:border-0 pt-1.5 md:pt-0">
-                    <div class="flex space-x-6 md:contents">
+                <div class="col-span-12 w-full flex flex-wrap justify-between items-center mt-1 md:mt-0 md:contents border-t border-slate-100 md:border-0 pt-1.5 md:pt-0">
+                    <div class="flex space-x-2 sm:space-x-4 md:space-x-6 md:contents">
                         <!-- Age -->
                         <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center">
                             <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Возраст</label>
@@ -1201,7 +1244,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         
                         <!-- Category -->
-                        <div class="md:col-span-2 text-left md:text-center flex flex-col items-start md:items-center w-full md:w-auto">
+                        <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center w-full md:w-auto">
                             <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Тип</label>
                             <select onchange="updateTouristCategory('${t.id}', this.value)"
                                 class="text-[9px] font-bold px-1.5 py-0.5 rounded border ${catSelectClass} focus:outline-none transition-all duration-300 cursor-pointer text-center w-full md:w-auto">
@@ -1211,6 +1254,19 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <option value="SNR" ${category === 'SNR' ? 'selected' : ''}>SNR</option>
                                 <option value="INV" ${category === 'INV' ? 'selected' : ''}>INV</option>
                             </select>
+                        </div>
+
+                        <!-- Disability -->
+                        <div class="md:col-span-2 text-left md:text-center flex flex-col items-start md:items-center w-full md:w-auto">
+                            ${category === 'INV' ? `
+                            <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Льгота</label>
+                            <select onchange="updateTourist('${t.id}', 'disability', this.value)"
+                                class="text-[9px] font-bold px-1.5 py-0.5 rounded border border-slate-200 text-slate-700 bg-white focus:outline-none transition-all duration-300 cursor-pointer text-center w-full md:w-auto">
+                                <option value="1" ${t.disability === '1' || t.disability === 'none' ? 'selected' : ''}>Инв 1 кат. (100%)</option>
+                                <option value="2" ${t.disability === '2' ? 'selected' : ''}>Инв 2 кат. (15%)</option>
+                                <option value="3" ${t.disability === '3' ? 'selected' : ''}>Инв 3 кат. (10%)</option>
+                            </select>
+                            ` : ''}
                         </div>
                     </div>
                     
@@ -1254,7 +1310,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (quickCounts.chld > 0) { exportText += `Дети CHLD: ${quickCounts.chld}\n`; hasQuickGuests = true; }
             if (quickCounts.pens > 0) { exportText += `Пенсионеры SNR: ${quickCounts.pens}\n`; hasQuickGuests = true; }
             if (quickCounts.inf > 0) { exportText += `Младенцы INF: ${quickCounts.inf}\n`; hasQuickGuests = true; }
-            if (quickCounts.inv > 0) { exportText += `Инвалиды INV: ${quickCounts.inv}\n`; hasQuickGuests = true; }
+            if (quickCounts.inv > 0) { exportText += `Инвалиды 1 кат. INV: ${quickCounts.inv}\n`; hasQuickGuests = true; }
+            if (quickCounts.inv2 > 0) { exportText += `Инвалиды 2 кат. INV2: ${quickCounts.inv2}\n`; hasQuickGuests = true; }
+            if (quickCounts.inv3 > 0) { exportText += `Инвалиды 3 кат. INV3: ${quickCounts.inv3}\n`; hasQuickGuests = true; }
             if (!hasQuickGuests) {
                 exportText += 'Пусто\n';
             }
@@ -1312,7 +1370,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function syncDetailedToQuick() {
-        let counts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0 };
+        let counts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0, inv2: 0, inv3: 0 };
         const visitDate = visitDateInput ? visitDateInput.value : '';
         tourists.forEach(t => {
             let age = null;
@@ -1324,12 +1382,23 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 age = calculateAge(t.dob, visitDate);
             }
-            const category = getPassengerCategory(age, t.gender, visitDate);
-            if (category === 'ADL') counts.adl++;
-            if (category === 'CHLD') counts.chld++;
-            if (category === 'SNR') counts.pens++;
-            if (category === 'INF') counts.inf++;
-            if (category === 'INV') counts.inv++;
+            let category = getPassengerCategory(age, t.gender, visitDate);
+            if (t.categoryManuallySet && t.category) {
+                category = t.category;
+            } else if (age === null && t.category) {
+                category = t.category;
+            }
+
+            if (t.disability === '1' || category === 'INV') {
+                counts.inv++;
+            } else if (t.disability === '2') {
+                counts.inv2++;
+            } else if (t.disability === '3') {
+                counts.inv3++;
+            } else if (category === 'ADL') counts.adl++;
+            else if (category === 'CHLD') counts.chld++;
+            else if (category === 'SNR') counts.pens++;
+            else if (category === 'INF') counts.inf++;
         });
         quickCounts = counts;
         updateQuickInputsDOM();
@@ -1398,6 +1467,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 categoryManuallySet: true
             });
         }
+        // Add Disabled 2nd Category (INV2)
+        for (let i = 0; i < quickCounts.inv2; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 30}-06-15`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: '2',
+                category: 'INV',
+                categoryManuallySet: true
+            });
+        }
+        // Add Disabled 3rd Category (INV3) - Adults
+        for (let i = 0; i < quickCounts.inv3; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 30}-06-15`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: '3',
+                category: 'INV',
+                categoryManuallySet: true
+            });
+        }
+        // Add Disabled Children (CHLD_INV)
+        for (let i = 0; i < quickCounts.chld_inv; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 8}-06-15`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: '3',
+                category: 'INV',
+                categoryManuallySet: true
+            });
+        }
     }
 
     function updateQuickInputsDOM() {
@@ -1406,11 +1514,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const pensEl = document.getElementById('quick_pens');
         const infEl = document.getElementById('quick_inf');
         const invEl = document.getElementById('quick_inv');
+        const inv2El = document.getElementById('quick_inv2');
+        const inv3El = document.getElementById('quick_inv3');
+        const chldInvEl = document.getElementById('quick_chld_inv');
         if (adlEl) adlEl.value = quickCounts.adl;
         if (chldEl) chldEl.value = quickCounts.chld;
         if (pensEl) pensEl.value = quickCounts.pens;
         if (infEl) infEl.value = quickCounts.inf;
         if (invEl) invEl.value = quickCounts.inv;
+        if (inv2El) inv2El.value = quickCounts.inv2;
+        if (inv3El) inv3El.value = quickCounts.inv3;
+        if (chldInvEl) chldInvEl.value = quickCounts.chld_inv;
     }
 
     function switchCalcMode(mode) {
@@ -1451,7 +1565,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resetQuickBtn.classList.remove('hidden');
             emptyState.classList.add('hidden');
             
-            if (quickCounts.adl === 0 && quickCounts.chld === 0 && quickCounts.pens === 0 && quickCounts.inf === 0 && quickCounts.inv === 0) {
+            if (quickCounts.adl === 0 && quickCounts.chld === 0 && quickCounts.pens === 0 && quickCounts.inf === 0 && quickCounts.inv === 0 && quickCounts.inv2 === 0 && quickCounts.inv3 === 0) {
                 syncDetailedToQuick();
             }
         }
@@ -1505,7 +1619,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetQuickCounts() {
-        quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0 };
+        quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0, inv2: 0, inv3: 0 };
         updateQuickInputsDOM();
         syncQuickToDetailed();
         render();
