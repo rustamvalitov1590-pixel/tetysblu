@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
         let sanitized = text;
         badWords.forEach(word => {
-            const regex = new RegExp('(^|[^\\\\p{L}])(' + word + ')($|[^\\\\p{L}])', 'giu');
+            const regex = new RegExp('(^|[^\\p{L}])(' + word + ')($|[^\\p{L}])', 'giu');
             sanitized = sanitized.replace(regex, '$1***$3');
             sanitized = sanitized.replace(regex, '$1***$3'); // second pass for overlaps
         });
