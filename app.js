@@ -463,7 +463,26 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. Убираем нумерацию строк (например, "1. ", "2) ", "3 ") в начале каждой строки
         normalizedText = normalizedText.replace(/(?:^|\n)\s*\d+[\.\)\s\-]+\s*(?=[a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/g, '\n');
         
-        const lines = normalizedText.split('\n');
+        // Сначала склеиваем строки, если на одной строке только имя, а на следующей — только дата
+let rawLines = normalizedText.split('\n').map(l => l.trim()).filter(l => l);
+let lines = [];
+
+for (let i = 0; i < rawLines.length; i++) {
+    let currentLine = rawLines[i];
+    
+    // Проверяем, является ли СЛЕДУЮЩАЯ строка чистой датой рождения (дд.мм.гггг)
+    if (i + 1 < rawLines.length) {
+        let nextLine = rawLines[i + 1];
+        const pureDobRegex = /^\b(0?[1-9]|[12]\d|3[01])[\.\-\/\s](0?[1-9]|1[0-2])[\.\-\/\s](\d{4}|\d{2})\b$/;
+        
+        if (pureDobRegex.test(nextLine)) {
+            // Склеиваем имя и дату в одну строку через пробел
+            currentLine = currentLine + " " + nextLine;
+            i++; // Пропускаем следующую строку, так как мы её уже забрали
+        }
+    }
+    lines.push(currentLine);
+}
         const unrecognizedLines = [];
         
         lines.forEach((line, index) => {
