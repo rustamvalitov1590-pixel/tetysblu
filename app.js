@@ -214,6 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentSeasonYearEl) { currentSeasonYearEl.textContent = `Сезон ${today.getFullYear()}`; }
 
     if (visitDateInput) visitDateInput.addEventListener('change', render);
+    if (clientTypeInput) clientTypeInput.value = 'tourist';
     if (clientTypeInput) clientTypeInput.addEventListener('change', render);
     if (tariffTypeInput) tariffTypeInput.addEventListener('change', render);
     if (addTouristBtn) addTouristBtn.addEventListener('click', addTourist);
@@ -259,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!matched) {
                     const hasAdl = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                     const hasChld = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:дети|дет(?:и|ям|ей|ях)?|chld|child(?:ren)?|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
-                    const hasInf = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)(?=$|\s|[^a-zA-Z4-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
+                    const hasInf = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                     const hasSnr = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                     const hasInv = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                     
@@ -286,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 render(); bulkText.value = ''; return;
             }
 
-            // Улучшенная склейка перенесенных дат
+            // Улучшенная склейка перенесенных дат визитов
             let rawLines = text.split('\n').map(l => l.trim()).filter(l => l);
             let mergedLines = [];
             for (let i = 0; i < rawLines.length; i++) {
@@ -308,16 +309,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const originalLine = line;
                 if (!line) return;
 
-                // Перевод текстовых месяцев СТРОГО внутри дат (чтобы не ломать фамилии вроде Каймир)
+                // Исправленная и безопасная обработка месяцев строго в составе дат
                 const monthMap = {
                     'января': '01', 'январь': '01', 'янв': '01', 'февраля': '02', 'февраль': '02', 'фев': '02', 'марта': '03', 'март': '03', 'мар': '03', 'апреля': '04', 'апрель': '04', 'апр': '04', 'мая': '05', 'май': '05', 'июня': '06', 'июнь': '06', 'июн': '06', 'июля': '07', 'июль': '07', 'июл': '07', 'августа': '08', 'август': '08', 'авг': '08', 'сентября': '09', 'сентябрь': '09', 'сен': '09', 'октября': '10', 'октябрь': '10', 'окт': '10', 'ноября': '11', 'ноябрь': '11', 'ноя': '11', 'декабря': '12', 'декабрь': '12', 'дек': '12', 'қаңтар': '01', 'кантар': '01', 'қаң': '01', 'ақпан': '02', 'акпан': '02', 'ақп': '02', 'наурыз': '03', 'нау': '03', 'сәуір': '04', 'сэуір': '04', 'сәу': '04', 'мамыр': '05', 'мам': '05', 'маусым': '06', 'мау': '06', 'шілде': '07', 'шилде': '07', 'шіл': '07', 'тамыз': '08', 'там': '08', 'қыркүйек': '09', 'кыркуйек': '09', 'қыр': '09', 'қазан': '10', 'казан': '10', 'қаз': '10', 'қараша': '11', 'караша': '11', 'қар': '11', 'желтоқсан': '12', 'желтоксан': '12', 'жел': '12'
                 };
                 
-                // Ищем конструкцию "цифры + слово месяца" (например, 12 марта)
                 for (let key in monthMap) {
-                    const inlineMonthRegex = new RegExp(`(\\d{1,2})\\s+${key}\\s*(\\d{2,4})?`, 'gi');
-                    if (inlineDobMatch = line.match(inlineMonthMap)) {
-                         line = line.replace(inlineForm, (m, g1, g2) => `${g1}.${monthMap[key]}.${g2 || new Date().getFullYear()}`);
+                    const inlineMonthRegex = new RegExp(`(\\d{1,2})\\s+${key}(?:\\s*\\.?\\s*(\\d{2,4}))?`, 'gi');
+                    if (inlineMonthRegex.test(line)) {
+                        line = line.replace(inlineMonthRegex, (m, g1, g2) => `${g1}.${monthMap[key]}.${g2 || new Date().getFullYear()}`);
                     }
                 }
 
@@ -339,14 +339,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // Извлечение категории СТРОГО до очистки строки
+                // Извлечение категории СТРОГО по границам слов
                 let parsedCategory = null;
                 const lowerLineForCat = line.toLowerCase();
-                if (/(?:^|\s)(?:snr|pensioners?|пенсионер[ыов]*|пенс|з[еи]й?неткер(?:лер)?)(?=$|\s)/i.test(lowerLineForCat)) { parsedCategory = 'SNR'; }
-                else if (/(?:^|\s)(?:chld|child(?:ren)?|дети|дет[ямнска]*|бала(?:лар)?)(?=$|\s)/i.test(lowerLineForCat)) { parsedCategory = 'CHLD'; }
-                else if (/(?:^|\s)(?:inf(?:ants?)?|младен[ецаы]*|мл[ад]*|ребен[окац]*|реб|сәби|бөбек)(?=$|\s)/i.test(lowerLineForCat)) { parsedCategory = 'INF'; }
-                else if (/(?:^|\s)(?:inv|инвалид[ыов]*|инв|мүгедек(?:тер)?)(?=$|\s)/i.test(lowerLineForCat)) { parsedCategory = 'INV'; }
-                else if (/(?:^|\s)(?:adl|adults?|взросл[ыеяйах]*|взр|үлкен)(?=$|\s)/i.test(lowerLineForCat)) { parsedCategory = 'ADL'; }
+                if (/\b(?:snr|pensioners?|пенсионер[ыов]*|пенс|зейнеткер(?:лер)?|з[еи]й?неткер(?:лер)?)\b/i.test(lowerLineForCat)) { parsedCategory = 'SNR'; }
+                else if (/\b(?:chld|child(?:ren)?|дети|дет[ямнска]*|бала(?:лар)?)\b/i.test(lowerLineForCat)) { parsedCategory = 'CHLD'; }
+                else if (/\b(?:inf(?:ants?)?|младен[ецаы]*|мл[ад]*|ребен[окац]*|реб|сәби|бөбек)\b/i.test(lowerLineForCat)) { parsedCategory = 'INF'; }
+                else if (/\b(?:inv|инвалид[ыов]*|инв|мүгедек(?:тер)?)\b/i.test(lowerLineForCat)) { parsedCategory = 'INV'; }
+                else if (/\b(?:adl|adults?|взросл[ыеяйах]*|взр|үлкен)\b/i.test(lowerLineForCat)) { parsedCategory = 'ADL'; }
 
                 const dobRegexStr = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s\,])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b/;
                 const dobMatch = line.match(dobRegexStr);
@@ -372,8 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 let namePart = line;
                 if (matchedStr) { namePart = namePart.replace(matchedStr, ' '); }
                 
-                // Удаляем триггеры категорий строго по границам слов, не ломая ФИО
-                namePart = namePart.replace(/\b(?:snr|pensioners?|пенсионер[ыов]*|пенс|з[еи]й?неткер(?:лер)?|chld|child|дети|дет[а-я]*|бала(?:лар)?|inf|младен[а-я]*|реб[а-я]*|inv|инвалид[а-я]*|adl|adults?|взросл[а-я]*|взр)\b/ig, ' ');
+                // Очищаем триггеры категорий строго по границам слов
+                namePart = namePart.replace(/\b(?:snr|pensioners?|пенсионер[ыов]*|пенс|зейнеткер(?:лер)?|з[еи]й?неткер(?:лер)?|chld|child|дети|дет[a-я]*|бала(?:лар)?|inf|младен[а-я]*|реб[а-я]*|inv|инвалид[а-я]*|adl|adults?|взросл[а-я]*|взр)\b/ig, ' ');
                 namePart = namePart.replace(/дата\s*рожд[а-я]*/ig, '').replace(/\bд\.?р\.?\b/ig, '');
                 namePart = namePart.replace(/\b(?:билет|пассажир|итого|сумма|заявка|бронь|турист|тур|пакс)\b/ig, ' ');
                 
@@ -481,7 +481,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tourist) {
             tourist.category = value;
             tourist.categoryManuallySet = true;
-            if (value !== 'INV') { tourist.disability = 'none'; } 
             render();
         }
     }
@@ -528,6 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'INF';
     }
 
+    // Восстановлена привязка к ADL в случае SNR/INV
     function getBasePrice(visitDateStr, clientType, tariffType, passengerCategory) {
         if (!visitDateStr || passengerCategory === '-') return 0;
         const visitDate = new Date(visitDateStr);
@@ -661,10 +661,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveDraft() {
         const data = { visitDate: visitDateInput ? visitDateInput.value : '', clientType: clientTypeInput ? clientTypeInput.value : 'tourist', tariffType: tariffTypeInput ? tariffTypeInput.value : 'day', tourists: tourists, currentCalcMode: currentCalcMode, quickCounts: quickCounts };
         localStorage.setItem('tetisBluDraft', JSON.stringify(data));
-    }
-
-    function switchCalcMode(mode) {
-        currentCalcMode = mode; render();
     }
 
     function initApp() {
