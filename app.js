@@ -1,6 +1,6 @@
-// === ??                   (                                       ) ===
+// === ?? ��������� ������� (���� ��� �������� ��������� ��� � �����) ===
 const CONFIG = {
-    // 1.      (                  )
+    // 1. ���� (������ �� ��������)
     tariffs: {
         day: [
             { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 } },
@@ -13,14 +13,14 @@ const CONFIG = {
             { start: '06-01', end: '08-31', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9000, CHLD: 7180 } }
         ]
     },
-    // 2.        (           )
+    // 2. ������ (� ���������)
     discounts: {
-        earlyBooking: 15, //      :                    
-        pensioner: 50,    //           
-        birthday: 100,    //           
-        disabled: 100     //             
+        earlyBooking: 15, // �����: ������ ������������
+        pensioner: 50,    // ����������
+        birthday: 100,    // ����������
+        disabled: 100     // ������������
     },
-    // 3.         (               )
+    // 3. ������� (������ � ������)
     credentials: {
         'admin': 'tetys2026',
         'manager': '0606'
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const adlRegex = /(\d+)\s*(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
             const infRegex = /(\d+)\s*(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
             const chldRegex = /(\d+)\s*(?:дети|дет(?:и|ям|ей|ях)?|chld|child(?:ren)?|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
-            const snrRegex = /(\d+)\s*(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
+            const snrRegex = /(\d+)\s*(?:пенсионер[ыов]*|пенс|snr|pensioners?|з(?:ейн|ин)еткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
             const invRegex = /(\d+)\s*(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
             
             let adlCount = 0;
@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const hasAdl = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                 const hasChld = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:дети|дет(?:и|ям|ей|ях)?|chld|child(?:ren)?|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                 const hasInf = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
-                const hasSnr = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
+                const hasSnr = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:пенсионер[ыов]*|пенс|snr|pensioners?|з(?:ейн|ин)еткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                 const hasInv = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                 
                 if (hasAdl || hasChld || hasInf || hasSnr || hasInv) {
@@ -457,13 +457,56 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 1. Предобработка: разбиваем на строки по датам рождения перед именами
-        const dobSplitRegex = /(?:\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s\,])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b|\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{4}|\d{2})\b)([\.\s\-\/\,]+)(?=[a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/g;
+        // Не разбиваем, если после даты идет служебное слово-категория (взрослый, ребенок,
+        // пенсионер/зейнеткер и т.д.) или указание возраста — это относится к тому же гостю,
+        // а не является началом новой строки/имени.
+        const trailingKeywordsAfterDate = '(?:лет|года?|г(?:оды|\\.)?|г\\.?р\\.?|жаста?|yo|y\\.o\\.|years?(?:\\s+old)?|old|mr|mrs|ms|chd|inf|adl|snr|inv|pax|adults?|pensioners?|children|infants?|взр(?:осл[а-я]*)?|реб(?:ен[окац]+)?|дети|дет(?:и|ям|ей|ях)?|млад(?:ен[а-я]*)?|пенс(?:ионер[а-я]*)?|инв(?:алид[а-я]*)?|з(?:ейн|ин)еткер(?:лер)?|мүгедек(?:тер)?|бала(?:лар)?|үлкен(?:дер)?)';
+        const dobSplitRegex = new RegExp(
+            '(?:\\b(0?[1-9]|[12]\\d|3[01])([\\.\\-\\/\\s\\,])(0?[1-9]|1[0-2])\\2(\\d{4}|\\d{2})\\b|\\b(0?[1-9]|[12]\\d|3[01])\\.(0?[1-9]|1[0-2])(\\d{4})\\b|\\b(0[1-9]|[12]\\d|3[01])(0[1-9]|1[0-2])(\\d{4}|\\d{2})\\b)([\\.\\s\\-\\/\\,]+)(?!' +
+            trailingKeywordsAfterDate + '(?:$|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ]))(?=[a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])',
+            'gi'
+        );
         let normalizedText = text.replace(dobSplitRegex, '$&\n');
         
         // 2. Убираем нумерацию строк (например, "1. ", "2) ", "3 ") в начале каждой строки
         normalizedText = normalizedText.replace(/(?:^|\n)\s*\d+[\.\)\s\-]+\s*(?=[a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/g, '\n');
         
-        const lines = normalizedText.split('\n');
+        const rawLines = normalizedText.split('\n');
+
+        // 3. Объединяем строки, где имя и дата рождения указаны на разных строках подряд
+        // (частый случай при копировании списков из мессенджеров/таблиц, где дата стоит под именем).
+        const dobLineRegex = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s\,])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b|\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{4}|\d{2})\b/;
+        const ageOrYearLineRegex = /^\(?\d{1,4}\)?\s*(?:лет|года?|г(?:\.|ода)?|г\.?р\.?|жаста?|yo|y\.o\.|years?(?:\s+old)?|old)?\.?$/i;
+
+        const isNameOnlyLine = (str) => {
+            const t = str.trim();
+            if (!t) return false;
+            if (/\d/.test(t)) return false;
+            if (!/^[a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\s\-\']+$/.test(t)) return false;
+            return t.split(/\s+/).filter(w => w.length >= 2).length >= 1;
+        };
+
+        const isDateOrAgeOnlyLine = (str) => {
+            const t = str.trim();
+            if (!t) return false;
+            if (dobLineRegex.test(t)) {
+                const rest = t.replace(dobLineRegex, '').trim();
+                return rest === '' || new RegExp('^' + trailingKeywordsAfterDate + '\\.?$', 'i').test(rest);
+            }
+            return ageOrYearLineRegex.test(t);
+        };
+
+        const lines = [];
+        for (let i = 0; i < rawLines.length; i++) {
+            const current = rawLines[i];
+            if (isNameOnlyLine(current) && i + 1 < rawLines.length && isDateOrAgeOnlyLine(rawLines[i + 1])) {
+                lines.push(current.trim() + ' ' + rawLines[i + 1].trim());
+                i++; // строка с датой уже присоединена к имени, пропускаем её
+            } else {
+                lines.push(current);
+            }
+        }
+
         const unrecognizedLines = [];
         
         lines.forEach((line, index) => {
@@ -478,15 +521,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (index === 0) {
                 const headerDateMatch = line.match(/(?:на\s+|дата\s*посещения\s*)?(\d{1,2})[\.\-\/](\d{1,2})(?:[\.\-\/](\d{2}|\d{4}))?/i);
                 const lowerLine = line.toLowerCase();
+                // Используем границы слова (с учетом кириллицы), чтобы не путать окончания имен
+                // (например "Нина" или "Мадина" заканчиваются на "на") с ключевыми словами заголовка.
+                const cyrBoundary = "a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ";
+                const hasHeaderWord = (word) => new RegExp(`(?:^|[^${cyrBoundary}])${word}(?=$|[^${cyrBoundary}])`, 'i').test(lowerLine);
                 const isHeader = headerDateMatch && (
-                    lowerLine.includes('на ') || 
-                    lowerLine.includes('дата') || 
-                    lowerLine.includes('тетис') ||
-                    lowerLine.includes('tour') ||
-                    lowerLine.includes('тур') ||
-                    lowerLine.includes('бронь') ||
-                    lowerLine.includes('заявка') ||
-                    lowerLine.includes('групп')
+                    new RegExp(`(?:^|[^${cyrBoundary}])на(?=\\s+\\d)`, 'i').test(line) ||
+                    hasHeaderWord('дата') ||
+                    hasHeaderWord('тетис') ||
+                    hasHeaderWord('tour') ||
+                    hasHeaderWord('тур') ||
+                    hasHeaderWord('бронь') ||
+                    hasHeaderWord('заявка') ||
+                    hasHeaderWord('групп[а-яА-Я]*')
                 );
 
                 if (isHeader) {
@@ -518,7 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 parsedCategory = 'CHLD';
             } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:inf(?:ants?)?|младен[ецаы]*|мл[ад]*|ребен[окац]*|реб|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
                 parsedCategory = 'INF';
-            } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:snr|pensioners?|пенсионер[ыов]*|пенс|зейнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
+            } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:snr|pensioners?|пенсионер[ыов]*|пенс|з(?:ейн|ин)еткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
                 parsedCategory = 'SNR';
             } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:inv|инвалид[ыов]*|инв|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
                 parsedCategory = 'INV';
@@ -655,7 +702,7 @@ document.addEventListener('DOMContentLoaded', () => {
             namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:mr|mrs|ms|chd|inf|adl|snr|inv|pax|adults?|pensioners?|children|infants?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/ig, ' ');
             
             // Убираем категории на трех языках
-            namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:взр(?:осл[а-я]*)?|реб(?:ен[окац]+)?|дети|дет(?:и|ям|ей|ях)?|млад(?:ен[а-я]*)?|пенс(?:ионер[а-я]*)?|инв(?:алид[а-я]*)?|зейнеткер(?:лер)?|мүгедек(?:тер)?|бала(?:лар)?|үлкен(?:дер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/ig, ' ');
+            namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:взр(?:осл[а-я]*)?|реб(?:ен[окац]+)?|дети|дет(?:и|ям|ей|ях)?|млад(?:ен[а-я]*)?|пенс(?:ионер[а-я]*)?|инв(?:алид[а-я]*)?|з(?:ейн|ин)еткер(?:лер)?|мүгедек(?:тер)?|бала(?:лар)?|үлкен(?:дер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/ig, ' ');
             
             // Убираем CRM-метки и мусорные слова
             namePart = namePart.replace(/дата\s*рожд[а-яА-Я]*/ig, '');
@@ -2174,8 +2221,3 @@ document.addEventListener('DOMContentLoaded', () => {
     initApp();
 
 });
-
-
-
-
-
