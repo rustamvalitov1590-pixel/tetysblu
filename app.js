@@ -15,7 +15,7 @@ const CONFIG = {
     },
     // 2. Скидки (В процентах)
     discounts: {
-        earlyBooking: 15, // Акция: Раннее бронирование
+        earlyBooking: 15, //   Раннее бронирование
         pensioner: 50,    // Пенсионеры
         birthday: 100,    // Именинники
         disabled: 100     // Инвалидность
@@ -206,15 +206,18 @@ document.addEventListener('DOMContentLoaded', () => {
         bday: document.getElementById('statBday')
     };
 
+    // Устанавливаем сегодняшнюю дату по умолчанию
     const today = new Date();
     const todayStr = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
     if (visitDateInput) visitDateInput.value = todayStr;
     
+    // Автоматический год сезона
     const currentSeasonYearEl = document.getElementById('currentSeasonYear');
-    if (currentSeasonYearEl) { currentSeasonYearEl.textContent = `Сезон ${today.getFullYear()}`; }
+    if (currentSeasonYearEl) {
+        currentSeasonYearEl.textContent = `Сезон ${today.getFullYear()}`;
+    }
 
     if (visitDateInput) visitDateInput.addEventListener('change', render);
-    if (clientTypeInput) clientTypeInput.value = 'tourist';
     if (clientTypeInput) clientTypeInput.addEventListener('change', render);
     if (tariffTypeInput) tariffTypeInput.addEventListener('change', render);
     if (addTouristBtn) addTouristBtn.addEventListener('click', addTourist);
@@ -236,16 +239,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const isForced = (text === lastAttemptedText);
             lastAttemptedText = text;
             
-            const dobRegex = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b|\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{4}|\d{2})\b/;
+            const dobRegexStr = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s\,])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b/;
             
             function parseQuantityDescription(inputText) {
-                if (dobRegex.test(inputText)) return null;
+                if (dobRegexStr.test(inputText)) return null;
                 const cleanText = inputText.toLowerCase();
                 
                 const adlRegex = /(\d+)\s*(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
                 const infRegex = /(\d+)\s*(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
                 const chldRegex = /(\d+)\s*(?:дети|дет(?:и|ям|ей|ях)?|chld|child(?:ren)?|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
-                const snrRegex = /(\d+)\s*(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
+                const snrRegex = /(\d+)\s*(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?|з[еи]й?неткер[а-я]*)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
                 const invRegex = /(\d+)\s*(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
                 
                 let adlCount = 0; let chldCount = 0; let infCount = 0; let snrCount = 0; let invCount = 0;
@@ -261,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const hasAdl = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                     const hasChld = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:дети|дет(?:и|ям|ей|ях)?|chld|child(?:ren)?|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                     const hasInf = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
-                    const hasSnr = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
+                    const hasSnr = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?|з[еи]й?неткер[а-я]*)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                     const hasInv = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
                     
                     if (hasAdl || hasChld || hasInf || hasSnr || hasInv) {
@@ -287,7 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 render(); bulkText.value = ''; return;
             }
 
-            // Улучшенная склейка перенесенных дат визитов
             let rawLines = text.split('\n').map(l => l.trim()).filter(l => l);
             let mergedLines = [];
             for (let i = 0; i < rawLines.length; i++) {
@@ -309,16 +311,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const originalLine = line;
                 if (!line) return;
 
-                // Исправленная и безопасная обработка месяцев строго в составе дат
                 const monthMap = {
                     'января': '01', 'январь': '01', 'янв': '01', 'февраля': '02', 'февраль': '02', 'фев': '02', 'марта': '03', 'март': '03', 'мар': '03', 'апреля': '04', 'апрель': '04', 'апр': '04', 'мая': '05', 'май': '05', 'июня': '06', 'июнь': '06', 'июн': '06', 'июля': '07', 'июль': '07', 'июл': '07', 'августа': '08', 'август': '08', 'авг': '08', 'сентября': '09', 'сентябрь': '09', 'сен': '09', 'октября': '10', 'октябрь': '10', 'окт': '10', 'ноября': '11', 'ноябрь': '11', 'ноя': '11', 'декабря': '12', 'декабрь': '12', 'дек': '12', 'қаңтар': '01', 'кантар': '01', 'қаң': '01', 'ақпан': '02', 'акпан': '02', 'ақп': '02', 'наурыз': '03', 'нау': '03', 'сәуір': '04', 'сэуір': '04', 'сәу': '04', 'мамыр': '05', 'мам': '05', 'маусым': '06', 'мау': '06', 'шілде': '07', 'шилде': '07', 'шіл': '07', 'тамыз': '08', 'там': '08', 'қыркүйек': '09', 'кыркуйек': '09', 'қыр': '09', 'қазан': '10', 'казан': '10', 'қаз': '10', 'қараша': '11', 'караша': '11', 'қар': '11', 'желтоқсан': '12', 'желтоксан': '12', 'жел': '12'
                 };
                 
                 for (let key in monthMap) {
                     const inlineMonthRegex = new RegExp(`(\\d{1,2})\\s+${key}(?:\\s*\\.?\\s*(\\d{2,4}))?`, 'gi');
-                    if (inlineMonthRegex.test(line)) {
-                        line = line.replace(inlineMonthRegex, (m, g1, g2) => `${g1}.${monthMap[key]}.${g2 || new Date().getFullYear()}`);
-                    }
+                    line = line.replace(inlineMonthRegex, (m, g1, g2) => `${g1}.${monthMap[key]}.${g2 || new Date().getFullYear()}`);
                 }
 
                 let tAge = undefined; let tYear = undefined;
@@ -339,14 +338,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // Извлечение категории СТРОГО по границам слов
+                // Кастомные надежные границы распознавания для кириллицы и казахского языка
                 let parsedCategory = null;
                 const lowerLineForCat = line.toLowerCase();
-                if (/\b(?:snr|pensioners?|пенсионер[ыов]*|пенс|зейнеткер(?:лер)?|з[еи]й?неткер(?:лер)?)\b/i.test(lowerLineForCat)) { parsedCategory = 'SNR'; }
-                else if (/\b(?:chld|child(?:ren)?|дети|дет[ямнска]*|бала(?:лар)?)\b/i.test(lowerLineForCat)) { parsedCategory = 'CHLD'; }
-                else if (/\b(?:inf(?:ants?)?|младен[ецаы]*|мл[ад]*|ребен[окац]*|реб|сәби|бөбек)\b/i.test(lowerLineForCat)) { parsedCategory = 'INF'; }
-                else if (/\b(?:inv|инвалид[ыов]*|инв|мүгедек(?:тер)?)\b/i.test(lowerLineForCat)) { parsedCategory = 'INV'; }
-                else if (/\b(?:adl|adults?|взросл[ыеяйах]*|взр|үлкен)\b/i.test(lowerLineForCat)) { parsedCategory = 'ADL'; }
+                if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:snr|pensioners?|пенсионер[ыов]*|пенс|зейнеткер(?:лер)?|з[еи]й?неткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) { parsedCategory = 'SNR'; }
+                else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:chld|child(?:ren)?|дети|дет[ямнска]*|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) { parsedCategory = 'CHLD'; }
+                else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:inf(?:ants?)?|младен[ецаы]*|мл[ад]*|ребен[окац]*|реб|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) { parsedCategory = 'INF'; }
+                else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:inv|инвалид[ыов]*|инв|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) { parsedCategory = 'INV'; }
+                else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:adl|adults?|взросл[ыеяйах]*|взр|үлкен)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) { parsedCategory = 'ADL'; }
 
                 const dobRegexStr = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s\,])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b/;
                 const dobMatch = line.match(dobRegexStr);
@@ -368,15 +367,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
-                // Аккуратная очистка имени БЕЗ удаления текста слева
                 let namePart = line;
                 if (matchedStr) { namePart = namePart.replace(matchedStr, ' '); }
                 
-                // Очищаем триггеры категорий строго по границам слов
-                namePart = namePart.replace(/\b(?:snr|pensioners?|пенсионер[ыов]*|пенс|зейнеткер(?:лер)?|з[еи]й?неткер(?:лер)?|chld|child|дети|дет[a-я]*|бала(?:лар)?|inf|младен[а-я]*|реб[а-я]*|inv|инвалид[а-я]*|adl|adults?|взросл[а-я]*|взр)\b/ig, ' ');
-                namePart = namePart.replace(/дата\s*рожд[а-я]*/ig, '').replace(/\bд\.?р\.?\b/ig, '');
-                namePart = namePart.replace(/\b(?:билет|пассажир|итого|сумма|заявка|бронь|турист|тур|пакс)\b/ig, ' ');
-                
+                // Безопасное вырезание служебных ключевых слов без разрушения ФИО
+                const cleanKeywordsRegex = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:snr|pensioners?|пенсионер[ыов]*|пенс|зейнеткер(?:лер)?|з[еи]й?неткер(?:лер)?|chld|child(?:ren)?|дети|дет[ямнска]*|бала(?:лар)?|inf(?:ants?)?|младен[ецаы]*|мл[ад]*|ребен[окац]*|реб|сәби|бөбек|inv|инвалид[ыов]*|инв|мүгедек(?:тер)?|adl|adults?|взросл[ыеяйах]*|взр|үлкен|билет|пассажир|итого|сумма|заявка|бронь|турист|тур|пакс|дата\s*рожд[а-я]*|\bд\.?р\.?\b)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/gi;
+                namePart = namePart.replace(allKeywords, ' ');
                 namePart = namePart.replace(/[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\s\-\']/g, ' ').trim();
                 namePart = namePart.replace(/\s+/g, ' ');
                 namePart = sanitizeProfanity(namePart);
@@ -527,7 +523,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'INF';
     }
 
-    // Восстановлена привязка к ADL в случае SNR/INV
     function getBasePrice(visitDateStr, clientType, tariffType, passengerCategory) {
         if (!visitDateStr || passengerCategory === '-') return 0;
         const visitDate = new Date(visitDateStr);
@@ -625,16 +620,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="w-full flex gap-2 pr-6 md:pr-0 md:contents">
                     <div class="flex-1 md:col-span-3 w-full relative">
+                        <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">ФИО (Рус/Каз)</label>
                         <input type="text" placeholder="ФИО туриста" value="${t.fullName}" onblur="updateTourist('${t.id}', 'fullName', this.value)" class="w-full text-left bg-transparent text-slate-800 border ${!t.fullName ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors">
                     </div>
                     <div class="w-[100px] shrink-0 md:w-full md:col-span-2">
+                        <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">Дата рожд.</label>
                         <input type="text" value="${displayDob}" placeholder="дд.мм.гггг или гггг" onblur="updateTouristDobDirect('${t.id}', this.value)" class="w-full text-left bg-transparent text-slate-800 border ${(!t.dob && t.age === undefined && t.year === undefined) ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-0.5 py-1 text-xs font-medium transition-colors">
                     </div>
                 </div>
                 <div class="col-span-12 w-full flex flex-wrap justify-between items-center mt-1 md:mt-0 md:contents border-t border-slate-100 md:border-0 pt-1.5 md:pt-0">
                     <div class="flex space-x-2 sm:space-x-4 md:space-x-6 md:contents">
-                        <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center"><span class="text-xs font-bold ${age === null ? 'text-slate-400' : 'text-[#0076ba]'}">${age !== null ? age : '-'}</span></div>
+                        <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center">
+                            <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Возраст</label>
+                            <span class="text-xs font-bold ${age === null ? 'text-slate-400' : 'text-[#0076ba]'}">${age !== null ? age : '-'}</span>
+                        </div>
                         <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center w-full md:w-auto">
+                            <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Тип</label>
                             <select onchange="updateTouristCategory('${t.id}', this.value)" class="text-[9px] font-bold px-1.5 py-0.5 rounded border ${catSelectClass} focus:outline-none transition-all duration-300 cursor-pointer text-center w-full md:w-auto">
                                 <option value="ADL" ${category === 'ADL' ? 'selected' : ''}>ADL</option>
                                 <option value="CHLD" ${category === 'CHLD' ? 'selected' : ''}>CHLD</option>
@@ -644,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="md:col-span-2"></div>
                     </div>
-                    <div class="md:col-span-2 text-right pr-2">
+                    <div class="md:col-span-2 text-right flex flex-col items-end justify-center pr-2">
                         ${discountPercent > 0 ? `<span class="badge-discount text-[8px] px-1.5 py-0.5 rounded-full mb-0.5 font-bold">-${discountPercent}%</span>` : ''}
                         <span class="text-xs font-bold text-slate-900">${basePrice === -1 ? 'Нет тарифа' : Math.round(finalPrice).toLocaleString('ru-RU')} ₸</span>
                     </div>
