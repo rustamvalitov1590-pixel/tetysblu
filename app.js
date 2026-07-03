@@ -1,6 +1,6 @@
-// === CONFIG (Тарифная матрица) ===
+// === ??                   (                                       ) ===
 const CONFIG = {
-    // 1. Цены (Базовые по сезонам)
+    // 1.      (                  )
     tariffs: {
         day: [
             { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 } },
@@ -13,14 +13,14 @@ const CONFIG = {
             { start: '06-01', end: '08-31', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9000, CHLD: 7180 } }
         ]
     },
-    // 2. Скидки (В процентах)
+    // 2.        (           )
     discounts: {
-        earlyBooking: 15, // Раннее бронирование
-        pensioner: 50,    // Пенсионеры
-        birthday: 100,    // Именинники
-        disabled: 100     // Инвалидность
+        earlyBooking: 15, //      :                    
+        pensioner: 50,    //           
+        birthday: 100,    //           
+        disabled: 100     //             
     },
-    // 3. Доступы (Логины и пароли)
+    // 3.         (               )
     credentials: {
         'admin': 'tetys2026',
         'manager': '0606'
@@ -64,12 +64,19 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         
         container.appendChild(toast);
-        toast.offsetHeight; // Trigger reflow
+        
+        // Trigger reflow
+        toast.offsetHeight;
+        
+        // Animate in
         toast.classList.remove('translate-y-5', 'opacity-0');
         
         setTimeout(() => {
+            // Animate out
             toast.classList.add('-translate-y-5', 'opacity-0');
-            setTimeout(() => { toast.remove(); }, 300);
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
         }, 4000);
     };
 
@@ -102,9 +109,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Изменили ключ, чтобы сбросить старую сессию без пароля
     if (localStorage.getItem('tetysAuthV2') === 'true') {
-        if (authScreen) authScreen.classList.add('hidden');
-        if (appContent) appContent.classList.remove('hidden');
+        authScreen.classList.add('hidden');
+        appContent.classList.remove('hidden');
     } else {
         if (authLogin) authLogin.focus();
     }
@@ -112,9 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function checkAuth() {
         const login = authLogin.value.trim().toLowerCase();
         const pass = authPin.value;
+        
         if (CONFIG.credentials[login] && CONFIG.credentials[login] === pass) {
             localStorage.setItem('tetysAuthV2', 'true');
-            localStorage.setItem('tetysUser', login);
+            localStorage.setItem('tetysUser', login); // Запоминаем кто вошел
+            
             authScreen.style.opacity = '0';
             setTimeout(() => {
                 authScreen.classList.add('hidden');
@@ -124,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             authError.classList.remove('hidden');
             authPin.value = '';
+            
             if (authFormBody) {
                 authFormBody.style.animation = 'shake 0.4s ease-in-out';
                 setTimeout(() => { authFormBody.style.animation = ''; }, 400);
@@ -136,17 +147,38 @@ document.addEventListener('DOMContentLoaded', () => {
         authPin.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAuth(); });
         authLogin.addEventListener('keypress', (e) => { if (e.key === 'Enter') authPin.focus(); });
     }
+    
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => { localStorage.removeItem('tetysAuthV2'); localStorage.removeItem('tetysUser'); location.reload(); });
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('tetysAuthV2');
+            localStorage.removeItem('tetysUser');
+            location.reload();
+        });
     }
+    
     if (!document.getElementById('authStyles')) {
         const style = document.createElement('style');
         style.id = 'authStyles';
         style.innerHTML = `@keyframes shake { 0%, 100% {transform: translateX(0);} 20%, 60% {transform: translateX(-10px);} 40%, 80% {transform: translateX(10px);} }`;
         document.head.appendChild(style);
     }
+    // -------------------
 
-    // Transliteration
+    // Тарифы
+    const tariffs = {
+        day: [
+            { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 } },
+            { start: '06-01', end: '08-23', tourist: { ADL: 14000, CHLD: 11500 }, agent: { ADL: 13450, CHLD: 10700 } },
+            { start: '08-24', end: '09-06', tourist: { ADL: 11500, CHLD: 9200 }, agent: { ADL: 11200, CHLD: 8860 } },
+            { start: '09-07', end: '09-20', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9200, CHLD: 7300 } },
+            { start: '09-21', end: '09-30', tourist: { ADL: 8500, CHLD: 6700 }, agent: { ADL: 8350, CHLD: 6520 } },
+        ],
+        evening: [
+            { start: '06-01', end: '08-31', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9000, CHLD: 7180 } }
+        ]
+    };
+
+    // Транслитерация
     const cyrillicToLatinMap = {
         'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'E', 'Ж': 'ZH', 'З': 'Z', 'И': 'I',
         'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T',
@@ -164,10 +196,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Состояние приложения
+
     let tourists = [];
     let currentCalcMode = 'detailed';
     let quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0, inv2: 0, inv3: 0, chld_inv: 0 };
     
+    // Элементы DOM
     const visitDateInput = document.getElementById('visitDate');
     const clientTypeInput = document.getElementById('clientType');
     const tariffTypeInput = document.getElementById('tariffType');
@@ -185,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function sanitizeProfanity(text) {
         if (!text) return text;
         const badWords = [
-            'хуй', 'хуя', 'хуе', 'нахуй', 'похуй', 'дохуя', 'пизда', 'пизде', 'пизду', 'пизды', 'пиздец', 'ебать', 'ебан', 'ебану', 'долбоеб', 'долбоёб', 'уебан', 'бля', 'блять', 'блядь', 'сука', 'суку', 'суки', 'пидор', 'пидарас', 'гандон', 'шлюха', 'шлюхи', 'шалава', 'шалавы', 'шмара', 'курва', 'залупа', 'говно', 'мразь', 'ублюдок', 'чмо', 'хуесос', 'хуйло', 'педик', 'пиздюк',
+            'хуй', 'хуя', 'хуе', 'нахуй', 'похуй', 'дохуя', 'пизда', 'пизде', 'пизду', 'пизды', 'пиздец', 'ебать', 'ебан', 'ебану', 'долбоеб', 'долбоёб', 'уебан', 'бля', 'блять', 'блядь', 'сука', 'суку', 'суки', 'пидор', 'пидарас', 'пидорас', 'гандон', 'шлюха', 'шлюхи', 'шалава', 'шалавы', 'шмара', 'курва', 'залупа', 'говно', 'мразь', 'ублюдок', 'чмо', 'хуесос', 'хуйло', 'педик', 'пиздюк',
             'қотақ', 'котак', 'қотағым', 'котагым', 'қотақбас', 'котакбас', 'ам', 'амы', 'сігіс', 'сигис', 'шешең', 'шешен', 'шешеңді', 'шешенди', 'көт', 'көті', 'коти', 'жалеп', 'амшык', 'амшық',
             'fuck', 'fucker', 'fucking', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'cock', 'pussy', 'whore', 'slut'
         ];
@@ -193,10 +227,16 @@ document.addEventListener('DOMContentLoaded', () => {
         badWords.forEach(word => {
             const regex = new RegExp('(^|[^\\p{L}])(' + word + ')($|[^\\p{L}])', 'giu');
             sanitized = sanitized.replace(regex, '$1***$3');
+            sanitized = sanitized.replace(regex, '$1***$3'); // second pass for overlaps
         });
         return sanitized;
     }
+    // ---------------
 
+
+    // Dummy auth logic removed to prevent conflicts with checkAuth
+
+    // Статистика
     const stats = {
         adl: document.getElementById('statAdl'),
         chld: document.getElementById('statChld'),
@@ -206,219 +246,533 @@ document.addEventListener('DOMContentLoaded', () => {
         bday: document.getElementById('statBday')
     };
 
+    // Устанавливаем сегодняшнюю дату по умолчанию
     const today = new Date();
+    // Форматируем с учетом локальной зоны (для корректного отображения YYYY-MM-DD)
     const todayStr = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-    if (visitDateInput) visitDateInput.value = todayStr;
+    visitDateInput.value = todayStr;
     
+    // Автоматический год сезона
     const currentSeasonYearEl = document.getElementById('currentSeasonYear');
-    if (currentSeasonYearEl) { currentSeasonYearEl.textContent = `Сезон ${today.getFullYear()}`; }
+    if (currentSeasonYearEl) {
+        currentSeasonYearEl.textContent = `Сезон ${today.getFullYear()}`;
+    }
 
     if (visitDateInput) visitDateInput.addEventListener('change', render);
-    if (clientTypeInput) clientTypeInput.value = 'tourist';
     if (clientTypeInput) clientTypeInput.addEventListener('change', render);
     if (tariffTypeInput) tariffTypeInput.addEventListener('change', render);
     if (addTouristBtn) addTouristBtn.addEventListener('click', addTourist);
     
     const earlyBookingToggle = document.getElementById('earlyBookingToggle');
     const earlyBookingContainer = document.getElementById('earlyBookingContainer');
-    const earlyBookingBadge = document.getElementById('earlyBookingBadge');
+    const earlyBookingBadge = document.getElementById('earlyBookingBadge'); // Из шапки
     
     if (earlyBookingToggle) earlyBookingToggle.addEventListener('change', render);
+
+    // Загрузка черновика (Авто-сохранение)
+    const draft = localStorage.getItem('tetisBluDraft');
+    if (draft) {
+        try {
+            const data = JSON.parse(draft);
+            // Мы больше не загружаем сохраненную дату визита из черновика, 
+            // чтобы она ВСЕГДА по умолчанию была сегодняшним днем.
+            // if (data.visitDate) visitDateInput.value = data.visitDate;
+            if (data.clientType) clientTypeInput.value = data.clientType;
+            if (data.tariffType) tariffTypeInput.value = data.tariffType;
+            if (data.tourists && Array.isArray(data.tourists) && data.tourists.length > 0) {
+                tourists = data.tourists;
+            } else {
+                addTourist();
+            }
+            if (data.currentCalcMode) {
+                currentCalcMode = data.currentCalcMode;
+            }
+            if (data.quickCounts) {
+                quickCounts = data.quickCounts;
+            }
+            setTimeout(() => {
+                switchCalcMode(currentCalcMode);
+            }, 50);
+        } catch (e) {
+            console.error('Ошибка загрузки черновика', e);
+            addTourist();
+        }
+    } else {
+        addTourist();
+    }
+    
+    // Первичный рендер если данные загружены
+    if (tourists.length > 0) render();
 
     let lastAttemptedText = '';
 
     // Parse Bulk Text Input
-    if (parseBulkBtn) {
-        parseBulkBtn.addEventListener('click', () => {
-            const text = bulkText.value.trim();
-            if (!text) return;
-            
-            const isForced = (text === lastAttemptedText);
-            lastAttemptedText = text;
-            
-            // Базовый паттерн поиска дат (без жестких \b латиницы на концах)
-            const globalDobRegex = /(?:^|\s|[^0-9])((?:0?[1-9]|[12]\d|3[01])[\.\-\/\s,](?:0?[1-9]|1[0-2])[\.\-\/\s,](\d{4}|\d{2}))(?=$|\s|[^0-9])/;
-            
-            function parseQuantityDescription(inputText) {
-                if (globalDobRegex.test(inputText)) return null;
-                const cleanText = inputText.toLowerCase();
-                
-                const adlRegex = /(\d+)\s*(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
-                const infRegex = /(\d+)\s*(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
-                const chldRegex = /(\d+)\s*(?:дети|дет(?:и|ям|ей|ях)?|chld|child(?:ren)?|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
-                const snrRegex = /(\d+)\s*(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?|з[еи]й?неткер[а-я]*)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
-                const invRegex = /(\d+)\s*(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
-                
-                let adlCount = 0; let chldCount = 0; let infCount = 0; let snrCount = 0; let invCount = 0;
-                let matched = false; let match;
-                
-                while ((match = adlRegex.exec(cleanText)) !== null) { adlCount += parseInt(match[1], 10); matched = true; }
-                while ((match = chldRegex.exec(cleanText)) !== null) { chldCount += parseInt(match[1], 10); matched = true; }
-                while ((match = infRegex.exec(cleanText)) !== null) { infCount += parseInt(match[1], 10); matched = true; }
-                while ((match = snrRegex.exec(cleanText)) !== null) { snrCount += parseInt(match[1], 10); matched = true; }
-                while ((match = invRegex.exec(cleanText)) !== null) { invCount += parseInt(match[1], 10); matched = true; }
-                
-                if (!matched) {
-                    const hasAdl = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
-                    const hasChld = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:дети|дет(?:и|ям|ей|ях)?|chld|child(?:ren)?|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
-                    const hasInf = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
-                    const hasSnr = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?|з[еи]й?неткер[а-я]*)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
-                    const hasInv = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
-                    
-                    if (hasAdl || hasChld || hasInf || hasSnr || hasInv) {
-                        if (hasAdl) adlCount = 1; if (hasChld) chldCount = 1; if (hasInf) infCount = 1; if (hasSnr) snrCount = 1; if (hasInv) invCount = 1;
-                        matched = true;
-                    }
-                }
-                if (!matched) return null;
-                return { adl: adlCount, chld: chldCount, inf: infCount, snr: snrCount, inv: invCount };
+    parseBulkBtn.addEventListener('click', () => {
+        const text = bulkText.value.trim();
+        if (!text) return;
+        
+        const isForced = (text === lastAttemptedText);
+        lastAttemptedText = text;
+        
+        // Check if the input represents quantities instead of names with dates of birth
+        const dobRegex = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b|\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{4}|\d{2})\b/;
+        
+        // Function to parse quantity descriptions like "2 взрослых и 1 ребенок"
+        function parseQuantityDescription(inputText) {
+            if (dobRegex.test(inputText)) {
+                return null; // Contains DOBs, so it's a detailed list, not just counts
             }
 
-            const quantityData = parseQuantityDescription(text);
-            if (quantityData) {
-                const today = new Date();
-                const visitDateStr = visitDateInput ? visitDateInput.value : '';
-                const visitYear = visitDateStr ? new Date(visitDateStr).getFullYear() : today.getFullYear();
-                tourists = [];
-                for (let i = 0; i < quantityData.adl; i++) { tourists.push({ id: createId(), fullName: `Гость ${tourists.length + 1}`, dob: `${visitYear - 25}-06-15`, gender: 'male', genderManuallySet: false, disability: 'none' }); }
-                for (let i = 0; i < quantityData.chld; i++) { tourists.push({ id: createId(), fullName: `Гость ${tourists.length + 1}`, dob: `${visitYear - 8}-06-15`, gender: 'male', genderManuallySet: false, disability: 'none' }); }
-                for (let i = 0; i < quantityData.snr; i++) { tourists.push({ id: createId(), fullName: `Гость ${tourists.length + 1}`, dob: `${visitYear - 65}-06-15`, gender: 'male', genderManuallySet: false, disability: 'none' }); }
-                for (let i = 0; i < quantityData.inf; i++) { tourists.push({ id: createId(), fullName: `Гость ${tourists.length + 1}`, dob: `${visitYear - 1}-06-15`, gender: 'male', genderManuallySet: false, disability: 'none' }); }
-                for (let i = 0; i < quantityData.inv; i++) { tourists.push({ id: createId(), fullName: `Гость ${tourists.length + 1}`, dob: `${visitYear - 30}-06-15`, gender: 'male', genderManuallySet: false, disability: '1', category: 'INV', categoryManuallySet: true }); }
-                render(); bulkText.value = ''; return;
-            }
-
-            // Умная склейка перенесенных на новую строчку дат
-            let rawLines = text.split('\n').map(l => l.trim()).filter(l => l);
-            let mergedLines = [];
-            for (let i = 0; i < rawLines.length; i++) {
-                let currentLine = rawLines[i];
-                if (i + 1 < rawLines.length) {
-                    let nextLine = rawLines[i + 1];
-                    const dateOnlyRegex = /^(?:0?[1-9]|[12]\d|3[01])[\.\-\/\s,](?:0?[1-9]|1[0-2])[\.\-\/\s,](\d{4}|\d{2})$/;
-                    if (dateOnlyRegex.test(nextLine)) {
-                        currentLine = currentLine + " " + nextLine;
-                        i++;
-                    }
-                }
-                mergedLines.push(currentLine);
-            }
-
-            const unrecognizedLines = [];
+            const cleanText = inputText.toLowerCase();
             
-            mergedLines.forEach((line, index) => {
-                const originalLine = line;
-                if (!line) return;
-
-                const monthMap = {
-                    'января': '01', 'январь': '01', 'янв': '01', 'февраля': '02', 'февраль': '02', 'фев': '02', 'марта': '03', 'март': '03', 'мар': '03', 'апреля': '04', 'апрель': '04', 'апр': '04', 'мая': '05', 'май': '05', 'июня': '06', 'июнь': '06', 'июн': '06', 'июля': '07', 'июль': '07', 'июл': '07', 'августа': '08', 'август': '08', 'авг': '08', 'сентября': '09', 'сентябрь': '09', 'сен': '09', 'октября': '10', 'октябрь': '10', 'окт': '10', 'ноября': '11', 'ноябрь': '11', 'ноя': '11', 'декабря': '12', 'декабрь': '12', 'дек': '12', 'қаңтар': '01', 'кантар': '01', 'қаң': '01', 'ақпан': '02', 'акпан': '02', 'ақп': '02', 'наурыз': '03', 'нау': '03', 'сәуір': '04', 'сэуір': '04', 'сәу': '04', 'мамыр': '05', 'мам': '05', 'маусым': '06', 'мау': '06', 'шілде': '07', 'шилде': '07', 'шіл': '07', 'тамыз': '08', 'там': '08', 'қыркүйек': '09', 'кыркуйек': '09', 'қыр': '09', 'қазан': '10', 'казан': '10', 'қаз': '10', 'қараша': '11', 'караша': '11', 'қар': '11', 'желтоқсан': '12', 'желтоксан': '12', 'жел': '12'
-                };
-                
-                for (let key in monthMap) {
-                    const inlineMonthRegex = new RegExp(`(\\d{1,2})\\s+${key}(?:\\s*\\.?\\s*(\\d{2,4}))?`, 'gi');
-                    if (inlineMonthRegex.test(line)) {
-                        line = line.replace(inlineMonthRegex, (m, g1, g2) => `${g1}.${monthMap[key]}.${g2 || new Date().getFullYear()}`);
-                    }
-                }
-
-                let tAge = undefined; let tYear = undefined;
-
-                if (index === 0) {
-                    const headerDateMatch = line.match(/(?:на\s+|дата\s*посещения\s*)?(\d{1,2})[\.\-\/](\d{1,2})(?:[\.\-\/](\d{2}|\d{4}))?/i);
-                    const lowerLine = line.toLowerCase();
-                    const isHeader = headerDateMatch && (lowerLine.includes('на ') || lowerLine.includes('дата') || lowerLine.includes('тетис') || lowerLine.includes('tour') || lowerLine.includes('тур') || lowerLine.includes('бронь') || lowerLine.includes('заявка') || lowerLine.includes('групп'));
-                    if (isHeader) {
-                        const day = headerDateMatch[1].padStart(2, '0'); const month = headerDateMatch[2].padStart(2, '0');
-                        let currentYear = new Date().getFullYear();
-                        if (headerDateMatch[3]) {
-                            let y = headerDateMatch[3];
-                            if (y.length === 2) { const yInt = parseInt(y); currentYear = yInt > 50 ? 1900 + yInt : 2000 + yInt; } else { currentYear = parseInt(y); }
-                        }
-                        if (visitDateInput) visitDateInput.value = `${currentYear}-${month}-${day}`;
-                        return;
-                    }
-                }
-
-                // Извлечение категории с поддержкой кириллических границ
-                let parsedCategory = null;
-                const lowerLineForCat = line.toLowerCase();
-                if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:snr|pensioners?|пенсионер[ыов]*|пенс|зейнеткер(?:лер)?|з[еи]й?неткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) { parsedCategory = 'SNR'; }
-                else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:chld|child(?:ren)?|дети|дет[ямнска]*|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) { parsedCategory = 'CHLD'; }
-                else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:inf(?:ants?)?|младен[ецаы]*|мл[ад]*|ребен[окац]*|реб|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) { parsedCategory = 'INF'; }
-                else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:inv|инвалид[ыов]*|инв|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) { parsedCategory = 'INV'; }
-                else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:adl|adults?|взросл[ыеяйах]*|взр|үлкен)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) { parsedCategory = 'ADL'; }
-
-                // Универсальное извлечение дат (без ломающихся латинских \b)
-                const dobMatch = line.match(/(?:^|\s|[^0-9])((?:0?[1-9]|[12]\d|3[01])[\.\-\/\s,](?:0?[1-9]|1[0-2])[\.\-\/\s,](\d{4}|\d{2}))(?=$|\s|[^0-9])/);
-                let dobIso = ''; let matchedStr = '';
-                
-                if (dobMatch) {
-                    matchedStr = dobMatch[1]; const parts = matchedStr.split(/[\.\-\/\s,]+/);
-                    let day = parts[0].padStart(2, '0'); let month = parts[1].padStart(2, '0'); let year = parts[2];
-                    if (year.length === 2) { const yInt = parseInt(year); year = (yInt > 50 ? 1900 + yInt : 2000 + yInt).toString(); }
-                    dobIso = `${year}-${month}-${day}`;
-                } else {
-                    const ageRegex = /(?<!\d)(\d{1,2})\s*(?:лет|года|год|жаста|жас|yo|y\.o\.|years?|old)(?!\p{L})/i;
-                    const ageMatch = line.match(ageRegex);
-                    if (ageMatch) { matchedStr = ageMatch[0]; tAge = parseInt(ageMatch[1], 10); dobIso = ''; }
-                    else {
-                        const yearRegex = /(?<!\d)(19\d{2}|20[0-2]\d)(?![0-9])/i;
-                        const yearMatch = line.match(yearRegex);
-                        if (yearMatch) { matchedStr = yearMatch[0]; tYear = parseInt(yearMatch[1], 10); dobIso = ''; }
-                    }
-                }
-                
-                let namePart = line;
-                if (matchedStr) { namePart = namePart.replace(matchedStr, ' '); }
-                
-                // Безопасное вырезание триггеров категорий по границам алфавитных символов
-                const cleanKeywordsRegex = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:snr|pensioners?|пенсионер[ыов]*|пенс|зейнеткер(?:лер)?|з[еи]й?неткер(?:лер)?|chld|child(?:ren)?|дети|дет[ямнска]*|бала(?:лар)?|inf(?:ants?)?|младен[ецаы]*|мл[ад]*|ребен[окац]*|реб|сәби|бөбек|inv|инвалид[ыов]*|инв|мүгедек(?:тер)?|adl|adults?|взросл[ыеяйах]*|взр|үлкен|билет|пассажир|итого|сумма|заявка|бронь|турист|тур|пакс|дата\s*рожд[а-я]*|\bд\.?р\.?\b)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/gi;
-                namePart = namePart.replace(cleanKeywordsRegex, ' ');
-                namePart = namePart.replace(/[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\s\-\']/g, ' ').trim();
-                namePart = namePart.replace(/\s+/g, ' ');
-                namePart = sanitizeProfanity(namePart);
-
-                const wordsCount = namePart.split(' ').length;
-                const hasDateOrAge = dobIso || tAge !== undefined || tYear !== undefined || parsedCategory;
-
-                if (namePart.length >= 2 && (hasDateOrAge || wordsCount >= 2 || isForced)) {
-                    namePart = namePart.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
-                    const guessed = guessGender(namePart);
-                    const touristObj = { id: createId(), fullName: namePart, dob: dobIso, gender: guessed, genderManuallySet: false, disability: 'none' };
-                    if (tAge !== undefined) touristObj.age = tAge;
-                    if (tYear !== undefined) touristObj.year = tYear;
-                    
-                    if (parsedCategory) { touristObj.category = parsedCategory; touristObj.categoryManuallySet = true; }
-                    else if (!dobIso && tAge === undefined && tYear === undefined) { touristObj.category = 'ADL'; touristObj.categoryManuallySet = false; }
-                    
-                    const isDuplicate = tourists.some(t => t.fullName.toLowerCase() === touristObj.fullName.toLowerCase() && t.dob === touristObj.dob);
-                    if (!isDuplicate) { tourists.push(touristObj); } else { unrecognizedLines.push(originalLine + " (Дубликат)"); }
-                } else { unrecognizedLines.push(originalLine); }
-            });
+            // Regex patterns to detect counts of different guest categories.
+            const adlRegex = /(\d+)\s*(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
+            const infRegex = /(\d+)\s*(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
+            const chldRegex = /(\d+)\s*(?:дети|дет(?:и|ям|ей|ях)?|chld|child(?:ren)?|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
+            const snrRegex = /(\d+)\s*(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
+            const invRegex = /(\d+)\s*(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/g;
             
-            if (tourists.length > 1 && tourists[0].fullName === '' && tourists[0].dob === '') { tourists.shift(); }
+            let adlCount = 0;
+            let chldCount = 0;
+            let infCount = 0;
+            let snrCount = 0;
+            let invCount = 0;
+            
+            let matched = false;
+            let match;
+            
+            while ((match = adlRegex.exec(cleanText)) !== null) {
+                adlCount += parseInt(match[1], 10);
+                matched = true;
+            }
+            while ((match = chldRegex.exec(cleanText)) !== null) {
+                chldCount += parseInt(match[1], 10);
+                matched = true;
+            }
+            while ((match = infRegex.exec(cleanText)) !== null) {
+                infCount += parseInt(match[1], 10);
+                matched = true;
+            }
+            while ((match = snrRegex.exec(cleanText)) !== null) {
+                snrCount += parseInt(match[1], 10);
+                matched = true;
+            }
+            while ((match = invRegex.exec(cleanText)) !== null) {
+                invCount += parseInt(match[1], 10);
+                matched = true;
+            }
+            
+            if (!matched) {
+                // If no numbers were matched, check if there are keywords present (meaning singular, like "взрослый и ребенок" -> 1 adult, 1 child)
+                const hasAdl = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:взросл[ыеяйах]*|взр|adl|adults?|ересектер?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
+                const hasChld = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:дети|дет(?:и|ям|ей|ях)?|chld|child(?:ren)?|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
+                const hasInf = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:ребен[окац]*|реб|младен[ецаы]*|мл[ад]*|inf(?:ants?)?|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
+                const hasSnr = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:пенсионер[ыов]*|пенс|snr|pensioners?|зейнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
+                const hasInv = /(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:инвалид[ыов]*|инв|inv|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/i.test(cleanText);
+                
+                if (hasAdl || hasChld || hasInf || hasSnr || hasInv) {
+                    if (hasAdl) adlCount = 1;
+                    if (hasChld) chldCount = 1;
+                    if (hasInf) infCount = 1;
+                    if (hasSnr) snrCount = 1;
+                    if (hasInv) invCount = 1;
+                    matched = true;
+                }
+            }
+            
+            if (!matched) return null;
+            
+            return { adl: adlCount, chld: chldCount, inf: infCount, snr: snrCount, inv: invCount };
+        }
+
+        const quantityData = parseQuantityDescription(text);
+        if (quantityData) {
+            const today = new Date();
+            const visitDateStr = visitDateInput ? visitDateInput.value : '';
+            const visitYear = visitDateStr ? new Date(visitDateStr).getFullYear() : today.getFullYear();
+            
+            tourists = []; // Clear existing list
+            
+            // Add Adults (ADL)
+            for (let i = 0; i < quantityData.adl; i++) {
+                tourists.push({
+                    id: createId(),
+                    fullName: `Гость ${tourists.length + 1}`,
+                    dob: `${visitYear - 25}-06-15`,
+                    gender: 'male',
+                    genderManuallySet: false,
+                    disability: 'none'
+                });
+            }
+            // Add Children (CHLD)
+            for (let i = 0; i < quantityData.chld; i++) {
+                tourists.push({
+                    id: createId(),
+                    fullName: `Гость ${tourists.length + 1}`,
+                    dob: `${visitYear - 8}-06-15`,
+                    gender: 'male',
+                    genderManuallySet: false,
+                    disability: 'none'
+                });
+            }
+            // Add Pensioners (SNR)
+            for (let i = 0; i < quantityData.snr; i++) {
+                tourists.push({
+                    id: createId(),
+                    fullName: `Гость ${tourists.length + 1}`,
+                    dob: `${visitYear - 65}-06-15`,
+                    gender: 'male',
+                    genderManuallySet: false,
+                    disability: 'none'
+                });
+            }
+            // Add Infants (INF)
+            for (let i = 0; i < quantityData.inf; i++) {
+                tourists.push({
+                    id: createId(),
+                    fullName: `Гость ${tourists.length + 1}`,
+                    dob: `${visitYear - 1}-06-15`,
+                    gender: 'male',
+                    genderManuallySet: false,
+                    disability: 'none'
+                });
+            }
+            // Add Disabled (INV)
+            for (let i = 0; i < quantityData.inv; i++) {
+                tourists.push({
+                    id: createId(),
+                    fullName: `Гость ${tourists.length + 1}`,
+                    dob: `${visitYear - 30}-06-15`,
+                    gender: 'male',
+                    genderManuallySet: false,
+                    disability: '1',
+                    category: 'INV',
+                    categoryManuallySet: true
+                });
+            }
+            
             render();
-            if (unrecognizedLines.length > 0) {
-                bulkText.value = unrecognizedLines.join('\n');
-                if (!isForced) { window.showToast(`Часть строк требует проверки. Нажмите еще раз, если все ок.`, 'fa-triangle-exclamation', 'bg-amber-500'); }
-            } else { bulkText.value = ''; lastAttemptedText = ''; }
+            bulkText.value = '';
+            return;
+        }
+
+        // 1. Предобработка: разбиваем на строки по датам рождения перед именами
+        const dobSplitRegex = /(?:\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s\,])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b|\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{4}|\d{2})\b)([\.\s\-\/\,]+)(?=[a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/g;
+        let normalizedText = text.replace(dobSplitRegex, '$&\n');
+        
+        // 2. Убираем нумерацию строк (например, "1. ", "2) ", "3 ") в начале каждой строки
+        normalizedText = normalizedText.replace(/(?:^|\n)\s*\d+[\.\)\s\-]+\s*(?=[a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/g, '\n');
+        
+        const lines = normalizedText.split('\n');
+        const unrecognizedLines = [];
+        
+        lines.forEach((line, index) => {
+            const originalLine = line;
+            line = line.trim();
+            if (!line) return;
+
+            let tAge = undefined;
+            let tYear = undefined;
+
+            // Проверяем, не заголовок ли это
+            if (index === 0) {
+                const headerDateMatch = line.match(/(?:на\s+|дата\s*посещения\s*)?(\d{1,2})[\.\-\/](\d{1,2})(?:[\.\-\/](\d{2}|\d{4}))?/i);
+                const lowerLine = line.toLowerCase();
+                const isHeader = headerDateMatch && (
+                    lowerLine.includes('на ') || 
+                    lowerLine.includes('дата') || 
+                    lowerLine.includes('тетис') ||
+                    lowerLine.includes('tour') ||
+                    lowerLine.includes('тур') ||
+                    lowerLine.includes('бронь') ||
+                    lowerLine.includes('заявка') ||
+                    lowerLine.includes('групп')
+                );
+
+                if (isHeader) {
+                    const day = headerDateMatch[1].padStart(2, '0');
+                    const month = headerDateMatch[2].padStart(2, '0');
+                    let currentYear = new Date().getFullYear();
+                    
+                    if (headerDateMatch[3]) {
+                        let y = headerDateMatch[3];
+                        if (y.length === 2) {
+                            const yInt = parseInt(y);
+                            currentYear = yInt > 50 ? 1900 + yInt : 2000 + yInt;
+                        } else {
+                            currentYear = parseInt(y);
+                        }
+                    }
+                    
+                    if (visitDateInput) visitDateInput.value = `${currentYear}-${month}-${day}`;
+                    return;
+                }
+            }
+
+            // Детекция категории из исходного текста
+            let parsedCategory = null;
+            const lowerLineForCat = line.toLowerCase();
+            if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:adl|adults?|взросл[ыеяйах]*|взр|үлкен)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
+                parsedCategory = 'ADL';
+            } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:chld|child(?:ren)?|дети|дет[ямнска]*|бала(?:лар)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
+                parsedCategory = 'CHLD';
+            } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:inf(?:ants?)?|младен[ецаы]*|мл[ад]*|ребен[окац]*|реб|сәби|бөбек)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
+                parsedCategory = 'INF';
+            } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:snr|pensioners?|пенсионер[ыов]*|пенс|зейнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
+                parsedCategory = 'SNR';
+            } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:inv|инвалид[ыов]*|инв|мүгедек(?:тер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
+                parsedCategory = 'INV';
+            }
+
+            // Перевод месяцев на трех языках в числовой формат перед распознаванием дат
+            const monthMap = {
+                'января': '01', 'январь': '01', 'янв': '01',
+                'февраля': '02', 'февраль': '02', 'фев': '02',
+                'марта': '03', 'март': '03', 'мар': '03',
+                'апреля': '04', 'апрель': '04', 'апр': '04',
+                'мая': '05', 'май': '05',
+                'июня': '06', 'июнь': '06', 'июн': '06',
+                'июля': '07', 'июль': '07', 'июл': '07',
+                'августа': '08', 'август': '08', 'авг': '08',
+                'сентября': '09', 'сентябрь': '09', 'сен': '09',
+                'октября': '10', 'октябрь': '10', 'окт': '10',
+                'ноября': '11', 'ноябрь': '11', 'ноя': '11',
+                'декабря': '12', 'декабрь': '12', 'дек': '12',
+                'қаңтар': '01', 'кантар': '01', 'қаң': '01',
+                'ақпан': '02', 'акпан': '02', 'ақп': '02',
+                'наурыз': '03', 'нау': '03',
+                'сәуір': '04', 'сэуір': '04', 'сәу': '04',
+                'мамыр': '05', 'мам': '05',
+                'маусым': '06', 'мау': '06',
+                'шілде': '07', 'шилде': '07', 'шіл': '07',
+                'тамыз': '08', 'там': '08',
+                'қыркүйек': '09', 'кыркуйек': '09', 'қыр': '09',
+                'қазан': '10', 'казан': '10', 'қаз': '10',
+                'қараша': '11', 'караша': '11', 'қар': '11',
+                'желтоқсан': '12', 'желтоксан': '12', 'жел': '12',
+                'january': '01', 'jan': '01',
+                'february': '02', 'feb': '02',
+                'march': '03', 'mar': '03',
+                'april': '04', 'apr': '04',
+                'may': '05',
+                'june': '06', 'jun': '06',
+                'july': '07', 'jul': '07',
+                'august': '08', 'aug': '08',
+                'september': '09', 'sep': '09',
+                'october': '10', 'oct': '10',
+                'november': '11', 'nov': '11',
+                'december': '12', 'dec': '12'
+            };
+
+            const monthKeys = Object.keys(monthMap).sort((a, b) => b.length - a.length);
+            for (let key of monthKeys) {
+                const regex = new RegExp(`(?<![a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])${key}(?![a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])`, 'gi');
+                if (regex.test(line)) {
+                    line = line.replace(regex, monthMap[key]);
+                }
+            }
+
+            // Ищем дату рождения по нашему улучшенному regex (день 1-31, месяц 1-12, год 2 или 4 цифры)
+            const dobRegex = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s\,])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b|\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])(\d{4})\b|\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{4}|\d{2})\b/;
+            const dobMatch = line.match(dobRegex);
+            
+            let dobIso = '';
+            let matchedStr = '';
+            
+            if (dobMatch) {
+                matchedStr = dobMatch[0];
+                const parts = matchedStr.split(/[\.\-\/\s\,]+/);
+                
+                let day = '';
+                let month = '';
+                let year = '';
+                
+                if (parts.length >= 3) {
+                    day = parts[0].padStart(2, '0');
+                    month = parts[1].padStart(2, '0');
+                    year = parts[2];
+                } else if (parts.length === 2) {
+                    day = parts[0].padStart(2, '0');
+                    // Например: "081997"
+                    month = parts[1].slice(0, 2).padStart(2, '0');
+                    year = parts[1].slice(2);
+                } else {
+                    // Нет разделителей вовсе, например "16081997" or "160897"
+                    day = matchedStr.slice(0, 2);
+                    month = matchedStr.slice(2, 4);
+                    year = matchedStr.slice(4);
+                }
+                
+                if (year.length === 2) {
+                    const yInt = parseInt(year);
+                    year = (yInt > 50 ? 1900 + yInt : 2000 + yInt).toString();
+                }
+
+                dobIso = `${year}-${month}-${day}`;
+            } else {
+                // Ищем указание возраста, например "35 лет", "5 жас", "12 years", "2 года"
+                const ageRegex = /(?<!\d)(\d{1,2})\s*(?:лет|года|год|жаста|жас|yo|y\.o\.|years?(?:\s+old)?|old)(?![a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ0-9_])/i;
+                const ageMatch = line.match(ageRegex);
+                if (ageMatch) {
+                    matchedStr = ageMatch[0];
+                    const age = parseInt(ageMatch[1], 10);
+                    dobIso = '';
+                    tAge = age;
+                } else {
+                    // Ищем только четырехзначный год рождения, например "1995", "2018 г.", "2015 г.р."
+                    const yearRegex = /(?<!\d)(19\d{2}|20[0-2]\d)(?![0-9])(?:\s*(?:г\.|г|года|г\.р\.|гр))?/i;
+                    const yearMatch = line.match(yearRegex);
+                    if (yearMatch) {
+                        matchedStr = yearMatch[0];
+                        const birthYear = parseInt(yearMatch[1], 10);
+                        dobIso = '';
+                        tYear = birthYear;
+                    } else {
+                        // Ищем просто цифру от 1 до 99 (скорее всего это возраст), даже если она слитно с именем
+                        const simpleAgeRegex = /(?<!\\d)(\\d{1,2})(?=$|\\s|,)/;
+                        const simpleAgeMatch = line.match(simpleAgeRegex);
+                        if (simpleAgeMatch) {
+                            matchedStr = simpleAgeMatch[1]; // берем саму группу цифр
+                            const age = parseInt(simpleAgeMatch[1], 10);
+                            dobIso = '';
+                            tAge = age;
+                        }
+                    }
+                }
+            }
+            
+            // Вырезаем дату/возраст/год из строки если найдено
+            let namePart = line;
+            if (matchedStr) {
+                namePart = line.replace(matchedStr, '');
+            }
+            
+            // Убираем указание возраста типа "(29 жас)", "29 жас", "(7 лет)", "7 лет"
+            namePart = namePart.replace(/\(?\b\d+\s*(?:жас|лет|год[а-я]*|yo|y\.o\.|years?|old)(?![a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ0-9])\)?/ig, '');
+            namePart = namePart.replace(/\(\s*\d+\s*\)/g, ''); // числа в круглых скобках
+            
+            // Убираем обращения (MR, MRS, MS, CHD, INF, ADL, SNR, INV, PAX и т.д.)
+            namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:mr|mrs|ms|chd|inf|adl|snr|inv|pax|adults?|pensioners?|children|infants?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/ig, ' ');
+            
+            // Убираем категории на трех языках
+            namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:взр(?:осл[а-я]*)?|реб(?:ен[окац]+)?|дети|дет(?:и|ям|ей|ях)?|млад(?:ен[а-я]*)?|пенс(?:ионер[а-я]*)?|инв(?:алид[а-я]*)?|зейнеткер(?:лер)?|мүгедек(?:тер)?|бала(?:лар)?|үлкен(?:дер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/ig, ' ');
+            
+            // Убираем CRM-метки и мусорные слова
+            namePart = namePart.replace(/дата\s*рожд[а-яА-Я]*/ig, '');
+            namePart = namePart.replace(/data\s*rozhd[a-zA-Z]*/ig, '');
+            namePart = namePart.replace(/\bд\.?р\.?\b/ig, '');
+            namePart = namePart.replace(/\bd\.?r\.?\b/ig, '');
+            namePart = namePart.replace(/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])(?:билет|пассажир|итого|сумма|заявка|бронь|турист|тур|пакс)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\'])/ig, ' ');
+            
+            // ПРОВЕРКА НА СТРАННЫЕ ДАННЫЕ (непонятные цифры)
+            // Исключаем слово "Гость N", которое генерируется самим приложением
+            let checkName = namePart.replace(/гость\s*\d+/ig, '');
+            const hasStrayNumbers = /\d/.test(checkName);
+
+            // Очищаем имя от лишних символов (оставляем только буквы трех языков, дефисы и апострофы)
+            namePart = namePart.replace(/[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ\s\-\']/g, ' ').trim();
+            namePart = namePart.replace(/^-+|-+$|^\'+|\'+$/g, '').trim();
+            namePart = namePart.replace(/\s+/g, ' ');
+            namePart = sanitizeProfanity(namePart);
+
+            const wordsCount = namePart.split(' ').length;
+            const hasDateOrAge = dobIso || tAge !== undefined || tYear !== undefined || parsedCategory;
+            const isSuspicious = !hasDateOrAge && wordsCount < 2;
+
+            if (namePart.length >= 2 && !hasStrayNumbers && (!isSuspicious || isForced)) {
+                // Делаем первые буквы заглавными
+                namePart = namePart.split(' ').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                ).join(' ');
+
+                const guessed = guessGender(namePart);
+                const touristObj = {
+                    id: createId(),
+                    fullName: namePart,
+                    dob: dobIso,
+                    gender: guessed,
+                    genderManuallySet: false,
+                    disability: 'none'
+                };
+                if (tAge !== undefined) touristObj.age = tAge;
+                if (tYear !== undefined) touristObj.year = tYear;
+                
+                // Если категория определена из текста
+                if (parsedCategory) {
+                    touristObj.category = parsedCategory;
+                    touristObj.categoryManuallySet = true;
+                } else if (!dobIso && tAge === undefined && tYear === undefined) {
+                    // Дефолтная категория, если нет дат
+                    touristObj.category = 'ADL';
+                    touristObj.categoryManuallySet = false;
+                }
+                
+                // Проверка на дубликат (полное совпадение имени и даты/возраста)
+                const isCleanState = Object.values(quickCounts).every(v => v === 0);
+                const isDuplicate = tourists.some(t => 
+                    t.fullName.toLowerCase() === touristObj.fullName.toLowerCase() && 
+                    t.dob === touristObj.dob && 
+                    t.age === touristObj.age && 
+                    t.year === touristObj.year
+                );
+
+                if (!isDuplicate) {
+                    tourists.push(touristObj);
+                } else {
+                    unrecognizedLines.push(originalLine + " (Дубликат)");
+                }
+            } else {
+                unrecognizedLines.push(originalLine);
+            }
         });
+        
+        // Удаляем пустую строку по умолчанию
+        if (tourists.length > 1 && tourists[0].fullName === '' && tourists[0].dob === '') {
+            tourists.shift();
+        }
+
+        render();
+        
+        if (unrecognizedLines.length > 0) {
+            bulkText.value = unrecognizedLines.join('\n');
+            if (!isForced) {
+                window.showToast(`Часть строк подозрительна (нет дат или одно слово). Если всё верно, нажмите еще раз.`, 'fa-triangle-exclamation', 'bg-amber-500');
+            } else {
+                window.showToast(`Часть гостей не распознана (${unrecognizedLines.length} строк)`, 'fa-triangle-exclamation', 'bg-amber-500');
+                lastAttemptedText = '';
+            }
+        } else {
+            bulkText.value = '';
+            lastAttemptedText = '';
+        }
+    });
+
+    function createId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
     }
 
-    function createId() { return Date.now().toString(36) + Math.random().toString(36).substr(2); }
-
     window.clearAllTourists = function() {
-        if (confirm('Вы уверены, что хотите удалить всех гостей?')) {
+        if (confirm('Вы уверены, что хотите удалить всех гостей и начать заново?')) {
             tourists = [];
+            
+            // Сбрасываем дату визита на сегодня
             const today = new Date();
             const todayStr = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
             if (visitDateInput) visitDateInput.value = todayStr;
+            
             render();
         }
     };
 
     function addTourist() {
-        tourists.push({ id: createId(), fullName: '', dob: '', gender: 'male', genderManuallySet: false, disability: 'none' });
+        tourists.push({
+            id: createId(),
+            fullName: '',
+            dob: '',
+            gender: 'male',
+            genderManuallySet: false,
+            disability: 'none'
+        });
         render();
     }
 
@@ -426,8 +780,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnElement) {
             const row = btnElement.closest('.tourist-row');
             if (row) {
-                row.classList.remove('animate-row-in'); row.classList.add('animate-row-out');
-                setTimeout(() => { tourists = tourists.filter(t => t.id !== id); render(); }, 250);
+                row.classList.remove('animate-row-in');
+                row.classList.add('animate-row-out');
+                setTimeout(() => {
+                    tourists = tourists.filter(t => t.id !== id);
+                    render();
+                }, 250);
                 return;
             }
         }
@@ -441,59 +799,165 @@ document.addEventListener('DOMContentLoaded', () => {
             if (field === 'fullName') value = sanitizeProfanity(value);
             tourist[field] = value;
             if (field === 'fullName') {
-                if (!tourist.genderManuallySet) { tourist.gender = guessGender(value); }
-                delete tourist.category; delete tourist.categoryManuallySet;
+                if (!tourist.genderManuallySet) {
+                    tourist.gender = guessGender(value);
+                }
+                delete tourist.category;
+                delete tourist.categoryManuallySet;
             }
-            if (field === 'gender') { tourist.genderManuallySet = true; }
-            if (field === 'dob') { delete tourist.age; delete tourist.year; delete tourist.category; delete tourist.categoryManuallySet; }
+            if (field === 'gender') {
+                tourist.genderManuallySet = true;
+            }
+            if (field === 'dob') {
+                delete tourist.age;
+                delete tourist.year;
+                delete tourist.category;
+                delete tourist.categoryManuallySet;
+            }
             render();
         }
     }
-
     function updateTouristDobDirect(id, value) {
         const tourist = tourists.find(t => t.id === id);
         if (!tourist) return;
+        
         value = value.trim();
         if (!value) {
-            tourist.dob = ''; delete tourist.age; delete tourist.year; delete tourist.category; delete tourist.categoryManuallySet;
-            render(); return;
+            tourist.dob = '';
+            delete tourist.age;
+            delete tourist.year;
+            delete tourist.category;
+            delete tourist.categoryManuallySet;
+            render();
+            return;
         }
-        const dobRegex = /(?:0?[1-9]|[12]\d|3[01])[\.\-\/\s,](?:0?[1-9]|1[0-2])[\.\-\/\s,](\d{4}|\d{2})/;
+        
+        // 1. Проверяем, полная ли это дата (например, 15.06.1990)
+        const dobRegex = /\b(0?[1-9]|[12]\d|3[01])([\.\-\/\s])(0?[1-9]|1[0-2])\2(\d{4}|\d{2})\b/;
         const match = value.match(dobRegex);
         if (match) {
-            const parts = match[0].split(/[\.\-\/\s,]+/);
+            const parts = match[0].split(/[\.\-\/\s]+/);
             let day = parts[0].padStart(2, '0');
             let month = parts[1].padStart(2, '0');
             let year = parts[2];
-            if (year.length === 2) { year = (parseInt(year) > 50 ? 1900 + parseInt(year) : 2000 + parseInt(year)).toString(); }
+            if (year.length === 2) {
+                const yInt = parseInt(year);
+                year = (yInt > 50 ? 1900 + yInt : 2000 + yInt).toString();
+            }
             tourist.dob = `${year}-${month}-${day}`;
-            delete tourist.age; delete tourist.year; delete tourist.category; delete tourist.categoryManuallySet;
-            render(); return;
+            delete tourist.age;
+            delete tourist.year;
+            delete tourist.category;
+            delete tourist.categoryManuallySet;
+            render();
+            return;
         }
+        
+        // 2. Проверяем, только ли это год (например, 4 цифры типа 2018)
+        const yearRegex = /\b(19\d{2}|20[0-2]\d)\b/;
+        const yearMatch = value.match(yearRegex);
+        if (yearMatch) {
+            tourist.year = parseInt(yearMatch[1], 10);
+            tourist.dob = '';
+            delete tourist.age;
+            delete tourist.category;
+            delete tourist.categoryManuallySet;
+            render();
+            return;
+        }
+        
+        // 3. Проверяем, только ли это возраст (например, 1 или 2 цифры типа 35)
+        const ageRegex = /\b(\d{1,2})\b/;
+        const ageMatch = value.match(ageRegex);
+        if (ageMatch) {
+            tourist.age = parseInt(ageMatch[1], 10);
+            tourist.dob = '';
+            delete tourist.year;
+            delete tourist.category;
+            delete tourist.categoryManuallySet;
+            render();
+            return;
+        }
+        
+        // Если не распознали, записываем как dob
+        tourist.dob = value;
+        delete tourist.age;
+        delete tourist.year;
+        delete tourist.category;
+        delete tourist.categoryManuallySet;
         render();
     }
-
     function updateTouristCategory(id, value) {
         const tourist = tourists.find(t => t.id === id);
         if (tourist) {
             tourist.category = value;
             tourist.categoryManuallySet = true;
+            if (value !== 'INV') {
+                tourist.disability = 'none';
+            } else if (tourist.disability === 'none' || !tourist.disability) {
+                const visitDate = visitDateInput ? visitDateInput.value : '';
+                const age = tourist.age !== undefined ? tourist.age : calculateAge(tourist.dob, visitDate);
+                if (age !== null && age >= 4 && age <= 11) {
+                    tourist.disability = '3';
+                } else {
+                    tourist.disability = '1';
+                }
+            }
             render();
         }
     }
 
     function guessGender(name) {
         if (!name) return 'male';
-        const cleanName = name.trim().toLowerCase(); const words = cleanName.split(/\s+/);
+        const cleanName = name.trim().toLowerCase();
+        const words = cleanName.split(/\s+/);
+        
         for (let word of words) {
+            // 1. Женские окончания (казахские отчества и фамилии)
             if (word.endsWith('қызы') || word.endsWith('kyzy') || word.endsWith('qyzy')) return 'female';
+            // 2. Мужские окончания (казахские отчества)
             if (word.endsWith('ұлы') || word.endsWith('uly') || word.endsWith('улы')) return 'male';
+            
+            // 3. Русские отчества
             if (word.endsWith('овна') || word.endsWith('евна') || word.endsWith('ична')) return 'female';
             if (word.endsWith('ович') || word.endsWith('евич') || word.endsWith('ич')) return 'male';
+            if (word.endsWith('ovna') || word.endsWith('evna') || word.endsWith('ichna')) return 'female';
+            if (word.endsWith('ovich') || word.endsWith('evich') || word.endsWith('ich')) return 'male';
+            
+            // 4. Русские/казахские фамилии на ova/eva/ina/aya/ова/ева/ина/ая
             if (word.endsWith('ова') || word.endsWith('ева') || word.endsWith('ина') || word.endsWith('ая')) return 'female';
+            if (word.endsWith('ova') || word.endsWith('eva') || word.endsWith('ina') || word.endsWith('aya')) return 'female';
+            
+            // 5. Окончания казахских женских имен (нұр/нур/nur, гүл/гул/gul, ым/ім/ym/im)
             if (word.endsWith('нұр') || word.endsWith('нур') || word.endsWith('nur')) return 'female';
             if (word.endsWith('гүл') || word.endsWith('гул') || word.endsWith('gul')) return 'female';
+            if (word.endsWith('ным') || word.endsWith('лым') || word.endsWith('рым') || word.endsWith('ным')) return 'female';
+            
+            // Известные женские имена без четких окончаний
+            if (word.endsWith('айым') || word.endsWith('ару') || word.endsWith('аружан') || word.endsWith('улжан') || 
+                word.endsWith('ұлжан') || word.endsWith('асем') || word.endsWith('әсем') || word.endsWith('асель') || 
+                word.endsWith('әсел') || word.endsWith('айгерім') || word.endsWith('айгерим') || word.endsWith('арайлым')) {
+                return 'female';
+            }
+            
+            // 6. Окончания мужских имен/фамилий на ов/ев/ин/ий
+            if (word.endsWith('ов') || word.endsWith('ев') || word.endsWith('ин') || word.endsWith('ий')) return 'male';
+            if (word.endsWith('ov') || word.endsWith('ev') || word.endsWith('in') || word.endsWith('iy') || word.endsWith('y')) {
+                // Если это Seidaly - это фамилия, может быть и мужской и женской. Но по дефолту оставим male.
+            }
         }
+        
+        // Вторая итерация по отдельным словам для поиска женских окончаний на -а / -я в именах
+        for (let word of words) {
+            if (word.length > 2 && (word.endsWith('а') || word.endsWith('я') || word.endsWith('a') || word.endsWith('ya'))) {
+                // Исключаем мужские имена/отчества
+                if (!word.endsWith('овича') && !word.endsWith('евича') && !word.endsWith('ича') && 
+                    !word.endsWith('илья') && !word.endsWith('никита') && !word.endsWith('данила') && !word.endsWith('баха')) {
+                    return 'female';
+                }
+            }
+        }
+        
         return 'male';
     }
 
@@ -502,16 +966,24 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!visitDateStr) return 61;
             const visitYear = new Date(visitDateStr).getFullYear();
             if (visitYear <= 2027) return 61;
+            if (visitYear === 2028) return 61.5;
+            if (visitYear === 2029) return 62;
+            if (visitYear === 2030) return 62.5;
             return 63;
         }
-        return 63;
+        return 63; // Men
     }
 
     function calculateAge(dobStr, visitDateStr) {
         if (!dobStr || !visitDateStr) return null;
-        const dob = new Date(dobStr); const visit = new Date(visitDateStr);
+        const dob = new Date(dobStr);
+        const visit = new Date(visitDateStr);
         let age = visit.getFullYear() - dob.getFullYear();
-        if (visit.getMonth() < dob.getMonth() || (visit.getMonth() === dob.getMonth() && visit.getDate() < dob.getDate())) { age--; }
+        
+        if (visit.getMonth() < dob.getMonth() || (visit.getMonth() === dob.getMonth() && visit.getDate() < dob.getDate())) {
+            age--;
+        }
+        
         return age;
     }
 
@@ -526,43 +998,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getBasePrice(visitDateStr, clientType, tariffType, passengerCategory) {
         if (!visitDateStr || passengerCategory === '-') return 0;
+        
         const visitDate = new Date(visitDateStr);
         const md = String(visitDate.getMonth() + 1).padStart(2, '0') + '-' + String(visitDate.getDate()).padStart(2, '0');
+        
         const periods = CONFIG.tariffs[tariffType] || [];
         let activePeriod = null;
-        for (let p of periods) { if (md >= p.start && md <= p.end) { activePeriod = p; break; } }
-        if (!activePeriod) return -1;
-        if (passengerCategory === 'INF') return 0;
+        for (let p of periods) {
+            if (md >= p.start && md <= p.end) {
+                activePeriod = p;
+                break;
+            }
+        }
+        
+        if (!activePeriod) return -1; // -1 означает что нет тарифа
+        
+        if (passengerCategory === 'INF') return 0; // Младенцы всегда бесплатно по базе
+        
         const priceCategory = (passengerCategory === 'SNR' || passengerCategory === 'INV') ? 'ADL' : passengerCategory;
         return activePeriod[clientType][priceCategory] || 0;
     }
 
     function calculateDiscount(dobStr, visitDateStr, disability, age, gender) {
         if (age === null || !visitDateStr) return 0;
+        
         let maxDiscount = 0;
+        
         if (age <= 3) maxDiscount = Math.max(maxDiscount, 100);
         if (disability === '1') maxDiscount = Math.max(maxDiscount, 100);
         
         let isBirthday = false;
         if (dobStr) {
-            const dob = new Date(dobStr); const visit = new Date(visitDateStr);
+            const dob = new Date(dobStr);
+            const visit = new Date(visitDateStr);
             isBirthday = dob.getDate() === visit.getDate() && dob.getMonth() === visit.getMonth();
         }
         if (isBirthday) maxDiscount = Math.max(maxDiscount, 50);
         
         const retirementAge = getRetirementAge(gender, visitDateStr);
-        if (age >= retirementAge) maxDiscount = Math.max(maxDiscount, 50);
+        const isPensioner = age >= retirementAge;
+        if (isPensioner) maxDiscount = Math.max(maxDiscount, 50);
         
         if (disability === '2') maxDiscount = Math.max(maxDiscount, 15);
         if (disability === '3') maxDiscount = Math.max(maxDiscount, 10);
         
-        return { percent: maxDiscount, isBirthday: isBirthday, isPensioner: age >= retirementAge, isInfant: age <= 3 };
+        return { percent: maxDiscount, isBirthday: isBirthday, isPensioner: isPensioner, isInfant: age <= 3 };
     }
 
     function formatDate(dateStr) {
         if (!dateStr) return '';
         const parts = dateStr.split('-');
-        if (parts.length === 3) { return `${parts[2]}.${parts[1]}.${parts[0]}`; }
+        if (parts.length === 3) {
+            return `${parts[2]}.${parts[1]}.${parts[0]}`;
+        }
         return dateStr;
     }
 
@@ -571,106 +1059,1123 @@ document.addEventListener('DOMContentLoaded', () => {
         const clientType = clientTypeInput ? clientTypeInput.value : 'tourist';
         const tariffType = tariffTypeInput ? tariffTypeInput.value : 'day';
 
+        // Управление видимостью кнопки Раннего Бронирования
+        if (visitDate && earlyBookingContainer) {
+            const vDate = new Date(visitDate);
+            const today = new Date();
+            // Акция действует СТРОГО 28, 29, 30 июня
+            const isPromoDays = today.getMonth() === 5 && (today.getDate() >= 28 && today.getDate() <= 30);
+            
+            // Месяц июль (0-индексация, значит 6)
+            if (vDate.getMonth() === 6 && isPromoDays) {
+                earlyBookingContainer.classList.remove('hidden');
+            } else {
+                earlyBookingContainer.classList.add('hidden');
+                if (earlyBookingToggle) earlyBookingToggle.checked = false;
+            }
+        }
+
+        // Управление бейджом "Раннее бронирование" в итоге
+        if (earlyBookingBadge && earlyBookingToggle) {
+            if (earlyBookingToggle.checked) {
+                earlyBookingBadge.classList.remove('hidden');
+            } else {
+                earlyBookingBadge.classList.add('hidden');
+            }
+        }
+
         if (touristListEl) touristListEl.innerHTML = '';
-        if (emptyState) { if (tourists.length === 0) { emptyState.classList.remove('hidden'); } else { emptyState.classList.add('hidden'); } }
+        
+        if (emptyState) {
+            if (tourists.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+        }
 
-        let totalSum = 0; let isTariffFound = true;
-        let counts = { adl: 0, chld: 0, inf: 0, pens: 0, bday: 0 }; let exportDataList = [];
+        let totalSum = 0;
+        let isTariffFound = true;
 
-        tourists.forEach((t, i) => {
-            let age = null; let displayDob = '';
-            if (t.age !== undefined) { age = t.age; const visitYear = visitDate ? new Date(visitDate).getFullYear() : new Date().getFullYear(); displayDob = (visitYear - t.age).toString(); } 
-            else if (t.year !== undefined) { age = (visitDate ? new Date(visitDate).getFullYear() : new Date().getFullYear()) - t.year; displayDob = t.year.toString(); } 
-            else { age = calculateAge(t.dob, visitDate); if (t.dob) { displayDob = formatDate(t.dob); } }
+        // Для статистики
+        let counts = { adl: 0, chld: 0, inf: 0, pens: 0, bday: 0 };
+        let exportDataList = [];
+
+        tourists.forEach((t, index) => {
+            if (!t.gender) t.gender = 'male';
+            if (t.genderManuallySet === undefined) t.genderManuallySet = false;
+
+            let age = null;
+            let displayDob = '';
+            if (t.age !== undefined) {
+                age = t.age;
+                const visitYear = visitDate ? new Date(visitDate).getFullYear() : new Date().getFullYear();
+                displayDob = (visitYear - t.age).toString();
+            } else if (t.year !== undefined) {
+                age = (visitDate ? new Date(visitDate).getFullYear() : new Date().getFullYear()) - t.year;
+                displayDob = t.year.toString();
+            } else {
+                age = calculateAge(t.dob, visitDate);
+                if (t.dob) {
+                    displayDob = formatDate(t.dob);
+                }
+            }
 
             let category = getPassengerCategory(age, t.gender, visitDate);
-            if (t.categoryManuallySet && t.category) { category = t.category; } 
+            if (t.categoryManuallySet && t.category) {
+                category = t.category;
+            } else if (age === null && t.category) {
+                category = t.category;
+            }
             t.category = category;
             
             const basePrice = getBasePrice(visitDate, clientType, tariffType, category);
+            
             if (basePrice === -1) isTariffFound = false;
 
+            const today = new Date();
+            const vDate = visitDate ? new Date(visitDate) : null;
+            // Акция применяется, если галочка включена (а галочка доступна только для июля)
             const earlyBookingEnabled = earlyBookingToggle ? earlyBookingToggle.checked : false;
             const discountInfo = calculateDiscount(t.dob, visitDate, category === 'INV' ? t.disability : 'none', age, t.gender);
             let discountPercent = discountInfo.percent || 0;
             
-            if (category === 'SNR') { discountPercent = Math.max(discountPercent, 50); discountInfo.isPensioner = true; }
-            if (category === 'INV' && t.disability !== '2' && t.disability !== '3') { discountPercent = 100; }
-
+            if (category === 'INV' && t.disability !== '2' && t.disability !== '3') {
+                discountPercent = 100;
+            }
+            
+            // Акция Раннего Бронирования (15%) не действует на инвалидов, именинников и пенсионеров
+            const hasOtherDiscounts = discountInfo.isBirthday || discountInfo.isPensioner || (t.disability && t.disability !== '0' && t.disability !== 'none');
+            if (earlyBookingEnabled && !hasOtherDiscounts && discountPercent < 100 && age >= 4) {
+                discountPercent = Math.max(discountPercent, CONFIG.discounts.earlyBooking);
+            }
+            
             let finalPrice = 0;
-            if (basePrice > 0) { finalPrice = basePrice * (1 - discountPercent / 100); }
-
-            if (category === 'ADL') counts.adl++; if (category === 'CHLD') counts.chld++; if (category === 'INF') counts.inf++; if (category === 'SNR') counts.pens++;
-            totalSum += finalPrice;
-
-            if (t.fullName) {
-                exportDataList.push({ translitName: transliterate(t.fullName), category: category, formattedDob: displayDob, tags: [], gender: t.gender === 'female' ? 'F' : 'M', isBirthday: discountInfo.isBirthday });
+            if (basePrice > 0) {
+                finalPrice = basePrice * (1 - discountPercent / 100);
             }
 
+            // Накопление статистики
+            if (category === 'ADL') counts.adl++;
+            if (category === 'CHLD') counts.chld++;
+            if (category === 'INF') counts.inf++;
+            if (category === 'SNR') counts.pens++;
+            if (category === 'INV' || t.disability === '1' || t.disability === '2' || t.disability === '3') counts.inv = (counts.inv || 0) + 1;
+            if (discountInfo.isBirthday) counts.bday++;
+
+            totalSum += finalPrice;
+
+            // Строка для экспорта (подготовка данных)
+            if (t.fullName && (t.dob || t.age !== undefined || t.year !== undefined)) {
+                let tags = [];
+                if (discountInfo.isBirthday) tags.push("ДР");
+                if (t.disability === '1') tags.push("Инв 100%");
+                if (t.disability === '2') tags.push("Инв 15%");
+                if (t.disability === '3') tags.push("Инв 10%");
+
+                let formattedDob = '';
+                if (t.dob) {
+                    formattedDob = formatDate(t.dob);
+                } else if (t.year !== undefined) {
+                    formattedDob = `${t.year} г.`;
+                } else if (t.age !== undefined) {
+                    formattedDob = `${t.age} лет`;
+                }
+
+                exportDataList.push({
+                    translitName: transliterate(t.fullName),
+                    category: category,
+                    formattedDob: formattedDob,
+                    tags: tags,
+                    gender: t.gender === 'female' ? 'F' : 'M',
+                    isBirthday: discountInfo.isBirthday
+                });
+            }
+
+            // Динамический бейдж с микро-анимацией (свечение)
+            // Динамический стиль для выпадающего списка типа (бейдж)
             let catSelectClass = 'border-slate-200 text-slate-700 bg-white';
             if (category === 'ADL') catSelectClass = 'bg-blue-50 text-blue-600 border-blue-200';
             if (category === 'SNR') catSelectClass = 'bg-purple-50 text-purple-600 border-purple-200';
             if (category === 'CHLD') catSelectClass = 'bg-teal-50 text-teal-600 border-teal-200';
             if (category === 'INF') catSelectClass = 'bg-green-50 text-green-600 border-green-200';
+            if (category === 'INV') catSelectClass = 'bg-rose-50 text-rose-600 border-rose-200';
 
+            // Создание DOM элемента строки
             const row = document.createElement('div');
             row.className = 'tourist-row p-1.5 md:p-1 flex flex-col md:grid md:grid-cols-12 gap-1.5 md:gap-1 items-start md:items-center transition-all relative hover:bg-slate-50 animate-row-in';
             row.innerHTML = `
+                <!-- Mobile Label: Delete Button -->
                 <div class="absolute top-1.5 right-1.5 md:static md:col-span-1 md:w-full flex justify-end md:order-last">
-                    <button onclick="removeTourist('${t.id}', this)" class="btn-danger p-0.5 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="fa-solid fa-trash-can text-xs pointer-events-none"></i></button>
+                    <button onclick="removeTourist('${t.id}', this)" class="btn-danger p-0.5 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="Удалить">
+                        <i class="fa-solid fa-trash-can text-xs pointer-events-none"></i>
+                    </button>
                 </div>
+                
                 <div class="w-full flex gap-2 pr-6 md:pr-0 md:contents">
+                    <!-- Full Name -->
                     <div class="flex-1 md:col-span-3 w-full relative">
-                        <input type="text" placeholder="ФИО туриста" value="${t.fullName}" onblur="updateTourist('${t.id}', 'fullName', this.value)" class="w-full text-left bg-transparent text-slate-800 border ${!t.fullName ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors">
+                        <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">ФИО (Рус/Каз)</label>
+                        <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
+                            onblur="updateTourist('${t.id}', 'fullName', this.value)"
+                            class="w-full text-left bg-transparent text-slate-800 border ${!t.fullName ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors ${discountInfo.isBirthday ? 'pr-7' : ''}">
+                        ${discountInfo.isBirthday ? '<div class="absolute right-2 top-[calc(50%+4px)] md:top-1/2 -translate-y-1/2 text-amber-500 text-[10px]" title="Именинник"><i class="fa-solid fa-cake-candles"></i></div>' : ''}
                     </div>
+                    
+                    <!-- DOB -->
                     <div class="w-[100px] shrink-0 md:w-full md:col-span-2">
-                        <input type="text" value="${displayDob}" placeholder="дд.мм.гггг или гггг" onblur="updateTouristDobDirect('${t.id}', this.value)" class="w-full text-left bg-transparent text-slate-800 border ${(!t.dob && t.age === undefined && t.year === undefined) ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-0.5 py-1 text-xs font-medium transition-colors">
+                        <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block">Дата рожд.</label>
+                        <input type="text" value="${displayDob}" 
+                            placeholder="дд.мм.гггг или гггг"
+                            onblur="updateTouristDobDirect('${t.id}', this.value)"
+                            class="w-full text-left bg-transparent text-slate-800 border ${(!t.dob && t.age === undefined && t.year === undefined) ? 'border-red-300 bg-red-50/40' : 'border-transparent'} hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none rounded-lg px-0.5 py-1 text-xs font-medium transition-colors">
                     </div>
                 </div>
+                
+                <!-- Stats Row (Age, Category, Price) -->
                 <div class="col-span-12 w-full flex flex-wrap justify-between items-center mt-1 md:mt-0 md:contents border-t border-slate-100 md:border-0 pt-1.5 md:pt-0">
                     <div class="flex space-x-2 sm:space-x-4 md:space-x-6 md:contents">
-                        <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center"><span class="text-xs font-bold ${age === null ? 'text-slate-400' : 'text-[#0076ba]'}">${age !== null ? age : '-'}</span></div>
+                        <!-- Age -->
+                        <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center">
+                            <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Возраст</label>
+                            <span class="text-xs font-bold ${age === null ? 'text-slate-400' : 'text-[#0076ba]'}">
+                                ${age !== null ? age : '-'}
+                            </span>
+                        </div>
+                        
+                        <!-- Category -->
                         <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center w-full md:w-auto">
-                            <select onchange="updateTouristCategory('${t.id}', this.value)" class="text-[9px] font-bold px-1.5 py-0.5 rounded border ${catSelectClass} focus:outline-none transition-all duration-300 cursor-pointer text-center w-full md:w-auto">
+                            <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Тип</label>
+                            <select onchange="updateTouristCategory('${t.id}', this.value)"
+                                class="text-[9px] font-bold px-1.5 py-0.5 rounded border ${catSelectClass} focus:outline-none transition-all duration-300 cursor-pointer text-center w-full md:w-auto">
                                 <option value="ADL" ${category === 'ADL' ? 'selected' : ''}>ADL</option>
                                 <option value="CHLD" ${category === 'CHLD' ? 'selected' : ''}>CHLD</option>
                                 <option value="INF" ${category === 'INF' ? 'selected' : ''}>INF</option>
                                 <option value="SNR" ${category === 'SNR' ? 'selected' : ''}>SNR</option>
+                                <option value="INV" ${category === 'INV' ? 'selected' : ''}>INV</option>
                             </select>
                         </div>
-                        <div class="md:col-span-2"></div>
+
+                        <!-- Disability -->
+                        <div class="md:col-span-2 text-left md:text-center flex flex-col items-start md:items-center w-full md:w-auto">
+                            ${category === 'INV' ? `
+                            <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Льгота</label>
+                            <select onchange="updateTourist('${t.id}', 'disability', this.value)"
+                                class="text-[9px] font-bold px-1.5 py-0.5 rounded border border-slate-200 text-slate-700 bg-white focus:outline-none transition-all duration-300 cursor-pointer text-center w-full md:w-auto">
+                                <option value="1" ${t.disability === '1' || t.disability === 'none' ? 'selected' : ''}>Инв 1 кат. (100%)</option>
+                                <option value="2" ${t.disability === '2' ? 'selected' : ''}>Инв 2 кат. (15%)</option>
+                                <option value="3" ${t.disability === '3' ? 'selected' : ''}>Инв 3 кат. (10%)</option>
+                            </select>
+                            ` : ''}
+                        </div>
                     </div>
-                    <div class="md:col-span-2 text-right pr-2">
-                        ${discountPercent > 0 ? `<span class="badge-discount text-[8px] px-1.5 py-0.5 rounded-full mb-0.5 font-bold">-${discountPercent}%</span>` : ''}
-                        <span class="text-xs font-bold text-slate-900">${basePrice === -1 ? 'Нет тарифа' : Math.round(finalPrice).toLocaleString('ru-RU')} ₸</span>
+                    
+                    <!-- Price -->
+                    <div class="md:col-span-2 text-right flex flex-col items-end justify-center pr-2">
+                        ${discountPercent > 0 ? `<span class="badge-discount text-[8px] px-1.5 py-0.5 rounded-full mb-0.5 leading-none font-bold">-${discountPercent}%</span>` : ''}
+                        <span class="text-xs font-bold ${finalPrice > 0 ? 'text-slate-900' : 'text-slate-400'}">
+                            ${basePrice === -1 ? 'Нет тарифа' : Math.round(finalPrice).toLocaleString('ru-RU')} ₸
+                        </span>
                     </div>
                 </div>
             `;
+            
             touristListEl.appendChild(row);
         });
 
+        // Обновление итогов
         totalPriceEl.textContent = Math.round(totalSum).toLocaleString('ru-RU');
-        stats.adl.textContent = counts.adl; stats.chld.textContent = counts.chld; stats.inf.textContent = counts.inf; stats.pens.textContent = counts.pens;
+        
+        if (!isTariffFound) {
+            dateWarning.classList.remove('hidden');
+        } else {
+            dateWarning.classList.add('hidden');
+        }
+
+        // Обновление статистики
+        stats.adl.textContent = counts.adl;
+        stats.chld.textContent = counts.chld;
+        stats.inf.textContent = counts.inf;
+        stats.pens.textContent = counts.pens;
+        if (stats.inv) stats.inv.textContent = counts.inv || 0;
+        stats.bday.textContent = counts.bday;
+
+        let exportText = `Дата посещения: ${visitDate ? formatDate(visitDate) : 'Не указана'}\n`;
+        exportText += `Тариф: ${tariffType === 'evening' ? 'Вечерний' : 'Дневной'}\n\n`;
+
+        if (currentCalcMode === 'quick') {
+            exportText += `Состав гостей:\n`;
+            let hasQuickGuests = false;
+            if (quickCounts.adl > 0) { exportText += `Взрослые ADL: ${quickCounts.adl}\n`; hasQuickGuests = true; }
+            if (quickCounts.chld > 0) { exportText += `Дети CHLD: ${quickCounts.chld}\n`; hasQuickGuests = true; }
+            if (quickCounts.pens > 0) { exportText += `Пенсионеры SNR: ${quickCounts.pens}\n`; hasQuickGuests = true; }
+            if (quickCounts.inf > 0) { exportText += `Младенцы INF: ${quickCounts.inf}\n`; hasQuickGuests = true; }
+            if (quickCounts.inv > 0) { exportText += `Инвалиды 1 кат. INV: ${quickCounts.inv}\n`; hasQuickGuests = true; }
+            if (quickCounts.inv2 > 0) { exportText += `Инвалиды 2 кат. INV2: ${quickCounts.inv2}\n`; hasQuickGuests = true; }
+            if (quickCounts.inv3 > 0) { exportText += `Инвалиды 3 кат. INV3: ${quickCounts.inv3}\n`; hasQuickGuests = true; }
+            if (!hasQuickGuests) {
+                exportText += 'Пусто\n';
+            }
+        } else {
+            // Сортируем: у кого ДР - в самый конец списка
+            exportDataList.sort((a, b) => {
+                if (a.isBirthday && !b.isBirthday) return 1;
+                if (!a.isBirthday && b.isBirthday) return -1;
+                return 0;
+            });
+
+            // Формируем финальные строки
+            let exportLines = exportDataList.map((item) => {
+                const tagsStr = item.tags.length > 0 ? ` (${item.tags.join(', ')})` : '';
+                return `${item.translitName.toUpperCase()} ${item.formattedDob}${tagsStr} ${item.category}`;
+            });
+
+            exportText += `Список гостей:\n`;
+            exportText += exportLines.length > 0 ? exportLines.join('\n') : 'Пусто';
+        }
+
+        // Экспорт данных
+        exportDataEl.value = exportText;
+        exportDataEl.style.height = 'auto';
+        exportDataEl.style.height = exportDataEl.scrollHeight + 'px';
+
+        // Применяем поиск, если он активен
+        const searchInput = document.getElementById('guestSearchInput');
+        if (searchInput && searchInput.value) {
+            if (window.filterGuests) {
+                window.filterGuests(searchInput.value);
+            }
+        }
+
+        // Авто-сохранение
         saveDraft();
+
+        // Для доступа из HTML
+        window.updateTourist = updateTourist;
+        window.removeTourist = removeTourist;
+        window.updateTouristDobDirect = updateTouristDobDirect;
+        window.updateTouristCategory = updateTouristCategory;
     }
 
     function saveDraft() {
-        const data = { visitDate: visitDateInput ? visitDateInput.value : '', clientType: clientTypeInput ? clientTypeInput.value : 'tourist', tariffType: tariffTypeInput ? tariffTypeInput.value : 'day', tourists: tourists, currentCalcMode: currentCalcMode, quickCounts: quickCounts };
+        const data = {
+            visitDate: visitDateInput ? visitDateInput.value : '',
+            clientType: clientTypeInput ? clientTypeInput.value : 'tourist',
+            tariffType: tariffTypeInput ? tariffTypeInput.value : 'day',
+            tourists: tourists,
+            currentCalcMode: currentCalcMode,
+            quickCounts: quickCounts
+        };
         localStorage.setItem('tetisBluDraft', JSON.stringify(data));
     }
 
-    function switchCalcMode(mode) { currentCalcMode = mode; render(); }
+    function syncDetailedToQuick() {
+        let counts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0, inv2: 0, inv3: 0 };
+        const visitDate = visitDateInput ? visitDateInput.value : '';
+        tourists.forEach(t => {
+            let age = null;
+            if (t.age !== undefined) {
+                age = t.age;
+            } else if (t.year !== undefined) {
+                const visitYear = visitDate ? new Date(visitDate).getFullYear() : new Date().getFullYear();
+                age = visitYear - t.year;
+            } else {
+                age = calculateAge(t.dob, visitDate);
+            }
+            let category = getPassengerCategory(age, t.gender, visitDate);
+            if (t.categoryManuallySet && t.category) {
+                category = t.category;
+            } else if (age === null && t.category) {
+                category = t.category;
+            }
 
-    function initApp() {
-        const draft = localStorage.getItem('tetisBluDraft');
-        if (draft) {
-            try {
-                const data = JSON.parse(draft);
-                if (data.tourists) tourists = data.tourists;
-            } catch (e) { addTourist(); }
-        } else { addTourist(); }
+            if (t.disability === '1' || category === 'INV') {
+                counts.inv++;
+            } else if (t.disability === '2') {
+                counts.inv2++;
+            } else if (t.disability === '3') {
+                counts.inv3++;
+            } else if (category === 'ADL') counts.adl++;
+            else if (category === 'CHLD') counts.chld++;
+            else if (category === 'SNR') counts.pens++;
+            else if (category === 'INF') counts.inf++;
+        });
+        quickCounts = counts;
+        updateQuickInputsDOM();
+    }
+
+    function syncQuickToDetailed() {
+        tourists = [];
+        const today = new Date();
+        const visitDateStr = visitDateInput ? visitDateInput.value : '';
+        const visitYear = visitDateStr ? new Date(visitDateStr).getFullYear() : today.getFullYear();
+        
+        // Add Adults (age 25)
+        for (let i = 0; i < quickCounts.adl; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 25}-06-15`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: 'none'
+            });
+        }
+        // Add Children (age 8)
+        for (let i = 0; i < quickCounts.chld; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 8}-06-15`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: 'none'
+            });
+        }
+        // Add Pensioners (age 65)
+        for (let i = 0; i < quickCounts.pens; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 65}-06-15`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: 'none'
+            });
+        }
+        // Add Infants (age 1)
+        for (let i = 0; i < quickCounts.inf; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 1}-06-15`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: 'none'
+            });
+        }
+        // Add Disabled (INV)
+        for (let i = 0; i < quickCounts.inv; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 30}-06-15`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: '1',
+                category: 'INV',
+                categoryManuallySet: true
+            });
+        }
+        // Add Disabled 2nd Category (INV2)
+        for (let i = 0; i < quickCounts.inv2; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 30}-06-15`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: '2',
+                category: 'INV',
+                categoryManuallySet: true
+            });
+        }
+        // Add Disabled 3rd Category (INV3) - Adults
+        for (let i = 0; i < quickCounts.inv3; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 30}-06-15`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: '3',
+                category: 'INV',
+                categoryManuallySet: true
+            });
+        }
+        // Add Disabled Children (CHLD_INV)
+        for (let i = 0; i < quickCounts.chld_inv; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 8}-06-15`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: '3',
+                category: 'INV',
+                categoryManuallySet: true
+            });
+        }
+    }
+
+    function updateQuickInputsDOM() {
+        const adlEl = document.getElementById('quick_adl');
+        const chldEl = document.getElementById('quick_chld');
+        const pensEl = document.getElementById('quick_pens');
+        const infEl = document.getElementById('quick_inf');
+        const invEl = document.getElementById('quick_inv');
+        const inv2El = document.getElementById('quick_inv2');
+        const inv3El = document.getElementById('quick_inv3');
+        const chldInvEl = document.getElementById('quick_chld_inv');
+        if (adlEl) adlEl.value = quickCounts.adl;
+        if (chldEl) chldEl.value = quickCounts.chld;
+        if (pensEl) pensEl.value = quickCounts.pens;
+        if (infEl) infEl.value = quickCounts.inf;
+        if (invEl) invEl.value = quickCounts.inv;
+        if (inv2El) inv2El.value = quickCounts.inv2;
+        if (inv3El) inv3El.value = quickCounts.inv3;
+        if (chldInvEl) chldInvEl.value = quickCounts.chld_inv;
+    }
+
+    function switchCalcMode(mode) {
+        currentCalcMode = mode;
+        const tabDetailed = document.getElementById('tabDetailed');
+        const tabQuick = document.getElementById('tabQuick');
+        const detailedModeContainer = document.getElementById('detailedModeContainer');
+        const quickModeContainer = document.getElementById('quickModeContainer');
+        const detailedActionButtons = document.getElementById('detailedActionButtons');
+        const resetQuickBtn = document.getElementById('resetQuickBtn');
+        const emptyState = document.getElementById('emptyState');
+        
+        if (!tabDetailed || !tabQuick) return;
+
+        if (mode === 'detailed') {
+            tabDetailed.classList.add('border-blue-500', 'text-blue-600');
+            tabDetailed.classList.remove('border-transparent', 'text-slate-400');
+            tabQuick.classList.add('border-transparent', 'text-slate-400');
+            tabQuick.classList.remove('border-blue-500', 'text-blue-600');
+            
+            detailedModeContainer.classList.remove('hidden');
+            quickModeContainer.classList.add('hidden');
+            detailedActionButtons.classList.remove('hidden');
+            resetQuickBtn.classList.add('hidden');
+            
+            if (tourists.length === 0 && (quickCounts.adl > 0 || quickCounts.chld > 0 || quickCounts.pens > 0 || quickCounts.inf > 0 || quickCounts.inv > 0)) {
+                syncQuickToDetailed();
+            }
+        } else {
+            tabQuick.classList.add('border-blue-500', 'text-blue-600');
+            tabQuick.classList.remove('border-transparent', 'text-slate-400');
+            tabDetailed.classList.add('border-transparent', 'text-slate-400');
+            tabDetailed.classList.remove('border-blue-500', 'text-blue-600');
+            
+            detailedModeContainer.classList.add('hidden');
+            quickModeContainer.classList.remove('hidden');
+            detailedActionButtons.classList.add('hidden');
+            resetQuickBtn.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            
+            if (quickCounts.adl === 0 && quickCounts.chld === 0 && quickCounts.pens === 0 && quickCounts.inf === 0 && quickCounts.inv === 0 && quickCounts.inv2 === 0 && quickCounts.inv3 === 0) {
+                syncDetailedToQuick();
+            }
+        }
+        
         render();
     }
 
+    function changeQuickCount(category, delta) {
+        // Валидация: Дети и малыши не могут быть без взрослых (adl) или пенсионеров (pens)
+        if ((category === 'chld' || category === 'inf') && delta > 0 && quickCounts.adl === 0 && quickCounts.pens === 0) {
+            if (window.showToast) {
+                window.showToast('Дети могут посещать парк только в сопровождении взрослых', 'fa-triangle-exclamation', 'bg-amber-500');
+            }
+            return;
+        }
+
+        quickCounts[category] = Math.max(0, quickCounts[category] + delta);
+        
+        // Авто-сброс детей, если убрали взрослых
+        if ((category === 'adl' || category === 'pens') && quickCounts.adl === 0 && quickCounts.pens === 0) {
+            quickCounts.chld = 0;
+            quickCounts.inf = 0;
+        }
+
+        updateQuickInputsDOM();
+        syncQuickToDetailed();
+        render();
+    }
+
+    function updateQuickCount(category, val) {
+        const newVal = Math.max(0, parseInt(val) || 0);
+        
+        if ((category === 'chld' || category === 'inf') && newVal > quickCounts[category] && quickCounts.adl === 0 && quickCounts.pens === 0) {
+            if (window.showToast) {
+                window.showToast('Дети могут посещать парк только в сопровождении взрослых', 'fa-triangle-exclamation', 'bg-amber-500');
+            }
+            updateQuickInputsDOM(); // вернуть старое значение в инпут
+            return;
+        }
+
+        quickCounts[category] = newVal;
+        
+        if ((category === 'adl' || category === 'pens') && quickCounts.adl === 0 && quickCounts.pens === 0) {
+            quickCounts.chld = 0;
+            quickCounts.inf = 0;
+        }
+
+        updateQuickInputsDOM();
+        syncQuickToDetailed();
+        render();
+    }
+
+    function resetQuickCounts() {
+        quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0, inv2: 0, inv3: 0 };
+        updateQuickInputsDOM();
+        syncQuickToDetailed();
+        render();
+    }
+
+    window.switchCalcMode = switchCalcMode;
+    window.changeQuickCount = changeQuickCount;
+    window.updateQuickCount = updateQuickCount;
+    window.resetQuickCounts = resetQuickCounts;
+
+    function validateAccompaniment() {
+        const adlStat = parseInt(document.getElementById('statAdl').textContent) || 0;
+        const pensStat = parseInt(document.getElementById('statPens').textContent) || 0;
+        const chldStat = parseInt(document.getElementById('statChld').textContent) || 0;
+        const infStat = parseInt(document.getElementById('statInf').textContent) || 0;
+        
+        if ((chldStat > 0 || infStat > 0) && adlStat === 0 && pensStat === 0) {
+            if (window.showToast) {
+                window.showToast('Внимание! Дети не могут быть в чеке без взрослых.', 'fa-triangle-exclamation', 'bg-red-500');
+            }
+            return false;
+        }
+        return true;
+    }
+
+    function copyExportData() {
+        if (!validateAccompaniment()) return;
+        if (!exportDataEl.value) return;
+        
+        navigator.clipboard.writeText(exportDataEl.value).then(() => {
+            const originalHTML = copyExportBtn.innerHTML;
+            copyExportBtn.innerHTML = '<i class="fa-solid fa-check mr-1.5"></i> Скопировано';
+            copyExportBtn.classList.add('bg-emerald-600', 'text-white');
+            copyExportBtn.classList.remove('bg-blue-50', 'text-brand-blue');
+            
+            setTimeout(() => {
+                copyExportBtn.innerHTML = originalHTML;
+                copyExportBtn.classList.remove('bg-emerald-600', 'text-white');
+                copyExportBtn.classList.add('bg-blue-50', 'text-brand-blue');
+            }, 2000);
+        });
+    }
+
+    if (copyExportBtn) {
+        copyExportBtn.addEventListener('click', copyExportData);
+    }
+
+    // --- ЛОГИКА ДНЯ РОЖДЕНИЯ ---
+    // --- ЛОГИКА ГЕНЕРАЦИИ ЧЕКА КАРТИНКОЙ ---
+    const downloadReceiptBtn = document.getElementById('downloadReceiptBtn');
+    if (downloadReceiptBtn) {
+        downloadReceiptBtn.addEventListener('click', generateReceiptImage);
+    }
+    
+    // --- ЛОГИКА ОТПРАВКИ (SHARE TEXT / IMAGE) ---
+    const nativeShareBtn = document.getElementById('nativeShareBtn');
+
+    function getShareText() {
+        if (!validateAccompaniment()) return '';
+        saveToHistory();
+        const text = exportDataEl.value;
+        return `*Официальный расчет Tetys Blu*\n\n${text}`;
+    }
+
+    // Общая функция для шаринга картинки чека
+    async function shareReceiptImage(btn) {
+        if (!validateAccompaniment()) return;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin sm:mr-1.5"></i> <span class="hidden sm:inline">Подождите...</span>';
+        try {
+            const { shareData, dataUrl } = await generateImageForShare();
+            
+            if (navigator.canShare && navigator.canShare(shareData)) {
+                await navigator.share(shareData);
+            } else {
+                throw new Error('ShareNotSupported');
+            }
+        } catch (e) {
+            if (e.name !== 'AbortError') {
+                console.error('Share Error:', e);
+                // Из-за ограничений безопасности Safari (iOS) и некоторых Android, 
+                // если генерация картинки заняла время, браузер блокирует окно "Поделиться".
+                // В качестве запасного плана - просто скачиваем картинку!
+                window.showToast('Браузер заблокировал окно. Чек автоматически скачан!', 'fa-download', 'bg-[#0076ba]');
+                
+                // Эмулируем нажатие "Скачать"
+                const downloadBtn = document.getElementById('downloadReceiptBtn');
+                if (downloadBtn) {
+                    downloadBtn.click();
+                }
+            }
+        } finally {
+            btn.innerHTML = originalHtml;
+        }
+    }
+
+    if (nativeShareBtn) {
+        nativeShareBtn.addEventListener('click', function() {
+            shareReceiptImage(this);
+        });
+    }
+
+    const whatsappShareBtn = document.getElementById('whatsappShareBtn');
+    if (whatsappShareBtn) {
+        whatsappShareBtn.addEventListener('click', async function() {
+            if (!validateAccompaniment()) return;
+            const originalHtml = this.innerHTML;
+            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin sm:mr-1.5 text-white"></i> <span class="hidden sm:inline">Отправка...</span>';
+            try {
+                saveToHistory();
+                const { shareData } = await generateImageForShare();
+                const file = shareData.files[0];
+                let copied = false;
+                
+                // Пробуем скопировать картинку в буфер
+                if (navigator.clipboard && navigator.clipboard.write) {
+                    await navigator.clipboard.write([
+                        new ClipboardItem({
+                            [file.type]: file
+                        })
+                    ]);
+                    copied = true;
+                }
+                
+                // Открываем WhatsApp без приветственного текста
+                window.open('https://wa.me/', '_blank');
+                
+                if (copied) {
+                    window.showToast('Картинка скопирована! В WhatsApp нажмите "Вставить" (Paste)', 'fa-check', 'bg-green-600');
+                }
+            } catch (err) {
+                console.error('Ошибка копирования:', err);
+                // Если не удалось скопировать картинку (ограничения браузера), просто отправляем текстовую версию
+                const text = getShareText();
+                if (text) {
+                    const encodedText = encodeURIComponent(text);
+                    window.open(`https://wa.me/?text=${encodedText}`, '_blank');
+                    window.showToast('Браузер запретил копировать картинку. Отправлен текстовый чек.', 'fa-info-circle', 'bg-amber-500');
+                }
+            } finally {
+                this.innerHTML = originalHtml;
+            }
+        });
+    }
+
+    function sendToEmail() {
+        if (!validateAccompaniment()) return;
+        saveToHistory();
+        const text = exportDataEl.value;
+        if (!text) return;
+        
+        // Парсим текст для темы и тела
+        const lines = text.split('\n');
+        let dateStr = '';
+        let tariffStr = '';
+        let bodyText = '';
+        
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].startsWith('Дата посещения:')) {
+                dateStr = lines[i].trim();
+            } else if (lines[i].startsWith('Тариф:')) {
+                tariffStr = lines[i].trim();
+            } else if (lines[i].startsWith('Список гостей:') || lines[i].startsWith('Состав гостей:')) {
+                // Все оставшиеся строки — это тело
+                bodyText = lines.slice(i).join('\n').trim();
+                break;
+            }
+        }
+        
+        const subject = `${dateStr} | ${tariffStr}`;
+        
+        // Проверяем, мобильное ли это устройство
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            // На смартфоне открываем нативное приложение почты (Mail, Gmail app и т.д.)
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+        } else {
+            // На ПК открываем Gmail в браузере в новой вкладке
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+            window.open(gmailUrl, '_blank');
+        }
+    }
+    
+    const emailExportBtn = document.getElementById('emailExportBtn');
+    if (emailExportBtn) {
+        emailExportBtn.addEventListener('click', sendToEmail);
+    }
+
+    async function generateImageForShare() {
+        return new Promise((resolve, reject) => {
+            const container = document.getElementById('receiptContainer');
+            const content = document.getElementById('receiptContent');
+            
+            fillReceiptData();
+            
+            // Временно достаем блок для рендера
+            content.classList.remove('opacity-0', 'pointer-events-none');
+            document.body.appendChild(content); 
+            content.style.position = 'fixed';
+            content.style.top = '0';
+            content.style.left = '0';
+            content.style.zIndex = '-9999';
+            
+            html2canvas(content, { scale: 2, backgroundColor: '#ffffff', logging: false }).then(canvas => {
+                // Возвращаем элемент на место
+                content.style.position = '';
+                content.style.top = '';
+                content.style.left = '';
+                content.style.zIndex = '';
+                content.classList.add('opacity-0', 'pointer-events-none');
+                container.appendChild(content);
+                
+                const dataUrl = canvas.toDataURL('image/png');
+                
+                canvas.toBlob(async (blob) => {
+                    if (!blob) return reject(new Error('Не удалось создать blob'));
+                    
+                    const formattedDate = visitDateInput ? visitDateInput.value : 'date';
+                    const file = new File([blob], `TetysBlu_Check_${formattedDate}.png`, { type: 'image/png' });
+                    
+                    // ВАЖНО: Для iOS Safari мы передаем ТОЛЬКО файл. 
+                    const shareData = {
+                        files: [file]
+                    };
+                    
+                    resolve({ shareData, dataUrl });
+                }, 'image/png');
+            }).catch(err => {
+                // Возврат элемента на место в случае ошибки
+                content.style.position = '';
+                content.style.top = '';
+                content.style.left = '';
+                content.classList.add('opacity-0', 'pointer-events-none');
+                container.appendChild(content);
+                reject(err);
+            });
+        });
+    }
+
+    function fillReceiptData() {
+        const metaEl = document.getElementById('receiptMeta');
+        const touristsEl = document.getElementById('receiptTourists');
+        
+        const dateParts = visitDateInput ? visitDateInput.value.split('-') : [];
+        const visitDateStr = visitDateInput ? visitDateInput.value : '';
+        const formattedDate = dateParts.length === 3 ? `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}` : visitDateStr;
+        const clientType = clientTypeInput ? clientTypeInput.value : 'tourist';
+        const tariffType = tariffTypeInput ? tariffTypeInput.value : 'day';
+        
+        const clientText = clientType === 'agent' ? 'Турагент' : 'Турист';
+        const tariffText = tariffTypeInput ? tariffTypeInput.options[tariffTypeInput.selectedIndex].text : 'Дневной тариф';
+        
+        metaEl.innerHTML = `
+            <div class="flex justify-between items-center"><span class="text-[#0076ba]">Дата:</span> <span class="font-bold text-[#1e293b]">${formattedDate}</span></div>
+            <div class="flex justify-between items-center"><span class="text-[#0076ba]">Клиент:</span> <span class="font-bold text-[#1e293b]">${clientText}</span></div>
+            <div class="flex justify-between items-center"><span class="text-[#0076ba]">Тариф:</span> <span class="font-bold text-[#1e293b]">${tariffText}</span></div>
+        `;
+        
+        touristsEl.innerHTML = '';
+        if (currentCalcMode === 'quick') {
+            let listHtml = '';
+            if (quickCounts.adl > 0) {
+                listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">ВЗРОСЛЫЕ (ADL): ${quickCounts.adl}</div></div>`;
+            }
+            if (quickCounts.chld > 0) {
+                listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">ДЕТИ (CHLD): ${quickCounts.chld}</div></div>`;
+            }
+            if (quickCounts.pens > 0) {
+                listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">ПЕНСИОНЕРЫ (SNR): ${quickCounts.pens}</div></div>`;
+            }
+            if (quickCounts.inf > 0) {
+                listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">МЛАДЕНЦЫ (INF): ${quickCounts.inf}</div></div>`;
+            }
+            if (quickCounts.inv > 0) {
+                listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">ИНВАЛИДЫ (INV): ${quickCounts.inv}</div></div>`;
+            }
+            if (!listHtml) {
+                listHtml = `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-slate-400 text-[15px]">СПИСОК ПУСТ</div></div>`;
+            }
+            touristsEl.innerHTML = listHtml;
+        } else {
+            tourists.forEach((t, i) => {
+                if (!t.fullName && !t.dob && t.age === undefined && t.year === undefined) return; // Пропуск пустых строк
+                
+                // Рассчитываем возраст
+                let age = null;
+                if (t.age !== undefined) {
+                    age = t.age;
+                } else if (t.year !== undefined) {
+                    const visitYear = visitDateStr ? new Date(visitDateStr).getFullYear() : new Date().getFullYear();
+                    age = visitYear - t.year;
+                } else {
+                    age = calculateAge(t.dob, visitDateStr);
+                }
+
+                let category = t.category;
+                if (!t.categoryManuallySet || !category) {
+                    category = getPassengerCategory(age, t.gender, visitDateStr);
+                }
+
+                const basePrice = getBasePrice(visitDateStr, clientType, tariffType, category);
+                const discountInfo = calculateDiscount(t.dob, visitDateStr, t.disability, age, t.gender);
+                let discountPercent = discountInfo.percent || 0;
+                
+                const earlyBookingEnabled = earlyBookingToggle ? earlyBookingToggle.checked : false;
+                
+                if (category === 'INV') {
+                    discountPercent = 100;
+                }
+                
+                // Акция Раннего Бронирования (15%) не действует на инвалидов, именинников и пенсионеров
+                const hasOtherDiscounts = discountInfo.isBirthday || discountInfo.isPensioner || (t.disability && t.disability !== '0' && t.disability !== 'none');
+                if (earlyBookingEnabled && !hasOtherDiscounts && discountPercent < 100 && age >= 4) {
+                    discountPercent = Math.max(discountPercent, CONFIG.discounts.earlyBooking);
+                }
+                
+                let finalPrice = 0;
+                if (basePrice > 0) {
+                    finalPrice = basePrice * (1 - discountPercent / 100);
+                }
+
+                // Форматируем ДР/возраст/год
+                let formattedDob = '';
+                if (t.dob) {
+                    formattedDob = formatDate(t.dob);
+                } else if (t.year !== undefined) {
+                    formattedDob = `${t.year} г.`;
+                } else if (t.age !== undefined) {
+                    formattedDob = `${t.age} лет`;
+                }
+
+                const priceStr = basePrice === -1 ? 'Нет тарифа' : `${Math.round(finalPrice).toLocaleString('ru-RU')} ₸`;
+
+                touristsEl.innerHTML += `
+                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3 tourist-row">
+                        <div class="flex-1 pr-4">
+                            <div class="font-bold text-[#1e293b] text-[15px] leading-relaxed break-words">
+                                ${(t.fullName || 'Гость ' + (i+1)).toUpperCase()} 
+                                ${formattedDob ? '- ' + formattedDob : ''} 
+                                <span class="text-xs text-slate-500 font-medium ml-1">(${category})</span>
+                            </div>
+                        </div>
+                        <div class="text-right font-bold text-[#0076ba] text-[15px] shrink-0">
+                            ${priceStr}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        const receiptTotalValue = document.getElementById('receiptTotalValue');
+        if (receiptTotalValue && totalPriceEl) {
+            receiptTotalValue.textContent = totalPriceEl.textContent;
+        }
+    }
+
+    function generateReceiptImage() {
+        if (!validateAccompaniment()) return;
+        saveToHistory(); // Сохраняем перед генерацией чека
+        const container = document.getElementById('receiptContainer');
+        const content = document.getElementById('receiptContent');
+        const formattedDate = visitDateInput ? visitDateInput.value : 'date';
+        
+        // Сбор данных вынесен в отдельную функцию, чтобы переиспользовать в share
+        fillReceiptData();
+        
+        // Временно достаем блок для рендера
+        content.classList.remove('opacity-0', 'pointer-events-none');
+        document.body.appendChild(content); 
+        content.style.position = 'fixed';
+        content.style.top = '0';
+        content.style.left = '0';
+        content.style.zIndex = '-9999';
+        
+        const originalBtnHtml = downloadReceiptBtn.innerHTML;
+        downloadReceiptBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Создание...';
+        
+        html2canvas(content, { 
+            scale: 2, 
+            backgroundColor: '#ffffff'
+        }).then(canvas => {
+            content.style.position = '';
+            content.style.top = '';
+            content.style.left = '';
+            content.style.zIndex = '';
+            content.classList.add('opacity-0', 'pointer-events-none');
+            container.appendChild(content);
+            
+            const link = document.createElement('a');
+            link.download = `TetysBlu_Check_${formattedDate}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            downloadReceiptBtn.innerHTML = originalBtnHtml;
+            window.showToast('Чек успешно сохранен!', 'fa-circle-check');
+        }).catch(err => {
+            console.error('Ошибка создания чека', err);
+            downloadReceiptBtn.innerHTML = originalBtnHtml;
+            window.showToast('Ошибка при создании чека', 'fa-triangle-exclamation', 'bg-red-500');
+            
+            // Возврат элемента на место в случае ошибки
+            content.style.position = '';
+            content.style.top = '';
+            content.style.left = '';
+            content.classList.add('opacity-0', 'pointer-events-none');
+            container.appendChild(content);
+        });
+    }
+
+    // --- TOAST NOTIFICATIONS ---
+    window.showToast = function(message, icon = 'fa-check', bgClass = 'bg-[#1ebd5a]') {
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${bgClass} text-white px-5 py-3 rounded-2xl shadow-xl flex items-center font-bold text-sm`;
+        toast.innerHTML = `<i class="fa-solid ${icon} mr-2.5 text-lg"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => { 
+            if (toast.parentNode) toast.parentNode.removeChild(toast); 
+        }, 3000);
+    };
+
+    // --- ИСТОРИЯ РАСЧЕТОВ ---
+    const historyBtn = document.getElementById('historyBtn');
+    const closeHistoryBtn = document.getElementById('closeHistoryBtn');
+    const historyModal = document.getElementById('historyModal');
+    const historyModalContent = document.getElementById('historyModalContent');
+    const historyList = document.getElementById('historyList');
+
+    function saveToHistory() {
+        if (tourists.length === 0 || (!tourists[0].fullName && !tourists[0].dob)) return;
+        const total = parseInt(totalPriceEl.textContent.replace(/\D/g, '')) || 0;
+        
+        const record = {
+            id: Date.now(),
+            timestamp: new Date().toISOString(),
+            visitDate: visitDateInput ? visitDateInput.value : '',
+            clientType: clientTypeInput ? clientTypeInput.value : 'tourist',
+            tariffType: tariffTypeInput ? tariffTypeInput.value : 'day',
+            totalSum: total,
+            tourists: JSON.parse(JSON.stringify(tourists))
+        };
+        
+        let history = JSON.parse(localStorage.getItem('tetysBluHistory') || '[]');
+        if (history.length > 0) {
+            const last = history[0];
+            if (JSON.stringify(last.tourists) === JSON.stringify(record.tourists) && last.visitDate === record.visitDate) {
+                return; // Пропуск дубликата
+            }
+        }
+        
+        history.unshift(record);
+        if (history.length > 20) history = history.slice(0, 20); // Храним только 20 последних
+        localStorage.setItem('tetysBluHistory', JSON.stringify(history));
+        
+        if (window.showToast) {
+            window.showToast('Сохранено в архив', 'fa-check', 'bg-emerald-500');
+        }
+    }
+
+    if (historyBtn) {
+        historyBtn.addEventListener('click', () => {
+            renderHistory();
+            historyModal.classList.remove('hidden');
+            setTimeout(() => {
+                historyModal.classList.remove('opacity-0');
+                historyModalContent.classList.remove('translate-x-full');
+            }, 10);
+        });
+    }
+    
+    if (closeHistoryBtn) {
+        closeHistoryBtn.addEventListener('click', () => {
+            historyModal.classList.add('opacity-0');
+            historyModalContent.classList.add('translate-x-full');
+            setTimeout(() => {
+                historyModal.classList.add('hidden');
+            }, 300);
+        });
+    }
+
+    function renderHistory() {
+        if (!historyList) return;
+        const history = JSON.parse(localStorage.getItem('tetysBluHistory') || '[]');
+        if (history.length === 0) {
+            historyList.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Архив пуст</p></div>';
+            return;
+        }
+        
+        historyList.innerHTML = '';
+        history.forEach(item => {
+            const date = new Date(item.timestamp);
+            const timeStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')} в ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+            
+            const card = document.createElement('div');
+            card.className = 'bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col space-y-2 relative';
+            card.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">${timeStr}</span>
+                    <span class="text-xs font-black text-[#1e293b]">${item.totalSum.toLocaleString('ru-RU')} ₸</span>
+                </div>
+                <div class="text-sm font-bold text-slate-800">Гостей: ${item.tourists.length}</div>
+                <div class="text-[11px] font-semibold text-slate-500">Визит: ${item.visitDate} • ${item.clientType === 'agent' ? 'Турагент' : 'Турист'}</div>
+                <button class="mt-2 w-full bg-blue-50 text-brand-blue hover:bg-brand-blue hover:text-white py-2 rounded-xl text-xs font-bold transition-colors">
+                    <i class="fa-solid fa-download mr-1.5"></i>Загрузить расчет
+                </button>
+            `;
+            
+            const loadBtn = card.querySelector('button');
+            loadBtn.addEventListener('click', () => {
+                if (visitDateInput) visitDateInput.value = item.visitDate;
+                if (clientTypeInput) clientTypeInput.value = item.clientType;
+                if (tariffTypeInput) tariffTypeInput.value = item.tariffType;
+                tourists = item.tourists;
+                render();
+                window.showToast('Расчет успешно загружен', 'fa-folder-open', 'bg-brand-blue');
+                closeHistoryBtn.click();
+            });
+            
+            historyList.appendChild(card);
+        });
+    }
+
+    // --- PWA INSTALLATION LOGIC ---
+    let deferredPrompt;
+    const installPwaBtn = document.getElementById('installPwaBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installPwaBtn) installPwaBtn.classList.remove('hidden');
+    });
+
+    if (installPwaBtn) {
+        installPwaBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installPwaBtn.classList.add('hidden');
+                }
+                deferredPrompt = null;
+            }
+        });
+    }
+
+    window.addEventListener('appinstalled', () => {
+        if (installPwaBtn) installPwaBtn.classList.add('hidden');
+        if (window.showToast) window.showToast('Приложение установлено!', 'fa-check', 'bg-emerald-500');
+    });
+
+    // Инициализация при загрузке
     initApp();
+
 });
+
+
+
+
+
