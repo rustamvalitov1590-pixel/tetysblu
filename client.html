@@ -623,7 +623,7 @@
             const tariffText = tariffTypeInput.options[tariffTypeInput.selectedIndex].text;
             const totalSum = document.getElementById('totalPrice').textContent;
 
-            let msg = `Дата посещения: ${formattedDate}\n`;
+            let msg = `${formattedDate}\n`;
             msg += `Тариф: ${tariffText}\n\n`;
             msg += `Список гостей:\n`;
             
@@ -656,6 +656,7 @@
             }
 
             msg += `\nИТОГО: ${totalSum} тенге`;
+            msg += `\n\nС уважением, Жумасилов Талгат\n+77027477339`;
 
             // ХАКЕРСКИЙ ОБХОД: Заменяем кириллические буквы на визуально идентичные латинские.
             // Это на 100% обходит любые локальные фильтры (антивирусы, словари), которые ломают текст.
