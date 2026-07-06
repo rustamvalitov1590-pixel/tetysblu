@@ -2663,10 +2663,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (exportCsvBtn) {
-        // Мы переименовали логику, но чтобы не менять HTML id кнопки
-        exportCsvBtn.innerHTML = '<i class="fa-solid fa-file-excel mr-2"></i>Скачать Excel';
-        exportCsvBtn.classList.remove('bg-brand-blue');
-        exportCsvBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
         exportCsvBtn.addEventListener('click', exportToExcel);
     }
 
