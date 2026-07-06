@@ -24,6 +24,11 @@ const CONFIG = {
     credentials: {
         'admin': 'tetys2026',
         'manager': '0606'
+    },
+    // 4. Промокоды
+    promocodes: {
+        'SUMMER10': { type: 'percent', value: 10 },
+        'TETYS2000': { type: 'fixed', value: 2000 }
     }
 };
 // ======================================================================
@@ -214,6 +219,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalPriceEl = document.getElementById('totalPrice');
     const exportDataEl = document.getElementById('exportData');
     const copyExportBtn = document.getElementById('copyExportBtn');
+    const promoInput = document.getElementById('promoInput');
+    const commentInput = document.getElementById('commentInput');
+
+    // Слушатели для промокода
+    if (promoInput) {
+        promoInput.addEventListener('input', () => {
+            render(); // Пересчет при изменении промокода
+        });
+    }
+    if (commentInput) {
+        commentInput.addEventListener('input', () => {
+            saveDraft();
+        });
+    }
 
     // --- Цензура ---
     function sanitizeProfanity(text) {
@@ -289,6 +308,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (data.quickCounts) {
                 quickCounts = data.quickCounts;
+            }
+            if (data.promo && promoInput) {
+                promoInput.value = data.promo;
+            }
+            if (data.comment && commentInput) {
+                commentInput.value = data.comment;
             }
             setTimeout(() => {
                 switchCalcMode(currentCalcMode);
@@ -1283,8 +1308,20 @@ document.addEventListener('DOMContentLoaded', () => {
             touristListEl.appendChild(row);
         });
 
-        // Обновление итогов
-        totalPriceEl.textContent = Math.round(totalSum).toLocaleString('ru-RU');
+        // Обновление итогов с учетом промокода
+        let finalTotalSum = totalSum;
+        let appliedPromo = null;
+        
+        if (promoInput && promoInput.value.trim().toUpperCase() in CONFIG.promocodes) {
+            appliedPromo = CONFIG.promocodes[promoInput.value.trim().toUpperCase()];
+            if (appliedPromo.type === 'percent') {
+                finalTotalSum = totalSum * (1 - appliedPromo.value / 100);
+            } else if (appliedPromo.type === 'fixed') {
+                finalTotalSum = Math.max(0, totalSum - appliedPromo.value);
+            }
+        }
+        
+        totalPriceEl.textContent = Math.round(finalTotalSum).toLocaleString('ru-RU');
         
         if (!isTariffFound) {
             dateWarning.classList.remove('hidden');
@@ -1334,7 +1371,13 @@ document.addEventListener('DOMContentLoaded', () => {
             exportText += exportLines.length > 0 ? exportLines.join('\n') : 'Пусто';
         }
 
-        exportText += `\n\nИТОГО: ${Math.round(totalSum).toLocaleString('ru-RU')} тенге`;
+        if (appliedPromo) {
+            exportText += `\nПромокод: ${promoInput.value.trim().toUpperCase()} (-${appliedPromo.value}${appliedPromo.type === 'percent' ? '%' : ' ₸'})`;
+        }
+        if (commentInput && commentInput.value.trim()) {
+            exportText += `\nКомментарий: ${commentInput.value.trim()}`;
+        }
+        exportText += `\n\nИТОГО: ${Math.round(finalTotalSum).toLocaleString('ru-RU')} тенге`;
 
         // Экспорт данных
         exportDataEl.value = exportText;
@@ -1366,7 +1409,9 @@ document.addEventListener('DOMContentLoaded', () => {
             tariffType: tariffTypeInput ? tariffTypeInput.value : 'day',
             tourists: tourists,
             currentCalcMode: currentCalcMode,
-            quickCounts: quickCounts
+            quickCounts: quickCounts,
+            promo: promoInput ? promoInput.value : '',
+            comment: commentInput ? commentInput.value : ''
         };
         localStorage.setItem('tetisBluDraft', JSON.stringify(data));
     }
@@ -2081,7 +2126,9 @@ document.addEventListener('DOMContentLoaded', () => {
             clientType: clientTypeInput ? clientTypeInput.value : 'tourist',
             tariffType: tariffTypeInput ? tariffTypeInput.value : 'day',
             totalSum: total,
-            tourists: JSON.parse(JSON.stringify(tourists))
+            tourists: JSON.parse(JSON.stringify(tourists)),
+            promocode: promoInput ? promoInput.value.trim().toUpperCase() : '',
+            comment: commentInput ? commentInput.value.trim() : ''
         };
         
         try {
@@ -2107,7 +2154,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         tariff_type: record.tariffType,
                         total_sum: record.totalSum,
                         tourists: record.tourists,
-                        user_login: currentUser
+                        user_login: currentUser,
+                        promocode: record.promocode,
+                        comment: record.comment
                     }]);
                 if (error) {
                     console.error("Ошибка Supabase:", error);
@@ -2159,7 +2208,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         clientType: row.client_type,
                         tariffType: row.tariff_type,
                         totalSum: row.total_sum,
-                        tourists: row.tourists
+                        tourists: row.tourists,
+                        promocode: row.promocode,
+                        comment: row.comment
                     }));
                 }
             } catch(e) {
@@ -2199,7 +2250,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="text-xs font-black text-[#1e293b]">${item.totalSum.toLocaleString('ru-RU')} ₸</span>
                     </div>
                     <div class="text-sm font-bold text-slate-800">Гостей: ${item.tourists.length}</div>
-                    <div class="text-[11px] font-semibold text-slate-500">Визит: ${item.visitDate} • ${item.clientType === 'agent' ? 'Турагент' : 'Турист'}</div>
+                    <div class="text-[11px] font-semibold text-slate-500 mb-1">Визит: ${item.visitDate} • ${item.clientType === 'agent' ? 'Турагент' : 'Турист'}</div>
+                    ${item.promocode ? `<div class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md mb-1"><i class="fa-solid fa-ticket mr-1"></i> ${item.promocode}</div>` : ''}
+                    ${item.comment ? `<div class="text-[10px] text-slate-500 italic mb-1"><i class="fa-regular fa-comment-dots mr-1"></i> ${item.comment}</div>` : ''}
                     <button class="mt-2 w-full bg-blue-50 text-brand-blue hover:bg-brand-blue hover:text-white py-2 rounded-xl text-xs font-bold transition-colors">
                         <i class="fa-solid fa-download mr-1.5"></i>Загрузить расчет
                     </button>
@@ -2254,7 +2307,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             statisticsContent.innerHTML = `
-                <div class="grid grid-cols-2 gap-4 mb-2">
+                <div class="grid grid-cols-2 gap-4 mb-4">
                     <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100 flex flex-col justify-center">
                         <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-1">Выручка (Всё время)</span>
                         <span class="text-lg sm:text-xl font-black text-indigo-900">${totalRevenue.toLocaleString('ru-RU')} ₸</span>
@@ -2268,10 +2321,83 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="text-2xl font-black text-blue-900">${totalClients}</span>
                     </div>
                 </div>
+
+                <!-- Блоки для графиков Chart.js -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 mb-4 shadow-sm">
+                    <h3 class="text-xs font-bold text-slate-700 uppercase mb-3">Выручка по дням визита</h3>
+                    <canvas id="revenueChart" width="400" height="200"></canvas>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 mb-4 shadow-sm">
+                    <h3 class="text-xs font-bold text-slate-700 uppercase mb-3">Соотношение Клиентов</h3>
+                    <div class="w-full flex justify-center"><canvas id="clientTypeChart" width="200" height="200" style="max-width:200px"></canvas></div>
+                </div>
+
                 <div class="text-[10px] text-slate-400 text-center mt-4 uppercase font-bold tracking-widest">
                     Данные на основе ${history.length} расчетов
                 </div>
             `;
+
+            // Подготовка данных для графиков
+            const revenueByDate = {};
+            let agentCount = 0;
+            let touristCount = 0;
+
+            history.forEach(item => {
+                // Агрегация выручки по дате визита
+                if (item.visitDate) {
+                    if (!revenueByDate[item.visitDate]) revenueByDate[item.visitDate] = 0;
+                    revenueByDate[item.visitDate] += item.totalSum;
+                }
+                // Агрегация типов клиентов
+                if (item.clientType === 'agent') {
+                    agentCount += item.tourists.length;
+                } else {
+                    touristCount += item.tourists.length;
+                }
+            });
+
+            // Сортировка дат
+            const sortedDates = Object.keys(revenueByDate).sort((a,b) => new Date(a) - new Date(b));
+            const revenueData = sortedDates.map(date => revenueByDate[date]);
+
+            // Рендер графиков с задержкой (чтобы DOM успел обновиться)
+            setTimeout(() => {
+                if (typeof Chart !== 'undefined') {
+                    const revCtx = document.getElementById('revenueChart');
+                    if (revCtx) {
+                        new Chart(revCtx, {
+                            type: 'bar',
+                            data: {
+                                labels: sortedDates.map(d => d.slice(5)), // Оставляем только MM-DD
+                                datasets: [{
+                                    label: 'Выручка ₸',
+                                    data: revenueData,
+                                    backgroundColor: '#0ea5e9',
+                                    borderRadius: 4
+                                }]
+                            },
+                            options: { responsive: true, plugins: { legend: { display: false } } }
+                        });
+                    }
+
+                    const typeCtx = document.getElementById('clientTypeChart');
+                    if (typeCtx) {
+                        new Chart(typeCtx, {
+                            type: 'pie',
+                            data: {
+                                labels: ['Турагенты', 'Обычные туристы'],
+                                datasets: [{
+                                    data: [agentCount, touristCount],
+                                    backgroundColor: ['#8b5cf6', '#10b981'],
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                        });
+                    }
+                }
+            }, 100);
+
         } catch(err) {
             console.error(err);
             statisticsContent.innerHTML = '<div class="text-center text-red-400 py-10"><p>Ошибка загрузки статистики</p></div>';
@@ -2288,7 +2414,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            let csvContent = "Дата,Время,Дата визита,Тип клиента,Тариф,Сумма,Гостей\n";
+            let csvContent = "Дата,Время,Дата визита,Тип клиента,Тариф,Сумма,Гостей,Промокод,Комментарий\n";
             history.forEach(item => {
                 const date = new Date(item.timestamp);
                 const dStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')}.${date.getFullYear()}`;
@@ -2296,7 +2422,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const typeStr = item.clientType === 'agent' ? 'Турагент' : 'Турист';
                 const tariffStr = item.tariffType;
                 
-                csvContent += `${dStr},${tStr},${item.visitDate},${typeStr},${tariffStr},${item.totalSum},${item.tourists.length}\n`;
+                const promo = item.promocode || '';
+                // Экранируем запятые в комментарии для CSV
+                const comment = item.comment ? `"${item.comment.replace(/"/g, '""')}"` : '';
+                
+                csvContent += `${dStr},${tStr},${item.visitDate},${typeStr},${tariffStr},${item.totalSum},${item.tourists.length},${promo},${comment}\n`;
             });
             
             const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
