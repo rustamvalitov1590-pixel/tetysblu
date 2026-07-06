@@ -329,6 +329,15 @@
                 </div>
             </div>
 
+            <!-- Контакты -->
+            <div class="mt-4">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Ваш номер телефона (WhatsApp)</label>
+                <div class="relative">
+                    <i class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-brand-blue text-sm"></i>
+                    <input type="tel" id="clientPhone" placeholder="+7 (___) ___-__-__" class="w-full pl-9 pr-3 py-3 concept-input text-sm">
+                </div>
+            </div>
+
             <!-- Итог -->
             <div class="bg-slate-900 rounded-2xl p-5 text-white flex items-center justify-between shadow-lg mt-4">
                 <div>
@@ -626,6 +635,16 @@
             totalGuestsEl.textContent = `${totalGuests} гостей`;
         }
 
+        const clientPhoneInput = document.getElementById('clientPhone');
+        
+        // Маска для телефона (простая)
+        clientPhoneInput.addEventListener('input', function (e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+            if (!x[1]) { e.target.value = ''; return; }
+            if (x[1] !== '7' && x[1] !== '8') x[1] = '7'; // Принудительно начинаем с 7 для Казахстана
+            e.target.value = !x[2] ? '+' + x[1] : '+' + x[1] + ' (' + x[2] + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+        });
+
         function generateMessageText() {
             const dateStr = visitDateInput.value;
             const parts = dateStr.split('-');
@@ -666,7 +685,11 @@
             }
 
             msg += `\nИТОГО: ${totalSum} тенге`;
-            return { msg, formattedDate, tariffText, totalSum };
+            
+            const phone = document.getElementById('clientPhone').value;
+            if (phone) msg += `\n\n📞 Телефон клиента: ${phone}`;
+            
+            return { msg, formattedDate, tariffText, totalSum, phone };
         }
 
         document.getElementById('bookBtnWA').addEventListener('click', () => {
@@ -694,8 +717,14 @@
         });
 
         document.getElementById('bookBtnTG').addEventListener('click', () => {
-            const { msg, formattedDate, tariffText, totalSum } = generateMessageText();
+            const { msg, formattedDate, tariffText, totalSum, phone } = generateMessageText();
             const totalGuests = counts.adl + counts.chld + counts.inf;
+            
+            if (!phone || phone.length < 16) {
+                openInfoModal('Укажите номер', 'Пожалуйста, введите ваш номер телефона, чтобы мы могли с вами связаться.');
+                clientPhoneInput.focus();
+                return;
+            }
             
             const botToken = '8326452253:AAGkZdUQSysj3ItCePnPxcD6qXh_05Mjnmk';
             const chatId = '673284304';
@@ -704,6 +733,7 @@
                           `📅 Дата визита: ${formattedDate}\n` +
                           `🎫 Тариф: ${tariffText}\n` +
                           `👥 Гостей: ${totalGuests}\n` +
+                          `📞 Телефон: ${phone}\n` +
                           `💰 Итого: *${totalSum} ₸*\n\n` +
                           `📋 *Детали:*\n\`${msg}\``;
             
