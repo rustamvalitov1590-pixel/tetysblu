@@ -2513,28 +2513,61 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function exportToCSV() {
+    async function exportToExcel() {
+        if (typeof ExcelJS === 'undefined') {
+            if(window.showToast) window.showToast('Библиотека Excel не загружена', 'fa-triangle-exclamation', 'bg-red-500');
+            return;
+        }
+
         try {
-            // Скачиваем все данные (limit = 0)
             let history = await getHistoryData(0);
             
             if (history.length === 0) {
                 if(window.showToast) window.showToast('Архив пуст', 'fa-triangle-exclamation', 'bg-amber-500');
                 return;
             }
+
+            const workbook = new ExcelJS.Workbook();
+            workbook.creator = 'Tetys Blu';
+            workbook.created = new Date();
             
-            let csvContent = "Дата;Время;Дата визита;Тип клиента;Тариф;Сумма;Гостей;Взрослые(ADL);Дети(CHLD);Инфанты(INF);Пенсионеры(SNR);Инвалиды(INV);Промокод;Комментарий\n";
+            const sheet = workbook.addWorksheet('Отчет по продажам');
+
+            // Настраиваем колонки с шириной
+            sheet.columns = [
+                { header: 'Дата создания', key: 'createdAt', width: 15 },
+                { header: 'Время', key: 'time', width: 10 },
+                { header: 'Дата визита', key: 'visitDate', width: 15 },
+                { header: 'Тип клиента', key: 'clientType', width: 15 },
+                { header: 'Тариф', key: 'tariffType', width: 15 },
+                { header: 'Сумма (₸)', key: 'totalSum', width: 15 },
+                { header: 'Всего гостей', key: 'guests', width: 15 },
+                { header: 'Взрослые (ADL)', key: 'adl', width: 18 },
+                { header: 'Дети (CHLD)', key: 'chld', width: 15 },
+                { header: 'Инфанты (INF)', key: 'inf', width: 15 },
+                { header: 'Пенсионеры (SNR)', key: 'snr', width: 18 },
+                { header: 'Инвалиды (INV)', key: 'inv', width: 15 },
+                { header: 'Промокод', key: 'promo', width: 15 },
+                { header: 'Комментарий', key: 'comment', width: 30 }
+            ];
+
+            // Красивый заголовок
+            const headerRow = sheet.getRow(1);
+            headerRow.font = { name: 'Arial', family: 4, size: 11, bold: true, color: { argb: 'FFFFFFFF' } };
+            headerRow.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FF0EA5E9' } // фирменный голубой
+            };
+            headerRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            headerRow.height = 30;
+
+            // Добавляем данные
             history.forEach(item => {
                 const date = new Date(item.timestamp);
                 const dStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')}.${date.getFullYear()}`;
                 const tStr = `${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
                 const typeStr = item.clientType === 'agent' ? 'Турагент' : 'Турист';
-                const tariffStr = item.tariffType;
-                
-                const promo = item.promocode || '';
-                // Экранируем кавычки в комментарии для CSV и убираем переносы
-                const commentRaw = (item.comment || '').replace(/\r?\n/g, ' ');
-                const comment = commentRaw ? `"${commentRaw.replace(/"/g, '""')}"` : '';
                 
                 let adl=0, chld=0, inf=0, snr=0, inv=0;
                 if (item.tourists && Array.isArray(item.tourists)) {
@@ -2547,23 +2580,64 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (cat === 'INV') inv++;
                     });
                 }
+
+                const row = sheet.addRow({
+                    createdAt: dStr,
+                    time: tStr,
+                    visitDate: item.visitDate,
+                    clientType: typeStr,
+                    tariffType: item.tariffType,
+                    totalSum: item.totalSum,
+                    guests: item.tourists.length,
+                    adl: adl,
+                    chld: chld,
+                    inf: inf,
+                    snr: snr,
+                    inv: inv,
+                    promo: item.promocode || '',
+                    comment: item.comment || ''
+                });
+
+                // Выравнивание и перенос текста для ячеек
+                row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
                 
-                csvContent += `${dStr};${tStr};${item.visitDate};${typeStr};${tariffStr};${item.totalSum};${item.tourists.length};${adl};${chld};${inf};${snr};${inv};${promo};${comment}\n`;
+                // Делаем сумму жирной
+                row.getCell('totalSum').font = { bold: true, color: { argb: 'FF16A34A' } };
+                row.getCell('totalSum').numFmt = '#,##0 ₸';
+                
+                // Левое выравнивание для комментария
+                row.getCell('comment').alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             });
+
+            // Добавляем границы ко всем ячейкам
+            sheet.eachRow((row, rowNumber) => {
+                row.eachCell((cell, colNumber) => {
+                    cell.border = {
+                        top: {style:'thin', color: {argb:'FFDDDDDD'}},
+                        left: {style:'thin', color: {argb:'FFDDDDDD'}},
+                        bottom: {style:'thin', color: {argb:'FFDDDDDD'}},
+                        right: {style:'thin', color: {argb:'FFDDDDDD'}}
+                    };
+                });
+            });
+
+            // Генерируем и скачиваем файл
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             
-            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
             link.setAttribute("href", url);
-            link.setAttribute("download", `TetysBlu_Statistics_${new Date().toISOString().slice(0,10)}.csv`);
+            link.setAttribute("download", `TetysBlu_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            if(window.showToast) window.showToast('Экспорт завершен', 'fa-file-csv', 'bg-emerald-500');
+            
+            if(window.showToast) window.showToast('Отчет Excel успешно создан', 'fa-file-excel', 'bg-emerald-500');
         } catch(err) {
-            console.error(err);
-            if(window.showToast) window.showToast('Ошибка при экспорте', 'fa-triangle-exclamation', 'bg-red-500');
+            console.error('Excel Export Error:', err);
+            if(window.showToast) window.showToast('Ошибка создания отчета', 'fa-triangle-exclamation', 'bg-red-500');
         }
     }
 
@@ -2589,7 +2663,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (exportCsvBtn) {
-        exportCsvBtn.addEventListener('click', exportToCSV);
+        // Мы переименовали логику, но чтобы не менять HTML id кнопки
+        exportCsvBtn.innerHTML = '<i class="fa-solid fa-file-excel mr-2"></i>Скачать Excel';
+        exportCsvBtn.classList.remove('bg-brand-blue');
+        exportCsvBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+        exportCsvBtn.addEventListener('click', exportToExcel);
     }
 
     // --- PWA INSTALLATION LOGIC ---
