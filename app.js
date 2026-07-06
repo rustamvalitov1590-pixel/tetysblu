@@ -29,6 +29,12 @@ const CONFIG = {
     promocodes: {
         'SUMMER10': { type: 'percent', value: 10 },
         'TETYS2000': { type: 'fixed', value: 2000 }
+    },
+    // 5. Настройки Telegram (уведомления)
+    telegram: {
+        token: '8326452253:AAGkZdUQSysj3ItCePnPxcD6qXh_05Mjnmk',
+        chatId: '673284304',
+        minSumForAlert: 50000 // Минимальная сумма для уведомления (например, 50 000 ₸)
     }
 };
 // ======================================================================
@@ -2167,8 +2173,47 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 if(window.showToast) window.showToast('Сохранено локально (нет облака)', 'fa-check', 'bg-emerald-500');
             }
+            
+            // Telegram-уведомление при превышении лимита
+            if (record.totalSum >= CONFIG.telegram.minSumForAlert) {
+                sendTelegramNotification(record, currentUser);
+            }
+
         } catch (err) {
             console.error("Ошибка сохранения в базу:", err);
+        }
+    }
+
+    async function sendTelegramNotification(record, currentUser) {
+        if (!CONFIG.telegram.token || !CONFIG.telegram.chatId) return;
+        
+        const dateStr = new Date(record.timestamp).toLocaleString('ru-RU');
+        const isAgent = record.clientType === 'agent' ? 'Да' : 'Нет';
+        
+        let message = `💰 *КРУПНАЯ ПРОДАЖА!*\n\n`;
+        message += `*Сумма:* ${record.totalSum.toLocaleString('ru-RU')} ₸\n`;
+        message += `*Дата визита:* ${record.visitDate}\n`;
+        message += `*Гостей:* ${record.tourists.length}\n`;
+        message += `*Турагент:* ${isAgent}\n`;
+        if (record.promocode) message += `*Промокод:* ${record.promocode}\n`;
+        if (record.comment) message += `*Комментарий:* ${record.comment}\n`;
+        message += `\n*Кассир:* ${currentUser}\n`;
+        message += `*Создано:* ${dateStr}`;
+
+        const url = `https://api.telegram.org/bot${CONFIG.telegram.token}/sendMessage`;
+        
+        try {
+            await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CONFIG.telegram.chatId,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            });
+        } catch (error) {
+            console.error("Ошибка отправки в Telegram:", error);
         }
     }
 
@@ -2226,6 +2271,31 @@ document.addEventListener('DOMContentLoaded', () => {
         return [];
     }
 
+    window.deleteHistoryRecord = async function(id) {
+        if (!confirm('Вы действительно хотите удалить этот чек? Это действие нельзя отменить.')) return;
+        
+        try {
+            // Удаляем из Supabase
+            if (supabaseClient) {
+                const { error } = await supabaseClient.from('calculations').delete().eq('id', id);
+                if (error) throw error;
+            }
+            
+            // Удаляем локально
+            if (historyDB) {
+                let hist = await historyDB.getItem('tetysBluHistory') || [];
+                hist = hist.filter(item => String(item.id) !== String(id));
+                await historyDB.setItem('tetysBluHistory', hist);
+            }
+            
+            if(window.showToast) window.showToast('Чек успешно удален', 'fa-trash', 'bg-emerald-500');
+            renderHistory(); // Перерисовываем список
+        } catch (err) {
+            console.error('Ошибка удаления:', err);
+            if(window.showToast) window.showToast('Ошибка при удалении', 'fa-triangle-exclamation', 'bg-red-500');
+        }
+    };
+
     async function renderHistory() {
         if (!historyList) return;
         try {
@@ -2236,6 +2306,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 historyList.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Архив пуст</p></div>';
                 return;
             }
+            
+            const currentUser = localStorage.getItem('tetysUser');
             
             historyList.innerHTML = '';
             history.forEach(item => {
@@ -2253,12 +2325,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="text-[11px] font-semibold text-slate-500 mb-1">Визит: ${item.visitDate} • ${item.clientType === 'agent' ? 'Турагент' : 'Турист'}</div>
                     ${item.promocode ? `<div class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md mb-1"><i class="fa-solid fa-ticket mr-1"></i> ${item.promocode}</div>` : ''}
                     ${item.comment ? `<div class="text-[10px] text-slate-500 italic mb-1"><i class="fa-regular fa-comment-dots mr-1"></i> ${item.comment}</div>` : ''}
-                    <button class="mt-2 w-full bg-blue-50 text-brand-blue hover:bg-brand-blue hover:text-white py-2 rounded-xl text-xs font-bold transition-colors">
+                    <button class="mt-2 w-full bg-blue-50 text-brand-blue hover:bg-brand-blue hover:text-white py-2 rounded-xl text-xs font-bold transition-colors load-btn">
                         <i class="fa-solid fa-download mr-1.5"></i>Загрузить расчет
                     </button>
+                    ${currentUser === 'admin' ? `
+                    <button onclick="deleteHistoryRecord('${item.id}')" class="mt-2 w-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white py-1.5 rounded-xl text-[10px] font-bold transition-colors">
+                        <i class="fa-solid fa-trash mr-1"></i>Удалить
+                    </button>
+                    ` : ''}
                 `;
                 
-                const loadBtn = card.querySelector('button');
+                const loadBtn = card.querySelector('.load-btn');
                 loadBtn.addEventListener('click', () => {
                     if (visitDateInput) visitDateInput.value = item.visitDate;
                     if (clientTypeInput) clientTypeInput.value = item.clientType;
@@ -2327,9 +2404,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3 class="text-xs font-bold text-slate-700 uppercase mb-3">Выручка по дням визита</h3>
                     <canvas id="revenueChart" width="400" height="200"></canvas>
                 </div>
-                <div class="bg-white border border-slate-200 rounded-2xl p-4 mb-4 shadow-sm">
-                    <h3 class="text-xs font-bold text-slate-700 uppercase mb-3">Соотношение Клиентов</h3>
-                    <div class="w-full flex justify-center"><canvas id="clientTypeChart" width="200" height="200" style="max-width:200px"></canvas></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                        <h3 class="text-[10px] font-bold text-slate-700 uppercase mb-3 text-center">Типы клиентов</h3>
+                        <div class="w-full flex justify-center"><canvas id="clientTypeChart" width="180" height="180" style="max-width:180px"></canvas></div>
+                    </div>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                        <h3 class="text-[10px] font-bold text-slate-700 uppercase mb-3 text-center">Возрастные категории</h3>
+                        <div class="w-full flex justify-center"><canvas id="ageCategoryChart" width="180" height="180" style="max-width:180px"></canvas></div>
+                    </div>
                 </div>
 
                 <div class="text-[10px] text-slate-400 text-center mt-4 uppercase font-bold tracking-widest">
@@ -2341,6 +2424,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const revenueByDate = {};
             let agentCount = 0;
             let touristCount = 0;
+            let catCounts = { ADL: 0, CHLD: 0, INF: 0, SNR: 0, INV: 0 };
 
             history.forEach(item => {
                 // Агрегация выручки по дате визита
@@ -2353,6 +2437,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     agentCount += item.tourists.length;
                 } else {
                     touristCount += item.tourists.length;
+                }
+                // Агрегация по категориям
+                if (item.tourists && Array.isArray(item.tourists)) {
+                    item.tourists.forEach(t => {
+                        const cat = t.category || 'ADL';
+                        if (catCounts[cat] !== undefined) {
+                            catCounts[cat]++;
+                        }
+                    });
                 }
             });
 
@@ -2383,16 +2476,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     const typeCtx = document.getElementById('clientTypeChart');
                     if (typeCtx) {
                         new Chart(typeCtx, {
-                            type: 'pie',
+                            type: 'doughnut',
                             data: {
-                                labels: ['Турагенты', 'Обычные туристы'],
+                                labels: ['Турагенты', 'Туристы'],
                                 datasets: [{
                                     data: [agentCount, touristCount],
                                     backgroundColor: ['#8b5cf6', '#10b981'],
                                     borderWidth: 0
                                 }]
                             },
-                            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+                        });
+                    }
+
+                    const ageCtx = document.getElementById('ageCategoryChart');
+                    if (ageCtx) {
+                        new Chart(ageCtx, {
+                            type: 'pie',
+                            data: {
+                                labels: ['Взрослые', 'Дети', 'Младенцы', 'Пенсионеры', 'Инвалиды'],
+                                datasets: [{
+                                    data: [catCounts.ADL, catCounts.CHLD, catCounts.INF, catCounts.SNR, catCounts.INV],
+                                    backgroundColor: ['#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444'],
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
                         });
                     }
                 }
@@ -2414,7 +2523,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            let csvContent = "Дата,Время,Дата визита,Тип клиента,Тариф,Сумма,Гостей,Промокод,Комментарий\n";
+            let csvContent = "Дата;Время;Дата визита;Тип клиента;Тариф;Сумма;Гостей;Взрослые(ADL);Дети(CHLD);Инфанты(INF);Пенсионеры(SNR);Инвалиды(INV);Промокод;Комментарий\n";
             history.forEach(item => {
                 const date = new Date(item.timestamp);
                 const dStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')}.${date.getFullYear()}`;
@@ -2423,10 +2532,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const tariffStr = item.tariffType;
                 
                 const promo = item.promocode || '';
-                // Экранируем запятые в комментарии для CSV
-                const comment = item.comment ? `"${item.comment.replace(/"/g, '""')}"` : '';
+                // Экранируем кавычки в комментарии для CSV и убираем переносы
+                const commentRaw = (item.comment || '').replace(/\r?\n/g, ' ');
+                const comment = commentRaw ? `"${commentRaw.replace(/"/g, '""')}"` : '';
                 
-                csvContent += `${dStr},${tStr},${item.visitDate},${typeStr},${tariffStr},${item.totalSum},${item.tourists.length},${promo},${comment}\n`;
+                let adl=0, chld=0, inf=0, snr=0, inv=0;
+                if (item.tourists && Array.isArray(item.tourists)) {
+                    item.tourists.forEach(t => {
+                        const cat = t.category || 'ADL';
+                        if (cat === 'ADL') adl++;
+                        if (cat === 'CHLD') chld++;
+                        if (cat === 'INF') inf++;
+                        if (cat === 'SNR') snr++;
+                        if (cat === 'INV') inv++;
+                    });
+                }
+                
+                csvContent += `${dStr};${tStr};${item.visitDate};${typeStr};${tariffStr};${item.totalSum};${item.tourists.length};${adl};${chld};${inf};${snr};${inv};${promo};${comment}\n`;
             });
             
             const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
