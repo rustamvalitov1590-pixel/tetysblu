@@ -343,12 +343,18 @@
                 </div>
             </div>
 
-            <!-- Кнопка заявки -->
-            <button id="bookBtn" class="w-full btn-primary py-4 rounded-xl text-base font-bold flex justify-center items-center gap-2 opacity-50 pointer-events-none mt-2">
-                <i class="fa-brands fa-whatsapp text-xl"></i>
-                Перейти к оформлению
-            </button>
-            <p class="text-[11px] text-center text-slate-400 font-medium">Вас перенаправит в WhatsApp для бронирования.</p>
+            <!-- Кнопки заявки -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                <button id="bookBtnWA" class="w-full btn-primary py-4 rounded-xl text-[13px] sm:text-sm font-bold flex justify-center items-center gap-1.5 opacity-50 pointer-events-none">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    В WhatsApp
+                </button>
+                <button id="bookBtnTG" class="w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white py-4 rounded-xl text-[13px] sm:text-sm font-bold flex justify-center items-center gap-1.5 opacity-50 pointer-events-none transition-all shadow-[0_8px_20px_rgba(59,130,246,0.3)]">
+                    <i class="fa-regular fa-paper-plane text-lg"></i>
+                    Отправить заявку
+                </button>
+            </div>
+            <p class="text-[11px] text-center text-slate-400 font-medium mt-3">Выберите удобный способ отправки расчета.</p>
         </div>
     </div>
 
@@ -550,7 +556,8 @@
             const docsWarning = document.getElementById('docsWarning');
             const dateWarning = document.getElementById('dateWarning');
             const totalPriceEl = document.getElementById('totalPrice');
-            const bookBtn = document.getElementById('bookBtn');
+            const bookBtnWA = document.getElementById('bookBtnWA');
+            const bookBtnTG = document.getElementById('bookBtnTG');
             const totalGuestsEl = document.getElementById('totalGuests');
 
             const totalGuests = counts.adl + counts.chld + counts.inf;
@@ -564,17 +571,23 @@
             if (adlPrice === -1 || chldPrice === -1) {
                 dateWarning.classList.remove('hidden');
                 totalPriceEl.textContent = "0";
-                bookBtn.classList.add('opacity-50', 'pointer-events-none');
-                bookBtn.disabled = true;
+                bookBtnWA.classList.add('opacity-50', 'pointer-events-none');
+                bookBtnWA.disabled = true;
+                bookBtnTG.classList.add('opacity-50', 'pointer-events-none');
+                bookBtnTG.disabled = true;
                 return;
             } else {
                 dateWarning.classList.add('hidden');
                 if (totalGuests > 0) {
-                    bookBtn.classList.remove('opacity-50', 'pointer-events-none');
-                    bookBtn.disabled = false;
+                    bookBtnWA.classList.remove('opacity-50', 'pointer-events-none');
+                    bookBtnWA.disabled = false;
+                    bookBtnTG.classList.remove('opacity-50', 'pointer-events-none');
+                    bookBtnTG.disabled = false;
                 } else {
-                    bookBtn.classList.add('opacity-50', 'pointer-events-none');
-                    bookBtn.disabled = true;
+                    bookBtnWA.classList.add('opacity-50', 'pointer-events-none');
+                    bookBtnWA.disabled = true;
+                    bookBtnTG.classList.add('opacity-50', 'pointer-events-none');
+                    bookBtnTG.disabled = true;
                 }
             }
 
@@ -613,10 +626,7 @@
             totalGuestsEl.textContent = `${totalGuests} гостей`;
         }
 
-        document.getElementById('bookBtn').addEventListener('click', () => {
-            const totalGuests = counts.adl + counts.chld + counts.inf;
-            if (totalGuests === 0) return;
-
+        function generateMessageText() {
             const dateStr = visitDateInput.value;
             const parts = dateStr.split('-');
             const formattedDate = parts.length === 3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : dateStr;
@@ -656,10 +666,14 @@
             }
 
             msg += `\nИТОГО: ${totalSum} тенге`;
-            msg += `\n\nС уважением, Жумасилов Талгат\n+77027477339`;
+            return { msg, formattedDate, tariffText, totalSum };
+        }
 
-            // ХАКЕРСКИЙ ОБХОД: Заменяем кириллические буквы на визуально идентичные латинские.
-            // Это на 100% обходит любые локальные фильтры (антивирусы, словари), которые ломают текст.
+        document.getElementById('bookBtnWA').addEventListener('click', () => {
+            const { msg } = generateMessageText();
+            let finalMsg = msg + `\n\nС уважением, Жумасилов Талгат\n+77027477339`;
+
+            // ХАКЕРСКИЙ ОБХОД для WhatsApp
             function cyrillicToLatinHack(str) {
                 const map = {
                     'А':'A','В':'B','С':'C','Е':'E','О':'O','Р':'P','Т':'T','Х':'X','У':'Y','М':'M','Н':'H',
@@ -668,7 +682,7 @@
                 return str.split('').map(char => map[char] || char).join('');
             }
 
-            const safeMsg = cyrillicToLatinHack(msg);
+            const safeMsg = cyrillicToLatinHack(finalMsg);
             const safeText = encodeURIComponent(safeMsg);
             
             const link = document.createElement('a');
@@ -677,6 +691,45 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        });
+
+        document.getElementById('bookBtnTG').addEventListener('click', () => {
+            const { msg, formattedDate, tariffText, totalSum } = generateMessageText();
+            const totalGuests = counts.adl + counts.chld + counts.inf;
+            
+            const botToken = '8326452253:AAGkZdUQSysj3ItCePnPxcD6qXh_05Mjnmk';
+            const chatId = '673284304';
+            
+            const tgMsg = `🆕 *Новая заявка с сайта!*\n\n` +
+                          `📅 Дата визита: ${formattedDate}\n` +
+                          `🎫 Тариф: ${tariffText}\n` +
+                          `👥 Гостей: ${totalGuests}\n` +
+                          `💰 Итого: *${totalSum} ₸*\n\n` +
+                          `📋 *Детали:*\n\`${msg}\``;
+            
+            const prevText = document.getElementById('bookBtnTG').innerHTML;
+            document.getElementById('bookBtnTG').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Отправка...';
+            
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: tgMsg,
+                    parse_mode: 'Markdown'
+                })
+            }).then(response => {
+                document.getElementById('bookBtnTG').innerHTML = prevText;
+                if(response.ok) {
+                    openInfoModal('Заявка отправлена', 'Спасибо! Мы получили ваш расчет. Скоро мы свяжемся с вами.');
+                } else {
+                    openInfoModal('Ошибка', 'Не удалось отправить заявку. Пожалуйста, напишите нам в WhatsApp.');
+                }
+            }).catch(e => {
+                console.error('TG Error:', e);
+                document.getElementById('bookBtnTG').innerHTML = prevText;
+                openInfoModal('Ошибка', 'Ошибка сети при отправке заявки.');
+            });
         });
 
         calculateTotal();
