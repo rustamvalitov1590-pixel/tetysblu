@@ -2048,9 +2048,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const historyModalContent = document.getElementById('historyModalContent');
     const historyList = document.getElementById('historyList');
 
-    function saveToHistory() {
+    const statisticsBtn = document.getElementById('statisticsBtn');
+    const closeStatisticsBtn = document.getElementById('closeStatisticsBtn');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const statisticsModal = document.getElementById('statisticsModal');
+    const statisticsModalContent = document.getElementById('statisticsModalContent');
+    const statisticsContent = document.getElementById('statisticsContent');
+
+    const SUPABASE_URL = 'https://zlnxvraopnwyfebfhmdj.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_2q7uufBD_85Esjf-1Mwrvg_hItngDPG';
+    
+    // Инициализируем Supabase, если ключи не являются заглушками
+    const supabaseClient = (typeof supabase !== 'undefined' && SUPABASE_URL !== 'ВАШ_SUPABASE_URL_ЗДЕСЬ') 
+        ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
+        : null;
+
+    const historyDB = typeof localforage !== 'undefined' ? localforage.createInstance({
+        name: "TetysBluCalc",
+        storeName: "history"
+    }) : null;
+
+    async function saveToHistory() {
+        if (!historyDB) return;
         if (tourists.length === 0 || (!tourists[0].fullName && !tourists[0].dob)) return;
         const total = parseInt(totalPriceEl.textContent.replace(/\D/g, '')) || 0;
+        const currentUser = localStorage.getItem('tetysUser') || 'unknown';
         
         const record = {
             id: Date.now(),
@@ -2062,20 +2084,42 @@ document.addEventListener('DOMContentLoaded', () => {
             tourists: JSON.parse(JSON.stringify(tourists))
         };
         
-        let history = JSON.parse(localStorage.getItem('tetysBluHistory') || '[]');
-        if (history.length > 0) {
-            const last = history[0];
-            if (JSON.stringify(last.tourists) === JSON.stringify(record.tourists) && last.visitDate === record.visitDate) {
-                return; // Пропуск дубликата
+        try {
+            // Сохраняем локально (как бэкап)
+            let history = await historyDB.getItem('tetysBluHistory') || [];
+            if (history.length > 0) {
+                const last = history[0];
+                if (JSON.stringify(last.tourists) === JSON.stringify(record.tourists) && last.visitDate === record.visitDate) {
+                    return; // Пропуск дубликата
+                }
             }
-        }
-        
-        history.unshift(record);
-        if (history.length > 20) history = history.slice(0, 20); // Храним только 20 последних
-        localStorage.setItem('tetysBluHistory', JSON.stringify(history));
-        
-        if (window.showToast) {
-            window.showToast('Сохранено в архив', 'fa-check', 'bg-emerald-500');
+            history.unshift(record);
+            await historyDB.setItem('tetysBluHistory', history);
+            
+            // Отправляем в Supabase
+            if (supabaseClient) {
+                const { error } = await supabaseClient
+                    .from('calculations')
+                    .insert([{
+                        created_at: record.timestamp,
+                        visit_date: record.visitDate,
+                        client_type: record.clientType,
+                        tariff_type: record.tariffType,
+                        total_sum: record.totalSum,
+                        tourists: record.tourists,
+                        user_login: currentUser
+                    }]);
+                if (error) {
+                    console.error("Ошибка Supabase:", error);
+                    if(window.showToast) window.showToast('Сохранено локально (ошибка облака)', 'fa-cloud-arrow-down', 'bg-amber-500');
+                } else {
+                    if(window.showToast) window.showToast('Сохранено в облако', 'fa-cloud-check', 'bg-emerald-500');
+                }
+            } else {
+                if(window.showToast) window.showToast('Сохранено локально (нет облака)', 'fa-check', 'bg-emerald-500');
+            }
+        } catch (err) {
+            console.error("Ошибка сохранения в базу:", err);
         }
     }
 
@@ -2100,46 +2144,200 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function renderHistory() {
-        if (!historyList) return;
-        const history = JSON.parse(localStorage.getItem('tetysBluHistory') || '[]');
-        if (history.length === 0) {
-            historyList.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Архив пуст</p></div>';
-            return;
+    async function getHistoryData(limit = 0) {
+        if (supabaseClient) {
+            try {
+                let query = supabaseClient.from('calculations').select('*').order('created_at', { ascending: false });
+                if (limit > 0) query = query.limit(limit);
+                
+                const { data, error } = await query;
+                if (!error && data) {
+                    return data.map(row => ({
+                        id: row.id,
+                        timestamp: row.created_at,
+                        visitDate: row.visit_date,
+                        clientType: row.client_type,
+                        tariffType: row.tariff_type,
+                        totalSum: row.total_sum,
+                        tourists: row.tourists
+                    }));
+                }
+            } catch(e) {
+                console.error("Supabase fetch error:", e);
+            }
         }
-        
-        historyList.innerHTML = '';
-        history.forEach(item => {
-            const date = new Date(item.timestamp);
-            const timeStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')} в ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+        // Fallback к локальной базе
+        if (historyDB) {
+            let hist = await historyDB.getItem('tetysBluHistory') || [];
+            if (limit > 0) hist = hist.slice(0, limit);
+            return hist;
+        }
+        return [];
+    }
+
+    async function renderHistory() {
+        if (!historyList) return;
+        try {
+            // Для UI истории загружаем только 50 последних записей
+            let history = await getHistoryData(50);
             
-            const card = document.createElement('div');
-            card.className = 'bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col space-y-2 relative';
-            card.innerHTML = `
-                <div class="flex justify-between items-center">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">${timeStr}</span>
-                    <span class="text-xs font-black text-[#1e293b]">${item.totalSum.toLocaleString('ru-RU')} ₸</span>
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Архив пуст</p></div>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            history.forEach(item => {
+                const date = new Date(item.timestamp);
+                const timeStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')} в ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+                
+                const card = document.createElement('div');
+                card.className = 'bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col space-y-2 relative';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">${timeStr}</span>
+                        <span class="text-xs font-black text-[#1e293b]">${item.totalSum.toLocaleString('ru-RU')} ₸</span>
+                    </div>
+                    <div class="text-sm font-bold text-slate-800">Гостей: ${item.tourists.length}</div>
+                    <div class="text-[11px] font-semibold text-slate-500">Визит: ${item.visitDate} • ${item.clientType === 'agent' ? 'Турагент' : 'Турист'}</div>
+                    <button class="mt-2 w-full bg-blue-50 text-brand-blue hover:bg-brand-blue hover:text-white py-2 rounded-xl text-xs font-bold transition-colors">
+                        <i class="fa-solid fa-download mr-1.5"></i>Загрузить расчет
+                    </button>
+                `;
+                
+                const loadBtn = card.querySelector('button');
+                loadBtn.addEventListener('click', () => {
+                    if (visitDateInput) visitDateInput.value = item.visitDate;
+                    if (clientTypeInput) clientTypeInput.value = item.clientType;
+                    if (tariffTypeInput) tariffTypeInput.value = item.tariffType;
+                    tourists = item.tourists;
+                    render();
+                    if(window.showToast) window.showToast('Расчет успешно загружен', 'fa-folder-open', 'bg-brand-blue');
+                    closeHistoryBtn.click();
+                });
+                
+                historyList.appendChild(card);
+            });
+        } catch(err) {
+            console.error("Ошибка загрузки истории:", err);
+            historyList.innerHTML = '<div class="text-center text-red-400 py-10"><p>Ошибка загрузки архива</p></div>';
+        }
+    }
+
+    // --- СТАТИСТИКА ---
+    async function calculateStatistics() {
+        if (!statisticsContent) return;
+        try {
+            statisticsContent.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-spinner fa-spin text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Загрузка облачной статистики...</p></div>';
+            
+            // Загружаем ВСЕ данные для статистики (limit = 0)
+            let history = await getHistoryData(0);
+            
+            if (history.length === 0) {
+                statisticsContent.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-chart-pie text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Нет данных для статистики</p></div>';
+                return;
+            }
+
+            let totalRevenue = 0;
+            let totalClients = 0;
+            let currentMonthRevenue = 0;
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+
+            history.forEach(item => {
+                totalRevenue += item.totalSum;
+                totalClients += item.tourists.length;
+                const d = new Date(item.timestamp);
+                if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+                    currentMonthRevenue += item.totalSum;
+                }
+            });
+
+            statisticsContent.innerHTML = `
+                <div class="grid grid-cols-2 gap-4 mb-2">
+                    <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100 flex flex-col justify-center">
+                        <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-1">Выручка (Всё время)</span>
+                        <span class="text-lg sm:text-xl font-black text-indigo-900">${totalRevenue.toLocaleString('ru-RU')} ₸</span>
+                    </div>
+                    <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 flex flex-col justify-center">
+                        <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider mb-1">За текущий месяц</span>
+                        <span class="text-lg sm:text-xl font-black text-emerald-900">${currentMonthRevenue.toLocaleString('ru-RU')} ₸</span>
+                    </div>
+                    <div class="col-span-2 bg-blue-50 p-4 rounded-2xl border border-blue-100 flex items-center justify-between">
+                        <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">Всего обслужено гостей</span>
+                        <span class="text-2xl font-black text-blue-900">${totalClients}</span>
+                    </div>
                 </div>
-                <div class="text-sm font-bold text-slate-800">Гостей: ${item.tourists.length}</div>
-                <div class="text-[11px] font-semibold text-slate-500">Визит: ${item.visitDate} • ${item.clientType === 'agent' ? 'Турагент' : 'Турист'}</div>
-                <button class="mt-2 w-full bg-blue-50 text-brand-blue hover:bg-brand-blue hover:text-white py-2 rounded-xl text-xs font-bold transition-colors">
-                    <i class="fa-solid fa-download mr-1.5"></i>Загрузить расчет
-                </button>
+                <div class="text-[10px] text-slate-400 text-center mt-4 uppercase font-bold tracking-widest">
+                    Данные на основе ${history.length} расчетов
+                </div>
             `;
+        } catch(err) {
+            console.error(err);
+            statisticsContent.innerHTML = '<div class="text-center text-red-400 py-10"><p>Ошибка загрузки статистики</p></div>';
+        }
+    }
+
+    async function exportToCSV() {
+        try {
+            // Скачиваем все данные (limit = 0)
+            let history = await getHistoryData(0);
             
-            const loadBtn = card.querySelector('button');
-            loadBtn.addEventListener('click', () => {
-                if (visitDateInput) visitDateInput.value = item.visitDate;
-                if (clientTypeInput) clientTypeInput.value = item.clientType;
-                if (tariffTypeInput) tariffTypeInput.value = item.tariffType;
-                tourists = item.tourists;
-                render();
-                window.showToast('Расчет успешно загружен', 'fa-folder-open', 'bg-brand-blue');
-                closeHistoryBtn.click();
+            if (history.length === 0) {
+                if(window.showToast) window.showToast('Архив пуст', 'fa-triangle-exclamation', 'bg-amber-500');
+                return;
+            }
+            
+            let csvContent = "Дата,Время,Дата визита,Тип клиента,Тариф,Сумма,Гостей\n";
+            history.forEach(item => {
+                const date = new Date(item.timestamp);
+                const dStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')}.${date.getFullYear()}`;
+                const tStr = `${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+                const typeStr = item.clientType === 'agent' ? 'Турагент' : 'Турист';
+                const tariffStr = item.tariffType;
+                
+                csvContent += `${dStr},${tStr},${item.visitDate},${typeStr},${tariffStr},${item.totalSum},${item.tourists.length}\n`;
             });
             
-            historyList.appendChild(card);
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `TetysBlu_Statistics_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            if(window.showToast) window.showToast('Экспорт завершен', 'fa-file-csv', 'bg-emerald-500');
+        } catch(err) {
+            console.error(err);
+            if(window.showToast) window.showToast('Ошибка при экспорте', 'fa-triangle-exclamation', 'bg-red-500');
+        }
+    }
+
+    if (statisticsBtn) {
+        statisticsBtn.addEventListener('click', () => {
+            calculateStatistics();
+            statisticsModal.classList.remove('hidden');
+            setTimeout(() => {
+                statisticsModal.classList.remove('opacity-0');
+                statisticsModalContent.classList.remove('scale-95');
+            }, 10);
         });
+    }
+
+    if (closeStatisticsBtn) {
+        closeStatisticsBtn.addEventListener('click', () => {
+            statisticsModal.classList.add('opacity-0');
+            statisticsModalContent.classList.add('scale-95');
+            setTimeout(() => {
+                statisticsModal.classList.add('hidden');
+            }, 300);
+        });
+    }
+
+    if (exportCsvBtn) {
+        exportCsvBtn.addEventListener('click', exportToCSV);
     }
 
     // --- PWA INSTALLATION LOGIC ---
