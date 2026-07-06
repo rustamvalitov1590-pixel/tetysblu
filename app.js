@@ -1335,7 +1335,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         exportText += `\n\nИТОГО: ${Math.round(totalSum).toLocaleString('ru-RU')} тенге`;
-        exportText += `\n\nС уважением, Жумасилов Талгат\n+77027477339`;
 
         // Экспорт данных
         exportDataEl.value = exportText;
