@@ -1922,7 +1922,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const basePrice = getBasePrice(visitDateStr, clientType, tariffType, category);
-                const discountInfo = calculateDiscount(t.dob, visitDateStr, t.disability, age, t.gender);
+                const discountInfo = calculateDiscount(t.dob, visitDateStr, t.disability, age, t.gender, category);
                 let discountPercent = discountInfo.percent || 0;
                 
                 const earlyBookingEnabled = earlyBookingToggle ? earlyBookingToggle.checked : false;
