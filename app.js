@@ -1,26 +1,27 @@
-// === ?? ��������� ������� (���� ��� �������� ��������� ��� � �����) ===
+// === ??   (      ) ===
 const CONFIG = {
-    // 1. ���� (������ �� ��������)
+    // Себестоимость билета (для расчета маржинальности и чистой прибыли) теперь берется динамически из свойства 'net' в tariffs
+    // 1.  (  )
     tariffs: {
         day: [
-            { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 } },
-            { start: '06-01', end: '08-23', tourist: { ADL: 14000, CHLD: 11500 }, agent: { ADL: 13450, CHLD: 10700 } },
-            { start: '08-24', end: '09-06', tourist: { ADL: 11500, CHLD: 9200 }, agent: { ADL: 11200, CHLD: 8860 } },
-            { start: '09-07', end: '09-20', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9200, CHLD: 7300 } },
-            { start: '09-21', end: '09-30', tourist: { ADL: 8500, CHLD: 6700 }, agent: { ADL: 8350, CHLD: 6520 } },
+            { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 }, net: { ADL: 10200, CHLD: 8160 } },
+            { start: '06-01', end: '08-23', tourist: { ADL: 14000, CHLD: 11500 }, agent: { ADL: 13450, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
+            { start: '08-24', end: '09-06', tourist: { ADL: 11500, CHLD: 9200 }, agent: { ADL: 11200, CHLD: 8860 }, net: { ADL: 10200, CHLD: 8160 } },
+            { start: '09-07', end: '09-20', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9200, CHLD: 7300 }, net: { ADL: 8500, CHLD: 6800 } },
+            { start: '09-21', end: '09-30', tourist: { ADL: 8500, CHLD: 6700 }, agent: { ADL: 8350, CHLD: 6520 }, net: { ADL: 7650, CHLD: 6120 } },
         ],
         evening: [
-            { start: '06-01', end: '08-31', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9000, CHLD: 7180 } }
+            { start: '06-01', end: '08-31', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9000, CHLD: 7180 }, net: { ADL: 8500, CHLD: 6800 } }
         ]
     },
-    // 2. ������ (� ���������)
+    // 2. Скидки (в процентах)
     discounts: {
-        earlyBooking: 15, // �����: ������ ������������
-        pensioner: 50,    // ����������
-        birthday: 100,    // ����������
-        disabled: 100     // ������������
+        earlyBooking: 15, // Акция: раннее бронирование
+        pensioner: 50,    // Пенсионеры
+        birthday: 100,    // Именинники
+        disabled: 100     // Инвалидность
     },
-    // 3. ������� (������ � ������)
+    // 3.  (  )
     credentials: {
         'admin': 'tetys2026',
         'manager': '0606'
@@ -178,14 +179,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Тарифы
     const tariffs = {
         day: [
-            { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 } },
-            { start: '06-01', end: '08-23', tourist: { ADL: 14000, CHLD: 11500 }, agent: { ADL: 13450, CHLD: 10700 } },
-            { start: '08-24', end: '09-06', tourist: { ADL: 11500, CHLD: 9200 }, agent: { ADL: 11200, CHLD: 8860 } },
-            { start: '09-07', end: '09-20', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9200, CHLD: 7300 } },
-            { start: '09-21', end: '09-30', tourist: { ADL: 8500, CHLD: 6700 }, agent: { ADL: 8350, CHLD: 6520 } },
+            { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 }, net: { ADL: 10200, CHLD: 8160 } },
+            { start: '06-01', end: '08-23', tourist: { ADL: 14000, CHLD: 11500 }, agent: { ADL: 13450, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
+            { start: '08-24', end: '09-06', tourist: { ADL: 11500, CHLD: 9200 }, agent: { ADL: 11200, CHLD: 8860 }, net: { ADL: 10200, CHLD: 8160 } },
+            { start: '09-07', end: '09-20', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9200, CHLD: 7300 }, net: { ADL: 8500, CHLD: 6800 } },
+            { start: '09-21', end: '09-30', tourist: { ADL: 8500, CHLD: 6700 }, agent: { ADL: 8350, CHLD: 6520 }, net: { ADL: 7650, CHLD: 6120 } },
         ],
         evening: [
-            { start: '06-01', end: '08-31', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9000, CHLD: 7180 } }
+            { start: '06-01', end: '08-31', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9000, CHLD: 7180 }, net: { ADL: 8500, CHLD: 6800 } }
         ]
     };
 
@@ -203,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function transliterate(text) {
         if (!text) return '';
-        return text.split('').map(char => cyrillicToLatinMap[char] || char.toUpperCase()).join('');
+        return text.split('').map(char => cyrillicToLatinMap[char] !== undefined ? cyrillicToLatinMap[char] : char.toUpperCase()).join('');
     }
 
     // Состояние приложения
@@ -1047,6 +1048,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (passengerCategory === 'INF') return 0; // Младенцы всегда бесплатно по базе
         
         const priceCategory = (passengerCategory === 'SNR' || passengerCategory === 'INV') ? 'ADL' : passengerCategory;
+        if (!activePeriod[clientType]) return 0;
         return activePeriod[clientType][priceCategory] || 0;
     }
 
@@ -1593,10 +1595,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!tabDetailed || !tabQuick) return;
 
         if (mode === 'detailed') {
-            tabDetailed.classList.add('border-blue-500', 'text-blue-600');
-            tabDetailed.classList.remove('border-transparent', 'text-slate-400');
-            tabQuick.classList.add('border-transparent', 'text-slate-400');
-            tabQuick.classList.remove('border-blue-500', 'text-blue-600');
+            tabDetailed.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
+            tabDetailed.classList.remove('text-slate-500');
+            tabQuick.classList.add('text-slate-500');
+            tabQuick.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
             
             detailedModeContainer.classList.remove('hidden');
             quickModeContainer.classList.add('hidden');
@@ -1607,10 +1609,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 syncQuickToDetailed();
             }
         } else {
-            tabQuick.classList.add('border-blue-500', 'text-blue-600');
-            tabQuick.classList.remove('border-transparent', 'text-slate-400');
-            tabDetailed.classList.add('border-transparent', 'text-slate-400');
-            tabDetailed.classList.remove('border-blue-500', 'text-blue-600');
+            tabQuick.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
+            tabQuick.classList.remove('text-slate-500');
+            tabDetailed.classList.add('text-slate-500');
+            tabDetailed.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
             
             detailedModeContainer.classList.add('hidden');
             quickModeContainer.classList.remove('hidden');
@@ -2026,6 +2028,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (receiptTotalValue && totalPriceEl) {
             receiptTotalValue.textContent = totalPriceEl.textContent;
         }
+
     }
 
     function generateReceiptImage() {
@@ -2098,6 +2101,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const historyModal = document.getElementById('historyModal');
     const historyModalContent = document.getElementById('historyModalContent');
     const historyList = document.getElementById('historyList');
+    
+    const historyFilterDateFrom = document.getElementById('historyFilterDateFrom');
+    const historyFilterDateTo = document.getElementById('historyFilterDateTo');
+    const historyFilterStatus = document.getElementById('historyFilterStatus');
+
+    // --- ЗАЯВКИ ОТ КЛИЕНТОВ ---
+    const requestsBtn = document.getElementById('requestsBtn');
+    const closeRequestsBtn = document.getElementById('closeRequestsBtn');
+    const requestsModal = document.getElementById('requestsModal');
+    const requestsModalContent = document.getElementById('requestsModalContent');
+    const requestsList = document.getElementById('requestsList');
+    
+    const requestsFilterDateFrom = document.getElementById('requestsFilterDateFrom');
+    const requestsFilterDateTo = document.getElementById('requestsFilterDateTo');
+    const requestsFilterStatus = document.getElementById('requestsFilterStatus');
+    const requestsPingBadge = document.getElementById('requestsPingBadge');
 
     const statisticsBtn = document.getElementById('statisticsBtn');
     const closeStatisticsBtn = document.getElementById('closeStatisticsBtn');
@@ -2134,7 +2153,8 @@ document.addEventListener('DOMContentLoaded', () => {
             totalSum: total,
             tourists: JSON.parse(JSON.stringify(tourists)),
             promocode: promoInput ? promoInput.value.trim().toUpperCase() : '',
-            comment: commentInput ? commentInput.value.trim() : ''
+            comment: commentInput ? commentInput.value.trim() : '',
+            status: 'Оплачено'
         };
         
         try {
@@ -2160,7 +2180,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         tariff_type: record.tariffType,
                         total_sum: record.totalSum,
                         tourists: record.tourists,
-                        user_login: currentUser,
+                        user_login: currentUser + '_paid',
                         promocode: record.promocode,
                         comment: record.comment
                     }]);
@@ -2238,6 +2258,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if (historyFilterDateFrom) historyFilterDateFrom.addEventListener('change', renderHistory);
+    if (historyFilterDateTo) historyFilterDateTo.addEventListener('change', renderHistory);
+    if (historyFilterStatus) historyFilterStatus.addEventListener('change', renderHistory);
+
+    // --- ОБРАБОТЧИКИ ЗАЯВОК ---
+    if (requestsBtn) {
+        requestsBtn.addEventListener('click', () => {
+            renderRequests();
+            requestsModal.classList.remove('hidden');
+            setTimeout(() => {
+                requestsModal.classList.remove('opacity-0');
+                requestsModalContent.classList.remove('translate-x-full');
+            }, 10);
+        });
+    }
+    
+    if (closeRequestsBtn) {
+        closeRequestsBtn.addEventListener('click', () => {
+            requestsModal.classList.add('opacity-0');
+            requestsModalContent.classList.add('translate-x-full');
+            setTimeout(() => {
+                requestsModal.classList.add('hidden');
+            }, 300);
+        });
+    }
+
+    if (requestsFilterDateFrom) requestsFilterDateFrom.addEventListener('change', renderRequests);
+    if (requestsFilterDateTo) requestsFilterDateTo.addEventListener('change', renderRequests);
+    if (requestsFilterStatus) requestsFilterStatus.addEventListener('change', renderRequests);
+
+    // Initial check and interval for new client requests notification
+    checkNewRequests();
+    setInterval(checkNewRequests, 30000);
+
     async function getHistoryData(limit = 0) {
         if (supabaseClient) {
             try {
@@ -2255,7 +2309,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         totalSum: row.total_sum,
                         tourists: row.tourists,
                         promocode: row.promocode,
-                        comment: row.comment
+                        comment: row.comment,
+                        status: row.status || (row.user_login === 'client_form' ? 'Ожидание оплаты' : (row.user_login === 'client_form_declined' || row.user_login === 'declined' ? 'Отказ' : (row.user_login && row.user_login.endsWith('_paid') ? 'Оплачено' : 'Оформлено'))),
+                        user_login: row.user_login
                     }));
                 }
             } catch(e) {
@@ -2296,14 +2352,93 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    window.updateHistoryStatus = async function(id, status) {
+        try {
+            // Обновляем в Supabase (безопасно, чтобы не упасть, если колонки еще нет)
+            if (supabaseClient) {
+                try {
+                    let userLoginVal = 'unknown';
+                    if (status === 'Заявка' || status === 'Ожидание оплаты') {
+                        userLoginVal = 'client_form';
+                    } else if (status === 'Отказ') {
+                        userLoginVal = 'client_form_declined';
+                    } else if (status === 'Оплачено') {
+                        let baseUser = localStorage.getItem('tetysUser') || 'unknown';
+                        if (baseUser.endsWith('_paid')) baseUser = baseUser.replace('_paid', '');
+                        userLoginVal = baseUser + '_paid';
+                    } else if (status === 'Оформлено') {
+                        let baseUser = localStorage.getItem('tetysUser') || 'unknown';
+                        if (baseUser.endsWith('_paid')) baseUser = baseUser.replace('_paid', '');
+                        userLoginVal = baseUser;
+                    }
+
+                    const { error } = await supabaseClient
+                        .from('calculations')
+                        .update({ status: status, user_login: userLoginVal })
+                        .eq('id', id);
+                    if (error) {
+                        // Если колонка status отсутствует, обновляем только user_login для совместимости
+                        const { error: error2 } = await supabaseClient
+                            .from('calculations')
+                            .update({ user_login: userLoginVal })
+                            .eq('id', id);
+                        if (error2) {
+                            console.error("Supabase fallback status update error:", error2);
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Supabase status update exception:", e);
+                }
+            }
+            
+            // Обновляем локально
+            if (historyDB) {
+                let hist = await historyDB.getItem('tetysBluHistory') || [];
+                hist = hist.map(item => {
+                    if (String(item.id) === String(id)) {
+                        return { ...item, status: status };
+                    }
+                    return item;
+                });
+                await historyDB.setItem('tetysBluHistory', hist);
+            }
+            
+            if(window.showToast) window.showToast('Статус обновлен на: ' + status, 'fa-check', 'bg-emerald-500');
+            renderHistory();
+        } catch (err) {
+            console.error('Ошибка обновления статуса:', err);
+            if(window.showToast) window.showToast('Ошибка обновления статуса', 'fa-triangle-exclamation', 'bg-red-500');
+        }
+    };
+
     async function renderHistory() {
         if (!historyList) return;
         try {
-            // Для UI истории загружаем только 50 последних записей
-            let history = await getHistoryData(50);
+            // Для UI истории загружаем все записи, чтобы фильтрация работала по всей базе
+            let history = await getHistoryData(0);
+            
+            // В архиве не показываем заявки в ожидании оплаты
+            history = history.filter(item => item.status !== 'Ожидание оплаты');
+            
+            // Фильтрация по датам выгрузки (timestamp)
+            const dateFromVal = historyFilterDateFrom ? historyFilterDateFrom.value : '';
+            const dateToVal = historyFilterDateTo ? historyFilterDateTo.value : '';
+            const statusFilterVal = historyFilterStatus ? historyFilterStatus.value : 'all';
+            
+            if (dateFromVal) {
+                const dateFrom = new Date(dateFromVal + 'T00:00:00');
+                history = history.filter(item => new Date(item.timestamp) >= dateFrom);
+            }
+            if (dateToVal) {
+                const dateTo = new Date(dateToVal + 'T23:59:59');
+                history = history.filter(item => new Date(item.timestamp) <= dateTo);
+            }
+            if (statusFilterVal && statusFilterVal !== 'all') {
+                history = history.filter(item => (item.status || 'Оформлено') === statusFilterVal);
+            }
             
             if (history.length === 0) {
-                historyList.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Архив пуст</p></div>';
+                historyList.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Заявки не найдены</p></div>';
                 return;
             }
             
@@ -2315,7 +2450,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 const timeStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')} в ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
                 
                 const card = document.createElement('div');
-                card.className = 'bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col space-y-2 relative';
+                let cardClass = '';
+                let pingBadge = '';
+                
+                if (item.status === 'Оплачено') {
+                    cardClass = 'bg-cyan-50/50 p-4 rounded-2xl border-l-4 border-l-cyan-500 border border-cyan-200 shadow-sm flex flex-col space-y-2 relative transition-all';
+                    pingBadge = `
+                        <span class="relative flex h-2 w-2 mr-1.5 shrink-0">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                        </span>
+                    `;
+                } else if (item.status === 'Отказ') {
+                    cardClass = 'bg-slate-100/60 p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col space-y-2 relative opacity-70 transition-all';
+                    pingBadge = `
+                        <span class="relative flex h-2 w-2 mr-1.5 shrink-0">
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-400"></span>
+                        </span>
+                    `;
+                } else {
+                    cardClass = 'bg-white bg-gradient-to-r from-emerald-50/10 to-white p-4 rounded-2xl border-l-4 border-l-emerald-500 border border-slate-200 shadow-sm flex flex-col space-y-2 relative transition-all';
+                    pingBadge = `
+                        <span class="relative flex h-2 w-2 mr-1.5 shrink-0">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                    `;
+                }
+                card.className = cardClass;
+
                 card.innerHTML = `
                     <div class="flex justify-between items-center">
                         <span class="text-[10px] font-bold text-slate-400 uppercase">${timeStr}</span>
@@ -2325,7 +2488,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="text-[11px] font-semibold text-slate-500 mb-1">Визит: ${item.visitDate} • ${item.clientType === 'agent' ? 'Турагент' : 'Турист'}</div>
                     ${item.promocode ? `<div class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md mb-1"><i class="fa-solid fa-ticket mr-1"></i> ${item.promocode}</div>` : ''}
                     ${item.comment ? `<div class="text-[10px] text-slate-500 italic mb-1"><i class="fa-regular fa-comment-dots mr-1"></i> ${item.comment}</div>` : ''}
-                    <button class="mt-2 w-full bg-blue-50 text-brand-blue hover:bg-brand-blue hover:text-white py-2 rounded-xl text-xs font-bold transition-colors load-btn">
+                    
+
+
+                    <button class="mt-2 w-full bg-blue-50 text-brand-blue hover:bg-brand-blue hover:text-white py-2 rounded-xl text-xs font-bold transition-all hover-lift load-btn">
                         <i class="fa-solid fa-download mr-1.5"></i>Загрузить расчет
                     </button>
                     ${currentUser === 'admin' ? `
@@ -2354,7 +2520,298 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- СТАТИСТИКА ---
+    let knownPendingRequestIds = new Set();
+    let isFirstCheck = true;
+
+    async function checkNewRequests() {
+        if (!supabaseClient) return;
+        try {
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            const { data, error } = await supabaseClient
+                .from('calculations')
+                .select('id, status, user_login')
+                .gt('created_at', sevenDaysAgo.toISOString());
+            
+            if (!error && data) {
+                const pendingRequests = data.filter(row => {
+                    const status = row.status || (row.user_login === 'client_form' ? 'Ожидание оплаты' : 'Другое');
+                    return status === 'Ожидание оплаты' && String(row.user_login).startsWith('client_form');
+                });
+                
+                let hasNew = false;
+                pendingRequests.forEach(req => {
+                    if (!knownPendingRequestIds.has(req.id)) {
+                        hasNew = true;
+                        knownPendingRequestIds.add(req.id);
+                    }
+                });
+                
+                // Очистка старых ID (чтобы не копились)
+                const currentPendingIds = new Set(pendingRequests.map(r => r.id));
+                for (let id of knownPendingRequestIds) {
+                    if (!currentPendingIds.has(id)) {
+                        knownPendingRequestIds.delete(id);
+                    }
+                }
+                
+                if (hasNew && !isFirstCheck) {
+                    if (window.showToast) window.showToast('Поступила новая заявка от клиента!', 'fa-bell', 'bg-amber-500');
+                    if (requestsModal && !requestsModal.classList.contains('hidden')) {
+                        renderRequests();
+                    }
+                }
+                isFirstCheck = false;
+
+                if (pendingRequests.length > 0) {
+                    if (requestsPingBadge) requestsPingBadge.classList.remove('hidden');
+                } else {
+                    if (requestsPingBadge) requestsPingBadge.classList.add('hidden');
+                }
+            }
+        } catch (e) {
+            console.error("Error checking new requests:", e);
+        }
+    }
+
+    async function renderRequests() {
+        if (!requestsList) return;
+        try {
+            let history = await getHistoryData(0);
+            
+            // Фильтруем только заявки, поступившие от клиентов (только ожидающие оплаты)
+            // Оплаченные и отказные переходят в архив
+            let requests = history.filter(item => {
+                return String(item.user_login).startsWith('client_form') && item.status === 'Ожидание оплаты';
+            });
+            
+            const dateFromVal = requestsFilterDateFrom ? requestsFilterDateFrom.value : '';
+            const dateToVal = requestsFilterDateTo ? requestsFilterDateTo.value : '';
+            const statusFilterVal = requestsFilterStatus ? requestsFilterStatus.value : 'all';
+            
+            if (dateFromVal) {
+                const dateFrom = new Date(dateFromVal + 'T00:00:00');
+                requests = requests.filter(item => new Date(item.timestamp) >= dateFrom);
+            }
+            if (dateToVal) {
+                const dateTo = new Date(dateToVal + 'T23:59:59');
+                requests = requests.filter(item => new Date(item.timestamp) <= dateTo);
+            }
+            if (statusFilterVal && statusFilterVal !== 'all') {
+                requests = requests.filter(item => item.status === statusFilterVal);
+            }
+            
+            if (requests.length === 0) {
+                requestsList.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Заявки не найдены</p></div>';
+                return;
+            }
+            
+            const currentUser = localStorage.getItem('tetysUser');
+            
+            requestsList.innerHTML = '';
+            requests.forEach(item => {
+                const date = new Date(item.timestamp);
+                const timeStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')} в ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+                
+                const card = document.createElement('div');
+                let cardClass = '';
+                let pingBadge = '';
+                
+                if (item.status === 'Ожидание оплаты') {
+                    cardClass = 'bg-amber-50/50 p-4 rounded-2xl border-l-4 border-l-amber-500 border border-amber-200 shadow-sm flex flex-col space-y-2 relative transition-all';
+                    pingBadge = `
+                        <span class="relative flex h-2 w-2 mr-1.5 shrink-0">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                        </span>
+                    `;
+                } else if (item.status === 'Отказ') {
+                    cardClass = 'bg-slate-100/60 p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col space-y-2 relative opacity-70 transition-all';
+                    pingBadge = `
+                        <span class="relative flex h-2 w-2 mr-1.5 shrink-0">
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-400"></span>
+                        </span>
+                    `;
+                } else { // Оплачено
+                    cardClass = 'bg-emerald-50/40 p-4 rounded-2xl border-l-4 border-l-emerald-500 border border-emerald-200 shadow-sm flex flex-col space-y-2 relative transition-all';
+                    pingBadge = `
+                        <span class="relative flex h-2 w-2 mr-1.5 shrink-0">
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                    `;
+                }
+                card.className = cardClass;
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">${timeStr}</span>
+                        <span class="text-xs font-black text-[#1e293b]">${item.totalSum.toLocaleString('ru-RU')} ₸</span>
+                    </div>
+                    <div class="text-sm font-bold text-slate-800">Гостей: ${item.tourists.length}</div>
+                    <div class="text-[11px] font-semibold text-slate-500 mb-1">Визит: ${item.visitDate} • Клиент</div>
+                    ${item.comment ? `<div class="text-[10px] text-slate-500 italic mb-1"><i class="fa-regular fa-comment-dots mr-1"></i> ${item.comment}</div>` : ''}
+                    
+                    <div class="flex items-center justify-end mt-2 pt-2 border-t border-slate-100 mb-2">
+                        <button type="button" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold transition-colors shadow-sm flex items-center archive-btn">
+                            <i class="fa-solid fa-check mr-1.5"></i>В архив
+                        </button>
+                    </div>
+
+                    <button class="mt-2 w-full bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white py-2 rounded-xl text-xs font-bold transition-all hover-lift load-btn">
+                        <i class="fa-solid fa-download mr-1.5"></i>Загрузить расчет
+                    </button>
+                    ${currentUser === 'admin' ? `
+                    <button onclick="deleteHistoryRecord('${item.id}'); setTimeout(renderRequests, 500);" class="mt-2 w-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white py-1.5 rounded-xl text-[10px] font-bold transition-colors">
+                        <i class="fa-solid fa-trash mr-1"></i>Удалить
+                    </button>
+                    ` : ''}
+                `;
+                
+                const loadBtn = card.querySelector('.load-btn');
+                loadBtn.addEventListener('click', () => {
+                    if (visitDateInput) visitDateInput.value = item.visitDate;
+                    if (clientTypeInput) clientTypeInput.value = item.clientType;
+                    if (tariffTypeInput) tariffTypeInput.value = item.tariffType;
+                    tourists = item.tourists;
+                    render();
+                    if(window.showToast) window.showToast('Расчет успешно загружен', 'fa-folder-open', 'bg-brand-blue');
+                    closeRequestsBtn.click();
+                });
+                
+                const archiveBtn = card.querySelector('.archive-btn');
+                if (archiveBtn) {
+                    archiveBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        updateRequestStatus(item.id, 'Оплачено');
+                    });
+                }
+                
+                requestsList.appendChild(card);
+            });
+        } catch (e) {
+            console.error("Error rendering requests:", e);
+        }
+    }
+
+    window.updateRequestStatus = async function(id, status) {
+        try {
+            if (supabaseClient) {
+                try {
+                    let userLoginVal = 'client_form';
+                    if (status === 'Оплачено') userLoginVal = 'client_form_paid';
+                    else if (status === 'Отказ') userLoginVal = 'client_form_declined';
+
+                    const { error } = await supabaseClient
+                        .from('calculations')
+                        .update({ status: status, user_login: userLoginVal })
+                        .eq('id', id);
+                    if (error) {
+                        const { error: error2 } = await supabaseClient
+                            .from('calculations')
+                            .update({ user_login: userLoginVal })
+                            .eq('id', id);
+                        if (error2) {
+                            console.error("Supabase fallback status update error:", error2);
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Supabase status update exception:", e);
+                }
+            }
+            
+            // Обновляем локально тоже, чтобы UI сразу отреагировал
+            if (historyDB) {
+                let hist = await historyDB.getItem('tetysBluHistory') || [];
+                hist = hist.map(item => {
+                    if (String(item.id) === String(id)) {
+                        let newUserLogin = item.user_login;
+                        if (status === 'Оплачено') newUserLogin = 'client_form_paid';
+                        else if (status === 'Отказ') newUserLogin = 'client_form_declined';
+                        return { ...item, status: status, user_login: newUserLogin };
+                    }
+                    return item;
+                });
+                await historyDB.setItem('tetysBluHistory', hist);
+            }
+            
+            if(window.showToast) window.showToast('Статус обновлен на: ' + status, 'fa-check', 'bg-emerald-500');
+            await renderRequests();
+            await checkNewRequests();
+            
+            // Если архив открыт, обновим его тоже
+            if (!historyModal.classList.contains('hidden')) {
+                renderHistory();
+            }
+        } catch (err) {
+            console.error('Ошибка обновления статуса заявки:', err);
+            if(window.showToast) window.showToast('Ошибка обновления статуса', 'fa-triangle-exclamation', 'bg-red-500');
+        }
+    };
+
+    function getRecordMetrics(item) {
+        let baseSum = 0;
+        let totalCost = 0;
+        
+        if (item.tourists && Array.isArray(item.tourists)) {
+            item.tourists.forEach(t => {
+                let age = null;
+                if (t.age !== undefined) {
+                    age = t.age;
+                } else if (t.year !== undefined) {
+                    const visitYear = item.visitDate ? new Date(item.visitDate).getFullYear() : new Date().getFullYear();
+                    age = visitYear - t.year;
+                } else if (t.dob) {
+                    age = calculateAge(t.dob, item.visitDate);
+                }
+                
+                const category = t.category || getPassengerCategory(age, t.gender, item.visitDate);
+                const basePrice = getBasePrice(item.visitDate, item.clientType, item.tariffType, category) || 0;
+                
+                // Получаем себестоимость из тарифов (Net price)
+                let costPrice = getBasePrice(item.visitDate, 'net', item.tariffType, category) || 0;
+                
+                // Если пенсионер или инвалид, то себестоимость 50% от взрослого
+                if (category === 'SNR' || category === 'INV') {
+                    const adlNet = getBasePrice(item.visitDate, 'net', item.tariffType, 'ADL');
+                    if (adlNet > 0) {
+                        costPrice = adlNet / 2;
+                    } else {
+                        costPrice = 0;
+                    }
+                }
+                
+                // Если нетто-цена не найдена (например, старые записи без даты визита), 
+                // мы оставляем 0, чтобы не завышать маржу, либо можно взять минимальную себестоимость.
+                // В данном случае лучше оставить как есть или попытаться взять дефолтный сезон.
+                if (costPrice === -1 || costPrice === 0) {
+                    if (category === 'INF') costPrice = 0;
+                    else {
+                        // Попытка взять первый доступный тариф как дефолт
+                        const defaultPeriod = CONFIG.tariffs[item.tariffType]?.[0];
+                        if (defaultPeriod && defaultPeriod.net) {
+                            costPrice = defaultPeriod.net[category === 'CHLD' ? 'CHLD' : 'ADL'] || 0;
+                        }
+                    }
+                }
+                
+                baseSum += basePrice > 0 ? basePrice : 0;
+                totalCost += costPrice;
+            });
+        }
+        
+        let discountSum = baseSum - item.totalSum;
+        if (discountSum < 0) discountSum = 0;
+        const profit = item.totalSum - totalCost;
+        
+        return {
+            baseSum: baseSum,
+            discountSum: discountSum,
+            cost: totalCost,
+            profit: profit
+        };
+    }
+
     async function calculateStatistics() {
         if (!statisticsContent) return;
         try {
@@ -2363,82 +2820,127 @@ document.addEventListener('DOMContentLoaded', () => {
             // Загружаем ВСЕ данные для статистики (limit = 0)
             let history = await getHistoryData(0);
             
+            // Фильтруем историю — статистика строится только по статусу "Оплачено"
+            history = history.filter(item => item.status === 'Оплачено');
+            
             if (history.length === 0) {
-                statisticsContent.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-chart-pie text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Нет данных для статистики</p></div>';
+                statisticsContent.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-chart-pie text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Нет оплаченных заявок для статистики</p></div>';
                 return;
             }
 
             let totalRevenue = 0;
+            let totalProfit = 0;
+            let totalDiscounts = 0;
             let totalClients = 0;
             let currentMonthRevenue = 0;
+            
             const currentMonth = new Date().getMonth();
             const currentYear = new Date().getFullYear();
 
             history.forEach(item => {
                 totalRevenue += item.totalSum;
                 totalClients += item.tourists.length;
+                
+                const metrics = getRecordMetrics(item);
+                totalProfit += metrics.profit;
+                totalDiscounts += metrics.discountSum;
+                
                 const d = new Date(item.timestamp);
                 if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
                     currentMonthRevenue += item.totalSum;
                 }
             });
 
+            const avgMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+
             statisticsContent.innerHTML = `
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100 flex flex-col justify-center">
-                        <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-1">Выручка (Всё время)</span>
-                        <span class="text-lg sm:text-xl font-black text-indigo-900">${totalRevenue.toLocaleString('ru-RU')} ₸</span>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
+                    <div class="bg-indigo-50/70 p-3.5 rounded-2xl border border-indigo-100/50 flex flex-col justify-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:drop-shadow-[0_0_8px_rgba(99,102,241,0.15)]">
+                        <span class="text-[9px] font-extrabold text-indigo-500/80 uppercase tracking-wider mb-1">Выручка (Всего)</span>
+                        <span class="text-base sm:text-lg font-black text-gradient-indigo">${totalRevenue.toLocaleString('ru-RU')} ₸</span>
                     </div>
-                    <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 flex flex-col justify-center">
-                        <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider mb-1">За текущий месяц</span>
-                        <span class="text-lg sm:text-xl font-black text-emerald-900">${currentMonthRevenue.toLocaleString('ru-RU')} ₸</span>
+                    <div class="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-100/50 flex flex-col justify-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:drop-shadow-[0_0_8px_rgba(16,185,129,0.15)]">
+                        <span class="text-[9px] font-extrabold text-emerald-600/80 uppercase tracking-wider mb-1">Выручка за месяц</span>
+                        <span class="text-base sm:text-lg font-black text-gradient-emerald">${currentMonthRevenue.toLocaleString('ru-RU')} ₸</span>
                     </div>
-                    <div class="col-span-2 bg-blue-50 p-4 rounded-2xl border border-blue-100 flex items-center justify-between">
-                        <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">Всего обслужено гостей</span>
-                        <span class="text-2xl font-black text-blue-900">${totalClients}</span>
+                    <div class="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-100/50 flex flex-col justify-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:drop-shadow-[0_0_8px_rgba(14,165,233,0.15)]">
+                        <span class="text-[9px] font-extrabold text-blue-600/80 uppercase tracking-wider mb-1">Чистая прибыль</span>
+                        <span class="text-base sm:text-lg font-black text-gradient-blue">${totalProfit.toLocaleString('ru-RU')} ₸</span>
+                    </div>
+                    <div class="bg-amber-50/70 p-3.5 rounded-2xl border border-amber-100/50 flex flex-col justify-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.15)]">
+                        <span class="text-[9px] font-extrabold text-amber-600 uppercase tracking-wider mb-1">Маржинальность</span>
+                        <span class="text-base sm:text-lg font-black text-gradient-amber">${avgMargin.toFixed(1)}%</span>
+                    </div>
+                    <div class="bg-rose-50/70 p-3.5 rounded-2xl border border-rose-100/50 flex flex-col justify-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:drop-shadow-[0_0_8px_rgba(244,63,94,0.15)]">
+                        <span class="text-[9px] font-extrabold text-rose-600 uppercase tracking-wider mb-1">Сумма скидок</span>
+                        <span class="text-base sm:text-lg font-black text-gradient-rose">${totalDiscounts.toLocaleString('ru-RU')} ₸</span>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/50 flex flex-col justify-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:drop-shadow-[0_0_8px_rgba(100,116,139,0.15)]">
+                        <span class="text-[9px] font-extrabold text-slate-500 uppercase tracking-wider mb-1">Обслужено гостей</span>
+                        <span class="text-base sm:text-lg font-black text-gradient-slate">${totalClients} чел.</span>
                     </div>
                 </div>
 
-                <!-- Блоки для графиков Chart.js -->
+                <!-- Выручка vs. Прибыль по дням -->
                 <div class="bg-white border border-slate-200 rounded-2xl p-4 mb-4 shadow-sm">
-                    <h3 class="text-xs font-bold text-slate-700 uppercase mb-3">Выручка по дням визита</h3>
-                    <canvas id="revenueChart" width="400" height="200"></canvas>
+                    <h3 class="text-xs font-bold text-slate-700 uppercase mb-3"><i class="fa-solid fa-chart-line text-indigo-500 mr-1.5"></i> Выручка vs. Чистая прибыль по дням визита</h3>
+                    <div style="height: 200px; position: relative;"><canvas id="revenueProfitChart"></canvas></div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                        <h3 class="text-[10px] font-bold text-slate-700 uppercase mb-3 text-center">Типы клиентов</h3>
-                        <div class="w-full flex justify-center"><canvas id="clientTypeChart" width="180" height="180" style="max-width:180px"></canvas></div>
+                
+                <!-- Круговые диаграммы аналитики -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col items-center">
+                        <h3 class="text-[10px] font-bold text-slate-700 uppercase mb-3 text-center">Типы клиентов (гости)</h3>
+                        <div class="w-full flex justify-center h-40"><canvas id="clientTypeChart"></canvas></div>
                     </div>
-                    <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                    <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col items-center">
                         <h3 class="text-[10px] font-bold text-slate-700 uppercase mb-3 text-center">Возрастные категории</h3>
-                        <div class="w-full flex justify-center"><canvas id="ageCategoryChart" width="180" height="180" style="max-width:180px"></canvas></div>
+                        <div class="w-full flex justify-center h-40"><canvas id="ageCategoryChart"></canvas></div>
+                    </div>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col items-center">
+                        <h3 class="text-[10px] font-bold text-slate-700 uppercase mb-3 text-center">Прибыль по тарифам</h3>
+                        <div class="w-full flex justify-center h-40"><canvas id="tariffProfitChart"></canvas></div>
                     </div>
                 </div>
 
                 <div class="text-[10px] text-slate-400 text-center mt-4 uppercase font-bold tracking-widest">
-                    Данные на основе ${history.length} расчетов
+                    Данные на основе ${history.length} оформленных расчетов
                 </div>
             `;
 
-            // Подготовка данных для графиков
-            const revenueByDate = {};
+            // Агрегация данных для графиков
+            const metricsByDate = {};
             let agentCount = 0;
             let touristCount = 0;
             let catCounts = { ADL: 0, CHLD: 0, INF: 0, SNR: 0, INV: 0 };
+            const profitByTariff = { day: 0, evening: 0 };
 
             history.forEach(item => {
-                // Агрегация выручки по дате визита
+                const metrics = getRecordMetrics(item);
+                
+                // 1. Агрегация по дате визита
                 if (item.visitDate) {
-                    if (!revenueByDate[item.visitDate]) revenueByDate[item.visitDate] = 0;
-                    revenueByDate[item.visitDate] += item.totalSum;
+                    if (!metricsByDate[item.visitDate]) {
+                        metricsByDate[item.visitDate] = { revenue: 0, profit: 0 };
+                    }
+                    metricsByDate[item.visitDate].revenue += item.totalSum;
+                    metricsByDate[item.visitDate].profit += metrics.profit;
                 }
-                // Агрегация типов клиентов
+                
+                // 2. Агрегация по тарифам
+                const tariff = item.tariffType || 'day';
+                if (profitByTariff[tariff] !== undefined) {
+                    profitByTariff[tariff] += metrics.profit;
+                }
+                
+                // 3. Агрегация типов клиентов
                 if (item.clientType === 'agent') {
                     agentCount += item.tourists.length;
                 } else {
                     touristCount += item.tourists.length;
                 }
-                // Агрегация по категориям
+                
+                // 4. Агрегация по категориям гостей
                 if (item.tourists && Array.isArray(item.tourists)) {
                     item.tourists.forEach(t => {
                         const cat = t.category || 'ADL';
@@ -2449,46 +2951,77 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Сортировка дат
-            const sortedDates = Object.keys(revenueByDate).sort((a,b) => new Date(a) - new Date(b));
-            const revenueData = sortedDates.map(date => revenueByDate[date]);
+            // Сортировка дат для временного графика
+            const sortedDates = Object.keys(metricsByDate).sort((a,b) => new Date(a) - new Date(b));
+            const revenueData = sortedDates.map(date => metricsByDate[date].revenue);
+            const profitData = sortedDates.map(date => metricsByDate[date].profit);
 
-            // Рендер графиков с задержкой (чтобы DOM успел обновиться)
+            // Инициализация графиков с небольшой задержкой
             setTimeout(() => {
                 if (typeof Chart !== 'undefined') {
-                    const revCtx = document.getElementById('revenueChart');
+                    // 1. Выручка vs Прибыль
+                    const revCtx = document.getElementById('revenueProfitChart');
                     if (revCtx) {
                         new Chart(revCtx, {
                             type: 'bar',
                             data: {
-                                labels: sortedDates.map(d => d.slice(5)), // Оставляем только MM-DD
-                                datasets: [{
-                                    label: 'Выручка ₸',
-                                    data: revenueData,
-                                    backgroundColor: '#0ea5e9',
-                                    borderRadius: 4
-                                }]
+                                labels: sortedDates.map(d => d.slice(5)), // Только MM-DD
+                                datasets: [
+                                    {
+                                        label: 'Выручка ₸',
+                                        data: revenueData,
+                                        backgroundColor: '#0ea5e9',
+                                        borderRadius: 4
+                                    },
+                                    {
+                                        label: 'Чистая прибыль ₸',
+                                        data: profitData,
+                                        backgroundColor: '#10b981',
+                                        borderRadius: 4
+                                    }
+                                ]
                             },
-                            options: { responsive: true, plugins: { legend: { display: false } } }
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        position: 'top',
+                                        labels: { boxWidth: 10, font: { size: 10, weight: 'bold' } }
+                                    }
+                                }
+                            }
                         });
                     }
 
+                    // 2. Типы клиентов
                     const typeCtx = document.getElementById('clientTypeChart');
                     if (typeCtx) {
                         new Chart(typeCtx, {
                             type: 'doughnut',
                             data: {
-                                labels: ['Турагенты', 'Туристы'],
+                                labels: ['Агенты', 'Туристы'],
                                 datasets: [{
                                     data: [agentCount, touristCount],
                                     backgroundColor: ['#8b5cf6', '#10b981'],
                                     borderWidth: 0
                                 }]
                             },
-                            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: { boxWidth: 8, font: { size: 9 } }
+                                    }
+                                }
+                            }
                         });
                     }
 
+                    // 3. Возрастные категории
                     const ageCtx = document.getElementById('ageCategoryChart');
                     if (ageCtx) {
                         new Chart(ageCtx, {
@@ -2501,7 +3034,42 @@ document.addEventListener('DOMContentLoaded', () => {
                                     borderWidth: 0
                                 }]
                             },
-                            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: { boxWidth: 8, font: { size: 9 } }
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // 4. Прибыль по тарифам
+                    const tariffCtx = document.getElementById('tariffProfitChart');
+                    if (tariffCtx) {
+                        new Chart(tariffCtx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['Дневной', 'Вечерний'],
+                                datasets: [{
+                                    data: [profitByTariff.day, profitByTariff.evening],
+                                    backgroundColor: ['#0076ba', '#f43f5e'],
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: { boxWidth: 8, font: { size: 9 } }
+                                    }
+                                }
+                            }
                         });
                     }
                 }
@@ -2536,19 +3104,16 @@ document.addEventListener('DOMContentLoaded', () => {
             // Настраиваем колонки с шириной
             sheet.columns = [
                 { header: 'Дата создания', key: 'createdAt', width: 15 },
-                { header: 'Время', key: 'time', width: 10 },
                 { header: 'Дата визита', key: 'visitDate', width: 15 },
                 { header: 'Тип клиента', key: 'clientType', width: 15 },
                 { header: 'Тариф', key: 'tariffType', width: 15 },
-                { header: 'Сумма (₸)', key: 'totalSum', width: 15 },
-                { header: 'Всего гостей', key: 'guests', width: 15 },
                 { header: 'Взрослые (ADL)', key: 'adl', width: 18 },
                 { header: 'Дети (CHLD)', key: 'chld', width: 15 },
-                { header: 'Инфанты (INF)', key: 'inf', width: 15 },
-                { header: 'Пенсионеры (SNR)', key: 'snr', width: 18 },
-                { header: 'Инвалиды (INV)', key: 'inv', width: 15 },
-                { header: 'Промокод', key: 'promo', width: 15 },
-                { header: 'Комментарий', key: 'comment', width: 30 }
+                { header: 'Всего гостей', key: 'guests', width: 15 },
+                { header: 'Базовая сумма (₸)', key: 'baseSum', width: 18 },
+                { header: 'Сумма со скидкой (₸)', key: 'totalSum', width: 22 },
+                { header: 'Себестоимость (₸)', key: 'cost', width: 18 },
+                { header: 'Валовая прибыль (₸)', key: 'profit', width: 22 }
             ];
 
             // Красивый заголовок
@@ -2566,7 +3131,6 @@ document.addEventListener('DOMContentLoaded', () => {
             history.forEach(item => {
                 const date = new Date(item.timestamp);
                 const dStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')}.${date.getFullYear()}`;
-                const tStr = `${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
                 const typeStr = item.clientType === 'agent' ? 'Турагент' : 'Турист';
                 
                 let adl=0, chld=0, inf=0, snr=0, inv=0;
@@ -2580,33 +3144,33 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (cat === 'INV') inv++;
                     });
                 }
+                
+                const metrics = getRecordMetrics(item);
 
                 const row = sheet.addRow({
                     createdAt: dStr,
-                    time: tStr,
                     visitDate: item.visitDate,
                     clientType: typeStr,
                     tariffType: item.tariffType,
-                    totalSum: item.totalSum,
-                    guests: item.tourists.length,
-                    adl: adl,
+                    adl: adl + snr + inv, // Объединяем взрослых с пенсионерами/инвалидами для простоты
                     chld: chld,
-                    inf: inf,
-                    snr: snr,
-                    inv: inv,
-                    promo: item.promocode || '',
-                    comment: item.comment || ''
+                    guests: item.tourists.length,
+                    baseSum: metrics.baseSum,
+                    totalSum: item.totalSum,
+                    cost: metrics.cost,
+                    profit: metrics.profit
                 });
 
                 // Выравнивание и перенос текста для ячеек
                 row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
                 
-                // Делаем сумму жирной
+                // Форматируем финансовые ячейки
+                row.getCell('baseSum').numFmt = '#,##0 ₸';
                 row.getCell('totalSum').font = { bold: true, color: { argb: 'FF16A34A' } };
                 row.getCell('totalSum').numFmt = '#,##0 ₸';
-                
-                // Левое выравнивание для комментария
-                row.getCell('comment').alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+                row.getCell('cost').numFmt = '#,##0 ₸';
+                row.getCell('profit').font = { bold: true, color: { argb: 'FF0EA5E9' } };
+                row.getCell('profit').numFmt = '#,##0 ₸';
             });
 
             // Добавляем границы ко всем ячейкам
@@ -2693,6 +3257,37 @@ document.addEventListener('DOMContentLoaded', () => {
         if (installPwaBtn) installPwaBtn.classList.add('hidden');
         if (window.showToast) window.showToast('Приложение установлено!', 'fa-check', 'bg-emerald-500');
     });
+
+    function initApp() {
+        const draft = localStorage.getItem('tetisBluDraft');
+        if (draft) {
+            try {
+                const data = JSON.parse(draft);
+                if (visitDateInput && data.visitDate) visitDateInput.value = data.visitDate;
+                if (clientTypeInput && data.clientType) clientTypeInput.value = data.clientType;
+                if (tariffTypeInput && data.tariffType) tariffTypeInput.value = data.tariffType;
+                if (data.currentCalcMode) currentCalcMode = data.currentCalcMode;
+                if (data.quickCounts) {
+                    Object.assign(quickCounts, data.quickCounts);
+                }
+                if (promoInput && data.promo) promoInput.value = data.promo;
+                if (commentInput && data.comment) commentInput.value = data.comment;
+                
+                if (data.tourists && Array.isArray(data.tourists)) {
+                    tourists = data.tourists;
+                }
+            } catch (e) {
+                console.error("Error parsing draft:", e);
+            }
+        }
+        
+        if (tourists.length === 0) {
+            addTourist();
+        }
+        
+        switchCalcMode(currentCalcMode);
+        checkNewRequests();
+    }
 
     // Инициализация при загрузке
     initApp();
