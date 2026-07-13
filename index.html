@@ -475,7 +475,7 @@
     </div>
 
     <!-- Main Dashboard Container -->
-    <div id="appContent" class="hidden w-full max-w-none px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+    <div id="appContent" class="hidden w-full max-w-7xl mx-auto min-[1600px]:max-w-none px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         
         <!-- Premium Navigation Header -->
         <header class="flex items-center justify-between bg-white border-none p-4 rounded-2xl shadow-2xl backdrop-blur-md">
@@ -525,6 +525,7 @@
                         <i class="fa-solid fa-chart-pie sm:mr-2"></i>
                         <span class="hidden sm:inline">Статистика</span>
                     </button>
+
                     <!-- Requests -->
                     <button id="requestsBtn" class="bg-amber-50 hover:bg-amber-100 text-amber-600 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border border-amber-200 flex items-center shadow-sm relative mr-2">
                         <span class="relative flex h-2 w-2 mr-1.5 shrink-0" id="requestsPingBadge">
@@ -642,11 +643,11 @@
                     <textarea id="bulkText" class="w-full h-36 concept-input p-3 text-xs resize-none mb-3" 
                         placeholder="Тетис на 06.06&#10;Kossymov Dias 15.04.2017 chld&#10;Otemissova Meruert 18.05.1998 adl"></textarea>
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <button id="parseBulkBtn" class="w-full sm:flex-1 btn-concept-primary py-2.5 rounded-xl text-xs font-bold shadow-md order-1 sm:order-2">
-                            Распознать и добавить
+                        <button id="parseBulkBtn" class="w-full sm:flex-1 btn-concept-primary py-2.5 rounded-xl text-xs font-bold shadow-md order-2 sm:order-2">
+                            Распознать
                         </button>
-                        <button id="clearBulkTextBtn" onclick="document.getElementById('bulkText').value=''" class="w-full sm:w-auto justify-center px-4 py-2.5 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-500 hover:text-white rounded-xl transition-colors border border-red-200 hover:border-red-500 flex items-center shadow-sm order-2 sm:order-1 whitespace-nowrap">
-                            <i class="fa-solid fa-trash-can mr-1.5"></i> Очистить текст
+                        <button id="clearBulkTextBtn" onclick="document.getElementById('bulkText').value=''" class="w-full sm:w-auto justify-center px-4 py-2.5 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-500 hover:text-white rounded-xl transition-colors border border-red-200 hover:border-red-500 flex items-center shadow-sm order-3 sm:order-1 whitespace-nowrap">
+                            <i class="fa-solid fa-trash-can mr-1.5"></i> Очистить
                         </button>
                     </div>
                 </section>
@@ -1115,6 +1116,8 @@
             </div>
         </div>
     </div>
+
+
 
     <!-- Script Import -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
