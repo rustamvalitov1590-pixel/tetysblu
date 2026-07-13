@@ -1028,7 +1028,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'INF';
     }
 
-    function getBasePrice(visitDateStr, clientType, tariffType, passengerCategory) {
+    function getBasePrice(visitDateStr, clientType, tariffType, passengerCategory, age = null) {
         if (!visitDateStr || passengerCategory === '-') return 0;
         
         const visitDate = new Date(visitDateStr);
@@ -1047,7 +1047,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (passengerCategory === 'INF') return 0; // Младенцы всегда бесплатно по базе
         
-        const priceCategory = (passengerCategory === 'SNR' || passengerCategory === 'INV') ? 'ADL' : passengerCategory;
+        let priceCategory = passengerCategory;
+        if (passengerCategory === 'SNR') {
+            priceCategory = 'ADL';
+        } else if (passengerCategory === 'INV') {
+            priceCategory = (age !== null && age >= 4 && age < 12) ? 'CHLD' : 'ADL';
+        }
         if (!activePeriod[clientType]) return 0;
         return activePeriod[clientType][priceCategory] || 0;
     }
@@ -1162,7 +1167,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             t.category = category;
             
-            const basePrice = getBasePrice(visitDate, clientType, tariffType, category);
+            const basePrice = getBasePrice(visitDate, clientType, tariffType, category, age);
             
             if (basePrice === -1) isTariffFound = false;
 
@@ -1974,7 +1979,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     category = getPassengerCategory(age, t.gender, visitDateStr);
                 }
 
-                const basePrice = getBasePrice(visitDateStr, clientType, tariffType, category);
+                const basePrice = getBasePrice(visitDateStr, clientType, tariffType, category, age);
                 const discountInfo = calculateDiscount(t.dob, visitDateStr, t.disability, age, t.gender, category);
                 let discountPercent = discountInfo.percent || 0;
                 
@@ -2766,16 +2771,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 const category = t.category || getPassengerCategory(age, t.gender, item.visitDate);
-                const basePrice = getBasePrice(item.visitDate, item.clientType, item.tariffType, category) || 0;
+                const basePrice = getBasePrice(item.visitDate, item.clientType, item.tariffType, category, age) || 0;
                 
                 // Получаем себестоимость из тарифов (Net price)
-                let costPrice = getBasePrice(item.visitDate, 'net', item.tariffType, category) || 0;
+                let costPrice = getBasePrice(item.visitDate, 'net', item.tariffType, category, age) || 0;
                 
-                // Если пенсионер или инвалид, то себестоимость 50% от взрослого
+                // Если пенсионер или инвалид, то себестоимость 50% от базового тарифа
                 if (category === 'SNR' || category === 'INV') {
-                    const adlNet = getBasePrice(item.visitDate, 'net', item.tariffType, 'ADL');
-                    if (adlNet > 0) {
-                        costPrice = adlNet / 2;
+                    const baseNet = getBasePrice(item.visitDate, 'net', item.tariffType, category, age);
+                    if (baseNet > 0) {
+                        costPrice = baseNet / 2;
                     } else {
                         costPrice = 0;
                     }
