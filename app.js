@@ -516,7 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
         normalizedText = normalizedText.replace(monthsRegexGlobal, (match, p1, p2) => `${p1}${monthMapGlobal[p2.toLowerCase()]}`);
 
         // 4. Нормализация разделителей дат: заменяем "15..05..1990" или "15 май 1990" на "15.05.1990"
-        normalizedText = normalizedText.replace(/(\b(?:0?[1-9]|[12]\d|3[01]))[\.\-\/\s\,]+(0?[1-9]|1[0-2])[\.\-\/\s\,]+(\d{4}|\d{2}\b)/g, '$1.$2.$3');
+        normalizedText = normalizedText.replace(/(\b(?:0?[1-9]|[12]\d|3[01]))[\.\-\/\s\,]+(0?[1-9]|1[0-2])[\.\-\/\s\,]+(\d{4}|\d{2})\b/g, '$1.$2.$3');
 
         // 5. Склеиваем перенесенные на новую строку даты/возраст/категории с предыдущей строкой (именем)
         const mergeRegex = /([a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])\s*[\r\n]+\s*(?=\b(?:0?[1-9]|[12]\d|3[01])[\.\-\/\s\,](?:0?[1-9]|1[0-2])[\.\-\/\s\,](?:\d{4}|\d{2})\b|\b(?:0?[1-9]|[12]\d|3[01])\.(?:0?[1-9]|1[0-2])\d{4}\b|\b(?:0[1-9]|[12]\d|3[01])(?:0[1-9]|1[0-2])(?:\d{4}|\d{2})\b|\b\d{1,2}\s*(?:лет|года?|жас|yo)\b|\b(?:chld|adl|inf|snr|inv|взр|реб|дет|пенс|инв)\b)/gi;
@@ -541,24 +541,18 @@ document.addEventListener('DOMContentLoaded', () => {
             let tYear = undefined;
 
             // Проверяем, не заголовок ли это (дата визита)
-            const headerDateMatch = line.match(/(?:на\s+|дата\s*посещения\s*|баратын\s*күніміз\s*)?(\d{1,2})[\.\-\/](\d{1,2})(?:[\.\-\/](\d{2}|\d{4}))?/i);
-            const lowerLine = line.toLowerCase();
-            const isHeader = headerDateMatch && (
-                lowerLine.includes('на ') || 
-                lowerLine.includes('дата') || 
-                lowerLine.includes('тетис') ||
-                lowerLine.includes('tour') ||
-                lowerLine.includes('тур') ||
-                lowerLine.includes('бронь') ||
-                lowerLine.includes('заявка') ||
-                lowerLine.includes('групп') ||
-                lowerLine.includes('баратын') ||
-                lowerLine.includes('күні') ||
-                lowerLine.includes('куни')
-            );
+            const headerDateMatch = line.match(/(?:на\s+|дата\s*посещения\s*|баратын\s*күніміз\s*)?[^\d]*(\d{1,2})[\.\-\/](\d{1,2})(?:[\.\-\/](\d{4}|\d{2}))?/i);
+            
+            const headerKeywords = /(?:^|\s)(на|дата|тетис|tour|тур|бронь|заявка|групп[ауы]?|баратын|күні|куни|күніміз|күніне)(?:\s|$|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһ])/i;
+            const hasHeaderKeyword = headerKeywords.test(line);
+            
+            // Если строка - только дата с возможными символами (например, "*22.07.26*")
+            const isJustDate = /^[^a-zA-Zа-яА-ЯёЁәіңғүұқөһ]*(\d{1,2})[\.\-\/](\d{1,2})(?:[\.\-\/](\d{4}|\d{2}))?[^a-zA-Zа-яА-ЯёЁәіңғүұқөһ]*$/.test(line);
+            
+            const isHeader = headerDateMatch && (hasHeaderKeyword || (index === 0 && isJustDate));
 
             // Если это явно заголовок (или первая/вторая строка с подозрением на заголовок)
-            if (isHeader && (index === 0 || index === 1 || lowerLine.includes('дата') || lowerLine.includes('баратын') || lowerLine.includes('күні') || lowerLine.includes('куни'))) {
+            if (isHeader && (index === 0 || index === 1 || hasHeaderKeyword)) {
                 const day = headerDateMatch[1].padStart(2, '0');
                 const month = headerDateMatch[2].padStart(2, '0');
                 let currentYear = new Date().getFullYear();
@@ -567,6 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     let y = headerDateMatch[3];
                     if (y.length === 2) {
                         const yInt = parseInt(y);
+                        // Для даты визита год > 50 означает 1900+, иначе 2000+
                         currentYear = yInt > 50 ? 1900 + yInt : 2000 + yInt;
                     } else {
                         currentYear = parseInt(y);
