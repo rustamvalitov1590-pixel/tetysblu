@@ -854,6 +854,22 @@
                                     <button onclick="changeQuickCount('chld_inv', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
                                 </div>
                             </div>
+                            
+                            <!-- Birthday Counter -->
+                            <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-150 rounded-2xl">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-yellow-100 text-yellow-600 flex items-center justify-center font-bold text-sm"><i class="fa-solid fa-cake-candles"></i></div>
+                                    <div>
+                                        <div class="text-xs font-bold text-slate-800">Именинники (BD)</div>
+                                        <div class="text-[10px] text-slate-400">Скидка 100%</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button onclick="changeQuickCount('bd', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
+                                    <input type="number" id="quick_bd" value="0" min="0" onchange="updateQuickCount('bd', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                                    <button onclick="changeQuickCount('bd', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
