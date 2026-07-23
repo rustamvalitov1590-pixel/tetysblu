@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let tourists = [];
     let currentCalcMode = 'detailed';
-    let quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0, inv2: 0, inv3: 0, chld_inv: 0 };
+    let quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0, inv2: 0, inv3: 0, chld_inv: 0, bd: 0 };
     
     // Элементы DOM
     const visitDateInput = document.getElementById('visitDate');
@@ -1352,6 +1352,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (quickCounts.inv > 0) { exportText += `Инвалиды 1 кат. INV: ${quickCounts.inv}\n`; hasQuickGuests = true; }
             if (quickCounts.inv2 > 0) { exportText += `Инвалиды 2 кат. INV2: ${quickCounts.inv2}\n`; hasQuickGuests = true; }
             if (quickCounts.inv3 > 0) { exportText += `Инвалиды 3 кат. INV3: ${quickCounts.inv3}\n`; hasQuickGuests = true; }
+            if (quickCounts.chld_inv > 0) { exportText += `Дети-инвалиды: ${quickCounts.chld_inv}\n`; hasQuickGuests = true; }
+            if (quickCounts.bd > 0) { exportText += `Именинники BD: ${quickCounts.bd}\n`; hasQuickGuests = true; }
             if (!hasQuickGuests) {
                 exportText += 'Пусто\n';
             }
@@ -1419,7 +1421,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function syncDetailedToQuick() {
-        let counts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0, inv2: 0, inv3: 0 };
+        let counts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0, inv2: 0, inv3: 0, chld_inv: 0, bd: 0 };
         const visitDate = visitDateInput ? visitDateInput.value : '';
         tourists.forEach(t => {
             let age = null;
@@ -1438,7 +1440,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 category = t.category;
             }
 
-            if (t.disability === '1' || category === 'INV') {
+            let isBirthday = false;
+            if (t.dob) {
+                const parts = t.dob.split('-');
+                if (parts.length === 3) {
+                    const dobM = parseInt(parts[1], 10);
+                    const dobD = parseInt(parts[2], 10);
+                    const vDateObj = visitDate ? new Date(visitDate) : new Date();
+                    isBirthday = (dobM === vDateObj.getMonth() + 1 && dobD === vDateObj.getDate());
+                }
+            }
+
+            if (isBirthday) {
+                counts.bd++;
+            } else if (t.disability === '1' || category === 'INV') {
                 counts.inv++;
             } else if (t.disability === '2') {
                 counts.inv2++;
@@ -1555,6 +1570,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 categoryManuallySet: true
             });
         }
+        // Add Birthday (BD)
+        const visitDateObj = visitDateStr ? new Date(visitDateStr) : today;
+        const vMonth = String(visitDateObj.getMonth() + 1).padStart(2, '0');
+        const vDay = String(visitDateObj.getDate()).padStart(2, '0');
+        for (let i = 0; i < quickCounts.bd; i++) {
+            tourists.push({
+                id: createId(),
+                fullName: `Гость ${tourists.length + 1}`,
+                dob: `${visitYear - 25}-${vMonth}-${vDay}`,
+                gender: 'male',
+                genderManuallySet: false,
+                disability: 'none'
+            });
+        }
     }
 
     function updateQuickInputsDOM() {
@@ -1566,6 +1595,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const inv2El = document.getElementById('quick_inv2');
         const inv3El = document.getElementById('quick_inv3');
         const chldInvEl = document.getElementById('quick_chld_inv');
+        const bdEl = document.getElementById('quick_bd');
         if (adlEl) adlEl.value = quickCounts.adl;
         if (chldEl) chldEl.value = quickCounts.chld;
         if (pensEl) pensEl.value = quickCounts.pens;
@@ -1574,6 +1604,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (inv2El) inv2El.value = quickCounts.inv2;
         if (inv3El) inv3El.value = quickCounts.inv3;
         if (chldInvEl) chldInvEl.value = quickCounts.chld_inv;
+        if (bdEl) bdEl.value = quickCounts.bd;
     }
 
     function switchCalcMode(mode) {
@@ -1599,7 +1630,7 @@ document.addEventListener('DOMContentLoaded', () => {
             detailedActionButtons.classList.remove('hidden');
             resetQuickBtn.classList.add('hidden');
             
-            if (tourists.length === 0 && (quickCounts.adl > 0 || quickCounts.chld > 0 || quickCounts.pens > 0 || quickCounts.inf > 0 || quickCounts.inv > 0)) {
+            if (tourists.length === 0 && (quickCounts.adl > 0 || quickCounts.chld > 0 || quickCounts.pens > 0 || quickCounts.inf > 0 || quickCounts.inv > 0 || quickCounts.inv2 > 0 || quickCounts.inv3 > 0 || quickCounts.chld_inv > 0 || quickCounts.bd > 0)) {
                 syncQuickToDetailed();
             }
         } else {
@@ -1614,7 +1645,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resetQuickBtn.classList.remove('hidden');
             emptyState.classList.add('hidden');
             
-            if (quickCounts.adl === 0 && quickCounts.chld === 0 && quickCounts.pens === 0 && quickCounts.inf === 0 && quickCounts.inv === 0 && quickCounts.inv2 === 0 && quickCounts.inv3 === 0) {
+            if (quickCounts.adl === 0 && quickCounts.chld === 0 && quickCounts.pens === 0 && quickCounts.inf === 0 && quickCounts.inv === 0 && quickCounts.inv2 === 0 && quickCounts.inv3 === 0 && quickCounts.chld_inv === 0 && quickCounts.bd === 0) {
                 syncDetailedToQuick();
             }
         }
@@ -1668,7 +1699,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetQuickCounts() {
-        quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0, inv2: 0, inv3: 0 };
+        quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0, inv: 0, inv2: 0, inv3: 0, chld_inv: 0, bd: 0 };
         updateQuickInputsDOM();
         syncQuickToDetailed();
         render();
@@ -1942,7 +1973,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">МЛАДЕНЦЫ (INF): ${quickCounts.inf}</div></div>`;
             }
             if (quickCounts.inv > 0) {
-                listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">ИНВАЛИДЫ (INV): ${quickCounts.inv}</div></div>`;
+                listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">ИНВАЛИДЫ 1 КАТ (INV): ${quickCounts.inv}</div></div>`;
+            }
+            if (quickCounts.inv2 > 0) {
+                listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">ИНВАЛИДЫ 2 КАТ (INV2): ${quickCounts.inv2}</div></div>`;
+            }
+            if (quickCounts.inv3 > 0) {
+                listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">ИНВАЛИДЫ 3 КАТ (INV3): ${quickCounts.inv3}</div></div>`;
+            }
+            if (quickCounts.chld_inv > 0) {
+                listHtml += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-[#1e293b] text-[15px]">ДЕТИ-ИНВАЛИДЫ: ${quickCounts.chld_inv}</div></div>`;
+            }
+            if (quickCounts.bd > 0) {
+                listHtml += `<div class="flex justify-between items-center bg-yellow-50 p-4 rounded-2xl border border-yellow-100 mb-3"><div class="font-bold text-yellow-700 text-[15px]"><i class="fa-solid fa-cake-candles mr-2"></i>ИМЕНИННИКИ (BD): ${quickCounts.bd}</div></div>`;
             }
             if (!listHtml) {
                 listHtml = `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3"><div class="font-bold text-slate-400 text-[15px]">СПИСОК ПУСТ</div></div>`;
