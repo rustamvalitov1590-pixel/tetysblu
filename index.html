@@ -727,148 +727,80 @@
                     <!-- Quick Mode Container -->
                     <div id="quickModeContainer" class="hidden space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <!-- Adults Counter -->
-                            <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-150 rounded-2xl">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">ВЗР</div>
-                                    <div>
-                                        <div class="text-xs font-bold text-slate-800">Взрослые (ADL)</div>
-                                        <div class="text-[10px] text-slate-400">От 12 лет</div>
+                            <!-- Adults Category -->
+                            <div class="flex flex-col p-4 bg-slate-50 border border-slate-150 rounded-2xl transition-all">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">ВЗР</div>
+                                        <div>
+                                            <div class="text-xs font-bold text-slate-800">Взрослые (ADL)</div>
+                                            <div class="text-[10px] text-slate-400">От 12 лет</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="changeQuickCount('adl', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
+                                        <input type="number" id="quick_adl" value="0" min="0" onchange="updateQuickCount('adl', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                                        <button onclick="changeQuickCount('adl', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <button onclick="changeQuickCount('adl', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
-                                    <input type="number" id="quick_adl" value="0" min="0" onchange="updateQuickCount('adl', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                    <button onclick="changeQuickCount('adl', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
-                                </div>
+                                <div id="quick_statuses_adl" class="mt-3 flex flex-col gap-2 empty:hidden"></div>
                             </div>
                             
-                            <!-- Children Counter -->
-                            <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-150 rounded-2xl">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-sm">ДЕТ</div>
-                                    <div>
-                                        <div class="text-xs font-bold text-slate-800">Дети (CHLD)</div>
-                                        <div class="text-[10px] text-slate-400">От 4 до 11 лет</div>
+                            <!-- Children Category -->
+                            <div class="flex flex-col p-4 bg-slate-50 border border-slate-150 rounded-2xl transition-all">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-sm">ДЕТ</div>
+                                        <div>
+                                            <div class="text-xs font-bold text-slate-800">Дети (CHLD)</div>
+                                            <div class="text-[10px] text-slate-400">От 4 до 11 лет</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="changeQuickCount('chld', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
+                                        <input type="number" id="quick_chld" value="0" min="0" onchange="updateQuickCount('chld', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                                        <button onclick="changeQuickCount('chld', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <button onclick="changeQuickCount('chld', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
-                                    <input type="number" id="quick_chld" value="0" min="0" onchange="updateQuickCount('chld', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                    <button onclick="changeQuickCount('chld', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
-                                </div>
+                                <div id="quick_statuses_chld" class="mt-3 flex flex-col gap-2 empty:hidden"></div>
                             </div>
 
-                            <!-- Pensioners Counter -->
-                            <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-150 rounded-2xl">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm">ПЕН</div>
-                                    <div>
-                                        <div class="text-xs font-bold text-slate-800">Пенсионеры (SNR)</div>
-                                        <div class="text-[10px] text-slate-400">Скидка 50%</div>
+                            <!-- Pensioners Category -->
+                            <div class="flex flex-col p-4 bg-slate-50 border border-slate-150 rounded-2xl transition-all">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm">ПЕН</div>
+                                        <div>
+                                            <div class="text-xs font-bold text-slate-800">Пенсионеры (SNR)</div>
+                                            <div class="text-[10px] text-slate-400">Скидка 50%</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="changeQuickCount('pens', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
+                                        <input type="number" id="quick_pens" value="0" min="0" onchange="updateQuickCount('pens', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                                        <button onclick="changeQuickCount('pens', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <button onclick="changeQuickCount('pens', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
-                                    <input type="number" id="quick_pens" value="0" min="0" onchange="updateQuickCount('pens', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                    <button onclick="changeQuickCount('pens', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
-                                </div>
+                                <div id="quick_statuses_pens" class="mt-3 flex flex-col gap-2 empty:hidden"></div>
                             </div>
 
-                            <!-- Infants Counter -->
-                            <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-150 rounded-2xl">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center font-bold text-sm">МЛД</div>
-                                    <div>
-                                        <div class="text-xs font-bold text-slate-800">Младенцы (INF)</div>
-                                        <div class="text-[10px] text-slate-400">До 3 лет (бесплатно)</div>
+                            <!-- Infants Category -->
+                            <div class="flex flex-col p-4 bg-slate-50 border border-slate-150 rounded-2xl transition-all">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center font-bold text-sm">МЛД</div>
+                                        <div>
+                                            <div class="text-xs font-bold text-slate-800">Младенцы (INF)</div>
+                                            <div class="text-[10px] text-slate-400">До 3 лет (бесплатно)</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="changeQuickCount('inf', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
+                                        <input type="number" id="quick_inf" value="0" min="0" onchange="updateQuickCount('inf', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                                        <button onclick="changeQuickCount('inf', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <button onclick="changeQuickCount('inf', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
-                                    <input type="number" id="quick_inf" value="0" min="0" onchange="updateQuickCount('inf', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                    <button onclick="changeQuickCount('inf', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
-                                </div>
-                            </div>
-
-                            <!-- Inv Counter -->
-                            <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-150 rounded-2xl">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-sm">ИНВ1</div>
-                                    <div>
-                                        <div class="text-xs font-bold text-slate-800">Инвалиды 1 кат.</div>
-                                        <div class="text-[10px] text-slate-400">Скидка 100%</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <button onclick="changeQuickCount('inv', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
-                                    <input type="number" id="quick_inv" value="0" min="0" onchange="updateQuickCount('inv', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                    <button onclick="changeQuickCount('inv', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
-                                </div>
-                            </div>
-                            
-                            <!-- Inv2 Counter -->
-                            <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-150 rounded-2xl">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-500 flex items-center justify-center font-bold text-sm">ИНВ2</div>
-                                    <div>
-                                        <div class="text-xs font-bold text-slate-800">Инвалиды 2 кат.</div>
-                                        <div class="text-[10px] text-slate-400">Скидка 15%</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <button onclick="changeQuickCount('inv2', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
-                                    <input type="number" id="quick_inv2" value="0" min="0" onchange="updateQuickCount('inv2', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                    <button onclick="changeQuickCount('inv2', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
-                                </div>
-                            </div>
-
-                            <!-- Inv3 Counter -->
-                            <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-150 rounded-2xl">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-400 flex items-center justify-center font-bold text-sm">ИНВ3</div>
-                                    <div>
-                                        <div class="text-xs font-bold text-slate-800">Инвалиды 3 кат.</div>
-                                        <div class="text-[10px] text-slate-400">Скидка 10%</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <button onclick="changeQuickCount('inv3', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
-                                    <input type="number" id="quick_inv3" value="0" min="0" onchange="updateQuickCount('inv3', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                    <button onclick="changeQuickCount('inv3', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
-                                </div>
-                            </div>
-                            
-                            <!-- Child Inv Counter -->
-                            <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-150 rounded-2xl">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-sm">Д-ИНВ</div>
-                                    <div>
-                                        <div class="text-xs font-bold text-slate-800">Дети-инвалиды</div>
-                                        <div class="text-[10px] text-slate-400">Скидка 10%</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <button onclick="changeQuickCount('chld_inv', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
-                                    <input type="number" id="quick_chld_inv" value="0" min="0" onchange="updateQuickCount('chld_inv', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                    <button onclick="changeQuickCount('chld_inv', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
-                                </div>
-                            </div>
-                            
-                            <!-- Birthday Counter -->
-                            <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-150 rounded-2xl">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-yellow-100 text-yellow-600 flex items-center justify-center font-bold text-sm"><i class="fa-solid fa-cake-candles"></i></div>
-                                    <div>
-                                        <div class="text-xs font-bold text-slate-800">Именинники (BD)</div>
-                                        <div class="text-[10px] text-slate-400">Скидка 100%</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <button onclick="changeQuickCount('bd', -1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">-</button>
-                                    <input type="number" id="quick_bd" value="0" min="0" onchange="updateQuickCount('bd', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-slate-800 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                    <button onclick="changeQuickCount('bd', 1)" class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 active:scale-95 transition-all font-bold text-lg">+</button>
-                                </div>
+                                <div id="quick_statuses_inf" class="mt-3 flex flex-col gap-2 empty:hidden"></div>
                             </div>
                         </div>
                     </div>
