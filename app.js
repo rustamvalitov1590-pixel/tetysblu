@@ -5,7 +5,7 @@ const CONFIG = {
     tariffs: {
         day: [
             { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 }, net: { ADL: 10200, CHLD: 8160 } },
-            { start: '06-01', end: '08-23', tourist: { ADL: 14000, CHLD: 11500 }, agent: { ADL: 13450, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
+            { start: '06-01', end: '08-23', tourist: { ADL: 15000, CHLD: 12000 }, agent: { ADL: 13450, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
             { start: '08-24', end: '09-06', tourist: { ADL: 11500, CHLD: 9200 }, agent: { ADL: 11200, CHLD: 8860 }, net: { ADL: 10200, CHLD: 8160 } },
             { start: '09-07', end: '09-20', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9200, CHLD: 7300 }, net: { ADL: 8500, CHLD: 6800 } },
             { start: '09-21', end: '09-30', tourist: { ADL: 8500, CHLD: 6700 }, agent: { ADL: 8350, CHLD: 6520 }, net: { ADL: 7650, CHLD: 6120 } },
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tariffs = {
         day: [
             { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 }, net: { ADL: 10200, CHLD: 8160 } },
-            { start: '06-01', end: '08-23', tourist: { ADL: 14000, CHLD: 11500 }, agent: { ADL: 13450, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
+            { start: '06-01', end: '08-23', tourist: { ADL: 15000, CHLD: 12000 }, agent: { ADL: 13450, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
             { start: '08-24', end: '09-06', tourist: { ADL: 11500, CHLD: 9200 }, agent: { ADL: 11200, CHLD: 8860 }, net: { ADL: 10200, CHLD: 8160 } },
             { start: '09-07', end: '09-20', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9200, CHLD: 7300 }, net: { ADL: 8500, CHLD: 6800 } },
             { start: '09-21', end: '09-30', tourist: { ADL: 8500, CHLD: 6700 }, agent: { ADL: 8350, CHLD: 6520 }, net: { ADL: 7650, CHLD: 6120 } },
@@ -1091,11 +1091,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (visitDate && earlyBookingContainer) {
             const vDate = new Date(visitDate);
             const today = new Date();
-            // Акция действует СТРОГО 28, 29, 30 июня
-            const isPromoDays = today.getMonth() === 5 && (today.getDate() >= 28 && today.getDate() <= 30);
+            // Акция действует СТРОГО с 29 по 31 июля
+            const isPromoDays = today.getMonth() === 6 && today.getDate() >= 29 && today.getDate() <= 31;
             
-            // Месяц июль (0-индексация, значит 6)
-            if (vDate.getMonth() === 6 && isPromoDays) {
+            let isPromoTime = true;
+            if (today.getDate() === 29 && today.getHours() < 10) isPromoTime = false;
+            if (today.getDate() === 31 && today.getHours() >= 20) isPromoTime = false;
+            
+            // Посещения в августе с 1 по 23
+            const isPromoVisit = vDate.getMonth() === 7 && vDate.getDate() >= 1 && vDate.getDate() <= 23;
+            
+            if (isPromoDays && isPromoTime && isPromoVisit) {
                 earlyBookingContainer.classList.remove('hidden');
             } else {
                 earlyBookingContainer.classList.add('hidden');
