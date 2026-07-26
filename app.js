@@ -5,7 +5,7 @@ const CONFIG = {
     tariffs: {
         day: [
             { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 }, net: { ADL: 10200, CHLD: 8160 } },
-            { start: '06-01', end: '08-23', tourist: { ADL: 15000, CHLD: 12000 }, agent: { ADL: 13450, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
+            { start: '06-01', end: '08-23', tourist: { ADL: 14000, CHLD: 11500 }, agent: { ADL: 13450, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
             { start: '08-24', end: '09-06', tourist: { ADL: 11500, CHLD: 9200 }, agent: { ADL: 11200, CHLD: 8860 }, net: { ADL: 10200, CHLD: 8160 } },
             { start: '09-07', end: '09-20', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9200, CHLD: 7300 }, net: { ADL: 8500, CHLD: 6800 } },
             { start: '09-21', end: '09-30', tourist: { ADL: 8500, CHLD: 6700 }, agent: { ADL: 8350, CHLD: 6520 }, net: { ADL: 7650, CHLD: 6120 } },
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tariffs = {
         day: [
             { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 }, net: { ADL: 10200, CHLD: 8160 } },
-            { start: '06-01', end: '08-23', tourist: { ADL: 15000, CHLD: 12000 }, agent: { ADL: 13450, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
+            { start: '06-01', end: '08-23', tourist: { ADL: 14000, CHLD: 11500 }, agent: { ADL: 13450, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
             { start: '08-24', end: '09-06', tourist: { ADL: 11500, CHLD: 9200 }, agent: { ADL: 11200, CHLD: 8860 }, net: { ADL: 10200, CHLD: 8160 } },
             { start: '09-07', end: '09-20', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9200, CHLD: 7300 }, net: { ADL: 8500, CHLD: 6800 } },
             { start: '09-21', end: '09-30', tourist: { ADL: 8500, CHLD: 6700 }, agent: { ADL: 8350, CHLD: 6520 }, net: { ADL: 7650, CHLD: 6120 } },
@@ -1184,9 +1184,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 discountPercent = Math.max(discountPercent, CONFIG.discounts.earlyBooking);
             }
             
+            let actualBasePrice = basePrice;
+            // Для туристов скидка РБ считается от кассовой цены (15000/12000 для дня, 10000/8000 для вечера)
+            if (earlyBookingEnabled && !hasOtherDiscounts && age >= 4 && clientType === 'tourist') {
+                if (tariffType === 'day') {
+                    if (category === 'ADL') actualBasePrice = 15000;
+                    if (category === 'CHLD') actualBasePrice = 12000;
+                } else if (tariffType === 'evening') {
+                    if (category === 'ADL') actualBasePrice = 10000;
+                    if (category === 'CHLD') actualBasePrice = 8000;
+                }
+            }
+            
             let finalPrice = 0;
-            if (basePrice > 0) {
-                finalPrice = basePrice * (1 - discountPercent / 100);
+            if (actualBasePrice > 0) {
+                finalPrice = actualBasePrice * (1 - discountPercent / 100);
+            }
+
+            if (t.isManualPrice) {
+                finalPrice = t.manualPrice !== undefined ? t.manualPrice : 0;
+                discountPercent = 0; // Отключаем бейджик процента, если цена ручная
             }
 
             // Накопление статистики
@@ -1306,10 +1323,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     <!-- Price -->
                     <div class="md:col-span-2 text-right flex flex-col items-end justify-center pr-2">
-                        ${discountPercent > 0 ? `<span class="badge-discount text-[8px] px-1.5 py-0.5 rounded-full mb-0.5 leading-none font-bold">-${discountPercent}%</span>` : ''}
-                        <span class="text-xs font-bold ${finalPrice > 0 ? 'text-slate-900' : 'text-slate-400'}">
-                            ${basePrice === -1 ? 'Нет тарифа' : Math.round(finalPrice).toLocaleString('ru-RU')} ₸
-                        </span>
+                        ${t.isManualPrice ? `<span class="badge-discount bg-amber-100 text-amber-700 text-[8px] px-1.5 py-0.5 rounded-full mb-0.5 leading-none font-bold whitespace-nowrap">Ручная цена</span>` : 
+                          (discountPercent > 0 ? `<span class="badge-discount text-[8px] px-1.5 py-0.5 rounded-full mb-0.5 leading-none font-bold">-${discountPercent}%</span>` : '')}
+                        <div class="flex items-center gap-1">
+                            <span class="text-xs font-bold ${finalPrice > 0 ? 'text-slate-900' : 'text-slate-400'}">
+                                ${basePrice === -1 ? 'Нет тарифа' : Math.round(finalPrice).toLocaleString('ru-RU')} ₸
+                            </span>
+                            <button onclick="openManualPriceModal('${t.id}', ${finalPrice})" class="text-slate-300 hover:text-amber-500 transition-colors py-1 pl-1 cursor-pointer" title="Индивидуальная цена">
+                                <i class="fa-solid fa-pencil text-[10px]"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -1438,7 +1461,60 @@ document.addEventListener('DOMContentLoaded', () => {
         window.removeTourist = removeTourist;
         window.updateTouristDobDirect = updateTouristDobDirect;
         window.updateTouristCategory = updateTouristCategory;
+        window.openManualPriceModal = openManualPriceModal;
     }
+
+    // --- Ручная корректировка цены ---
+    let manualPriceTargetId = null;
+
+    function openManualPriceModal(touristId, currentPrice) {
+        manualPriceTargetId = touristId;
+        const modal = document.getElementById('manualPriceModal');
+        const input = document.getElementById('manualPriceInput');
+        
+        const tourist = tourists.find(t => t.id === touristId);
+        if (tourist && tourist.isManualPrice) {
+            input.value = tourist.manualPrice;
+        } else {
+            input.value = Math.round(currentPrice);
+        }
+        
+        modal.classList.remove('hidden');
+        input.focus();
+    }
+
+    window.closeManualPriceModal = function() {
+        manualPriceTargetId = null;
+        document.getElementById('manualPriceModal').classList.add('hidden');
+    }
+
+    window.saveManualPrice = function() {
+        if (!manualPriceTargetId) return;
+        const input = document.getElementById('manualPriceInput');
+        const price = parseFloat(input.value);
+        
+        if (!isNaN(price) && price >= 0) {
+            const tourist = tourists.find(t => t.id === manualPriceTargetId);
+            if (tourist) {
+                tourist.isManualPrice = true;
+                tourist.manualPrice = price;
+                render();
+            }
+        }
+        window.closeManualPriceModal();
+    }
+
+    window.resetManualPrice = function() {
+        if (!manualPriceTargetId) return;
+        const tourist = tourists.find(t => t.id === manualPriceTargetId);
+        if (tourist) {
+            tourist.isManualPrice = false;
+            tourist.manualPrice = 0;
+            render();
+        }
+        window.closeManualPriceModal();
+    }
+    // --------------------------------
 
     function saveDraft() {
         const data = {
@@ -1561,11 +1637,16 @@ document.addEventListener('DOMContentLoaded', () => {
                                <option value="3" ${status === '3' ? 'selected' : ''}>Инвалид 3 кат.</option>`;
 
                 container.innerHTML += `
-                    <div class="flex items-center justify-between text-xs py-1 px-2 bg-white rounded-lg border border-slate-100">
-                        <span class="text-slate-500 font-medium">Гость ${i + 1}</span>
-                        <select onchange="changeQuickStatus('${cat}', ${i}, this.value)" class="bg-slate-50 text-slate-700 border border-slate-200 rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium">
-                            ${options}
-                        </select>
+                    <div class="flex items-center justify-between text-sm py-2 px-3 bg-white rounded-xl border border-slate-200/60 shadow-sm mb-2">
+                        <span class="text-slate-600 font-semibold">Гость ${i + 1}</span>
+                        <div class="relative">
+                            <select onchange="changeQuickStatus('${cat}', ${i}, this.value)" class="appearance-none bg-slate-50 text-brand-blue border border-slate-200 rounded-lg pl-3 pr-8 py-1 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 font-semibold cursor-pointer text-sm">
+                                ${options}
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-brand-blue">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
                     </div>
                 `;
             }
@@ -1708,6 +1789,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.changeQuickCount = changeQuickCount;
     window.updateQuickCount = updateQuickCount;
     window.resetQuickCounts = resetQuickCounts;
+    window.changeQuickStatus = changeQuickStatus;
 
     function validateAccompaniment() {
         const adlStat = parseInt(document.getElementById('statAdl').textContent) || 0;
@@ -2038,6 +2120,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     finalPrice = basePrice * (1 - discountPercent / 100);
                 }
 
+                if (t.isManualPrice) {
+                    finalPrice = t.manualPrice !== undefined ? t.manualPrice : 0;
+                }
+
                 // Форматируем ДР/возраст/год
                 let formattedDob = '';
                 if (t.dob) {
@@ -2048,7 +2134,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     formattedDob = `${t.age} лет`;
                 }
 
-                const priceStr = basePrice === -1 ? 'Нет тарифа' : `${Math.round(finalPrice).toLocaleString('ru-RU')} ₸`;
+                let priceStr = basePrice === -1 ? 'Нет тарифа' : `${Math.round(finalPrice).toLocaleString('ru-RU')} ₸`;
+                if (t.isManualPrice) {
+                    priceStr += `<div class="text-[9px] text-amber-500 mt-1 uppercase font-semibold">Ручная цена</div>`;
+                }
 
                 touristsEl.innerHTML += `
                     <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3 tourist-row">
@@ -2059,7 +2148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="text-xs text-slate-500 font-medium ml-1">(${category})</span>
                             </div>
                         </div>
-                        <div class="text-right font-bold text-[#0076ba] text-[15px] shrink-0">
+                        <div class="text-right font-bold text-[#0076ba] text-[15px] shrink-0 flex flex-col items-end justify-center">
                             ${priceStr}
                         </div>
                     </div>
