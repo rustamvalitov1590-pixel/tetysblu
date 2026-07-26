@@ -123,6 +123,14 @@
             transform: translateY(0) !important;
         }
 
+        .hide-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
 
         /* Tourist Row customized card look */
         .tourist-row {
@@ -475,14 +483,14 @@
     </div>
 
     <!-- Main Dashboard Container -->
-    <div id="appContent" class="hidden w-full max-w-7xl mx-auto min-[1600px]:max-w-none px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+    <div id="appContent" class="hidden w-full max-w-7xl mx-auto min-[1600px]:max-w-none px-4 sm:px-6 lg:px-8 mt-6 space-y-6 pb-20 sm:pb-0">
         
         <!-- Premium Navigation Header -->
-        <header class="flex items-center justify-between bg-white border-none p-4 rounded-2xl shadow-2xl backdrop-blur-md">
-            <div class="flex items-center space-x-8">
+        <header class="flex items-center justify-between bg-white border-none p-3 sm:p-4 rounded-2xl shadow-2xl gap-2 sm:gap-4 overflow-visible z-50">
+            <div class="flex items-center shrink-0">
                 <!-- Caspian Dream Park Brand Logo -->
-                <div class="flex items-center space-x-3">
-                    <img src="https://tetysblu.com/content/images/logo.png" alt="Tetys Blu" class="h-10 md:h-12 drop-shadow-sm">
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <img src="https://tetysblu.com/content/images/logo.png" alt="Tetys Blu" class="h-8 sm:h-10 md:h-12 drop-shadow-sm shrink-0 object-contain">
                     <div class="hidden sm:block border-l border-slate-200 pl-3">
                         <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Caspian Dream Park</span>
                     </div>
@@ -491,62 +499,56 @@
             </div>
 
             <!-- Profile Info & Exit -->
-            <div class="flex items-center space-x-6">
-                
-                <!-- Client Version Link -->
-                <a href="client.html" target="_blank" class="hidden sm:flex items-center space-x-2 px-4 py-2 bg-slate-100 text-brand-blue rounded-xl font-bold text-xs hover:bg-slate-200 transition-colors">
-                    <i class="fa-solid fa-up-right-from-square"></i>
-                    <span>Клиентская версия</span>
-                </a>
-
-                <!-- Active User Badge (Temporarily hidden) -->
-                <!-- <div class="hidden md:flex items-center space-x-3 border-r border-slate-200 pr-5">
-                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-brand-blue font-bold text-sm">
-                        <i class="fa-solid fa-user-tie"></i>
-                    </div>
-                    <div class="text-left">
-                        <span class="text-xs font-bold text-slate-800 block">Отдел продаж</span>
-                        <span class="text-[9px] font-semibold text-slate-400 block" id="currentSeasonYear">Сезон 2026</span>
-                    </div>
-                </div> -->
-
+            <div class="flex items-center overflow-visible">
                 <div class="flex items-center space-x-2 sm:space-x-3">
-                    <!-- PWA Install -->
-                    <button id="installPwaBtn" class="hidden bg-emerald-50 hover:bg-emerald-100 text-emerald-600 px-3 py-2 rounded-xl text-sm font-bold transition-all border border-emerald-200/50 flex items-center shadow-sm" title="Установить приложение">
-                        <i class="fa-solid fa-mobile-screen sm:mr-1.5"></i>
-                        <span class="hidden sm:inline">Установить</span>
-                    </button>
+                    
+                    <!-- Primary Buttons (Always visible) -->
                     <!-- Theme Toggle -->
-                    <button id="themeToggleBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-2 rounded-xl text-sm font-bold transition-all border border-slate-200/50 flex items-center" title="Переключить тему">
+                    <button id="themeToggleBtn" class="shrink-0 bg-slate-100 hover:bg-slate-200 text-slate-600 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-sm font-bold transition-all border border-slate-200/50 flex items-center" title="Переключить тему">
                         <i id="themeIcon" class="fa-solid fa-moon"></i>
                     </button>
-                    <!-- Statistics -->
-                    <button id="statisticsBtn" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border border-indigo-200 flex items-center shadow-sm">
-                        <i class="fa-solid fa-chart-pie sm:mr-2"></i>
-                        <span class="hidden sm:inline">Статистика</span>
-                    </button>
 
-                    <!-- Requests -->
-                    <button id="requestsBtn" class="bg-amber-50 hover:bg-amber-100 text-amber-600 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border border-amber-200 flex items-center shadow-sm relative mr-2">
-                        <span class="relative flex h-2 w-2 mr-1.5 shrink-0" id="requestsPingBadge">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                        </span>
-                        <i class="fa-solid fa-bell sm:mr-1.5"></i>
-                        <span class="hidden sm:inline">Заявки</span>
-                    </button>
-                    <!-- History -->
-                    <button id="historyBtn" class="bg-blue-50 hover:bg-blue-100 text-brand-blue px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border border-blue-200 flex items-center shadow-sm">
-                        <i class="fa-solid fa-clock-rotate-left sm:mr-2"></i>
-                        <span class="hidden sm:inline">Архив</span>
-                    </button>
-                    <!-- Logout -->
-                    <button id="logoutBtn" class="bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border border-slate-200/50 flex items-center group">
-                        <i class="fa-solid fa-arrow-right-from-bracket sm:mr-2 group-hover:translate-x-0.5 transition-transform"></i>
-                        <span class="hidden sm:inline">Выйти</span>
-                    </button>
+                    <!-- Navigation Bar (Fixed bottom on mobile, relative row on desktop) -->
+                    <div id="secondaryMenu" class="fixed bottom-0 left-0 right-0 w-full sm:static sm:w-auto bg-white sm:bg-transparent flex flex-row justify-around sm:justify-end items-center px-2 py-3 sm:p-0 shadow-[0_-5px_20px_rgba(0,0,0,0.08)] sm:shadow-none border-t border-slate-100 sm:border-none z-[100] sm:z-auto sm:space-x-3 pb-[env(safe-area-inset-bottom)] sm:pb-0">
+                        
+                        <!-- Client Version Link -->
+                        <a href="client.html" target="_blank" class="hidden sm:flex lg:flex shrink-0 items-center justify-center space-x-2 px-4 py-2 bg-slate-100 text-brand-blue rounded-xl font-bold text-xs hover:bg-slate-200 transition-colors">
+                            <i class="fa-solid fa-up-right-from-square"></i>
+                            <span>Клиентская версия</span>
+                        </a>
+
+                        <!-- Requests -->
+                        <button id="requestsBtn" class="flex-1 sm:flex-none flex flex-col sm:flex-row items-center justify-center shrink-0 bg-transparent sm:bg-amber-50 hover:bg-slate-50 sm:hover:bg-amber-100 text-slate-400 sm:text-amber-600 px-1 sm:px-4 py-1 sm:py-2 rounded-xl text-[10px] sm:text-sm font-medium sm:font-bold transition-all border-none sm:border sm:border-solid border-amber-200 shadow-none sm:shadow-sm relative">
+                            <span class="absolute top-0 right-1/4 sm:relative sm:top-0 sm:right-auto flex h-2 w-2 sm:mr-1.5 shrink-0" id="requestsPingBadge">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                            </span>
+                            <i class="fa-solid fa-bell mb-1 sm:mb-0 sm:mr-1.5 text-[22px] sm:text-base"></i>
+                            <span class="mt-0.5 sm:mt-0">Заявки</span>
+                        </button>
+
+                        <!-- Statistics -->
+                        <button id="statisticsBtn" class="flex-1 sm:flex-none flex flex-col sm:flex-row items-center justify-center shrink-0 bg-transparent sm:bg-indigo-50 hover:bg-slate-50 sm:hover:bg-indigo-100 text-slate-400 sm:text-indigo-600 px-1 sm:px-4 py-1 sm:py-2 rounded-xl text-[10px] sm:text-sm font-medium sm:font-bold transition-all border-none sm:border sm:border-solid border-indigo-200 shadow-none sm:shadow-sm">
+                            <i class="fa-solid fa-chart-pie mb-1 sm:mb-0 sm:mr-2 text-[22px] sm:text-base"></i>
+                            <span class="mt-0.5 sm:mt-0">Статистика</span>
+                        </button>
+                        
+                        <!-- History -->
+                        <button id="historyBtn" class="flex-1 sm:flex-none flex flex-col sm:flex-row items-center justify-center shrink-0 bg-transparent sm:bg-blue-50 hover:bg-slate-50 sm:hover:bg-blue-100 text-slate-400 sm:text-brand-blue px-1 sm:px-4 py-1 sm:py-2 rounded-xl text-[10px] sm:text-sm font-medium sm:font-bold transition-all border-none sm:border sm:border-solid border-blue-200 shadow-none sm:shadow-sm">
+                            <i class="fa-solid fa-clock-rotate-left mb-1 sm:mb-0 sm:mr-2 text-[22px] sm:text-base"></i>
+                            <span class="mt-0.5 sm:mt-0">Архив</span>
+                        </button>
+
+                        <!-- Logout -->
+                        <button id="logoutBtn" class="flex-1 sm:flex-none flex flex-col sm:flex-row items-center justify-center shrink-0 bg-transparent sm:bg-slate-100 hover:bg-slate-50 sm:hover:bg-red-50 text-slate-400 sm:text-slate-600 sm:hover:text-red-600 px-1 sm:px-4 py-1 sm:py-2 rounded-xl text-[10px] sm:text-sm font-medium sm:font-bold transition-all border-none sm:border sm:border-solid border-slate-200/50 shadow-none sm:shadow-sm group">
+                            <i class="fa-solid fa-arrow-right-from-bracket mb-1 sm:mb-0 sm:mr-2 group-hover:translate-x-0.5 transition-transform text-[22px] sm:text-base"></i>
+                            <span class="mt-0.5 sm:mt-0">Выйти</span>
+                        </button>
+                    </div>
+
                 </div>
             </div>
+            
         </header>
 
         <!-- Dynamic Title Section -->
@@ -1065,7 +1067,26 @@
         </div>
     </div>
 
-
+    <!-- Manual Price Modal -->
+    <div id="manualPriceModal" class="fixed inset-0 z-[8000] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-fade-in">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-amber-50">
+                <h2 class="text-base font-bold text-amber-800"><i class="fa-solid fa-pencil mr-2"></i>Индивидуальная цена</h2>
+                <button onclick="window.closeManualPriceModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-amber-200 text-amber-600 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <label class="block text-xs font-bold text-slate-500 mb-2">Новая итоговая цена (₸)</label>
+                <input type="number" id="manualPriceInput" min="0" class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-lg font-bold focus:border-amber-400 focus:bg-white focus:outline-none transition-colors" placeholder="Например: 15000">
+                
+                <div class="mt-6 flex gap-3">
+                    <button onclick="window.resetManualPrice()" class="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors text-sm">Сбросить</button>
+                    <button onclick="window.saveManualPrice()" class="flex-[2] py-3 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 transition-colors shadow-md shadow-amber-500/30 text-sm">Применить</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Script Import -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
