@@ -10,71 +10,71 @@
     
     <!-- Info Modal -->
     <div id="infoModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300" id="infoModalContent">
-            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h3 class="font-black text-slate-800 text-sm flex items-center gap-2" id="infoModalTitle">
-                    <i class="fa-solid fa-circle-info text-brand-blue"></i>
+        <div class="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300" id="infoModalContent">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+                <h3 class="font-black text-white text-sm flex items-center gap-2 drop-shadow-sm" id="infoModalTitle">
+                    <i class="fa-solid fa-circle-info text-cyan-400"></i>
                 </h3>
-                <button onclick="closeInfoModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300 transition-colors">
+                <button onclick="closeInfoModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition-colors">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div class="p-5 text-sm text-slate-600 leading-relaxed" id="infoModalText">
+            <div class="p-5 text-sm text-slate-300 leading-relaxed" id="infoModalText">
                 <!-- Filled dynamically -->
             </div>
-            <div class="p-4 bg-slate-50 text-center">
-                <button onclick="closeInfoModal()" id="infoModalCloseBtn" class="btn-primary w-full py-3 rounded-xl font-bold text-sm">Понятно</button>
+            <div class="p-4 bg-white/5 border-t border-white/10 text-center">
+                <button onclick="closeInfoModal()" id="infoModalCloseBtn" class="btn-glass-primary w-full py-3 rounded-xl font-bold text-sm">Понятно</button>
             </div>
         </div>
     </div>
 
     <!-- Tourist Info Modal -->
     <div id="touristInfoModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-2 sm:p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-slate-50 rounded-2xl w-full max-w-2xl h-[90vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-300 shadow-2xl" id="touristInfoModalContent">
-            <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-white shrink-0">
-                <h3 class="font-black text-slate-800 text-sm md:text-base flex items-center gap-2" id="i18n_info_modal_title">
-                    <i class="fa-solid fa-book-open text-brand-blue"></i> Памятка туристу
+        <div class="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-2xl h-[90vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-300 shadow-2xl" id="touristInfoModalContent">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/5 shrink-0">
+                <h3 class="font-black text-white text-sm md:text-base flex items-center gap-2 drop-shadow-sm" id="i18n_info_modal_title">
+                    <i class="fa-solid fa-book-open text-cyan-400"></i> Памятка туристу
                 </h3>
-                <button onclick="closeTouristInfoModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+                <button onclick="closeTouristInfoModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition-colors">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             
             <div class="p-4 sm:p-6 overflow-y-auto flex-1 flex flex-col gap-5 pb-10">
                 <!-- Prices -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                    <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-tags text-brand-blue"></i> <span id="i18n_info_prices_title">Актуальные цены</span>
+                <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
+                    <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
+                        <i class="fa-solid fa-tags text-cyan-400"></i> <span id="i18n_info_prices_title">Актуальные цены</span>
                     </h4>
-                    <div id="i18n_info_prices_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
+                    <div id="i18n_info_prices_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- Included -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                    <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-gift text-brand-blue"></i> <span id="i18n_info_included_title">Что входит в стоимость?</span>
+                <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
+                    <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
+                        <i class="fa-solid fa-gift text-cyan-400"></i> <span id="i18n_info_included_title">Что входит в стоимость?</span>
                     </h4>
-                    <div id="i18n_info_included_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
+                    <div id="i18n_info_included_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- FAQ -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                    <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-circle-question text-brand-blue"></i> <span id="i18n_info_faq_title">Часто задаваемые вопросы</span>
+                <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
+                    <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
+                        <i class="fa-solid fa-circle-question text-cyan-400"></i> <span id="i18n_info_faq_title">Часто задаваемые вопросы</span>
                     </h4>
-                    <div id="i18n_info_faq_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
+                    <div id="i18n_info_faq_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- Rules -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                    <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-clipboard-list text-brand-blue"></i> <span id="i18n_info_rules_title">Правила и условия</span>
+                <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
+                    <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
+                        <i class="fa-solid fa-clipboard-list text-cyan-400"></i> <span id="i18n_info_rules_title">Правила и условия</span>
                     </h4>
-                    <div id="i18n_info_rules_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
+                    <div id="i18n_info_rules_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- Fast Track -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                    <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-forward-fast text-brand-blue"></i> <span id="i18n_info_fasttrack_title">Fast Track</span>
+                <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
+                    <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
+                        <i class="fa-solid fa-forward-fast text-cyan-400"></i> <span id="i18n_info_fasttrack_title">Fast Track</span>
                     </h4>
-                    <div id="i18n_info_fasttrack_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
+                    <div id="i18n_info_fasttrack_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
                 </div>
             </div>
         </div>
@@ -101,72 +101,102 @@
     
     <style>
         body {
-            background-color: #03182f;
-            background-image: 
-                radial-gradient(circle at 100% 0%, rgba(0, 180, 216, 0.4) 0%, transparent 60%),
-                radial-gradient(circle at 0% 100%, rgba(0, 118, 186, 0.6) 0%, transparent 60%);
+            background-color: #03182f !important;
+            background-image: url('assets/ocean_bg.png') !important;
+            background-size: cover !important;
+            background-position: center center !important;
+            background-attachment: fixed !important;
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
             color: #f1f5f9;
-            background-attachment: fixed;
+            overflow-x: hidden;
             min-height: 100vh;
         }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #1e293b;
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 18, 40, 0.62);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .concept-input {
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
-            color: #1e293b;
-            font-weight: 600;
-            transition: all 0.2s;
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05) !important;
+            backdrop-filter: blur(24px) !important;
+            -webkit-backdrop-filter: blur(24px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 
+                0 10px 30px -5px rgba(0, 0, 0, 0.3), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+            border-radius: 24px !important;
+            color: #f8fafc !important;
+        }
+
+        .neon-card-blue {
+            background: rgba(13, 27, 42, 0.7) !important;
+            backdrop-filter: blur(12px) !important;
+            border: 1px solid rgba(14, 165, 233, 0.2) !important;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.1), inset 0 0 10px rgba(14, 165, 233, 0.05) !important;
+            border-radius: 24px !important;
+        }
+
+        .glass-input {
+            background: rgba(0, 0, 0, 0.2) !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 12px !important;
+            color: #ffffff !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .glass-input:focus {
+            outline: none !important;
+            border-color: #0ea5e9 !important;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2) !important;
+            background: rgba(0, 0, 0, 0.3) !important;
         }
         
-        .concept-input:focus {
-            border-color: #0ea5e9;
-            background: #fff;
-            outline: none;
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            color: white;
-            transition: all 0.3s;
-            box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
+        .btn-glass-primary {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.8) 0%, rgba(2, 132, 199, 0.9) 100%) !important;
+            backdrop-filter: blur(8px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
         }
-        .btn-primary:active { transform: translateY(0); }
-        .btn-primary:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(22, 163, 74, 0.4); }
-        .btn-primary:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
+        .btn-glass-primary:active { transform: translateY(0); }
+        .btn-glass-primary:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(2, 132, 199, 0.6) !important; }
+        .btn-glass-primary:disabled { background: rgba(148, 163, 184, 0.5) !important; box-shadow: none !important; cursor: not-allowed; }
     </style>
 </head>
 <body class="flex items-start justify-center p-4 sm:p-8 overflow-y-auto">
 
-    <div class="glass-card w-full max-w-xl relative mb-10">
+    <div class="glass-panel neon-card-blue w-full max-w-xl relative mb-10 mt-6 sm:mt-10">
         
         <!-- Language Switcher -->
-        <div class="absolute top-4 right-4 z-20 flex bg-slate-100 p-0.5 rounded-lg border border-slate-200/50 shadow-sm select-none text-[10px]">
-            <button onclick="changeLanguage('kz')" id="lang_kz" class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer text-slate-500 hover:text-slate-800">KZ</button>
-            <button onclick="changeLanguage('ru')" id="lang_ru" class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer bg-white text-slate-800 shadow-sm">RU</button>
-            <button onclick="changeLanguage('en')" id="lang_en" class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer text-slate-500 hover:text-slate-800">EN</button>
+        <div class="absolute top-4 right-4 z-20 flex bg-black/20 p-0.5 rounded-lg border border-white/10 shadow-sm select-none text-[10px]">
+            <button onclick="changeLanguage('kz')" id="lang_kz" class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer text-slate-400 hover:text-white">KZ</button>
+            <button onclick="changeLanguage('ru')" id="lang_ru" class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer bg-white/20 text-white shadow-sm">RU</button>
+            <button onclick="changeLanguage('en')" id="lang_en" class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer text-slate-400 hover:text-white">EN</button>
         </div>
 
         <!-- Header -->
-        <div class="bg-white p-6 text-center relative overflow-hidden rounded-t-[24px] border-b border-slate-100">
-            <svg class="absolute inset-0 w-full h-full text-brand-blue/5 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <div class="bg-transparent p-6 text-center relative overflow-hidden rounded-t-[24px] border-b border-white/10">
+            <svg class="absolute inset-0 w-full h-full text-cyan-400/5 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <path d="M0 80 Q 25 50 50 80 T 100 80 L 100 100 L 0 100 Z" fill="currentColor"/>
                 <path d="M0 60 Q 30 75 60 55 T 100 65 L 100 100 L 0 100 Z" fill="currentColor" opacity="0.5"/>
             </svg>
             <div class="relative z-10 flex flex-col items-center">
-                <img src="https://tetysblu.com/content/images/logo.png" alt="Tetys Blu" class="h-14 mb-3">
-                <h1 id="i18n_purchase_tickets" class="text-2xl font-black tracking-tight text-slate-800">Покупка билетов</h1>
-                <p id="i18n_official_calculator" class="text-xs text-slate-500 mt-1 font-medium">Официальный калькулятор парка</p>
-                <button type="button" onclick="openTouristInfoModal()" class="mt-4 px-5 py-2 bg-blue-50 text-brand-blue border border-blue-200 rounded-full text-xs font-bold flex items-center gap-2 hover:bg-brand-blue hover:text-white transition-colors shadow-sm cursor-pointer">
+                <img src="assets/logo.png" alt="Tetys Blu" class="h-14 mb-3 drop-shadow-md">
+                <h1 id="i18n_purchase_tickets" class="text-2xl font-black tracking-tight text-white drop-shadow-sm">Покупка билетов</h1>
+                <p id="i18n_official_calculator" class="text-xs text-slate-400 mt-1 font-medium">Официальный калькулятор парка</p>
+                <button type="button" onclick="openTouristInfoModal()" class="mt-4 px-5 py-2 bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 rounded-full text-xs font-bold flex items-center gap-2 hover:bg-cyan-500/30 hover:text-cyan-100 transition-colors shadow-sm cursor-pointer backdrop-blur-md">
                     <i class="fa-solid fa-circle-info"></i> <span id="i18n_info_btn_text">Памятка туристу</span>
                 </button>
             </div>
@@ -177,10 +207,10 @@
             <!-- Дата и Тариф -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label id="i18n_visit_date" class="block text-[13px] font-extrabold text-slate-800 uppercase mb-1.5">Дата посещения</label>
+                    <label id="i18n_visit_date" class="block text-[13px] font-extrabold text-white uppercase mb-1.5 drop-shadow-sm">Дата посещения</label>
                     <div class="relative">
-                        <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-brand-blue text-sm"></i>
-                        <input type="date" id="visitDate" class="w-full pl-9 pr-3 py-3 concept-input text-sm">
+                        <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
+                        <input type="date" id="visitDate" class="w-full pl-9 pr-3 py-3 glass-input text-sm">
                     </div>
                     <div id="promoBadge" class="hidden mt-2">
                         <span class="inline-flex items-center gap-1 text-[10px] text-white bg-gradient-to-r from-pink-500 to-orange-400 font-bold px-2 py-1 rounded-md shadow-sm">
@@ -189,32 +219,32 @@
                     </div>
                 </div>
                 <div>
-                    <label id="i18n_tariff_label" class="flex items-center text-[11px] font-bold text-slate-500 uppercase mb-1.5">
+                    <label id="i18n_tariff_label" class="flex items-center text-[11px] font-bold text-slate-400 uppercase mb-1.5 drop-shadow-sm">
                         <span id="i18n_tariff_title">Тариф</span>
-                        <i class="fa-solid fa-circle-info text-blue-400 ml-1 cursor-pointer hover:text-blue-500 transition-colors text-xs" onclick="openInfoModalByTag('tariffs')"></i>
+                        <i class="fa-solid fa-circle-info text-cyan-400 ml-1 cursor-pointer hover:text-cyan-300 transition-colors text-xs" onclick="openInfoModalByTag('tariffs')"></i>
                     </label>
                     <div class="relative">
-                        <i class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-brand-blue text-sm"></i>
-                        <select id="tariffType" class="w-full pl-9 pr-3 py-3 concept-input text-sm appearance-none cursor-pointer">
-                            <option value="day" id="i18n_day_tariff">Дневной (полный день)</option>
-                            <option value="evening" id="i18n_evening_tariff">Вечерний тариф</option>
+                        <i class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
+                        <select id="tariffType" class="w-full pl-9 pr-3 py-3 glass-input text-sm appearance-none cursor-pointer">
+                            <option value="day" class="bg-slate-800" id="i18n_day_tariff">Дневной (полный день)</option>
+                            <option value="evening" class="bg-slate-800" id="i18n_evening_tariff">Вечерний тариф</option>
                         </select>
                         <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                     </div>
                 </div>
             </div>
             
-            <p id="dateWarning" class="text-xs text-red-500 font-semibold hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i><span id="i18n_date_warning">К сожалению, на выбранную дату парк не работает.</span></p>
+            <p id="dateWarning" class="text-xs text-rose-400 font-semibold hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i><span id="i18n_date_warning">К сожалению, на выбранную дату парк не работает.</span></p>
 
-            <div class="h-px w-full bg-slate-100"></div>
+            <div class="h-px w-full bg-white/10"></div>
 
             <!-- Гости (Список на ввод) -->
             <div>
                 <div class="flex items-center justify-between mb-4">
-                    <h2 id="i18n_indicate_guests_count" class="text-sm font-bold text-slate-800 flex items-center">
-                        <i class="fa-solid fa-users text-brand-blue mr-2"></i> Укажите гостей
+                    <h2 id="i18n_indicate_guests_count" class="text-sm font-bold text-white flex items-center drop-shadow-sm">
+                        <i class="fa-solid fa-users text-cyan-400 mr-2"></i> Укажите гостей
                     </h2>
-                    <button onclick="addTouristRow()" id="addTouristBtn" class="px-3 py-1.5 bg-blue-50 text-brand-blue hover:bg-brand-blue hover:text-white rounded-xl text-xs font-bold transition-colors flex items-center gap-1 shadow-sm border border-blue-200 cursor-pointer">
+                    <button onclick="addTouristRow()" id="addTouristBtn" class="px-3 py-1.5 btn-glass-primary rounded-xl text-xs flex items-center gap-1 cursor-pointer">
                         <i class="fa-solid fa-user-plus text-[10px]"></i> <span id="i18n_add_guest_btn">Добавить гостя</span>
                     </button>
                 </div>
@@ -224,30 +254,31 @@
                     <!-- Заполняется динамически через JS -->
                 </div>
 
-                <div id="docsWarning" class="hidden mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3.5 flex items-start gap-2 shadow-sm">
-                    <i class="fa-solid fa-circle-exclamation text-amber-500 mt-0.5 text-lg"></i>
-                    <p id="i18n_docs_warning" class="text-xs text-amber-900 font-medium leading-snug">
-                        Вы выбрали льготные билеты. Пожалуйста, возьмите с собой <b>оригиналы документов</b> (свидетельство о рождении, пенсионное удостоверение и т.д.) для предъявления на кассе.
+                <div id="docsWarning" class="hidden mt-4 bg-amber-500/20 border border-amber-500/30 rounded-xl p-3.5 flex items-start gap-2 shadow-sm">
+                    <i class="fa-solid fa-circle-exclamation text-amber-400 mt-0.5 text-lg"></i>
+                    <p id="i18n_docs_warning" class="text-xs text-amber-100 font-medium leading-snug">
+                        Вы выбрали льготные билеты. Пожалуйста, возьмите с собой <b class="text-amber-300">оригиналы документов</b> (свидетельство о рождении, пенсионное удостоверение и т.д.) для предъявления на кассе.
                     </p>
                 </div>
             </div>
 
             <!-- Контакты -->
             <div class="mt-4">
-                <label id="i18n_phone_label" class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Ваш номер телефона (WhatsApp)</label>
+                <label id="i18n_phone_label" class="block text-[11px] font-bold text-slate-400 uppercase mb-1.5 drop-shadow-sm">Ваш номер телефона (WhatsApp)</label>
                 <div class="relative">
-                    <i class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-brand-blue text-sm"></i>
-                    <input type="tel" id="clientPhone" placeholder="+7 (___) ___-__-__" class="w-full pl-9 pr-3 py-3 concept-input text-sm">
+                    <i class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
+                    <input type="tel" id="clientPhone" placeholder="+7 (___) ___-__-__" class="w-full pl-9 pr-3 py-3 glass-input text-sm">
                 </div>
             </div>
 
             <!-- Итог -->
-            <div class="bg-slate-900 rounded-2xl p-5 text-white flex items-center justify-between shadow-lg mt-4">
-                <div>
+            <div class="bg-black/30 border border-white/10 rounded-2xl p-5 text-white flex items-center justify-between shadow-lg mt-4 backdrop-blur-md relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent pointer-events-none"></div>
+                <div class="relative z-10">
                     <span id="i18n_total_to_pay" class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block mb-1">Итого к оплате</span>
                     <div class="flex items-baseline gap-1.5">
-                        <span class="text-3xl font-black tracking-tight" id="totalPrice">0</span>
-                        <span class="text-lg font-bold text-brand-sky">₸</span>
+                        <span class="text-3xl font-black tracking-tight drop-shadow-md text-white" id="totalPrice">0</span>
+                        <span class="text-lg font-bold text-cyan-400">₸</span>
                     </div>
                 </div>
                 <div class="text-right">
@@ -648,13 +679,13 @@
             
             tourists.forEach((tourist, index) => {
                 const row = document.createElement('div');
-                row.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3 relative";
+                row.className = "bg-black/20 p-4 rounded-xl border border-white/10 shadow-sm space-y-3 relative";
                 row.innerHTML = `
                     <!-- Row Header with Number and Delete Button -->
                     <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-brand-blue bg-blue-50 px-2.5 py-1 rounded-lg"># ${index + 1}</span>
+                        <span class="text-xs font-bold text-cyan-400 bg-cyan-500/20 px-2.5 py-1 rounded-lg"># ${index + 1}</span>
                         ${tourists.length > 1 ? `
-                        <button onclick="removeTouristRow(${tourist.id})" class="text-slate-400 hover:text-red-500 transition-colors p-1 cursor-pointer">
+                        <button onclick="removeTouristRow(${tourist.id})" class="text-slate-500 hover:text-rose-400 transition-colors p-1 cursor-pointer">
                             <i class="fa-regular fa-trash-can text-sm"></i>
                         </button>
                         ` : ''}
@@ -668,7 +699,7 @@
                             <input type="text" value="${tourist.lastName || ''}" 
                                 placeholder="${t.lastName_placeholder}" 
                                 oninput="updateTouristField(${tourist.id}, 'lastName', this.value)"
-                                class="w-full px-3 py-2.5 concept-input text-xs" />
+                                class="w-full px-3 py-2.5 glass-input text-xs" />
                         </div>
                         
                         <!-- First Name Input -->
@@ -676,7 +707,7 @@
                             <input type="text" value="${tourist.firstName || ''}" 
                                 placeholder="${t.firstName_placeholder}" 
                                 oninput="updateTouristField(${tourist.id}, 'firstName', this.value)"
-                                class="w-full px-3 py-2.5 concept-input text-xs" />
+                                class="w-full px-3 py-2.5 glass-input text-xs" />
                         </div>
 
                         <!-- Middle Name Input -->
@@ -684,7 +715,7 @@
                             <input type="text" value="${tourist.middleName || ''}" 
                                 placeholder="${t.middleName_placeholder}" 
                                 oninput="updateTouristField(${tourist.id}, 'middleName', this.value)"
-                                class="w-full px-3 py-2.5 concept-input text-xs" />
+                                class="w-full px-3 py-2.5 glass-input text-xs" />
                         </div>
                         
                         <!-- Date of Birth Input -->
@@ -695,7 +726,7 @@
                                 placeholder="${t.dob_placeholder}" 
                                 inputmode="numeric"
                                 oninput="handleDobInput(${tourist.id}, this)"
-                                class="w-full pl-8 pr-3 py-2.5 concept-input text-xs" />
+                                class="w-full pl-8 pr-3 py-2.5 glass-input text-xs" />
                         </div>
                     </div>
                     
@@ -705,15 +736,15 @@
                         <div class="relative w-full sm:max-w-xs flex flex-col">
                             <div class="relative">
                                 <select onchange="updateTouristField(${tourist.id}, 'disability', this.value)" 
-                                    class="w-full px-3 py-2 concept-input text-[11px] appearance-none cursor-pointer pr-8">
-                                    <option value="none" ${tourist.disability === 'none' ? 'selected' : ''}>${t.disability_none}</option>
-                                    <option value="cat1" ${tourist.disability === 'cat1' ? 'selected' : ''}>${t.disability_cat1}</option>
-                                    <option value="cat2" ${tourist.disability === 'cat2' ? 'selected' : ''}>${t.disability_cat2}</option>
-                                    <option value="cat3" ${tourist.disability === 'cat3' ? 'selected' : ''}>${t.disability_cat3}</option>
+                                    class="w-full px-3 py-2 glass-input text-[11px] appearance-none cursor-pointer pr-8">
+                                    <option value="none" class="bg-slate-800" ${tourist.disability === 'none' ? 'selected' : ''}>${t.disability_none}</option>
+                                    <option value="cat1" class="bg-slate-800" ${tourist.disability === 'cat1' ? 'selected' : ''}>${t.disability_cat1}</option>
+                                    <option value="cat2" class="bg-slate-800" ${tourist.disability === 'cat2' ? 'selected' : ''}>${t.disability_cat2}</option>
+                                    <option value="cat3" class="bg-slate-800" ${tourist.disability === 'cat3' ? 'selected' : ''}>${t.disability_cat3}</option>
                                 </select>
                                 <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] pointer-events-none"></i>
                             </div>
-                            <div id="disability_hint_${tourist.id}" class="text-[9px] text-amber-600 font-bold mt-1.5 hidden flex items-center gap-1">
+                            <div id="disability_hint_${tourist.id}" class="text-[9px] text-amber-400 font-bold mt-1.5 hidden flex items-center gap-1 drop-shadow-sm">
                                 <i class="fa-solid fa-triangle-exclamation"></i>
                                 <span>${t.disability_hint}</span>
                             </div>
