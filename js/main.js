@@ -2410,6 +2410,38 @@ document.addEventListener('DOMContentLoaded', () => {
         renderDbTable(dbSearchInput ? dbSearchInput.value : '');
     };
 
+    window.loadDbRecordToCalculator = function(id) {
+        const record = dbAllRecords.find(r => r.id === id);
+        if (!record) return;
+
+        if (clientTypeInput && record.clientType) clientTypeInput.value = record.clientType;
+        if (visitDateInput && record.visitDate) visitDateInput.value = record.visitDate;
+        if (tariffTypeInput && record.tariffType) tariffTypeInput.value = record.tariffType;
+        
+        // Force detailed mode when loading from DB to show all guest data correctly
+        currentCalcMode = 'detailed';
+        
+        if (record.tourists && Array.isArray(record.tourists) && record.tourists.length > 0) {
+            tourists = JSON.parse(JSON.stringify(record.tourists));
+        } else {
+            tourists = [];
+            addTourist();
+        }
+
+        // Reset quick counts
+        quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0 };
+        quickStatuses = { adl: [], chld: [], pens: [], inf: [] };
+
+        // Re-render and switch view
+        switchCalcMode(currentCalcMode);
+        render();
+        switchAppView('view-calculator');
+        
+        if (typeof window.showToast === 'function') {
+            window.showToast('Заявка загружена в калькулятор', 'fa-file-import', 'bg-cyan-500');
+        }
+    };
+
     function renderDbTable(query = '') {
         if (!dbTableBody) return;
         const q = query.toLowerCase().trim();
@@ -2524,7 +2556,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="px-4 py-3 text-center font-bold text-white text-xs whitespace-nowrap">${tourists.length}</td>
                 <td class="px-4 py-3 min-w-[220px]">${guestsHtml}</td>
                 <td class="px-4 py-3 text-right font-black text-emerald-400 text-xs whitespace-nowrap">${(item.totalSum || 0).toLocaleString('ru-RU')} ₸</td>
-                <td class="px-4 py-3 text-center">
+                <td class="px-4 py-3 text-center whitespace-nowrap">
+                    <button onclick="loadDbRecordToCalculator('${item.id}')" class="text-cyan-400 hover:text-cyan-300 transition-colors mr-3" title="Загрузить в калькулятор"><i class="fa-solid fa-file-import text-sm"></i></button>
                     ${currentUser === 'admin' ? `<button onclick="deleteHistoryRecord('${item.id}')" class="text-slate-400 hover:text-rose-400 transition-colors" title="Удалить"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}
                 </td>
             </tr>`;
