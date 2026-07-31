@@ -10,7 +10,9 @@ const CONFIG = {
             { start: '09-21', end: '09-30', tourist: { ADL: 8500, CHLD: 6700 }, agent: { ADL: 8350, CHLD: 6520 }, net: { ADL: 7650, CHLD: 6120 } },
         ],
         evening: [
-            { start: '06-01', end: '08-31', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9000, CHLD: 7180 }, net: { ADL: 8500, CHLD: 6800 } }
+            { start: '06-01', end: '07-31', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9000, CHLD: 7180 }, net: { ADL: 8500, CHLD: 6800 } },
+            { start: '08-01', end: '08-23', tourist: { ADL: 10450, CHLD: 8438 }, agent: { ADL: 9900, CHLD: 8000 }, net: { ADL: 8500, CHLD: 6800 } },
+            { start: '08-24', end: '08-31', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9000, CHLD: 7180 }, net: { ADL: 8500, CHLD: 6800 } }
         ]
     },
     discounts: {
