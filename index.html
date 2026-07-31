@@ -685,6 +685,24 @@
         #navCalcBtn, #navDashboardBtn, #navDatabaseBtn, a[href="client.html"] {
             color: #334155 !important;
         }
+        
+        /* Light theme overrides for transparent white elements (like + / - buttons) */
+        .bg-white\/10, button.bg-white\/10 {
+            background-color: #f1f5f9 !important; /* slate-100 */
+        }
+        .bg-white\/5 {
+            background-color: #f8fafc !important; /* slate-50 */
+        }
+        .border-white\/20 {
+            border-color: #cbd5e1 !important; /* slate-300 */
+        }
+        .border-white\/10 {
+            border-color: #e2e8f0 !important; /* slate-200 */
+        }
+        button.hover\:bg-white\/20:hover {
+            background-color: #e2e8f0 !important; /* slate-200 */
+        }
+        
         #navCalcBtn.bg-white\/10 {
             background: #e2e8f0 !important;
             border: 1px solid #cbd5e1 !important;
