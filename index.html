@@ -599,6 +599,78 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        /* --- Light Theme Override for Sun Visibility --- */
+        body {
+            background-color: #f1f5f9 !important;
+            background-image: none !important;
+            color: #0f172a !important;
+        }
+        body::before { display: none !important; }
+        .underwater-bg {
+            background: #f1f5f9 !important;
+            background-image: none !important;
+        }
+        
+        .glass-panel, .neon-card-blue, .neon-card-green, .neon-card-amber, .neon-card-rose, .dark-glass-panel, .tourist-row, .glass-stat-box {
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+            color: #0f172a !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+        
+        .glass-input, .underwater-input {
+            background: #ffffff !important;
+            border: 1px solid #94a3b8 !important;
+            color: #0f172a !important;
+        }
+        .glass-input:focus, .underwater-input:focus {
+            border-color: #0ea5e9 !important;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2) !important;
+            background: #ffffff !important;
+        }
+        .glass-input::placeholder, .underwater-input::placeholder {
+            color: #64748b !important;
+        }
+        
+        /* Force texts to be dark */
+        .text-white, .text-slate-100, .text-slate-200, .text-slate-300, .text-slate-400, .text-cyan-100, .text-cyan-200, .text-cyan-300 {
+            color: #1e293b !important;
+        }
+        .text-cyan-400 {
+            color: #0284c7 !important;
+        }
+        
+        /* Headers and buttons */
+        header {
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+        
+        /* specific for auth screen */
+        #authScreen {
+            background: #f8fafc !important;
+        }
+        .glass-orb, .glass-bubble {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
+        }
+        .text-glow {
+            text-shadow: none !important;
+        }
+        .light-rays { display: none !important; }
+        
+        /* Nav buttons */
+        #navCalcBtn, #navDashboardBtn, #navDatabaseBtn, a[href="client.html"] {
+            color: #334155 !important;
+        }
+        #navCalcBtn.bg-white\/10 {
+            background: #e2e8f0 !important;
+            border: 1px solid #cbd5e1 !important;
+        }
     </style>
 </head>
 <body class="min-h-screen relative flex flex-col underwater-bg">
