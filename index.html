@@ -516,6 +516,7 @@
 
         /* --- Premium Deep Ocean Dark Mode Theme --- */
         body.dark-mode {
+            color-scheme: dark;
             background-color: #020813 !important;
             background-image: 
                 radial-gradient(circle at 100% 0%, rgba(0, 180, 216, 0.25) 0%, transparent 60%),
@@ -556,7 +557,7 @@
             background-color: #0d1e36 !important;
             border-color: rgba(14, 165, 233, 0.2) !important;
         }
-        body.dark-mode select.glass-input-light option {
+        body.dark-mode select.glass-input-light option, body.dark-mode select.glass-input option {
             background-color: #07152c;
             color: #f1f5f9;
         }
@@ -793,7 +794,7 @@
     </div>
 
     <!-- Main Dashboard Container -->
-    <div id="appContent" class="hidden h-screen w-full flex flex-col relative z-10 overflow-hidden text-slate-100">
+    <div id="appContent" class="hidden h-screen w-full max-w-[1400px] mx-auto flex flex-col relative z-10 overflow-hidden text-slate-100">
         
         <!-- Header wrapper with matching horizontal padding -->
         <div class="px-4 md:px-8 pt-3 flex-shrink-0">
@@ -866,10 +867,10 @@
             
             <!-- LEFT COLUMN: "Your Visit Details" & Stats (4/12 wide) -->
             <div class="lg:col-span-4 relative">
-                <div class="space-y-6 sticky top-0">
+                <div class="flex flex-col gap-6 sticky lg:top-6 lg:h-[calc(100vh-4rem)]">
                 
                 <!-- Visit Details Form -->
-                <section class="neon-card-blue p-6 relative">
+                <section class="neon-card-blue p-6 relative shrink-0">
                     
                     <h2 class="text-base font-bold text-white mb-5 flex items-center drop-shadow-md">
                         <i class="fa-solid fa-circle-info text-cyan-400 mr-2"></i>
@@ -884,8 +885,8 @@
                             <div class="relative w-full overflow-hidden rounded-xl">
                                 <i class="fa-solid fa-user-group absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                                 <select id="clientType" class="w-full pl-9 pr-8 py-3 glass-input text-xs sm:text-sm appearance-none cursor-pointer text-ellipsis">
-                                    <option value="tourist" class="bg-slate-800">Турист (Прямые продажи)</option>
-                                    <option value="agent" class="bg-slate-800">Агент (Оптовые продажи)</option>
+                                    <option value="tourist">Турист (Прямые продажи)</option>
+                                    <option value="agent">Агент (Оптовые продажи)</option>
                                 </select>
                                 <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                             </div>
@@ -897,7 +898,7 @@
                                 <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 drop-shadow-sm">Дата визита</label>
                                 <div class="relative w-full overflow-hidden rounded-xl">
                                     <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                                    <input type="date" id="visitDate" autocomplete="off" class="w-full pl-9 pr-2 py-3 glass-input text-xs sm:text-sm appearance-none [color-scheme:dark]" style="max-width: 100%; box-sizing: border-box;" />
+                                    <input type="date" id="visitDate" autocomplete="off" class="w-full pl-9 pr-2 py-3 glass-input text-xs sm:text-sm " style="max-width: 100%; box-sizing: border-box;" />
                                 </div>
                                 <p id="dateWarning" class="text-xs text-rose-400 font-semibold mt-1.5 hidden drop-shadow-sm"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Тариф не найден</p>
                             </div>
@@ -908,8 +909,8 @@
                                 <div class="relative w-full overflow-hidden rounded-xl">
                                     <i class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                                     <select id="tariffType" class="w-full pl-9 pr-8 py-3 glass-input text-xs sm:text-sm appearance-none cursor-pointer text-ellipsis">
-                                        <option value="day" class="bg-slate-800">Дневной</option>
-                                        <option value="evening" class="bg-slate-800">Вечерний</option>
+                                        <option value="day">Дневной</option>
+                                        <option value="evening">Вечерний</option>
                                     </select>
                                     <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                                 </div>
@@ -933,7 +934,7 @@
                 </section>
                 
                 <!-- Bulk Add Form (Текстовый ввод) -->
-                <section class="neon-card-blue p-6 mt-6 relative">
+                <section class="neon-card-blue p-6 relative flex-1 flex flex-col min-h-[300px]">
                     <h2 class="text-base font-bold text-white mb-3 flex items-center drop-shadow-md">
                         <i class="fa-solid fa-file-text text-cyan-400 mr-2"></i>
                         Текстовый ввод гостей
@@ -945,7 +946,7 @@
                             Просто скопируйте текст из мессенджера. Система сама извлечет имена, определит возраст и отфильтрует лишнюю информацию.
                         </p>
                     </div>
-                    <textarea id="bulkText" class="w-full h-36 glass-input p-3 text-xs resize-none mb-3" 
+                    <textarea id="bulkText" class="w-full flex-1 glass-input p-3 text-xs resize-none mb-3 min-h-[120px]" 
                         placeholder="Тетис на 06.06&#10;Kossymov Dias 15.04.2017 chld&#10;Otemissova Meruert 18.05.1998 adl"></textarea>
                     <div class="flex flex-col sm:flex-row gap-2">
                         <button id="parseBulkBtn" class="w-full sm:flex-1 glow-btn-cyan py-2.5 rounded-xl text-xs font-bold order-2 sm:order-2 transition-all">
@@ -956,27 +957,6 @@
                         </button>
                     </div>
                 </section>
-
-                <section class="neon-card-blue p-5 mt-6 relative rounded-2xl shadow-sm flex flex-col">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-3">
-                        <h2 class="text-sm font-bold text-white flex items-center whitespace-nowrap drop-shadow-md">
-                            <i class="fa-solid fa-code text-slate-400 mr-2"></i>
-                            Экспорт (CRM)
-                        </h2>
-                        <div class="flex items-center gap-2 w-full sm:w-auto">
-                            <button id="emailExportBtn" class="flex-1 sm:flex-none justify-center text-[11px] font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 px-3 py-2 rounded-xl transition-colors flex items-center whitespace-nowrap">
-                                <i class="fa-solid fa-envelope sm:mr-1.5"></i> <span class="hidden sm:inline">На почту</span>
-                            </button>
-                            <button id="copyExportBtn" class="flex-1 sm:flex-none justify-center text-[11px] font-bold text-blue-300 bg-blue-500/20 hover:bg-blue-500/40 border border-blue-400/30 px-3 py-2 rounded-xl transition-colors flex items-center whitespace-nowrap">
-                                <i class="fa-regular fa-copy sm:mr-1.5"></i> <span class="hidden sm:inline">Копировать</span>
-                            </button>
-                        </div>
-                    </div>
-                    <textarea id="exportData" readonly 
-                        class="w-full min-h-[120px] overflow-hidden glass-input p-3 text-xs font-mono resize-none focus:border-white/20 bg-black/20 text-white cursor-text select-all" 
-                        placeholder="Тут появится текст для экспорта в CRM..."></textarea>
-                </section>
-                
                 </div> <!-- End sticky left column wrapper -->
             </div>
             
@@ -1146,8 +1126,7 @@
                 </section>
 
                 <!-- Calculated Estimate Summary (Matches Right Box in Concept) -->
-                <!-- Calculated Estimate Summary (Matches Right Box in Concept) -->
-                <section class="neon-card-blue p-3 md:p-4 rounded-2xl relative overflow-hidden sticky bottom-4 z-40 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] border border-blue-500/30">
+                <section class="neon-card-blue p-5 rounded-2xl relative overflow-hidden shadow-sm border border-blue-500/20">
                     <!-- Concept Background Waves Inside Card -->
                     <svg class="absolute inset-0 w-full h-full text-white/10 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
                         <path d="M0 80 Q 25 50 50 80 T 100 80 L 100 100 L 0 100 Z" fill="currentColor"/>
@@ -1186,8 +1165,9 @@
                     </div>
                 </section>
 
-                <!-- Dynamic Stats Summary Panel -->
-                <section class="neon-card-blue p-5 relative rounded-2xl shadow-sm">
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
+                    <!-- Dynamic Stats Summary Panel -->
+                    <section class="neon-card-blue p-5 relative rounded-2xl shadow-sm flex flex-col h-full">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
                         <h2 class="text-sm font-bold text-white flex items-center drop-shadow-md">
                             <i class="fa-solid fa-chart-simple text-cyan-400 mr-2"></i>
@@ -1233,7 +1213,32 @@
                                 <span class="text-2xl sm:text-3xl font-black text-amber-300 mt-1 block relative z-10 drop-shadow-lg" id="statBday">0</span>
                             </div>
                         </div>
-                </section>
+                    </section>
+
+                    <section class="neon-card-blue p-5 relative rounded-2xl shadow-sm flex flex-col h-full">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-3">
+                        <h2 class="text-sm font-bold text-white flex items-center whitespace-nowrap drop-shadow-md">
+                            <i class="fa-solid fa-code text-slate-400 mr-2"></i>
+                            Экспорт (CRM)
+                        </h2>
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <button id="emailExportBtn" class="flex-1 sm:flex-none justify-center text-[11px] font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 px-3 py-2 rounded-xl transition-colors flex items-center whitespace-nowrap">
+                                <i class="fa-solid fa-envelope sm:mr-1.5"></i> <span class="hidden sm:inline">На почту</span>
+                            </button>
+                            <button id="copyExportBtn" class="flex-1 sm:flex-none justify-center text-[11px] font-bold text-blue-300 bg-blue-500/20 hover:bg-blue-500/40 border border-blue-400/30 px-3 py-2 rounded-xl transition-colors flex items-center whitespace-nowrap">
+                                <i class="fa-regular fa-copy sm:mr-1.5"></i> <span class="hidden sm:inline">Копировать</span>
+                            </button>
+                        </div>
+                    </div>
+                        <textarea id="exportData" readonly 
+                            class="w-full flex-1 min-h-[120px] overflow-hidden glass-input p-3 text-xs font-mono resize-none focus:border-white/20 bg-black/20 text-white cursor-text select-all" 
+                            placeholder="Тут появится текст для экспорта в CRM..."></textarea>
+                    </section>
+                </div>
+
+
+
+
             </div> <!-- End RIGHT COLUMN -->
         </div> <!-- End Main Grid -->
             </div> <!-- End view-calculator -->
@@ -1257,16 +1262,16 @@
                 <div class="flex-1 overflow-auto min-h-0 custom-scrollbar">
                     <table class="w-full text-xs border-collapse min-w-[700px]" id="dbTable">
                         <thead class="sticky top-0 z-20">
-                            <tr class="bg-[#0b172a] text-slate-300 uppercase text-[10px] font-bold tracking-wide shadow-md">
-                                <th class="px-4 py-3 text-left whitespace-nowrap">#</th>
-                                <th class="px-4 py-3 text-left whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors" onclick="sortDbTable('date')">Дата / Время <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-date"></i></th>
-                                <th class="px-4 py-3 text-left whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors" onclick="sortDbTable('visit')">Визит <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-visit"></i></th>
-                                <th class="px-4 py-3 text-left whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors" onclick="sortDbTable('client')">Клиент <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-client"></i></th>
-                                <th class="px-4 py-3 text-left whitespace-nowrap">Тариф</th>
-                                <th class="px-4 py-3 text-center whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors" onclick="sortDbTable('guests')">Гостей <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-guests"></i></th>
-                                <th class="px-4 py-3 text-left whitespace-nowrap">Список гостей (ФИО · дата рождения · кат.)</th>
-                                <th class="px-4 py-3 text-right whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors" onclick="sortDbTable('sum')">Сумма <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-sum"></i></th>
-                                <th class="px-4 py-3 text-center whitespace-nowrap"></th>
+                            <tr class="bg-[#0b172a] uppercase text-[10px] font-bold tracking-wide shadow-md">
+                                <th class="px-4 py-3 text-left whitespace-nowrap" style="color: white !important;">#</th>
+                                <th class="px-4 py-3 text-left whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors" style="color: white !important;" onclick="sortDbTable('date')">Дата / Время <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-date"></i></th>
+                                <th class="px-4 py-3 text-left whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors" style="color: white !important;" onclick="sortDbTable('visit')">Визит <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-visit"></i></th>
+                                <th class="px-4 py-3 text-left whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors" style="color: white !important;" onclick="sortDbTable('client')">Клиент <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-client"></i></th>
+                                <th class="px-4 py-3 text-left whitespace-nowrap" style="color: white !important;">Тариф</th>
+                                <th class="px-4 py-3 text-center whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors" style="color: white !important;" onclick="sortDbTable('guests')">Гостей <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-guests"></i></th>
+                                <th class="px-4 py-3 text-left whitespace-nowrap" style="color: white !important;">Список гостей (ФИО · дата рождения · кат.)</th>
+                                <th class="px-4 py-3 text-right whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors" style="color: white !important;" onclick="sortDbTable('sum')">Сумма <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-sum"></i></th>
+                                <th class="px-4 py-3 text-center whitespace-nowrap" style="color: white !important;"></th>
                             </tr>
                         </thead>
                         <tbody id="dbTableBody">
