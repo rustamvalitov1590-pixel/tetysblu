@@ -183,20 +183,32 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             // Отправляем строго в Supabase
-            const { error } = await supabaseClient
+            let insertData = {
+                created_at: record.timestamp,
+                visit_date: record.visitDate,
+                client_type: record.clientType,
+                tariff_type: record.tariffType,
+                total_sum: record.totalSum,
+                tourists: record.tourists,
+                user_login: currentUser + '_paid',
+                promocode: record.promocode,
+                comment: record.comment,
+                status: record.status
+            };
+            
+            let { error } = await supabaseClient
                 .from('calculations')
-                .insert([{
-                    created_at: record.timestamp,
-                    visit_date: record.visitDate,
-                    client_type: record.clientType,
-                    tariff_type: record.tariffType,
-                    total_sum: record.totalSum,
-                    tourists: record.tourists,
-                    user_login: currentUser + '_paid',
-                    promocode: record.promocode,
-                    comment: record.comment,
-                    status: record.status
-                }]);
+                .insert([insertData]);
+                
+            // Если ошибка связана с отсутствием новых колонок, пробуем без них
+            if (error && error.message && (error.message.includes('column') || error.code === 'PGRST204' || error.code === '42703')) {
+                console.warn('Supabase: отсутствуют колонки, сохраняем базовые данные без promocode, comment и status.');
+                delete insertData.promocode;
+                delete insertData.comment;
+                delete insertData.status;
+                const retry = await supabaseClient.from('calculations').insert([insertData]);
+                error = retry.error;
+            }
             
             if (error) {
                 console.error("Ошибка Supabase:", error);
@@ -2215,7 +2227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const discountInfo = calculateDiscount(t.dob, visitDateStr, t.disability, age, t.gender, category);
                 let discountPercent = discountInfo.percent || 0;
                 
-                const earlyBookingEnabled = earlyBookingToggle ? earlyBookingToggle.checked : false;
+                const earlyBookingEnabled = typeof earlyBookingToggle !== 'undefined' && earlyBookingToggle ? earlyBookingToggle.checked : false;
                 
                 if (category === 'INV') {
                     discountPercent = 100;
@@ -2307,13 +2319,51 @@ document.addEventListener('DOMContentLoaded', () => {
             content.classList.add('opacity-0', 'pointer-events-none');
             container.appendChild(content);
             
-            const link = document.createElement('a');
-            link.download = `TetysBlu_Check_${formattedDate}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (isIOS) {
+                const shareModal = document.getElementById('shareModal');
+                const shareModalContent = document.getElementById('shareModalContent');
+                const sharePreviewImg = document.getElementById('sharePreviewImg');
+                const closeShareBtn = document.getElementById('closeShareBtn');
+                
+                if (shareModal && sharePreviewImg) {
+                    sharePreviewImg.src = canvas.toDataURL('image/png');
+                    shareModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        shareModal.classList.remove('opacity-0');
+                        if (shareModalContent) {
+                            shareModalContent.classList.remove('scale-95');
+                            shareModalContent.classList.add('scale-100');
+                        }
+                    }, 10);
+                    
+                    if (closeShareBtn) {
+                        closeShareBtn.onclick = () => {
+                            shareModal.classList.add('opacity-0');
+                            if (shareModalContent) {
+                                shareModalContent.classList.remove('scale-100');
+                                shareModalContent.classList.add('scale-95');
+                            }
+                            setTimeout(() => shareModal.classList.add('hidden'), 300);
+                        };
+                    }
+                    window.showToast('Зажмите чек, чтобы сохранить', 'fa-download', 'bg-[#0076ba]');
+                } else {
+                    const link = document.createElement('a');
+                    link.download = `TetysBlu_Check_${formattedDate}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    window.showToast('Чек успешно создан!', 'fa-circle-check');
+                }
+            } else {
+                const link = document.createElement('a');
+                link.download = `TetysBlu_Check_${formattedDate}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                window.showToast('Чек успешно сохранен!', 'fa-circle-check');
+            }
             
             downloadReceiptBtn.innerHTML = originalBtnHtml;
-            window.showToast('Чек успешно сохранен!', 'fa-circle-check');
         }).catch(err => {
             console.error('Ошибка создания чека', err);
             downloadReceiptBtn.innerHTML = originalBtnHtml;
@@ -3282,7 +3332,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // Инициализация графиков с небольшой задержкой
             setTimeout(() => {
                 if (typeof Chart !== 'undefined') {
-                    Chart.defaults.color = '#cbd5e1';
+                    const isDark = document.body.classList.contains('dark-mode');
+                    const chartTextColor = isDark ? '#cbd5e1' : '#475569';
+                    const chartLegendColor = isDark ? '#f8fafc' : '#334155';
+                    const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                    const ttBgColor = isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)';
+                    const ttTitleColor = isDark ? '#f8fafc' : '#0f172a';
+                    const ttBodyColor = isDark ? '#cbd5e1' : '#334155';
+
+                    Chart.defaults.color = chartTextColor;
                     Chart.defaults.font.family = "'Inter', 'Plus Jakarta Sans', sans-serif";
 
                     // 1. Выручка vs Прибыль
@@ -3345,11 +3403,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 scales: {
                                     x: {
                                         grid: { display: false },
-                                        ticks: { color: '#cbd5e1', font: { weight: 'bold' } }
+                                        ticks: { color: chartTextColor, font: { weight: 'bold' } }
                                     },
                                     y: {
-                                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                                        ticks: { color: '#cbd5e1', font: { weight: 'bold' } },
+                                        grid: { color: gridColor },
+                                        ticks: { color: chartTextColor, font: { weight: 'bold' } },
                                         beginAtZero: true
                                     }
                                 },
@@ -3357,15 +3415,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                     legend: {
                                         display: true,
                                         position: 'top',
-                                        labels: { boxWidth: 10, font: { size: 12, weight: 'bold' }, color: '#f8fafc', usePointStyle: true }
+                                        labels: { boxWidth: 10, font: { size: 12, weight: 'bold' }, color: chartLegendColor, usePointStyle: true }
                                     },
                                     tooltip: {
                                         mode: 'index',
                                         intersect: false,
-                                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                                        titleColor: '#f8fafc',
-                                        bodyColor: '#cbd5e1',
-                                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                                        backgroundColor: ttBgColor,
+                                        titleColor: ttTitleColor,
+                                        bodyColor: ttBodyColor,
+                                        borderColor: gridColor,
                                         borderWidth: 1,
                                         padding: 10,
                                         boxPadding: 4,
@@ -3403,7 +3461,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 plugins: {
                                     legend: {
                                         position: 'bottom',
-                                        labels: { boxWidth: 8, font: { size: 9 }, color: '#cbd5e1' }
+                                        labels: { boxWidth: 8, font: { size: 9 }, color: chartTextColor }
                                     }
                                 }
                             }
@@ -3430,7 +3488,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 plugins: {
                                     legend: {
                                         position: 'bottom',
-                                        labels: { boxWidth: 8, font: { size: 9 }, color: '#cbd5e1' }
+                                        labels: { boxWidth: 8, font: { size: 9 }, color: chartTextColor }
                                     }
                                 }
                             }
@@ -3458,7 +3516,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 plugins: {
                                     legend: {
                                         position: 'bottom',
-                                        labels: { boxWidth: 8, font: { size: 9 }, color: '#cbd5e1' }
+                                        labels: { boxWidth: 8, font: { size: 9 }, color: chartTextColor }
                                     }
                                 }
                             }
