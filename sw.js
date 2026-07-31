@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tetys-calc-v12';
+const CACHE_NAME = 'tetys-calc-v13';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
