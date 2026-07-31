@@ -623,23 +623,33 @@ document.addEventListener('DOMContentLoaded', () => {
             let match;
             
             while ((match = adlRegex.exec(cleanText)) !== null) {
-                adlCount += parseInt(match[1], 10);
+                let count = parseInt(match[1], 10);
+                if (count > 500) return null; // Защита от годов (например, "1966 ADL")
+                adlCount += count;
                 matched = true;
             }
             while ((match = chldRegex.exec(cleanText)) !== null) {
-                chldCount += parseInt(match[1], 10);
+                let count = parseInt(match[1], 10);
+                if (count > 500) return null;
+                chldCount += count;
                 matched = true;
             }
             while ((match = infRegex.exec(cleanText)) !== null) {
-                infCount += parseInt(match[1], 10);
+                let count = parseInt(match[1], 10);
+                if (count > 500) return null;
+                infCount += count;
                 matched = true;
             }
             while ((match = snrRegex.exec(cleanText)) !== null) {
-                snrCount += parseInt(match[1], 10);
+                let count = parseInt(match[1], 10);
+                if (count > 500) return null;
+                snrCount += count;
                 matched = true;
             }
             while ((match = invRegex.exec(cleanText)) !== null) {
-                invCount += parseInt(match[1], 10);
+                let count = parseInt(match[1], 10);
+                if (count > 500) return null;
+                invCount += count;
                 matched = true;
             }
             
