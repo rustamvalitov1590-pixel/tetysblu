@@ -934,7 +934,7 @@
                 </section>
                 
                 <!-- Bulk Add Form (Текстовый ввод) -->
-                <section class="neon-card-blue p-6 relative flex-1 flex flex-col min-h-[300px]">
+                <section class="neon-card-blue p-6 relative flex flex-col min-h-[180px]">
                     <h2 class="text-base font-bold text-white mb-3 flex items-center drop-shadow-md">
                         <i class="fa-solid fa-file-text text-cyan-400 mr-2"></i>
                         Текстовый ввод гостей
@@ -946,7 +946,7 @@
                             Просто скопируйте текст из мессенджера. Система сама извлечет имена, определит возраст и отфильтрует лишнюю информацию.
                         </p>
                     </div>
-                    <textarea id="bulkText" class="w-full flex-1 glass-input p-3 text-xs resize-none mb-3 min-h-[120px]" 
+                    <textarea id="bulkText" class="w-full glass-input p-3 text-xs resize-none mb-3 h-[70px]" 
                         placeholder="Тетис на 06.06&#10;Kossymov Dias 15.04.2017 chld&#10;Otemissova Meruert 18.05.1998 adl"></textarea>
                     <div class="flex flex-col sm:flex-row gap-2">
                         <button id="parseBulkBtn" class="w-full sm:flex-1 glow-btn-cyan py-2.5 rounded-xl text-xs font-bold order-2 sm:order-2 transition-all">
@@ -1125,97 +1125,97 @@
                     </div>
                 </section>
 
-                <!-- Calculated Estimate Summary (Matches Right Box in Concept) -->
-                <section class="neon-card-blue p-5 rounded-2xl relative overflow-hidden shadow-sm border border-blue-500/20">
-                    <!-- Concept Background Waves Inside Card -->
-                    <svg class="absolute inset-0 w-full h-full text-white/10 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <path d="M0 80 Q 25 50 50 80 T 100 80 L 100 100 L 0 100 Z" fill="currentColor"/>
-                        <path d="M0 60 Q 30 75 60 55 T 100 65 L 100 100 L 0 100 Z" fill="currentColor" opacity="0.5"/>
-                    </svg>
+                <!-- Top row: Итоговый расчет + Сводная статистика на одном уровне -->
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
 
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 relative z-10">
-                        <div>
-                            <div class="flex items-center gap-2 mb-0.5">
+                    <!-- Calculated Estimate Summary (compact) -->
+                    <section class="xl:col-span-6 neon-card-blue p-4 rounded-2xl relative overflow-hidden shadow-sm border border-blue-500/20 flex flex-col justify-center">
+                        <!-- Concept Background Waves Inside Card -->
+                        <svg class="absolute inset-0 w-full h-full text-white/10 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <path d="M0 80 Q 25 50 50 80 T 100 80 L 100 100 L 0 100 Z" fill="currentColor"/>
+                            <path d="M0 60 Q 30 75 60 55 T 100 65 L 100 100 L 0 100 Z" fill="currentColor" opacity="0.5"/>
+                        </svg>
+
+                        <div class="relative z-10">
+                            <div class="flex items-center gap-2 mb-0.5 flex-wrap">
                                 <span class="text-blue-200 text-[9px] font-bold uppercase tracking-widest block">Итоговый расчет</span>
                                 <!-- Early Booking Pulse Badge -->
                                 <div id="earlyBookingBadge" class="hidden bg-amber-400 text-slate-900 text-[8px] font-extrabold px-1.5 py-0.5 rounded-full shadow-md animate-pulse">
-                                    <i class="fa-solid fa-bolt mr-0.5"></i> Раннее бронирование (-15%)
+                                    <i class="fa-solid fa-bolt mr-0.5"></i> -15%
                                 </div>
                             </div>
-                            <div class="flex items-baseline space-x-1.5 mt-0.5">
+                            <div class="flex items-baseline space-x-1.5 mt-0.5 mb-3">
                                 <span class="text-lg md:text-xl font-extrabold text-white tracking-tight drop-shadow-md" id="totalPrice">0</span>
                                 <span class="text-sm font-black text-amber-300 drop-shadow-sm">₸</span>
                             </div>
-                        </div>
-                        
-                        <div class="flex flex-wrap items-center gap-1.5 justify-end w-full sm:w-auto mt-2 sm:mt-0">
-                            <!-- WhatsApp Action (Copy + Open) -->
-                            <button id="whatsappShareBtn" class="flex-1 sm:flex-none justify-center bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 font-bold px-3 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm border border-emerald-400/30" title="Отправить в WhatsApp">
-                                <i class="fa-brands fa-whatsapp sm:mr-1.5 text-sm text-emerald-400"></i> <span class="hidden sm:inline">WhatsApp</span>
-                            </button>
-                            <!-- Download Action -->
-                            <button id="downloadReceiptBtn" class="flex-1 sm:flex-none justify-center bg-blue-400/20 hover:bg-blue-400/40 text-blue-300 font-bold px-3 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm border border-blue-400/30" title="Скачать PDF чек">
-                                <i class="fa-solid fa-cloud-arrow-down sm:mr-1.5 text-blue-300 text-sm"></i> <span class="hidden sm:inline">Скачать</span>
-                            </button>
-                            <!-- Share Actions -->
-                            <button id="nativeShareBtn" class="flex-1 sm:flex-none justify-center bg-white/10 hover:bg-white/20 text-white font-bold px-3 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm backdrop-blur-sm border border-white/20" title="Поделиться чеком">
-                                <i class="fa-solid fa-share-nodes sm:mr-1.5 text-sm"></i> <span class="hidden sm:inline">Поделиться</span>
-                            </button>
-                        </div>
-                    </div>
-                </section>
 
-                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
-                    <!-- Dynamic Stats Summary Panel -->
-                    <section class="neon-card-blue p-5 relative rounded-2xl shadow-sm flex flex-col h-full">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
-                        <h2 class="text-sm font-bold text-white flex items-center drop-shadow-md">
-                            <i class="fa-solid fa-chart-simple text-cyan-400 mr-2"></i>
-                            Сводная статистика
-                        </h2>
-                    </div>
-                        
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mt-2">
-                            <!-- Взрослые -->
-                            <div class="relative overflow-hidden p-3 sm:p-4 text-center border border-white/10 bg-gradient-to-br from-blue-500/10 to-blue-900/10 hover:from-blue-500/20 hover:to-blue-900/20 rounded-xl transition-colors group">
-                                <div class="absolute right-3 top-1/2 -translate-y-1/2 opacity-10 group-hover:opacity-20 transition-opacity"><i class="fa-solid fa-user text-4xl text-blue-400"></i></div>
-                                <span class="text-[10px] sm:text-xs font-bold text-blue-200 uppercase tracking-wider block relative z-10 drop-shadow-md">Взрослые (ADL)</span>
-                                <span class="text-2xl sm:text-3xl font-black text-white mt-1 block relative z-10 drop-shadow-lg" id="statAdl">0</span>
-                            </div>
-                            <!-- Дети -->
-                            <div class="relative overflow-hidden p-3 sm:p-4 text-center border border-white/10 bg-gradient-to-br from-teal-500/10 to-teal-900/10 hover:from-teal-500/20 hover:to-teal-900/20 rounded-xl transition-colors group">
-                                <div class="absolute right-3 top-1/2 -translate-y-1/2 opacity-10 group-hover:opacity-20 transition-opacity"><i class="fa-solid fa-child text-4xl text-teal-400"></i></div>
-                                <span class="text-[10px] sm:text-xs font-bold text-teal-200 uppercase tracking-wider block relative z-10 drop-shadow-md">Дети (CHLD)</span>
-                                <span class="text-2xl sm:text-3xl font-black text-white mt-1 block relative z-10 drop-shadow-lg" id="statChld">0</span>
-                            </div>
-                            <!-- Младенцы -->
-                            <div class="relative overflow-hidden p-3 sm:p-4 text-center border border-white/10 bg-gradient-to-br from-emerald-500/10 to-emerald-900/10 hover:from-emerald-500/20 hover:to-emerald-900/20 rounded-xl transition-colors group">
-                                <div class="absolute right-3 top-1/2 -translate-y-1/2 opacity-10 group-hover:opacity-20 transition-opacity"><i class="fa-solid fa-baby text-4xl text-emerald-400"></i></div>
-                                <span class="text-[10px] sm:text-xs font-bold text-emerald-200 uppercase tracking-wider block relative z-10 drop-shadow-md">Младенцы (INF)</span>
-                                <span class="text-2xl sm:text-3xl font-black text-white mt-1 block relative z-10 drop-shadow-lg" id="statInf">0</span>
-                            </div>
-                            <!-- Пенсионеры -->
-                            <div class="relative overflow-hidden p-3 sm:p-4 text-center border border-white/10 bg-gradient-to-br from-purple-500/10 to-purple-900/10 hover:from-purple-500/20 hover:to-purple-900/20 rounded-xl transition-colors group">
-                                <div class="absolute right-3 top-1/2 -translate-y-1/2 opacity-10 group-hover:opacity-20 transition-opacity"><i class="fa-solid fa-person-cane text-4xl text-purple-400"></i></div>
-                                <span class="text-[10px] sm:text-xs font-bold text-purple-200 uppercase tracking-wider block relative z-10 drop-shadow-md">Пенсионеры</span>
-                                <span class="text-2xl sm:text-3xl font-black text-white mt-1 block relative z-10 drop-shadow-lg" id="statPens">0</span>
-                            </div>
-                            <!-- Инвалиды -->
-                            <div class="relative overflow-hidden p-3 sm:p-4 text-center border border-white/10 bg-gradient-to-br from-rose-500/10 to-rose-900/10 hover:from-rose-500/20 hover:to-rose-900/20 rounded-xl transition-colors group">
-                                <div class="absolute right-3 top-1/2 -translate-y-1/2 opacity-10 group-hover:opacity-20 transition-opacity"><i class="fa-solid fa-wheelchair text-4xl text-rose-400"></i></div>
-                                <span class="text-[10px] sm:text-xs font-bold text-rose-200 uppercase tracking-wider block relative z-10 drop-shadow-md">Инвалиды</span>
-                                <span class="text-2xl sm:text-3xl font-black text-white mt-1 block relative z-10 drop-shadow-lg" id="statInv">0</span>
-                            </div>
-                            <!-- Именинники -->
-                            <div class="relative overflow-hidden p-3 sm:p-4 text-center border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-amber-600/20 hover:from-amber-500/20 hover:to-amber-600/30 rounded-xl transition-colors group shadow-[0_0_15px_rgba(245,158,11,0.15)]">
-                                <div class="absolute right-3 top-1/2 -translate-y-1/2 opacity-10 group-hover:opacity-20 transition-opacity"><i class="fa-solid fa-cake-candles text-4xl text-amber-400"></i></div>
-                                <span class="text-[10px] sm:text-xs font-bold text-amber-400 uppercase tracking-wider block relative z-10 drop-shadow-md">Именинники</span>
-                                <span class="text-2xl sm:text-3xl font-black text-amber-300 mt-1 block relative z-10 drop-shadow-lg" id="statBday">0</span>
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <!-- WhatsApp Action (Copy + Open) -->
+                                <button id="whatsappShareBtn" class="flex-1 justify-center bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 font-bold px-2 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm border border-emerald-400/30" title="Отправить в WhatsApp">
+                                    <i class="fa-brands fa-whatsapp text-sm text-emerald-400"></i>
+                                </button>
+                                <!-- Download Action -->
+                                <button id="downloadReceiptBtn" class="flex-1 justify-center bg-blue-400/20 hover:bg-blue-400/40 text-blue-300 font-bold px-2 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm border border-blue-400/30" title="Скачать PDF чек">
+                                    <i class="fa-solid fa-cloud-arrow-down text-blue-300 text-sm"></i>
+                                </button>
+                                <!-- Share Actions -->
+                                <button id="nativeShareBtn" class="flex-1 justify-center bg-white/10 hover:bg-white/20 text-white font-bold px-2 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm backdrop-blur-sm border border-white/20" title="Поделиться чеком">
+                                    <i class="fa-solid fa-share-nodes text-sm"></i>
+                                </button>
                             </div>
                         </div>
                     </section>
 
-                    <section class="neon-card-blue p-5 relative rounded-2xl shadow-sm flex flex-col h-full">
+                    <!-- Dynamic Stats Summary Panel -->
+                    <section class="xl:col-span-6 neon-card-blue p-4 relative rounded-2xl shadow-sm flex flex-col h-full">
+                        <h2 class="text-sm font-bold text-white flex items-center drop-shadow-md mb-2">
+                            <i class="fa-solid fa-chart-simple text-cyan-400 mr-2"></i>
+                            Сводная статистика
+                        </h2>
+
+                        <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-1">
+                            <!-- Взрослые -->
+                            <div class="relative overflow-hidden p-2 text-center border border-white/10 bg-gradient-to-br from-blue-500/10 to-blue-900/10 hover:from-blue-500/20 hover:to-blue-900/20 rounded-xl transition-colors group">
+                                <i class="fa-solid fa-user text-sm text-blue-400/70 block mb-0.5"></i>
+                                <span class="text-[9px] font-bold text-blue-200 uppercase tracking-wider block relative z-10 drop-shadow-md leading-tight">Взрослые</span>
+                                <span class="text-xl font-black text-white mt-0.5 block relative z-10 drop-shadow-lg" id="statAdl">0</span>
+                            </div>
+                            <!-- Дети -->
+                            <div class="relative overflow-hidden p-2 text-center border border-white/10 bg-gradient-to-br from-teal-500/10 to-teal-900/10 hover:from-teal-500/20 hover:to-teal-900/20 rounded-xl transition-colors group">
+                                <i class="fa-solid fa-child text-sm text-teal-400/70 block mb-0.5"></i>
+                                <span class="text-[9px] font-bold text-teal-200 uppercase tracking-wider block relative z-10 drop-shadow-md leading-tight">Дети</span>
+                                <span class="text-xl font-black text-white mt-0.5 block relative z-10 drop-shadow-lg" id="statChld">0</span>
+                            </div>
+                            <!-- Младенцы -->
+                            <div class="relative overflow-hidden p-2 text-center border border-white/10 bg-gradient-to-br from-emerald-500/10 to-emerald-900/10 hover:from-emerald-500/20 hover:to-emerald-900/20 rounded-xl transition-colors group">
+                                <i class="fa-solid fa-baby text-sm text-emerald-400/70 block mb-0.5"></i>
+                                <span class="text-[9px] font-bold text-emerald-200 uppercase tracking-wider block relative z-10 drop-shadow-md leading-tight">Младенцы</span>
+                                <span class="text-xl font-black text-white mt-0.5 block relative z-10 drop-shadow-lg" id="statInf">0</span>
+                            </div>
+                            <!-- Пенсионеры -->
+                            <div class="relative overflow-hidden p-2 text-center border border-white/10 bg-gradient-to-br from-purple-500/10 to-purple-900/10 hover:from-purple-500/20 hover:to-purple-900/20 rounded-xl transition-colors group">
+                                <i class="fa-solid fa-person-cane text-sm text-purple-400/70 block mb-0.5"></i>
+                                <span class="text-[9px] font-bold text-purple-200 uppercase tracking-wider block relative z-10 drop-shadow-md leading-tight">Пенсионеры</span>
+                                <span class="text-xl font-black text-white mt-0.5 block relative z-10 drop-shadow-lg" id="statPens">0</span>
+                            </div>
+                            <!-- Инвалиды -->
+                            <div class="relative overflow-hidden p-2 text-center border border-white/10 bg-gradient-to-br from-rose-500/10 to-rose-900/10 hover:from-rose-500/20 hover:to-rose-900/20 rounded-xl transition-colors group">
+                                <i class="fa-solid fa-wheelchair text-sm text-rose-400/70 block mb-0.5"></i>
+                                <span class="text-[9px] font-bold text-rose-200 uppercase tracking-wider block relative z-10 drop-shadow-md leading-tight">Инвалиды</span>
+                                <span class="text-xl font-black text-white mt-0.5 block relative z-10 drop-shadow-lg" id="statInv">0</span>
+                            </div>
+                            <!-- Именинники -->
+                            <div class="relative overflow-hidden p-2 text-center border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-amber-600/20 hover:from-amber-500/20 hover:to-amber-600/30 rounded-xl transition-colors group shadow-[0_0_15px_rgba(245,158,11,0.15)]">
+                                <i class="fa-solid fa-cake-candles text-sm text-amber-400/70 block mb-0.5"></i>
+                                <span class="text-[9px] font-bold text-amber-400 uppercase tracking-wider block relative z-10 drop-shadow-md leading-tight">Именинники</span>
+                                <span class="text-xl font-black text-amber-300 mt-0.5 block relative z-10 drop-shadow-lg" id="statBday">0</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Экспорт (CRM) — отдельная строка на всю ширину -->
+                <section class="neon-card-blue p-5 relative rounded-2xl shadow-sm flex flex-col">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-3">
                         <h2 class="text-sm font-bold text-white flex items-center whitespace-nowrap drop-shadow-md">
                             <i class="fa-solid fa-code text-slate-400 mr-2"></i>
@@ -1231,10 +1231,9 @@
                         </div>
                     </div>
                         <textarea id="exportData" readonly 
-                            class="w-full flex-1 min-h-[120px] overflow-hidden glass-input p-3 text-xs font-mono resize-none focus:border-white/20 bg-black/20 text-white cursor-text select-all" 
+                            class="w-full min-h-[100px] overflow-hidden glass-input p-3 text-xs font-mono resize-none focus:border-white/20 bg-black/20 text-white cursor-text select-all" 
                             placeholder="Тут появится текст для экспорта в CRM..."></textarea>
                     </section>
-                </div>
 
 
 
