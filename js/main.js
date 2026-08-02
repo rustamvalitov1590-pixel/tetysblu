@@ -539,6 +539,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+    // Плавная анимация числа (одометр): используется для суммы и статистики,
+    // чтобы изменения ощущались живыми, а не мгновенным подменом текста.
+    function animateValue(el, newValue, { formatMoney = false, pulse = false } = {}) {
+        if (!el) return;
+        const oldValue = parseInt(el.textContent.replace(/\D/g, '')) || 0;
+        newValue = Math.round(newValue);
+        if (oldValue === newValue) return;
+
+        if (el._animFrame) cancelAnimationFrame(el._animFrame);
+
+        const duration = 450;
+        const startTime = performance.now();
+        const easeOutExpo = (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+
+        function step(now) {
+            const progress = Math.min((now - startTime) / duration, 1);
+            const eased = easeOutExpo(progress);
+            const current = Math.round(oldValue + (newValue - oldValue) * eased);
+            el.textContent = formatMoney ? current.toLocaleString('ru-RU') : current;
+            if (progress < 1) {
+                el._animFrame = requestAnimationFrame(step);
+            } else {
+                el.textContent = formatMoney ? newValue.toLocaleString('ru-RU') : newValue;
+                el._animFrame = null;
+            }
+        }
+        el._animFrame = requestAnimationFrame(step);
+
+        if (pulse) {
+            el.classList.remove('value-pulse');
+            void el.offsetWidth; // restart animation
+            el.classList.add('value-pulse');
+        }
+    }
+
     // Статистика
     const stats = {
         adl: document.getElementById('statAdl'),
@@ -1500,7 +1535,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        totalPriceEl.textContent = Math.round(finalTotalSum).toLocaleString('ru-RU');
+        animateValue(totalPriceEl, finalTotalSum, { formatMoney: true, pulse: true });
+        const totalPriceCard = totalPriceEl.closest('section');
+        if (totalPriceCard) {
+            totalPriceCard.classList.remove('price-flash');
+            void totalPriceCard.offsetWidth;
+            totalPriceCard.classList.add('price-flash');
+        }
 
         if (!isTariffFound) {
             dateWarning.classList.remove('hidden');
@@ -1509,12 +1550,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Обновление статистики
-        stats.adl.textContent = counts.adl;
-        stats.chld.textContent = counts.chld;
-        stats.inf.textContent = counts.inf;
-        stats.pens.textContent = counts.pens;
-        if (stats.inv) stats.inv.textContent = counts.inv || 0;
-        stats.bday.textContent = counts.bday;
+        animateValue(stats.adl, counts.adl);
+        animateValue(stats.chld, counts.chld);
+        animateValue(stats.inf, counts.inf);
+        animateValue(stats.pens, counts.pens);
+        if (stats.inv) animateValue(stats.inv, counts.inv || 0);
+        animateValue(stats.bday, counts.bday);
 
         let exportText = `${visitDate ? formatDate(visitDate) : 'Не указана'}\n`;
         exportText += `Тариф: ${tariffType === 'evening' ? 'Вечерний' : 'Дневной'}\n\n`;
@@ -2687,6 +2728,10 @@ document.addEventListener('DOMContentLoaded', () => {
             activeMobBtn = mobNavCalcBtn;
             viewCalc.classList.remove('hidden');
             viewCalc.classList.add('flex');
+            // Перезапускаем каскадную анимацию появления карточек при каждом входе на вкладку
+            viewCalc.classList.remove('stagger-in');
+            void viewCalc.offsetWidth;
+            viewCalc.classList.add('stagger-in');
         } else if (viewId === 'view-dashboard' && viewDashboard) {
             activeBtn = navDashboardBtn;
             activeMobBtn = mobNavDashboardBtn;
