@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // на сервере через Supabase Edge Function "verify-login".
     async function checkAuth() {
         const login = authLogin.value.trim().toLowerCase();
-        const password = authPin.value;
+        const pass = authPin.value;
 
         if (!supabaseClient) {
             authError.textContent = 'Нет подключения к серверу авторизации';
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             const { data, error } = await supabaseClient.functions.invoke('verify-login', {
-                body: { login, password }
+                body: { login, pass }
             });
 
             if (error || !data || !data.ok) {
