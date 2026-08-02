@@ -19,7 +19,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Premium Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@500;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -44,404 +45,134 @@
     </script>
 
     <style>
-        /* Modern, Clean & High-End Coastal Styling */
+        /* ============================================================
+           TETYS BLUE — Design tokens
+           Concept: "dive in, then work in daylight". The login screen
+           is an immersive, dark underwater moment; once inside, the
+           workspace switches to a bright, high-contrast surface built
+           for a cashier's screen in direct sun. A day/night toggle
+           (#themeToggleBtn) lets staff switch the workspace itself
+           to a calmer dark mode for evening shifts.
+           ============================================================ */
+        :root {
+            --ink: #0B2A43;
+            --ink-soft: #4B6478;
+            --ink-faint: #7C93A3;
+            --surface: #FFFFFF;
+            --surface-soft: #F3F8FB;
+            --canvas-a: #E9F3FA;
+            --canvas-b: #F8FBFD;
+            --brand: #0076BA;
+            --brand-dark: #02649C;
+            --aqua: #00B4D8;
+            --coral: #FF6F51;
+            --sun: #F2A900;
+            --line: #D8E6EF;
+            --line-soft: #E8F1F7;
+            --shadow-card: 0 10px 25px -10px rgba(11, 42, 67, 0.16);
+            --shadow-lift: 0 18px 34px -12px rgba(11, 42, 67, 0.22);
+            --radius-lg: 22px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+        }
+
+        body.dark-mode {
+            --ink: #EAF3FA;
+            --ink-soft: #93B0C4;
+            --ink-faint: #62839A;
+            --surface: #0E2740;
+            --surface-soft: #0A1F35;
+            --canvas-a: #071C30;
+            --canvas-b: #0A2338;
+            --brand: #2EA8E6;
+            --brand-dark: #1C8AC2;
+            --aqua: #22D3EE;
+            --coral: #FF8266;
+            --sun: #FFC24D;
+            --line: rgba(255, 255, 255, 0.12);
+            --line-soft: rgba(255, 255, 255, 0.07);
+            --shadow-card: 0 10px 25px -10px rgba(0, 0, 0, 0.4);
+            --shadow-lift: 0 18px 34px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* ------------------------------------------------------------
+           Typography — Manrope carries numbers & headings (a display
+           face with a bit of character), Inter carries dense UI/data.
+           -apple-system/BlinkMacSystemFont lead every stack so real
+           iOS/macOS devices render native SF Pro automatically.
+           ------------------------------------------------------------ */
+        #appContent {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+        }
+
+        .font-display,
+        #totalPrice,
+        #statAdl,
+        #statChld,
+        #statInf,
+        #statPens,
+        #statInv,
+        #statBday {
+            font-family: -apple-system, BlinkMacSystemFont, 'Manrope', 'Inter', sans-serif;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.01em;
+        }
+
+        /* ------------------------------------------------------------
+           Motion system — iOS-flavoured: a snappy "spring" for taps
+           and toggles, a smoother glide for cards entering/leaving.
+           ------------------------------------------------------------ */
+        :root {
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #appContent button,
+        #appContent .hover-lift,
+        #appContent .glow-btn-cyan,
+        #appContent select.glass-input,
+        #appContent .tourist-row {
+            transition: transform 0.18s var(--ease-spring),
+                box-shadow 0.25s var(--ease-out),
+                background-color 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease !important;
+        }
+
+        #appContent button:active {
+            transform: scale(0.96) !important;
+        }
+
+        #appContent button:disabled:active {
+            transform: none !important;
+        }
+
+        /* ------------------------------------------------------------
+           Page canvas
+           ------------------------------------------------------------ */
         body {
-            background-color: #03182f !important;
-            background-image: url('assets/ocean_bg.png') !important;
-            background-size: cover !important;
-            background-position: center center !important;
-            background-attachment: fixed !important;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #f1f5f9;
             overflow-x: hidden;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: rgba(2, 18, 40, 0.62);
-            pointer-events: none;
-            z-index: 0;
+        body.daylight-bg {
+            background: linear-gradient(180deg, var(--canvas-a) 0%, var(--canvas-b) 55%, var(--canvas-b) 100%) fixed;
+            color: var(--ink);
         }
 
-        /* Glassmorphism panels that look like the concept cards */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05) !important;
-            backdrop-filter: blur(24px) !important;
-            -webkit-backdrop-filter: blur(24px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            box-shadow:
-                0 10px 30px -5px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-            border-radius: 24px !important;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-            color: #f8fafc !important;
-        }
-
-        .glass-panel-light {
-            background: rgba(255, 255, 255, 0.92) !important;
-            backdrop-filter: blur(16px) !important;
-            -webkit-backdrop-filter: blur(16px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.4) !important;
-            box-shadow:
-                0 10px 25px -5px rgba(0, 118, 186, 0.1),
-                inset 0 2px 0 rgba(255, 255, 255, 1) !important;
-            border-radius: 24px !important;
-            color: #0f172a !important;
-        }
-
-        .glass-panel:hover,
-        .glass-panel-light:hover {
-            transform: translateY(-3px);
-            box-shadow:
-                0 20px 40px -8px rgba(0, 0, 0, 0.4),
-                inset 0 2px 0 rgba(255, 255, 255, 0.2) !important;
-        }
-
-        .glass-panel-light:hover {
-            box-shadow:
-                0 20px 40px -8px rgba(0, 118, 186, 0.15),
-                inset 0 2px 0 rgba(255, 255, 255, 1) !important;
-        }
-
-        /* Input fields in the design concept */
-        .glass-input {
-            background: rgba(0, 0, 0, 0.2) !important;
-            border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 12px !important;
-            color: #ffffff !important;
-            font-weight: 500 !important;
-            transition: all 0.2s ease !important;
-        }
-
-        .glass-input-light {
-            background: rgba(255, 255, 255, 0.8) !important;
-            border: 1.5px solid rgba(0, 118, 186, 0.2) !important;
-            border-radius: 12px !important;
-            color: #0f172a !important;
-            transition: all 0.2s ease !important;
-        }
-
-        .glass-input:focus {
-            outline: none !important;
-            border-color: #0ea5e9 !important;
-            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2) !important;
-            background: rgba(0, 0, 0, 0.3) !important;
-        }
-
-        .glass-input-light:focus {
-            outline: none !important;
-            border-color: #0076ba !important;
-            box-shadow: 0 0 0 4px rgba(0, 118, 186, 0.15) !important;
-        }
-
-        .glass-input::placeholder {
-            color: rgba(255, 255, 255, 0.5) !important;
-        }
-
-        .glass-input-light::placeholder {
-            color: rgba(15, 23, 42, 0.5) !important;
-        }
-
-        /* Concept Button styling */
-        .btn-glass-primary {
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.8) 0%, rgba(2, 132, 199, 0.9) 100%) !important;
-            backdrop-filter: blur(8px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            color: white !important;
-            font-weight: 600 !important;
-            letter-spacing: 0.02em;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            border-radius: 12px !important;
-            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-        }
-
-        .btn-glass-primary:hover {
-            background: linear-gradient(135deg, rgba(14, 165, 233, 1) 0%, rgba(2, 132, 199, 1) 100%) !important;
-            box-shadow: 0 8px 25px rgba(2, 132, 199, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-            transform: translateY(-2px);
-        }
-
-        .btn-glass-primary:active {
-            transform: translateY(0);
-        }
-
-        .hover-lift {
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-3px) !important;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
-        }
-
-        .hover-lift:active {
-            transform: translateY(0) !important;
-        }
-
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            /* IE and Edge */
-            scrollbar-width: none;
-            /* Firefox */
-        }
-
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* AQUA WORLD: Neon Cards */
-        .neon-card-blue {
-            background: rgba(15, 23, 42, 0.4) !important;
-            border: 1px solid #0ea5e9 !important;
-            border-radius: 16px !important;
-            box-shadow: 0 0 20px rgba(14, 165, 233, 0.3) !important;
-            color: #ffffff !important;
-            backdrop-filter: blur(12px) !important;
-        }
-
-        .neon-card-green {
-            background: rgba(15, 23, 42, 0.4) !important;
-            border: 1px solid #10b981 !important;
-            border-radius: 16px !important;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3), inset 0 0 15px rgba(16, 185, 129, 0.15) !important;
-            color: #ffffff !important;
-            backdrop-filter: blur(12px) !important;
-        }
-
-        .neon-card-amber {
-            background: rgba(15, 23, 42, 0.4) !important;
-            border: 1px solid #f59e0b !important;
-            border-radius: 16px !important;
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3), inset 0 0 15px rgba(245, 158, 11, 0.15) !important;
-            color: #ffffff !important;
-            backdrop-filter: blur(12px) !important;
-        }
-
-        .neon-card-rose {
-            background: rgba(15, 23, 42, 0.4) !important;
-            border: 1px solid #f43f5e !important;
-            border-radius: 16px !important;
-            box-shadow: 0 0 20px rgba(244, 63, 94, 0.3), inset 0 0 15px rgba(244, 63, 94, 0.15) !important;
-            color: #ffffff !important;
-            backdrop-filter: blur(12px) !important;
-        }
-
-        /* AQUA WORLD: Dark Glass Panel */
-        .dark-glass-panel {
-            background: rgba(15, 23, 42, 0.4) !important;
-            backdrop-filter: blur(24px) !important;
-            -webkit-backdrop-filter: blur(24px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5) !important;
-            border-radius: 24px !important;
-            color: #f8fafc !important;
-        }
-
-        /* AQUA WORLD: Status Pills */
-        .pill-emerald {
-            background-color: #10b981 !important;
-            color: white !important;
-            font-weight: bold;
-            border-radius: 999px;
-        }
-
-        .pill-cyan {
-            background-color: #0ea5e9 !important;
-            color: white !important;
-            font-weight: bold;
-            border-radius: 999px;
-        }
-
-        .pill-amber {
-            background-color: #f59e0b !important;
-            color: white !important;
-            font-weight: bold;
-            border-radius: 999px;
-        }
-
-        .pill-rose {
-            background-color: #f43f5e !important;
-            color: white !important;
-            font-weight: bold;
-            border-radius: 999px;
-        }
-
-        .pill-slate {
-            background-color: #64748b !important;
-            color: white !important;
-            font-weight: bold;
-            border-radius: 999px;
-        }
-
-        /* Tourist Row customized card look */
-        .tourist-row {
-            background: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 16px !important;
-            transition: all 0.3s ease !important;
-            backdrop-filter: blur(8px) !important;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
-        }
-
-        .tourist-row-light {
-            background: rgba(255, 255, 255, 0.8) !important;
-            border: 1px solid rgba(0, 118, 186, 0.1) !important;
-            border-radius: 16px !important;
-            transition: all 0.3s ease !important;
-        }
-
-        .tourist-row:hover {
-            border-color: rgba(14, 165, 233, 0.5) !important;
-            background: rgba(255, 255, 255, 0.08) !important;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(14, 165, 233, 0.1) !important;
-        }
-
-        .tourist-row-light:hover {
-            border-color: rgba(0, 118, 186, 0.3) !important;
-            background: #ffffff !important;
-            box-shadow: 0 8px 20px rgba(0, 118, 186, 0.1) !important;
-        }
-
-        /* AQUA WORLD: Global Background */
-        .underwater-bg {
-            background-color: #0d1b2a;
-            background-image: linear-gradient(rgba(13, 27, 42, 0.8), rgba(13, 27, 42, 0.95)), url('assets/bg.png');
-            background-size: cover;
-            background-position: center bottom;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-        }
-
-        /* AQUA WORLD: Glow Buttons */
-        .glow-btn-cyan {
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.8) 0%, rgba(6, 182, 212, 0.9) 100%) !important;
-            backdrop-filter: blur(8px) !important;
-            border: 1px solid rgba(34, 211, 238, 0.5) !important;
-            color: white !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.05em;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            border-radius: 12px !important;
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.4), inset 0 0 10px rgba(34, 211, 238, 0.2) !important;
-        }
-
-        .glow-btn-cyan:hover {
-            background: linear-gradient(135deg, rgba(14, 165, 233, 1) 0%, rgba(6, 182, 212, 1) 100%) !important;
-            box-shadow: 0 0 30px rgba(34, 211, 238, 0.6), inset 0 0 15px rgba(34, 211, 238, 0.4) !important;
-            transform: translateY(-2px);
-        }
-
-        .glow-btn-coral {
-            background: linear-gradient(135deg, rgba(244, 63, 94, 0.8) 0%, rgba(251, 113, 133, 0.9) 100%) !important;
-            backdrop-filter: blur(8px) !important;
-            border: 1px solid rgba(251, 113, 133, 0.5) !important;
-            color: white !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.05em;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            border-radius: 12px !important;
-            box-shadow: 0 0 20px rgba(251, 113, 133, 0.4), inset 0 0 10px rgba(251, 113, 133, 0.2) !important;
-        }
-
-        .glow-btn-coral:hover {
-            background: linear-gradient(135deg, rgba(244, 63, 94, 1) 0%, rgba(251, 113, 133, 1) 100%) !important;
-            box-shadow: 0 0 30px rgba(251, 113, 133, 0.6), inset 0 0 15px rgba(251, 113, 133, 0.4) !important;
-            transform: translateY(-2px);
-        }
-
-        /* Premium Stat box */
-        .glass-stat-box {
-            background: rgba(0, 0, 0, 0.2) !important;
-            border: 1px solid rgba(255, 255, 255, 0.05) !important;
-            border-radius: 16px !important;
-            transition: all 0.3s ease !important;
-            backdrop-filter: blur(12px) !important;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-stat-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        }
-
-        .glass-stat-box:hover {
-            background: rgba(0, 0, 0, 0.3) !important;
-            border-color: rgba(14, 165, 233, 0.3) !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
-            transform: translateY(-2px);
-        }
-
-        /* Skeleton Animation */
-        @keyframes shimmer {
-            0% {
-                background-position: -1000px 0;
-            }
-
-            100% {
-                background-position: 1000px 0;
-            }
-        }
-
-        .skeleton {
-            animation: shimmer 2s infinite linear;
-            background: linear-gradient(to right, rgba(255, 255, 255, 0.05) 4%, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.05) 36%);
-            background-size: 1000px 100%;
-        }
-
-        .skeleton-light {
-            animation: shimmer 2s infinite linear;
-            background: linear-gradient(to right, #f1f5f9 4%, #e2e8f0 25%, #f1f5f9 36%);
-            background-size: 1000px 100%;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in-up {
-            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-
-        /* Custom scrollbar for premium aesthetics */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        /* ==================================================
-           UNDERWATER LOGIN SCREEN (Marine Glassmorphism)
-           ================================================== */
-
+        /* The dark underwater gradient used on the login screen (and on
+           <body> before login) — kept as its own, always-dark identity. */
         .underwater-bg {
             background: radial-gradient(circle at 50% -20%, rgba(0, 180, 216, 0.6) 0%, rgba(3, 40, 77, 1) 70%, rgba(1, 15, 33, 1) 100%);
             position: relative;
@@ -506,22 +237,535 @@
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
         }
 
-        .btn-coral {
-            background: linear-gradient(135deg, #ff7a59 0%, #ff5252 100%);
-            color: white;
-            box-shadow: 0 8px 25px rgba(255, 82, 82, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
+        .text-glow {
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 220, 255, 0.4);
         }
 
-        .btn-coral:hover {
-            background: linear-gradient(135deg, #ff8a6c 0%, #ff6b6b 100%);
-            box-shadow: 0 12px 35px rgba(255, 82, 82, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.4);
+        #themeIcon.theme-icon-active {
+            color: var(--sun) !important;
+        }
+
+        /* ------------------------------------------------------------
+           Signature element — "the tide line": a thin animated wave
+           marking the threshold between the underwater arrival screen
+           and the daylight workspace. Sits under the header.
+           ------------------------------------------------------------ */
+        .tide-line {
+            position: relative;
+            height: 6px;
+            margin: 10px 0 0;
+            overflow: hidden;
+            border-radius: 999px;
+            background: var(--line-soft);
+        }
+
+        .tide-line::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            width: 200%;
+            background: repeating-linear-gradient(90deg,
+                    var(--aqua) 0, var(--aqua) 40px,
+                    var(--brand) 40px, var(--brand) 80px);
+            opacity: 0.55;
+            animation: tide-drift 9s linear infinite;
+        }
+
+        @keyframes tide-drift {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-80px);
+            }
+        }
+
+        /* ------------------------------------------------------------
+           Dashboard surfaces (scoped to #appContent so the login
+           screen keeps its own dark identity untouched)
+           ------------------------------------------------------------ */
+        #appContent header {
+            background: rgba(255, 255, 255, 0.72) !important;
+            border: 1px solid var(--line) !important;
+            box-shadow: var(--shadow-card);
+        }
+
+        body.dark-mode #appContent header {
+            background: rgba(14, 39, 64, 0.72) !important;
+        }
+
+        #appContent .glass-panel,
+        #appContent .glass-panel-light,
+        #appContent .dark-glass-panel,
+        #appContent .neon-card-blue,
+        #appContent .neon-card-green,
+        #appContent .neon-card-amber,
+        #appContent .neon-card-rose,
+        #appContent .tourist-row,
+        #appContent .glass-stat-box {
+            background: var(--surface) !important;
+            border: 1px solid var(--line) !important;
+            box-shadow: var(--shadow-card) !important;
+            color: var(--ink) !important;
+            border-radius: var(--radius-lg) !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out), border-color 0.25s ease;
+            position: relative;
+        }
+
+        #appContent .glass-panel::before,
+        #appContent .neon-card-blue::before,
+        #appContent .glass-stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 12%;
+            right: 12%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+            pointer-events: none;
+        }
+
+        body.dark-mode #appContent .glass-panel::before,
+        body.dark-mode #appContent .neon-card-blue::before,
+        body.dark-mode #appContent .glass-stat-box::before {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+        }
+
+        #appContent .glass-panel:hover,
+        #appContent .neon-card-blue:hover,
+        #appContent .tourist-row:hover,
+        #appContent .glass-stat-box:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lift) !important;
+            border-color: var(--aqua) !important;
+        }
+
+        #appContent .glass-input,
+        #appContent .underwater-input {
+            background: var(--surface) !important;
+            border: 1.5px solid var(--line) !important;
+            border-radius: var(--radius-sm) !important;
+            color: var(--ink) !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        #appContent .glass-input:focus {
+            outline: none !important;
+            border-color: var(--aqua) !important;
+            box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.18) !important;
+        }
+
+        #appContent .glass-input::placeholder {
+            color: var(--ink-faint) !important;
+        }
+
+        /* Force Tailwind text/bg utility classes used throughout the
+           dashboard (authored for a dark glass background) onto the
+           light-surface token palette. */
+        #appContent .text-white,
+        #appContent .text-slate-100,
+        #appContent .text-slate-200,
+        #appContent .text-slate-300 {
+            color: var(--ink) !important;
+        }
+
+        #appContent .text-slate-400 {
+            color: var(--ink-soft) !important;
+        }
+
+        #appContent .text-cyan-100,
+        #appContent .text-cyan-200,
+        #appContent .text-cyan-300,
+        #appContent .text-cyan-400,
+        #appContent .text-teal-100,
+        #appContent .text-teal-200,
+        #appContent .text-teal-300,
+        #appContent .text-teal-400 {
+            color: #0f766e !important;
+        }
+
+        #appContent .text-blue-100,
+        #appContent .text-blue-200,
+        #appContent .text-blue-300,
+        #appContent .text-blue-400 {
+            color: var(--brand-dark) !important;
+        }
+
+        #appContent .text-emerald-100,
+        #appContent .text-emerald-200,
+        #appContent .text-emerald-300,
+        #appContent .text-emerald-400,
+        #appContent .text-green-100,
+        #appContent .text-green-200,
+        #appContent .text-green-300,
+        #appContent .text-green-400 {
+            color: #047857 !important;
+        }
+
+        #appContent .text-purple-100,
+        #appContent .text-purple-200,
+        #appContent .text-purple-300,
+        #appContent .text-purple-400 {
+            color: #6d28d9 !important;
+        }
+
+        #appContent .text-rose-100,
+        #appContent .text-rose-200,
+        #appContent .text-rose-300,
+        #appContent .text-rose-400 {
+            color: #be123c !important;
+        }
+
+        #appContent .text-amber-100,
+        #appContent .text-amber-200,
+        #appContent .text-amber-300,
+        #appContent .text-amber-400,
+        #appContent .text-yellow-100,
+        #appContent .text-yellow-200,
+        #appContent .text-yellow-300,
+        #appContent .text-yellow-400 {
+            color: #b45309 !important;
+        }
+
+        #appContent .glass-orb,
+        #appContent .glass-bubble {
+            background: var(--surface) !important;
+            border: 1px solid var(--line) !important;
+            box-shadow: var(--shadow-card) !important;
+        }
+
+        #appContent .text-glow {
+            text-shadow: none !important;
+        }
+
+        #appContent .light-rays {
+            display: none !important;
+        }
+
+        #appContent .bg-white\/10 {
+            background-color: var(--surface-soft) !important;
+        }
+
+        #appContent .bg-white\/5 {
+            background-color: var(--surface-soft) !important;
+        }
+
+        #appContent .bg-white\/20 {
+            background-color: var(--line-soft) !important;
+        }
+
+        #appContent .bg-black\/30 {
+            background-color: var(--surface-soft) !important;
+        }
+
+        #appContent .border-white\/20 {
+            border-color: var(--line) !important;
+        }
+
+        #appContent .border-white\/10,
+        #appContent .border-white\/5 {
+            border-color: var(--line-soft) !important;
+        }
+
+        #appContent .border-white\/50 {
+            border-color: var(--line) !important;
+        }
+
+        #appContent .hover\:bg-white\/20:hover,
+        #appContent .hover\:bg-white\/10:hover,
+        #appContent .hover\:bg-white\/5:hover {
+            background-color: var(--line-soft) !important;
+        }
+
+        #appContent .hover\:border-white\/20:hover {
+            border-color: var(--aqua) !important;
+        }
+
+        /* Only the neutral (slate-based) hover:text-white targets flip to ink —
+           colored buttons (rose/red/amber/blue solid-hover) correctly keep
+           white text on hover and must NOT be touched here. */
+        #appContent .text-slate-300.hover\:text-white:hover,
+        #appContent .text-slate-400.hover\:text-white:hover,
+        #appContent #themeToggleBtn.hover\:text-white:hover {
+            color: var(--ink) !important;
+        }
+
+        #appContent nav.fixed.bottom-0 {
+            background-color: var(--surface) !important;
+            border-top-color: var(--line) !important;
+        }
+
+        #appContent .bg-black\/20,
+        #appContent .bg-black\/40,
+        #appContent .bg-black\/50,
+        #appContent .bg-black\/60 {
+            background-color: var(--surface-soft) !important;
+        }
+
+        #appContent #navCalcBtn.bg-white\/10 {
+            background: var(--line-soft) !important;
+            border: 1px solid var(--line) !important;
+        }
+
+        /* Nav buttons */
+        #appContent #navCalcBtn,
+        #appContent #navDashboardBtn,
+        #appContent #navDatabaseBtn,
+        #appContent a[href="client.html"] {
+            color: var(--ink-soft) !important;
+        }
+
+        /* ------------------------------------------------------------
+           Dark-mode counterparts (toggle button inside the dashboard).
+           Tokens already flip via `body.dark-mode` above; these just
+           correct a few spots where a hard-coded light value would
+           otherwise win.
+           ------------------------------------------------------------ */
+        body.dark-mode #appContent .glass-input,
+        body.dark-mode #appContent select.glass-input option {
+            background-color: var(--surface-soft) !important;
+            border-color: var(--line) !important;
+            color: var(--ink) !important;
+        }
+
+        body.dark-mode #appContent #authScreen {
+            /* no-op guard, kept for clarity */
+        }
+
+        /* ------------------------------------------------------------
+           Glow buttons, pills, gradients, stat boxes — reusable across
+           both themes via tokens.
+           ------------------------------------------------------------ */
+        .glow-btn-cyan {
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--brand) 100%) !important;
+            border: 1px solid rgba(34, 211, 238, 0.5) !important;
+            color: white !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.03em;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            border-radius: var(--radius-sm) !important;
+            box-shadow: 0 6px 18px rgba(0, 180, 216, 0.35) !important;
+        }
+
+        .glow-btn-cyan:hover {
+            box-shadow: 0 10px 24px rgba(0, 180, 216, 0.5) !important;
             transform: translateY(-2px);
         }
 
-        .text-glow {
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 220, 255, 0.4);
+        .hover-lift {
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: var(--shadow-lift) !important;
+        }
+
+        .hover-lift:active {
+            transform: translateY(0) !important;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .pill-emerald {
+            background-color: #10b981 !important;
+            color: white !important;
+            font-weight: bold;
+            border-radius: 999px;
+        }
+
+        .pill-cyan {
+            background-color: var(--aqua) !important;
+            color: white !important;
+            font-weight: bold;
+            border-radius: 999px;
+        }
+
+        .pill-amber {
+            background-color: var(--sun) !important;
+            color: white !important;
+            font-weight: bold;
+            border-radius: 999px;
+        }
+
+        .pill-rose {
+            background-color: #f43f5e !important;
+            color: white !important;
+            font-weight: bold;
+            border-radius: 999px;
+        }
+
+        .pill-slate {
+            background-color: #64748b !important;
+            color: white !important;
+            font-weight: bold;
+            border-radius: 999px;
+        }
+
+        .glass-stat-box {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ------------------------------------------------------------
+           Analytics — editorial "graphs template" style: white cards,
+           big regular-weight numbers, small dot-legends, thick rounded
+           donut rings. Uses the same design tokens as the rest of the
+           app, so it follows the light/dark toggle automatically.
+           ------------------------------------------------------------ */
+        #appContent .kpi-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            padding: 22px 24px;
+            transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+        }
+
+        #appContent .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lift);
+        }
+
+        #appContent .kpi-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 999px;
+            display: inline-block;
+        }
+
+        #appContent .kpi-icon {
+            color: var(--ink-faint);
+            font-size: 15px;
+        }
+
+        #appContent .kpi-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ink-soft);
+            margin-bottom: 6px;
+        }
+
+        #appContent .kpi-value {
+            font-family: -apple-system, BlinkMacSystemFont, 'Manrope', 'Inter', sans-serif;
+            font-variant-numeric: tabular-nums;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--ink);
+            margin-bottom: 14px;
+            line-height: 1.15;
+        }
+
+        #appContent .kpi-unit {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--ink-soft);
+        }
+
+        #appContent .kpi-pill {
+            display: inline-block;
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+
+        #appContent .chart-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            padding: 22px 24px;
+        }
+
+        #appContent .chart-card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        #appContent .chart-card-subtitle {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--ink-soft);
+        }
+
+        /* Skeleton loading shimmer */
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        .skeleton {
+            animation: shimmer 2s infinite linear;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.04) 4%, rgba(0, 0, 0, 0.08) 25%, rgba(0, 0, 0, 0.04) 36%);
+            background-size: 1000px 100%;
+        }
+
+        .skeleton-light {
+            animation: shimmer 2s infinite linear;
+            background: linear-gradient(to right, #f1f5f9 4%, #e2e8f0 25%, #f1f5f9 36%);
+            background-size: 1000px 100%;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
         }
 
         @keyframes float {
@@ -533,30 +777,6 @@
 
             50% {
                 transform: translateY(-15px) rotate(2deg);
-            }
-        }
-
-        @keyframes float-delay-1 {
-
-            0%,
-            100% {
-                transform: translateY(0) scale(1);
-            }
-
-            50% {
-                transform: translateY(-20px) scale(1.05);
-            }
-        }
-
-        @keyframes float-delay-2 {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-10px);
             }
         }
 
@@ -598,7 +818,17 @@
             padding: 0;
         }
 
-        /* Micro-Animations & Toasts */
+        input[type="date"]::-webkit-date-and-time-value {
+            text-align: left !important;
+        }
+
+        input[type="date"]::-webkit-datetime-edit {
+            text-align: left !important;
+            display: block;
+            padding: 0;
+        }
+
+        /* Micro-animations & toasts */
         @keyframes toast-slide-up {
             0% {
                 transform: translate(-50%, 20px) scale(0.95);
@@ -663,317 +893,34 @@
             animation: row-fade-out 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* --- Premium Deep Ocean Dark Mode Theme --- */
-        body.dark-mode {
-            color-scheme: dark;
-            background-color: #020813 !important;
-            background-image:
-                radial-gradient(circle at 100% 0%, rgba(0, 180, 216, 0.25) 0%, transparent 60%),
-                radial-gradient(circle at 0% 100%, rgba(0, 118, 186, 0.3) 0%, transparent 60%) !important;
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-6px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(6px);
+            }
         }
 
-        body.dark-mode .concept-card,
-        body.dark-mode .tourist-row,
-        body.dark-mode .glass-stat-box {
-            background-color: #07152c !important;
-            border-color: rgba(14, 165, 233, 0.2) !important;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3) !important;
-        }
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.98);
+            }
 
-        body.dark-mode .glass-input-light {
-            background-color: #0d1e36 !important;
-            border-color: rgba(14, 165, 233, 0.3) !important;
-            color: #f1f5f9 !important;
-        }
-
-        body.dark-mode .text-slate-900,
-        body.dark-mode .text-slate-800,
-        body.dark-mode .text-slate-700 {
-            color: #f1f5f9 !important;
-        }
-
-        body.dark-mode .text-slate-500,
-        body.dark-mode .text-slate-400 {
-            color: #94a3b8 !important;
-        }
-
-        body.dark-mode .bg-white {
-            background-color: #07152c !important;
-        }
-
-        body.dark-mode .bg-slate-50,
-        body.dark-mode .bg-slate-100 {
-            background-color: #0d1e36 !important;
-            border-color: rgba(14, 165, 233, 0.2) !important;
-        }
-
-        body.dark-mode .border-slate-200,
-        body.dark-mode .border-slate-100 {
-            border-color: rgba(14, 165, 233, 0.2) !important;
-        }
-
-        body.dark-mode .hover\:bg-slate-50:hover {
-            background-color: #0d1e36 !important;
-        }
-
-        body.dark-mode .bg-blue-50,
-        body.dark-mode .bg-teal-50,
-        body.dark-mode .bg-purple-50,
-        body.dark-mode .bg-green-50,
-        body.dark-mode .bg-rose-50 {
-            background-color: #0d1e36 !important;
-            border-color: rgba(14, 165, 233, 0.2) !important;
-        }
-
-        body.dark-mode select.glass-input-light option,
-        body.dark-mode select.glass-input option {
-            background-color: #07152c;
-            color: #f1f5f9;
-        }
-
-        body.dark-mode header {
-            background-color: rgba(7, 21, 44, 0.9) !important;
-            border-color: rgba(14, 165, 233, 0.2) !important;
-        }
-
-        body.dark-mode .tourist-row input:focus {
-            background-color: #07152c !important;
-        }
-
-        /* --- Premium Text Gradients --- */
-        .text-gradient-indigo {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .text-gradient-emerald {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .text-gradient-blue {
-            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .text-gradient-amber {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .text-gradient-rose {
-            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .text-gradient-slate {
-            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* --- Light Theme Override for Sun Visibility --- */
-        body {
-            background-color: #f1f5f9 !important;
-            background-image: none !important;
-            color: #0f172a !important;
-        }
-
-        body::before {
-            display: none !important;
-        }
-
-        .underwater-bg {
-            background: #f1f5f9 !important;
-            background-image: none !important;
-        }
-
-        .glass-panel,
-        .neon-card-blue,
-        .neon-card-green,
-        .neon-card-amber,
-        .neon-card-rose,
-        .dark-glass-panel,
-        .tourist-row,
-        .glass-stat-box {
-            background: #ffffff !important;
-            border: 1px solid #cbd5e1 !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-            color: #0f172a !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-        }
-
-        .glass-input,
-        .underwater-input {
-            background: #ffffff !important;
-            border: 1px solid #94a3b8 !important;
-            color: #0f172a !important;
-        }
-
-        .glass-input:focus,
-        .underwater-input:focus {
-            border-color: #0ea5e9 !important;
-            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2) !important;
-            background: #ffffff !important;
-        }
-
-        .glass-input::placeholder,
-        .underwater-input::placeholder {
-            color: #64748b !important;
-        }
-
-        /* Force texts to be dark but retain color coding */
-        .text-white,
-        .text-slate-100,
-        .text-slate-200,
-        .text-slate-300,
-        .text-slate-400 {
-            color: #1e293b !important;
-        }
-
-        .text-cyan-100,
-        .text-cyan-200,
-        .text-cyan-300,
-        .text-cyan-400,
-        .text-teal-100,
-        .text-teal-200,
-        .text-teal-300,
-        .text-teal-400 {
-            color: #0f766e !important;
-            /* teal-700 */
-        }
-
-        .text-blue-100,
-        .text-blue-200,
-        .text-blue-300,
-        .text-blue-400 {
-            color: #1d4ed8 !important;
-            /* blue-700 */
-        }
-
-        .text-emerald-100,
-        .text-emerald-200,
-        .text-emerald-300,
-        .text-emerald-400,
-        .text-green-100,
-        .text-green-200,
-        .text-green-300,
-        .text-green-400 {
-            color: #047857 !important;
-            /* emerald-700 */
-        }
-
-        .text-purple-100,
-        .text-purple-200,
-        .text-purple-300,
-        .text-purple-400 {
-            color: #6d28d9 !important;
-            /* purple-700 */
-        }
-
-        .text-rose-100,
-        .text-rose-200,
-        .text-rose-300,
-        .text-rose-400 {
-            color: #be123c !important;
-            /* rose-700 */
-        }
-
-        .text-amber-100,
-        .text-amber-200,
-        .text-amber-300,
-        .text-amber-400,
-        .text-yellow-100,
-        .text-yellow-200,
-        .text-yellow-300,
-        .text-yellow-400 {
-            color: #b45309 !important;
-            /* amber-700 */
-        }
-
-        /* Headers and buttons */
-        header {
-            background: #ffffff !important;
-            border: 1px solid #cbd5e1 !important;
-        }
-
-        /* specific for auth screen */
-        #authScreen {
-            background: #f8fafc !important;
-        }
-
-        .glass-orb,
-        .glass-bubble {
-            background: #ffffff !important;
-            border: 1px solid #e2e8f0 !important;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05) !important;
-        }
-
-        .text-glow {
-            text-shadow: none !important;
-        }
-
-        .light-rays {
-            display: none !important;
-        }
-
-        /* Nav buttons */
-        #navCalcBtn,
-        #navDashboardBtn,
-        #navDatabaseBtn,
-        a[href="client.html"] {
-            color: #334155 !important;
-        }
-
-        /* Light theme overrides for transparent white elements (like + / - buttons) */
-        .bg-white\/10,
-        button.bg-white\/10 {
-            background-color: #f1f5f9 !important;
-            /* slate-100 */
-        }
-
-        .bg-white\/5 {
-            background-color: #f8fafc !important;
-            /* slate-50 */
-        }
-
-        .border-white\/20 {
-            border-color: #cbd5e1 !important;
-            /* slate-300 */
-        }
-
-        .border-white\/10 {
-            border-color: #e2e8f0 !important;
-            /* slate-200 */
-        }
-
-        button.hover\:bg-white\/20:hover {
-            background-color: #e2e8f0 !important;
-            /* slate-200 */
-        }
-
-        /* Mobile Nav and Dark Backgrounds */
-        nav.fixed.bottom-0 {
-            background-color: #ffffff !important;
-            border-top-color: #cbd5e1 !important;
-        }
-
-        .bg-black\/20,
-        .bg-black\/40,
-        .bg-black\/50,
-        .bg-black\/60 {
-            background-color: #f1f5f9 !important;
-        }
-
-        #navCalcBtn.bg-white\/10 {
-            background: #e2e8f0 !important;
-            border: 1px solid #cbd5e1 !important;
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
     </style>
 </head>
@@ -1031,7 +978,8 @@
                         class="fa-solid fa-dolphin absolute -top-4 -left-2 text-cyan-300 text-xl transform -rotate-12 opacity-80"></i>
                     <i
                         class="fa-solid fa-dolphin absolute -top-2 -right-1 text-cyan-300 text-lg transform rotate-45 opacity-80 scale-x-[-1]"></i>
-                    <h2 class="text-3xl md:text-4xl font-black text-white tracking-wider text-glow mt-2">TETYS BLUE</h2>
+                    <h2 class="font-display text-3xl md:text-4xl font-black text-white tracking-wider text-glow mt-2">
+                        TETYS BLUE</h2>
                 </div>
                 <p class="text-[9px] md:text-[10px] font-bold text-cyan-100 uppercase tracking-widest mt-1 opacity-90">
                     Панель расчетов</p>
@@ -1122,7 +1070,8 @@
                             class="text-[11px] font-normal text-slate-300 tracking-wide font-sans"></h1>
                     </div>
                     <button id="themeToggleBtn"
-                        class="hidden w-8 h-8 md:w-10 md:h-10 items-center justify-center hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-all">
+                        class="flex w-8 h-8 md:w-10 md:h-10 items-center justify-center hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-all"
+                        title="Светлая/тёмная тема">
                         <i id="themeIcon" class="fa-solid fa-moon text-sm md:text-base"></i>
                     </button>
                     <!-- Admin Profile -->
@@ -1143,6 +1092,7 @@
                     </button>
                 </div>
             </header>
+            <div class="tide-line" aria-hidden="true"></div>
         </div>
 
         <!-- MAIN CONTENT AREA -->
@@ -1204,7 +1154,8 @@
                                             </div>
                                             <p id="dateWarning"
                                                 class="text-xs text-rose-400 font-semibold mt-1.5 hidden drop-shadow-sm">
-                                                <i class="fa-solid fa-triangle-exclamation mr-1"></i>Тариф не найден</p>
+                                                <i class="fa-solid fa-triangle-exclamation mr-1"></i>Тариф не найден
+                                            </p>
                                         </div>
 
                                         <!-- Tariff Type -->
@@ -1556,7 +1507,8 @@
                             <!-- Dynamic Stats Summary Panel -->
                             <section
                                 class="xl:col-span-6 neon-card-blue p-4 relative rounded-2xl shadow-sm flex flex-col h-full">
-                                <h2 class="text-sm font-bold text-white flex items-center drop-shadow-md mb-2">
+                                <h2
+                                    class="font-display text-sm font-bold text-white flex items-center drop-shadow-md mb-2">
                                     <i class="fa-solid fa-chart-simple text-cyan-400 mr-2"></i>
                                     Сводная статистика
                                 </h2>
@@ -1877,11 +1829,11 @@
             if (document.body.classList.contains('dark-mode')) {
                 themeIcon.classList.remove('fa-moon');
                 themeIcon.classList.add('fa-sun');
-                themeBtn.classList.replace('text-slate-600', 'text-amber-400');
+                themeIcon.classList.add('theme-icon-active');
             } else {
                 themeIcon.classList.remove('fa-sun');
                 themeIcon.classList.add('fa-moon');
-                themeBtn.classList.replace('text-amber-400', 'text-slate-600');
+                themeIcon.classList.remove('theme-icon-active');
             }
         }
 
