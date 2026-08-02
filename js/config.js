@@ -4,7 +4,7 @@ const CONFIG = {
     tariffs: {
         day: [
             { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 }, net: { ADL: 10200, CHLD: 8160 } },
-            { start: '06-01', end: '08-23', tourist: { ADL: 14000, CHLD: 11500 }, agent: { ADL: 13450, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
+            { start: '06-01', end: '08-23', tourist: { ADL: 14000, CHLD: 11500 }, agent: { ADL: 13300, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
             { start: '08-24', end: '09-06', tourist: { ADL: 11500, CHLD: 9200 }, agent: { ADL: 11200, CHLD: 8860 }, net: { ADL: 10200, CHLD: 8160 } },
             { start: '09-07', end: '09-20', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9200, CHLD: 7300 }, net: { ADL: 8500, CHLD: 6800 } },
             { start: '09-21', end: '09-30', tourist: { ADL: 8500, CHLD: 6700 }, agent: { ADL: 8350, CHLD: 6520 }, net: { ADL: 7650, CHLD: 6120 } },
