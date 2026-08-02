@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Регистрация Service Worker для PWA
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(err => console.error('SW registration failed', err));
@@ -175,7 +175,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const SUPABASE_URL = 'https://zlnxvraopnwyfebfhmdj.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_2q7uufBD_85Esjf-1Mwrvg_hItngDPG';
+    // Временно используем legacy JWT anon-ключ вместо sb_publishable_... —
+    // проверяем, не в новом ли формате ключей причина CORS-ошибок на /rest/v1.
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpsbnh2cmFvcG53eWZlYmZobWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMDY0MTgsImV4cCI6MjA5ODg4MjQxOH0.npYssFPPcvk4PDzUjLpH9COKi4tRt_xlLkQUoDJCplU';
 
     // Инициализируем Supabase, если ключи не являются заглушками
     const supabaseClient = (typeof supabase !== 'undefined' && SUPABASE_URL !== 'ВАШ_SUPABASE_URL_ЗДЕСЬ')
@@ -538,6 +540,64 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
+
+    // --- ЦЕНЫ И АКЦИИ (редактируются админом, хранятся в Supabase) ---
+    // Список активных акций раннего бронирования, загружается при старте
+    // из таблицы `promotions`. Пока не загружен (или Supabase недоступен) —
+    // пустой массив, и приложение работает на ценах из js/config.js.
+    let activePromotions = [];
+
+    // Возвращает акцию с наибольшей скидкой, применимую сегодня к дате
+    // посещения visitDateStr и типу тарифа tariffType, либо null.
+    function getApplicablePromotion(visitDateStr, tariffType) {
+        if (!visitDateStr || !activePromotions.length) return null;
+        const todayStr = new Date().toISOString().split('T')[0];
+        let best = null;
+        for (const promo of activePromotions) {
+            if (!promo.active) continue;
+            if (promo.tariff_type !== 'both' && promo.tariff_type !== tariffType) continue;
+            if (todayStr < promo.purchase_start || todayStr > promo.purchase_end) continue;
+            if (visitDateStr < promo.visit_start || visitDateStr > promo.visit_end) continue;
+            if (!best || promo.discount_percent > best.discount_percent) best = promo;
+        }
+        return best;
+    }
+
+    // Подтягивает переопределённые цены и список акций из Supabase.
+    // При любой ошибке/недоступности сети приложение молча остаётся
+    // на значениях по умолчанию из js/config.js — это не должно блокировать работу кассы.
+    async function loadRemoteConfig() {
+        if (!supabaseClient) return;
+        try {
+            const timeout = new Promise((resolve) => setTimeout(() => resolve(null), 4000));
+            const fetchPromise = Promise.all([
+                supabaseClient.from('app_settings').select('value').eq('key', 'tariffs').maybeSingle(),
+                supabaseClient.from('promotions').select('*').order('created_at', { ascending: false })
+            ]);
+
+            const result = await Promise.race([fetchPromise, timeout]);
+            if (!result) {
+                console.warn('Supabase не ответил за 4с — используются локальные цены/акции по умолчанию.');
+                return;
+            }
+            const [settingsRes, promosRes] = result;
+
+            if (settingsRes && settingsRes.data && settingsRes.data.value) {
+                const remote = settingsRes.data.value;
+                if (remote.day) CONFIG.tariffs.day = remote.day;
+                if (remote.evening) CONFIG.tariffs.evening = remote.evening;
+                if (typeof remote.earlyBookingFallback === 'number') {
+                    CONFIG.discounts.earlyBooking = remote.earlyBookingFallback;
+                }
+            }
+
+            if (promosRes && promosRes.data) {
+                activePromotions = promosRes.data;
+            }
+        } catch (e) {
+            console.error('Не удалось загрузить цены/акции из Supabase, используются значения по умолчанию:', e);
+        }
+    }
 
     // Плавная анимация числа (одометр): используется для суммы и статистики,
     // чтобы изменения ощущались живыми, а не мгновенным подменом текста.
@@ -1274,20 +1334,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const tariffType = tariffTypeInput ? tariffTypeInput.value : 'day';
 
         let earlyBookingEnabled = false;
+        let currentPromo = null;
 
         // Управление видимостью кнопки Раннего Бронирования
         if (visitDate && earlyBookingContainer) {
-            const vDate = new Date(visitDate);
-            const today = new Date();
-            // Акция действует СТРОГО с 29 по 31 июля
-            const isPromoDays = today.getMonth() === 6 && today.getDate() >= 29 && today.getDate() <= 31;
+            currentPromo = getApplicablePromotion(visitDate, tariffType);
 
-            let isPromoTime = true; // Убрали строгую привязку к часам, так как на устройствах могут быть сбиты часовые пояса
-
-            // Посещения в августе с 1 по 23
-            const isPromoVisit = vDate.getMonth() === 7 && vDate.getDate() >= 1 && vDate.getDate() <= 23;
-
-            if (isPromoDays && isPromoTime && isPromoVisit && tariffType === 'day') {
+            if (currentPromo) {
                 earlyBookingEnabled = true;
                 earlyBookingContainer.classList.remove('hidden');
             } else {
@@ -1297,8 +1350,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Управление бейджом "Раннее бронирование" в итоге
         if (earlyBookingBadge) {
-            if (earlyBookingEnabled) {
+            if (earlyBookingEnabled && currentPromo) {
                 earlyBookingBadge.classList.remove('hidden');
+                const badgeText = document.getElementById('earlyBookingBadgeText');
+                if (badgeText) badgeText.textContent = `-${currentPromo.discount_percent}%`;
             } else {
                 earlyBookingBadge.classList.add('hidden');
             }
@@ -1363,19 +1418,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 discountPercent = 100;
             }
 
-            // Акция Раннего Бронирования (15%) не действует на инвалидов, именинников и пенсионеров
+            // Акция раннего бронирования не действует на инвалидов, именинников и пенсионеров
             const hasOtherDiscounts = discountInfo.isBirthday || discountInfo.isPensioner || (t.disability && t.disability !== '0' && t.disability !== 'none');
-            if (earlyBookingEnabled && !hasOtherDiscounts && discountPercent < 100 && age >= 4) {
-                discountPercent = Math.max(discountPercent, CONFIG.discounts.earlyBooking);
+            if (currentPromo && !hasOtherDiscounts && discountPercent < 100 && age >= 4) {
+                discountPercent = Math.max(discountPercent, currentPromo.discount_percent);
             }
 
             let actualBasePrice = basePrice;
-            // Для туристов скидка РБ считается от кассовой цены (15000/12000 для дня)
-            if (earlyBookingEnabled && !hasOtherDiscounts && age >= 4 && clientType === 'tourist') {
-                if (tariffType === 'day') {
-                    if (category === 'ADL') actualBasePrice = 15000;
-                    if (category === 'CHLD') actualBasePrice = 12000;
-                }
+            // Для туристов скидка РБ может считаться от отдельной "кассовой" цены,
+            // если она задана в самой акции (ref_price_adl / ref_price_chld)
+            if (currentPromo && !hasOtherDiscounts && age >= 4 && clientType === 'tourist') {
+                if (category === 'ADL' && currentPromo.ref_price_adl) actualBasePrice = currentPromo.ref_price_adl;
+                if (category === 'CHLD' && currentPromo.ref_price_chld) actualBasePrice = currentPromo.ref_price_chld;
             }
 
             let finalPrice = 0;
@@ -3766,7 +3820,281 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.showToast) window.showToast('Приложение установлено!', 'fa-check', 'bg-emerald-500');
     });
 
+    // --- АДМИН-ПАНЕЛЬ: ЦЕНЫ И АКЦИИ ---
+    const MONTHS_SHORT = ['', 'янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+    function formatPeriodLabel(p) {
+        const [sm, sd] = p.start.split('-');
+        const [em, ed] = p.end.split('-');
+        return `${sd} ${MONTHS_SHORT[parseInt(sm, 10)]} – ${ed} ${MONTHS_SHORT[parseInt(em, 10)]}`;
+    }
+
+    function renderTariffPriceTable(tariffType, periods) {
+        const rows = periods.map((p, idx) => `
+            <tr class="border-b border-slate-100 last:border-0">
+                <td class="py-2 pr-2 text-[11px] font-bold text-slate-500 whitespace-nowrap">${formatPeriodLabel(p)}</td>
+                <td class="py-2 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="tourist" data-cat="ADL" value="${p.tourist.ADL}"></td>
+                <td class="py-2 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="tourist" data-cat="CHLD" value="${p.tourist.CHLD}"></td>
+                <td class="py-2 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="agent" data-cat="ADL" value="${p.agent.ADL}"></td>
+                <td class="py-2 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="agent" data-cat="CHLD" value="${p.agent.CHLD}"></td>
+                <td class="py-2 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="net" data-cat="ADL" value="${p.net.ADL}"></td>
+                <td class="py-2 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="net" data-cat="CHLD" value="${p.net.CHLD}"></td>
+            </tr>`).join('');
+
+        return `
+        <div class="mb-6">
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-500 mb-2">${tariffType === 'day' ? 'Дневной тариф' : 'Вечерний тариф'}</h3>
+            <div class="overflow-x-auto -mx-1">
+            <table class="w-full text-xs min-w-[560px]">
+                <thead>
+                    <tr class="text-[9px] uppercase text-slate-400 font-bold">
+                        <th class="text-left py-1 pr-2">Период</th>
+                        <th class="py-1 px-1" colspan="2">Турист</th>
+                        <th class="py-1 px-1" colspan="2">Агент</th>
+                        <th class="py-1 px-1" colspan="2">Себестоимость</th>
+                    </tr>
+                    <tr class="text-[9px] uppercase text-slate-300 font-bold">
+                        <th></th>
+                        <th>Взр.</th><th>Дет.</th>
+                        <th>Взр.</th><th>Дет.</th>
+                        <th>Взр.</th><th>Дет.</th>
+                    </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>
+            </div>
+        </div>`;
+    }
+
+    function renderPricingPricesPanel() {
+        const panel = document.getElementById('pricingPricesPanel');
+        if (!panel) return;
+        panel.innerHTML = `
+            ${renderTariffPriceTable('day', CONFIG.tariffs.day)}
+            ${renderTariffPriceTable('evening', CONFIG.tariffs.evening)}
+            <div class="mb-4 pt-2 border-t border-slate-100">
+                <label class="block text-[11px] font-bold text-slate-500 mb-1 mt-3">Скидка «раннее бронирование» по умолчанию для ручного режима, %</label>
+                <input id="earlyBookingFallbackInput" type="number" class="price-input max-w-[120px] text-left" value="${CONFIG.discounts.earlyBooking}">
+            </div>
+            <button onclick="window.savePricingPrices()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-xl transition-colors text-sm">
+                <i class="fa-solid fa-floppy-disk mr-1.5"></i>Сохранить цены
+            </button>
+            <p id="pricingSaveStatus" class="text-center text-xs mt-2"></p>
+        `;
+    }
+
+    window.savePricingPrices = async function () {
+        const inputs = document.querySelectorAll('#pricingPricesPanel .price-input[data-tariff]');
+        inputs.forEach(inp => {
+            const { tariff, idx, group, cat } = inp.dataset;
+            CONFIG.tariffs[tariff][idx][group][cat] = parseInt(inp.value) || 0;
+        });
+        const fallbackInput = document.getElementById('earlyBookingFallbackInput');
+        if (fallbackInput) CONFIG.discounts.earlyBooking = parseInt(fallbackInput.value) || 0;
+
+        const status = document.getElementById('pricingSaveStatus');
+        if (!supabaseClient) {
+            if (status) { status.textContent = 'Нет соединения с Supabase'; status.className = 'text-center text-xs mt-2 text-rose-600 font-bold'; }
+            return;
+        }
+        try {
+            const { error } = await supabaseClient.from('app_settings').upsert({
+                key: 'tariffs',
+                value: { day: CONFIG.tariffs.day, evening: CONFIG.tariffs.evening, earlyBookingFallback: CONFIG.discounts.earlyBooking },
+                updated_at: new Date().toISOString()
+            });
+            if (error) throw error;
+            if (status) { status.textContent = 'Сохранено ✓'; status.className = 'text-center text-xs mt-2 text-emerald-600 font-bold'; }
+            render();
+            if (window.showToast) window.showToast('Цены обновлены', 'fa-check', 'bg-emerald-500');
+        } catch (e) {
+            console.error(e);
+            if (status) { status.textContent = 'Ошибка сохранения: ' + (e.message || ''); status.className = 'text-center text-xs mt-2 text-rose-600 font-bold'; }
+        }
+    };
+
+    function renderPricingPromosPanel() {
+        const panel = document.getElementById('pricingPromosPanel');
+        if (!panel) return;
+
+        const tariffLabel = (t) => t === 'both' ? 'любой' : (t === 'day' ? 'дневной' : 'вечерний');
+        const rows = activePromotions.map(p => `
+            <div class="border border-slate-200 rounded-xl p-3 mb-2 flex items-start justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1 flex-wrap">
+                        <span class="font-bold text-sm text-slate-900">${p.title}</span>
+                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full ${p.active ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}">${p.active ? 'Активна' : 'Выключена'}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-500 leading-relaxed">
+                        Скидка <b class="text-slate-700">${p.discount_percent}%</b> · Тариф: ${tariffLabel(p.tariff_type)}<br>
+                        Покупка: ${p.purchase_start} — ${p.purchase_end}<br>
+                        Посещение: ${p.visit_start} — ${p.visit_end}
+                        ${p.ref_price_adl || p.ref_price_chld ? `<br>Реф. цена: ${p.ref_price_adl || '—'} / ${p.ref_price_chld || '—'}` : ''}
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1.5 shrink-0">
+                    <button onclick="window.togglePromoActive('${p.id}', ${!p.active})" class="text-[11px] font-bold px-2 py-1 rounded-lg whitespace-nowrap ${p.active ? 'bg-slate-100 hover:bg-slate-200 text-slate-600' : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-700'}">${p.active ? 'Выключить' : 'Включить'}</button>
+                    <button onclick="window.deletePromo('${p.id}')" class="text-[11px] font-bold px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600">Удалить</button>
+                </div>
+            </div>`).join('') || `<p class="text-sm text-slate-400 text-center py-6">Акций пока нет</p>`;
+
+        panel.innerHTML = `
+            <div class="mb-5">${rows}</div>
+            <div class="border-t border-slate-100 pt-4">
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-500 mb-3">Новая акция</h3>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div class="col-span-2">
+                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Название</label>
+                        <input id="promoTitleInput" type="text" class="price-input text-left" placeholder="Например: Раннее бронирование — август">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Скидка, %</label>
+                        <input id="promoDiscountInput" type="number" min="1" max="100" class="price-input text-left" value="15">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Тариф</label>
+                        <select id="promoTariffInput" class="price-input text-left">
+                            <option value="both">Любой</option>
+                            <option value="day">Дневной</option>
+                            <option value="evening">Вечерний</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Покупка — от</label>
+                        <input id="promoPurchaseStartInput" type="date" class="price-input text-left">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Покупка — до</label>
+                        <input id="promoPurchaseEndInput" type="date" class="price-input text-left">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Посещение — от</label>
+                        <input id="promoVisitStartInput" type="date" class="price-input text-left">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Посещение — до</label>
+                        <input id="promoVisitEndInput" type="date" class="price-input text-left">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Реф. цена взрослый (необязательно)</label>
+                        <input id="promoRefAdlInput" type="number" class="price-input text-left" placeholder="напр. 15000">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Реф. цена детский (необязательно)</label>
+                        <input id="promoRefChldInput" type="number" class="price-input text-left" placeholder="напр. 12000">
+                    </div>
+                </div>
+                <p class="text-[10px] text-slate-400 mb-3">Реф. цена — если задана, скидка считается от неё вместо обычной сезонной цены (только для туристов). Оставьте пустым для обычной логики.</p>
+                <button onclick="window.addPromo()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-xl transition-colors text-sm">
+                    <i class="fa-solid fa-plus mr-1.5"></i>Добавить акцию
+                </button>
+                <p id="promoSaveStatus" class="text-center text-xs mt-2"></p>
+            </div>
+        `;
+    }
+
+    window.addPromo = async function () {
+        const title = document.getElementById('promoTitleInput').value.trim();
+        const discount = parseInt(document.getElementById('promoDiscountInput').value) || 0;
+        const tariff = document.getElementById('promoTariffInput').value;
+        const pStart = document.getElementById('promoPurchaseStartInput').value;
+        const pEnd = document.getElementById('promoPurchaseEndInput').value;
+        const vStart = document.getElementById('promoVisitStartInput').value;
+        const vEnd = document.getElementById('promoVisitEndInput').value;
+        const refAdl = document.getElementById('promoRefAdlInput').value;
+        const refChld = document.getElementById('promoRefChldInput').value;
+        const status = document.getElementById('promoSaveStatus');
+
+        if (!title || !discount || !pStart || !pEnd || !vStart || !vEnd) {
+            if (status) { status.textContent = 'Заполните все обязательные поля'; status.className = 'text-center text-xs mt-2 text-rose-600 font-bold'; }
+            return;
+        }
+        if (!supabaseClient) return;
+
+        try {
+            const { error } = await supabaseClient.from('promotions').insert([{
+                title, discount_percent: discount, tariff_type: tariff,
+                purchase_start: pStart, purchase_end: pEnd,
+                visit_start: vStart, visit_end: vEnd,
+                ref_price_adl: refAdl ? parseInt(refAdl) : null,
+                ref_price_chld: refChld ? parseInt(refChld) : null,
+                active: true
+            }]);
+            if (error) throw error;
+            await loadRemoteConfig();
+            renderPricingPromosPanel();
+            render();
+            if (window.showToast) window.showToast('Акция добавлена', 'fa-check', 'bg-emerald-500');
+        } catch (e) {
+            console.error(e);
+            if (status) { status.textContent = 'Ошибка: ' + (e.message || ''); status.className = 'text-center text-xs mt-2 text-rose-600 font-bold'; }
+        }
+    };
+
+    window.togglePromoActive = async function (id, newActive) {
+        if (!supabaseClient) return;
+        await supabaseClient.from('promotions').update({ active: newActive }).eq('id', id);
+        await loadRemoteConfig();
+        renderPricingPromosPanel();
+        render();
+    };
+
+    window.deletePromo = async function (id) {
+        if (!confirm('Удалить эту акцию?')) return;
+        if (!supabaseClient) return;
+        await supabaseClient.from('promotions').delete().eq('id', id);
+        await loadRemoteConfig();
+        renderPricingPromosPanel();
+        render();
+    };
+
+    window.openPricingAdminModal = function () {
+        const modal = document.getElementById('pricingAdminModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        renderPricingPricesPanel();
+        renderPricingPromosPanel();
+    };
+
+    window.closePricingAdminModal = function () {
+        const modal = document.getElementById('pricingAdminModal');
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    };
+
+    window.switchPricingTab = function (tab) {
+        const pricesPanel = document.getElementById('pricingPricesPanel');
+        const promosPanel = document.getElementById('pricingPromosPanel');
+        const pricesBtn = document.getElementById('pricingTabPricesBtn');
+        const promosBtn = document.getElementById('pricingTabPromosBtn');
+        if (!pricesPanel || !promosPanel) return;
+        if (tab === 'prices') {
+            pricesPanel.classList.remove('hidden');
+            promosPanel.classList.add('hidden');
+            pricesBtn.classList.add('active');
+            promosBtn.classList.remove('active');
+        } else {
+            pricesPanel.classList.add('hidden');
+            promosPanel.classList.remove('hidden');
+            pricesBtn.classList.remove('active');
+            promosBtn.classList.add('active');
+        }
+    };
+
     function initApp() {
+        // Кнопка "Цены и акции" видна только администратору
+        const pricingAdminBtn = document.getElementById('pricingAdminBtn');
+        if (pricingAdminBtn) {
+            if (localStorage.getItem('tetysUser') === 'admin') {
+                pricingAdminBtn.classList.remove('hidden');
+                pricingAdminBtn.classList.add('flex');
+                pricingAdminBtn.addEventListener('click', window.openPricingAdminModal);
+            } else {
+                pricingAdminBtn.classList.add('hidden');
+            }
+        }
+
         const draft = localStorage.getItem('tetisBluDraft');
         if (draft) {
             try {
@@ -3817,6 +4145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Инициализация при загрузке
+    await loadRemoteConfig();
     initApp();
     startLiveClock();
 
