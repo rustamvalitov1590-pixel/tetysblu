@@ -849,6 +849,56 @@
             }
         }
 
+        /* ------------------------------------------------------------
+           "Wow" micro-interactions for the calculator: a number pulse
+           when a value changes, and a soft light-sweep on the total
+           price card, plus a staggered entrance for the page cards.
+           ------------------------------------------------------------ */
+        @keyframes value-pulse {
+            0% { transform: scale(1); }
+            35% { transform: scale(1.12); }
+            100% { transform: scale(1); }
+        }
+
+        .value-pulse {
+            display: inline-block;
+            animation: value-pulse 0.4s var(--ease-spring);
+        }
+
+        @keyframes price-flash {
+            0% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0.55), var(--shadow-card); }
+            60% { box-shadow: 0 0 0 10px rgba(0, 180, 216, 0), var(--shadow-card); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0), var(--shadow-card); }
+        }
+
+        .price-flash {
+            animation: price-flash 0.7s ease-out;
+        }
+
+        @keyframes card-enter {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #view-calculator.stagger-in > div > * {
+            animation: card-enter 0.5s var(--ease-out) both;
+        }
+
+        #view-calculator.stagger-in > div > *:nth-child(1) { animation-delay: 0.02s; }
+        #view-calculator.stagger-in > div > *:nth-child(2) { animation-delay: 0.1s; }
+
+        #view-calculator.stagger-in .lg\:col-span-4 > div > section,
+        #view-calculator.stagger-in .lg\:col-span-8 > section,
+        #view-calculator.stagger-in .lg\:col-span-8 > div {
+            animation: card-enter 0.5s var(--ease-out) both;
+        }
+
+        #view-calculator.stagger-in .lg\:col-span-4 > div > section:nth-child(1) { animation-delay: 0.08s; }
+        #view-calculator.stagger-in .lg\:col-span-4 > div > section:nth-child(2) { animation-delay: 0.16s; }
+        #view-calculator.stagger-in .lg\:col-span-8 > *:nth-child(1) { animation-delay: 0.14s; }
+        #view-calculator.stagger-in .lg\:col-span-8 > *:nth-child(2) { animation-delay: 0.22s; }
+        #view-calculator.stagger-in .lg\:col-span-8 > *:nth-child(3) { animation-delay: 0.3s; }
+
         @keyframes popIn {
             from {
                 opacity: 0;
