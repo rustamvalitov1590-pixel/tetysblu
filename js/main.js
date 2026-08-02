@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             const { data, error } = await supabaseClient.functions.invoke('verify-login', {
-                body: { login, pass }
+                body: { login, password }
             });
 
             if (error || !data || !data.ok) {
