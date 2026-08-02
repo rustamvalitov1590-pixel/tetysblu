@@ -225,35 +225,6 @@
             color: var(--sun) !important;
         }
 
-        .tide-line {
-            position: relative;
-            height: 6px;
-            margin: 10px 0 0;
-            overflow: hidden;
-            border-radius: 999px;
-            background: var(--line-soft);
-        }
-
-        .tide-line::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            width: 200%;
-            background: repeating-linear-gradient(90deg, var(--aqua) 0, var(--aqua) 40px, var(--brand) 40px, var(--brand) 80px);
-            opacity: 0.55;
-            animation: tide-drift 9s linear infinite;
-        }
-
-        @keyframes tide-drift {
-            from {
-                transform: translateX(0);
-            }
-
-            to {
-                transform: translateX(-80px);
-            }
-        }
-
         #appContent header {
             background: rgba(255, 255, 255, 0.72) !important;
             border: 1px solid var(--line) !important;
@@ -855,9 +826,17 @@
            price card, plus a staggered entrance for the page cards.
            ------------------------------------------------------------ */
         @keyframes value-pulse {
-            0% { transform: scale(1); }
-            35% { transform: scale(1.12); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            35% {
+                transform: scale(1.12);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .value-pulse {
@@ -866,9 +845,17 @@
         }
 
         @keyframes price-flash {
-            0% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0.55), var(--shadow-card); }
-            60% { box-shadow: 0 0 0 10px rgba(0, 180, 216, 0), var(--shadow-card); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0), var(--shadow-card); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 180, 216, 0.55), var(--shadow-card);
+            }
+
+            60% {
+                box-shadow: 0 0 0 10px rgba(0, 180, 216, 0), var(--shadow-card);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 180, 216, 0), var(--shadow-card);
+            }
         }
 
         .price-flash {
@@ -876,28 +863,54 @@
         }
 
         @keyframes card-enter {
-            from { opacity: 0; transform: translateY(14px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        #view-calculator.stagger-in > div > * {
+        #view-calculator.stagger-in>div>* {
             animation: card-enter 0.5s var(--ease-out) both;
         }
 
-        #view-calculator.stagger-in > div > *:nth-child(1) { animation-delay: 0.02s; }
-        #view-calculator.stagger-in > div > *:nth-child(2) { animation-delay: 0.1s; }
+        #view-calculator.stagger-in>div>*:nth-child(1) {
+            animation-delay: 0.02s;
+        }
 
-        #view-calculator.stagger-in .lg\:col-span-4 > div > section,
-        #view-calculator.stagger-in .lg\:col-span-8 > section,
-        #view-calculator.stagger-in .lg\:col-span-8 > div {
+        #view-calculator.stagger-in>div>*:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        #view-calculator.stagger-in .lg\:col-span-4>div>section,
+        #view-calculator.stagger-in .lg\:col-span-8>section,
+        #view-calculator.stagger-in .lg\:col-span-8>div {
             animation: card-enter 0.5s var(--ease-out) both;
         }
 
-        #view-calculator.stagger-in .lg\:col-span-4 > div > section:nth-child(1) { animation-delay: 0.08s; }
-        #view-calculator.stagger-in .lg\:col-span-4 > div > section:nth-child(2) { animation-delay: 0.16s; }
-        #view-calculator.stagger-in .lg\:col-span-8 > *:nth-child(1) { animation-delay: 0.14s; }
-        #view-calculator.stagger-in .lg\:col-span-8 > *:nth-child(2) { animation-delay: 0.22s; }
-        #view-calculator.stagger-in .lg\:col-span-8 > *:nth-child(3) { animation-delay: 0.3s; }
+        #view-calculator.stagger-in .lg\:col-span-4>div>section:nth-child(1) {
+            animation-delay: 0.08s;
+        }
+
+        #view-calculator.stagger-in .lg\:col-span-4>div>section:nth-child(2) {
+            animation-delay: 0.16s;
+        }
+
+        #view-calculator.stagger-in .lg\:col-span-8>*:nth-child(1) {
+            animation-delay: 0.14s;
+        }
+
+        #view-calculator.stagger-in .lg\:col-span-8>*:nth-child(2) {
+            animation-delay: 0.22s;
+        }
+
+        #view-calculator.stagger-in .lg\:col-span-8>*:nth-child(3) {
+            animation-delay: 0.3s;
+        }
 
         @keyframes popIn {
             from {
@@ -909,6 +922,43 @@
                 opacity: 1;
                 transform: scale(1);
             }
+        }
+
+        /* Pricing & Promotions admin modal — plain light modal, same
+           convention as #manualPriceModal (lives outside #appContent). */
+        .pricing-tab-btn {
+            padding: 10px 14px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .pricing-tab-btn:hover {
+            color: #0f172a;
+        }
+
+        .pricing-tab-btn.active {
+            color: #0284c7;
+            border-bottom-color: #0284c7;
+        }
+
+        .price-input {
+            width: 100%;
+            padding: 6px 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #0f172a;
+            text-align: center;
+        }
+
+        .price-input:focus {
+            outline: none;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
         }
     </style>
 </head>
@@ -1045,6 +1095,11 @@
                         <h1 id="liveClockDisplay"
                             class="text-[11px] font-normal text-slate-300 tracking-wide font-sans"></h1>
                     </div>
+                    <button id="pricingAdminBtn"
+                        class="hidden w-8 h-8 md:w-10 md:h-10 items-center justify-center hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-all"
+                        title="Цены и акции">
+                        <i class="fa-solid fa-tags text-sm md:text-base"></i>
+                    </button>
                     <button id="themeToggleBtn"
                         class="flex w-8 h-8 md:w-10 md:h-10 items-center justify-center hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-all"
                         title="Светлая/тёмная тема">
@@ -1066,7 +1121,6 @@
                     </button>
                 </div>
             </header>
-            <div class="tide-line" aria-hidden="true"></div>
         </div>
 
         <!-- MAIN CONTENT AREA -->
@@ -1422,7 +1476,8 @@
                                             <!-- Early Booking Pulse Badge -->
                                             <div id="earlyBookingBadge"
                                                 class="hidden bg-amber-400 text-slate-900 text-[8px] font-extrabold px-1.5 py-0.5 rounded-full shadow-md animate-pulse">
-                                                <i class="fa-solid fa-bolt mr-0.5"></i> -15%
+                                                <i class="fa-solid fa-bolt mr-0.5"></i><span
+                                                    id="earlyBookingBadgeText">-15%</span>
                                             </div>
                                         </div>
 
@@ -1769,6 +1824,31 @@
                     <button onclick="window.saveManualPrice()"
                         class="flex-[2] py-3 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 transition-colors shadow-md shadow-amber-500/30 text-sm">Применить</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing & Promotions Admin Modal -->
+    <div id="pricingAdminModal"
+        class="fixed inset-0 z-[8000] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-4xl max-h-[88vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center shrink-0">
+                <h2 class="text-lg font-black text-slate-900"><i class="fa-solid fa-tags text-cyan-600 mr-2"></i>Цены
+                    и акции</h2>
+                <button onclick="window.closePricingAdminModal()"
+                    class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="flex border-b border-slate-100 px-5 gap-1 shrink-0">
+                <button id="pricingTabPricesBtn" onclick="window.switchPricingTab('prices')"
+                    class="pricing-tab-btn active">Цены тарифов</button>
+                <button id="pricingTabPromosBtn" onclick="window.switchPricingTab('promos')"
+                    class="pricing-tab-btn">Акции раннего бронирования</button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-5">
+                <div id="pricingPricesPanel"></div>
+                <div id="pricingPromosPanel" class="hidden"></div>
             </div>
         </div>
     </div>
