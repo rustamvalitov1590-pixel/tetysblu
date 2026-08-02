@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#03182f">
     <title>Покупка билетов | Caspian Dream Park</title>
-    
+
     <link rel="icon" type="image/png" sizes="32x32" href="https://tetysblu.com/src/favicon/favicon-32x32.png">
-    
+
     <!-- Info Modal -->
-    <div id="infoModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300" id="infoModalContent">
+    <div id="infoModal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300"
+            id="infoModalContent">
             <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
                 <h3 class="font-black text-white text-sm flex items-center gap-2 drop-shadow-sm" id="infoModalTitle">
                     <i class="fa-solid fa-circle-info text-cyan-400"></i>
                 </h3>
-                <button onclick="closeInfoModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition-colors">
+                <button onclick="closeInfoModal()"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition-colors">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -23,56 +27,66 @@
                 <!-- Filled dynamically -->
             </div>
             <div class="p-4 bg-white/5 border-t border-white/10 text-center">
-                <button onclick="closeInfoModal()" id="infoModalCloseBtn" class="btn-glass-primary w-full py-3 rounded-xl font-bold text-sm">Понятно</button>
+                <button onclick="closeInfoModal()" id="infoModalCloseBtn"
+                    class="btn-glass-primary w-full py-3 rounded-xl font-bold text-sm">Понятно</button>
             </div>
         </div>
     </div>
 
     <!-- Tourist Info Modal -->
-    <div id="touristInfoModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-2 sm:p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-2xl h-[90vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-300 shadow-2xl" id="touristInfoModalContent">
+    <div id="touristInfoModal"
+        class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-2 sm:p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-2xl h-[90vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-300 shadow-2xl"
+            id="touristInfoModalContent">
             <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/5 shrink-0">
-                <h3 class="font-black text-white text-sm md:text-base flex items-center gap-2 drop-shadow-sm" id="i18n_info_modal_title">
+                <h3 class="font-black text-white text-sm md:text-base flex items-center gap-2 drop-shadow-sm"
+                    id="i18n_info_modal_title">
                     <i class="fa-solid fa-book-open text-cyan-400"></i> Памятка туристу
                 </h3>
-                <button onclick="closeTouristInfoModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition-colors">
+                <button onclick="closeTouristInfoModal()"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition-colors">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            
+
             <div class="p-4 sm:p-6 overflow-y-auto flex-1 flex flex-col gap-5 pb-10">
                 <!-- Prices -->
                 <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
                     <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-tags text-cyan-400"></i> <span id="i18n_info_prices_title">Актуальные цены</span>
+                        <i class="fa-solid fa-tags text-cyan-400"></i> <span id="i18n_info_prices_title">Актуальные
+                            цены</span>
                     </h4>
                     <div id="i18n_info_prices_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- Included -->
                 <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
                     <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-gift text-cyan-400"></i> <span id="i18n_info_included_title">Что входит в стоимость?</span>
+                        <i class="fa-solid fa-gift text-cyan-400"></i> <span id="i18n_info_included_title">Что входит в
+                            стоимость?</span>
                     </h4>
                     <div id="i18n_info_included_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- FAQ -->
                 <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
                     <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-circle-question text-cyan-400"></i> <span id="i18n_info_faq_title">Часто задаваемые вопросы</span>
+                        <i class="fa-solid fa-circle-question text-cyan-400"></i> <span id="i18n_info_faq_title">Часто
+                            задаваемые вопросы</span>
                     </h4>
                     <div id="i18n_info_faq_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- Rules -->
                 <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
                     <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-clipboard-list text-cyan-400"></i> <span id="i18n_info_rules_title">Правила и условия</span>
+                        <i class="fa-solid fa-clipboard-list text-cyan-400"></i> <span
+                            id="i18n_info_rules_title">Правила и условия</span>
                     </h4>
                     <div id="i18n_info_rules_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- Fast Track -->
                 <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
                     <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-forward-fast text-cyan-400"></i> <span id="i18n_info_fasttrack_title">Fast Track</span>
+                        <i class="fa-solid fa-forward-fast text-cyan-400"></i> <span id="i18n_info_fasttrack_title">Fast
+                            Track</span>
                     </h4>
                     <div id="i18n_info_fasttrack_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
                 </div>
@@ -81,11 +95,12 @@
     </div>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+
     <script>
         tailwind.config = {
             theme: {
@@ -98,7 +113,7 @@
             }
         }
     </script>
-    
+
     <style>
         body {
             background-color: #03182f !important;
@@ -111,6 +126,7 @@
             overflow-x: hidden;
             min-height: 100vh;
         }
+
         body::before {
             content: '';
             position: fixed;
@@ -125,8 +141,8 @@
             backdrop-filter: blur(24px) !important;
             -webkit-backdrop-filter: blur(24px) !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            box-shadow: 
-                0 10px 30px -5px rgba(0, 0, 0, 0.3), 
+            box-shadow:
+                0 10px 30px -5px rgba(0, 0, 0, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
             border-radius: 24px !important;
             color: #f8fafc !important;
@@ -155,7 +171,7 @@
             box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2) !important;
             background: rgba(0, 0, 0, 0.3) !important;
         }
-        
+
         .glass-input::placeholder {
             color: rgba(255, 255, 255, 0.5) !important;
         }
@@ -170,9 +186,21 @@
             border-radius: 12px !important;
             box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
         }
-        .btn-glass-primary:active { transform: translateY(0); }
-        .btn-glass-primary:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(2, 132, 199, 0.6) !important; }
-        .btn-glass-primary:disabled { background: rgba(148, 163, 184, 0.5) !important; box-shadow: none !important; cursor: not-allowed; }
+
+        .btn-glass-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-glass-primary:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.6) !important;
+        }
+
+        .btn-glass-primary:disabled {
+            background: rgba(148, 163, 184, 0.5) !important;
+            box-shadow: none !important;
+            cursor: not-allowed;
+        }
 
         /* --- Light Theme Override for Sun Visibility --- */
         body {
@@ -180,9 +208,15 @@
             background-image: none !important;
             color: #0f172a !important;
         }
-        body::before { display: none !important; }
-        
-        .glass-panel, .neon-card-blue, .bg-\\[\\#0f172a\\]\\/95, .bg-black\\/20 {
+
+        body::before {
+            display: none !important;
+        }
+
+        .glass-panel,
+        .neon-card-blue,
+        .bg-\\[\\#0f172a\\]\\/95,
+        .bg-black\\/20 {
             background: #ffffff !important;
             border: 1px solid #cbd5e1 !important;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
@@ -190,150 +224,220 @@
             backdrop-filter: none !important;
             -webkit-backdrop-filter: none !important;
         }
-        
+
         .glass-input {
             background: #ffffff !important;
             border: 1px solid #94a3b8 !important;
             color: #0f172a !important;
         }
+
         .glass-input:focus {
             border-color: #0ea5e9 !important;
             box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2) !important;
             background: #ffffff !important;
         }
+
         .glass-input::placeholder {
             color: #64748b !important;
         }
-        
+
         /* Force texts to be dark */
-        .text-white, .text-slate-100, .text-slate-200, .text-slate-300, .text-slate-400, 
-        .text-cyan-100, .text-cyan-200, .text-cyan-300, .text-cyan-400,
-        .text-blue-100, .text-blue-200, .text-blue-300, .text-blue-400,
-        .text-emerald-100, .text-emerald-200, .text-emerald-300, .text-emerald-400,
-        .text-green-100, .text-green-200, .text-green-300, .text-green-400,
-        .text-teal-100, .text-teal-200, .text-teal-300, .text-teal-400,
-        .text-purple-100, .text-purple-200, .text-purple-300, .text-purple-400,
-        .text-rose-100, .text-rose-200, .text-rose-300, .text-rose-400,
-        .text-amber-100, .text-amber-200, .text-amber-300, .text-amber-400,
-        .text-yellow-100, .text-yellow-200, .text-yellow-300, .text-yellow-400 {
+        .text-white,
+        .text-slate-100,
+        .text-slate-200,
+        .text-slate-300,
+        .text-slate-400,
+        .text-cyan-100,
+        .text-cyan-200,
+        .text-cyan-300,
+        .text-cyan-400,
+        .text-blue-100,
+        .text-blue-200,
+        .text-blue-300,
+        .text-blue-400,
+        .text-emerald-100,
+        .text-emerald-200,
+        .text-emerald-300,
+        .text-emerald-400,
+        .text-green-100,
+        .text-green-200,
+        .text-green-300,
+        .text-green-400,
+        .text-teal-100,
+        .text-teal-200,
+        .text-teal-300,
+        .text-teal-400,
+        .text-purple-100,
+        .text-purple-200,
+        .text-purple-300,
+        .text-purple-400,
+        .text-rose-100,
+        .text-rose-200,
+        .text-rose-300,
+        .text-rose-400,
+        .text-amber-100,
+        .text-amber-200,
+        .text-amber-300,
+        .text-amber-400,
+        .text-yellow-100,
+        .text-yellow-200,
+        .text-yellow-300,
+        .text-yellow-400 {
             color: #1e293b !important;
         }
     </style>
 </head>
+
 <body class="flex items-start justify-center p-4 sm:p-8 overflow-y-auto">
 
     <div class="glass-panel neon-card-blue w-full max-w-xl relative mb-10 mt-6 sm:mt-10">
-        
+
         <!-- Language Switcher -->
-        <div class="absolute top-4 right-4 z-20 flex bg-black/20 p-0.5 rounded-lg border border-white/10 shadow-sm select-none text-[10px]">
-            <button onclick="changeLanguage('kz')" id="lang_kz" class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer text-slate-400 hover:text-white">KZ</button>
-            <button onclick="changeLanguage('ru')" id="lang_ru" class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer bg-white/20 text-white shadow-sm">RU</button>
-            <button onclick="changeLanguage('en')" id="lang_en" class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer text-slate-400 hover:text-white">EN</button>
+        <div
+            class="absolute top-4 right-4 z-20 flex bg-black/20 p-0.5 rounded-lg border border-white/10 shadow-sm select-none text-[10px]">
+            <button onclick="changeLanguage('kz')" id="lang_kz"
+                class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer text-slate-400 hover:text-white">KZ</button>
+            <button onclick="changeLanguage('ru')" id="lang_ru"
+                class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer bg-white/20 text-white shadow-sm">RU</button>
+            <button onclick="changeLanguage('en')" id="lang_en"
+                class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer text-slate-400 hover:text-white">EN</button>
         </div>
 
         <!-- Header -->
         <div class="bg-transparent p-6 text-center relative overflow-hidden rounded-t-[24px] border-b border-white/10">
-            <svg class="absolute inset-0 w-full h-full text-cyan-400/5 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M0 80 Q 25 50 50 80 T 100 80 L 100 100 L 0 100 Z" fill="currentColor"/>
-                <path d="M0 60 Q 30 75 60 55 T 100 65 L 100 100 L 0 100 Z" fill="currentColor" opacity="0.5"/>
+            <svg class="absolute inset-0 w-full h-full text-cyan-400/5 pointer-events-none" viewBox="0 0 100 100"
+                preserveAspectRatio="none">
+                <path d="M0 80 Q 25 50 50 80 T 100 80 L 100 100 L 0 100 Z" fill="currentColor" />
+                <path d="M0 60 Q 30 75 60 55 T 100 65 L 100 100 L 0 100 Z" fill="currentColor" opacity="0.5" />
             </svg>
             <div class="relative z-10 flex flex-col items-center">
                 <img src="assets/logo.png" alt="Tetys Blu" class="h-14 mb-3 drop-shadow-md">
-                <h1 id="i18n_purchase_tickets" class="text-2xl font-black tracking-tight text-white drop-shadow-sm">Покупка билетов</h1>
-                <p id="i18n_official_calculator" class="text-xs text-slate-400 mt-1 font-medium">Официальный калькулятор парка</p>
-                <button type="button" onclick="openTouristInfoModal()" class="mt-4 px-5 py-2 bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 rounded-full text-xs font-bold flex items-center gap-2 hover:bg-cyan-500/30 hover:text-cyan-100 transition-colors shadow-sm cursor-pointer backdrop-blur-md">
+                <h1 id="i18n_purchase_tickets" class="text-2xl font-black tracking-tight text-white drop-shadow-sm">
+                    Покупка билетов</h1>
+                <p id="i18n_official_calculator" class="text-xs text-slate-400 mt-1 font-medium">Официальный калькулятор
+                    парка</p>
+                <button type="button" onclick="openTouristInfoModal()"
+                    class="mt-4 px-5 py-2 bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 rounded-full text-xs font-bold flex items-center gap-2 hover:bg-cyan-500/30 hover:text-cyan-100 transition-colors shadow-sm cursor-pointer backdrop-blur-md">
                     <i class="fa-solid fa-circle-info"></i> <span id="i18n_info_btn_text">Памятка туристу</span>
                 </button>
             </div>
         </div>
 
         <div class="p-6 sm:p-8 space-y-6">
-            
+
             <!-- Дата и Тариф -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label id="i18n_visit_date" class="block text-[13px] font-extrabold text-white uppercase mb-1.5 drop-shadow-sm">Дата посещения</label>
+                    <label id="i18n_visit_date"
+                        class="block text-[13px] font-extrabold text-white uppercase mb-1.5 drop-shadow-sm">Дата
+                        посещения</label>
                     <div class="relative">
-                        <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
+                        <i
+                            class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
                         <input type="date" id="visitDate" class="w-full pl-9 pr-3 py-3 glass-input text-sm">
                     </div>
                     <div id="promoBadge" class="hidden mt-2">
-                        <span class="inline-flex items-center gap-1 text-[10px] text-white bg-gradient-to-r from-pink-500 to-orange-400 font-bold px-2 py-1 rounded-md shadow-sm">
+                        <span
+                            class="inline-flex items-center gap-1 text-[10px] text-white bg-gradient-to-r from-pink-500 to-orange-400 font-bold px-2 py-1 rounded-md shadow-sm">
                             <i class="fa-solid fa-fire"></i>
                         </span>
                     </div>
                 </div>
                 <div>
-                    <label id="i18n_tariff_label" class="flex items-center text-[11px] font-bold text-slate-400 uppercase mb-1.5 drop-shadow-sm">
+                    <label id="i18n_tariff_label"
+                        class="flex items-center text-[11px] font-bold text-slate-400 uppercase mb-1.5 drop-shadow-sm">
                         <span id="i18n_tariff_title">Тариф</span>
-                        <i class="fa-solid fa-circle-info text-cyan-400 ml-1 cursor-pointer hover:text-cyan-300 transition-colors text-xs" onclick="openInfoModalByTag('tariffs')"></i>
+                        <i class="fa-solid fa-circle-info text-cyan-400 ml-1 cursor-pointer hover:text-cyan-300 transition-colors text-xs"
+                            onclick="openInfoModalByTag('tariffs')"></i>
                     </label>
                     <div class="relative">
                         <i class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
-                        <select id="tariffType" class="w-full pl-9 pr-3 py-3 glass-input text-sm appearance-none cursor-pointer">
+                        <select id="tariffType"
+                            class="w-full pl-9 pr-3 py-3 glass-input text-sm appearance-none cursor-pointer">
                             <option value="day" class="bg-slate-800" id="i18n_day_tariff">Дневной (полный день)</option>
-                            <option value="evening" class="bg-slate-800" id="i18n_evening_tariff">Вечерний тариф</option>
+                            <option value="evening" class="bg-slate-800" id="i18n_evening_tariff">Вечерний тариф
+                            </option>
                         </select>
-                        <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                        <i
+                            class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                     </div>
                 </div>
             </div>
-            
-            <p id="dateWarning" class="text-xs text-rose-400 font-semibold hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i><span id="i18n_date_warning">К сожалению, на выбранную дату парк не работает.</span></p>
+
+            <p id="dateWarning" class="text-xs text-rose-400 font-semibold hidden"><i
+                    class="fa-solid fa-triangle-exclamation mr-1"></i><span id="i18n_date_warning">К сожалению, на
+                    выбранную дату парк не работает.</span></p>
 
             <div class="h-px w-full bg-white/10"></div>
 
             <!-- Гости (Список на ввод) -->
             <div>
                 <div class="flex items-center justify-between mb-4">
-                    <h2 id="i18n_indicate_guests_count" class="text-sm font-bold text-white flex items-center drop-shadow-sm">
+                    <h2 id="i18n_indicate_guests_count"
+                        class="text-sm font-bold text-white flex items-center drop-shadow-sm">
                         <i class="fa-solid fa-users text-cyan-400 mr-2"></i> Укажите гостей
                     </h2>
-                    <button onclick="addTouristRow()" id="addTouristBtn" class="px-3 py-1.5 btn-glass-primary rounded-xl text-xs flex items-center gap-1 cursor-pointer">
-                        <i class="fa-solid fa-user-plus text-[10px]"></i> <span id="i18n_add_guest_btn">Добавить гостя</span>
+                    <button onclick="addTouristRow()" id="addTouristBtn"
+                        class="px-3 py-1.5 btn-glass-primary rounded-xl text-xs flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-user-plus text-[10px]"></i> <span id="i18n_add_guest_btn">Добавить
+                            гостя</span>
                     </button>
                 </div>
-                
+
                 <!-- Список гостей -->
                 <div id="touristsListContainer" class="space-y-4">
                     <!-- Заполняется динамически через JS -->
                 </div>
 
-                <div id="docsWarning" class="hidden mt-4 bg-amber-500/20 border border-amber-500/30 rounded-xl p-3.5 flex items-start gap-2 shadow-sm">
+                <div id="docsWarning"
+                    class="hidden mt-4 bg-amber-500/20 border border-amber-500/30 rounded-xl p-3.5 flex items-start gap-2 shadow-sm">
                     <i class="fa-solid fa-circle-exclamation text-amber-400 mt-0.5 text-lg"></i>
                     <p id="i18n_docs_warning" class="text-xs text-amber-100 font-medium leading-snug">
-                        Вы выбрали льготные билеты. Пожалуйста, возьмите с собой <b class="text-amber-300">оригиналы документов</b> (свидетельство о рождении, пенсионное удостоверение и т.д.) для предъявления на кассе.
+                        Вы выбрали льготные билеты. Пожалуйста, возьмите с собой <b class="text-amber-300">оригиналы
+                            документов</b> (свидетельство о рождении, пенсионное удостоверение и т.д.) для предъявления
+                        на кассе.
                     </p>
                 </div>
             </div>
 
             <!-- Контакты -->
             <div class="mt-4">
-                <label id="i18n_phone_label" class="block text-[11px] font-bold text-slate-400 uppercase mb-1.5 drop-shadow-sm">Ваш номер телефона (WhatsApp)</label>
+                <label id="i18n_phone_label"
+                    class="block text-[11px] font-bold text-slate-400 uppercase mb-1.5 drop-shadow-sm">Ваш номер
+                    телефона (WhatsApp)</label>
                 <div class="relative">
                     <i class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
-                    <input type="tel" id="clientPhone" placeholder="+7 (___) ___-__-__" class="w-full pl-9 pr-3 py-3 glass-input text-sm">
+                    <input type="tel" id="clientPhone" placeholder="+7 (___) ___-__-__"
+                        class="w-full pl-9 pr-3 py-3 glass-input text-sm">
                 </div>
             </div>
 
             <!-- Итог -->
-            <div class="bg-black/30 border border-white/10 rounded-2xl p-5 text-white flex items-center justify-between shadow-lg mt-4 backdrop-blur-md relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent pointer-events-none"></div>
+            <div
+                class="bg-black/30 border border-white/10 rounded-2xl p-5 text-white flex items-center justify-between shadow-lg mt-4 backdrop-blur-md relative overflow-hidden">
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent pointer-events-none">
+                </div>
                 <div class="relative z-10">
-                    <span id="i18n_total_to_pay" class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block mb-1">Итого к оплате</span>
+                    <span id="i18n_total_to_pay"
+                        class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block mb-1">Итого к
+                        оплате</span>
                     <div class="flex items-baseline gap-1.5">
-                        <span class="text-3xl font-black tracking-tight drop-shadow-md text-white" id="totalPrice">0</span>
+                        <span class="text-3xl font-black tracking-tight drop-shadow-md text-white"
+                            id="totalPrice">0</span>
                         <span class="text-lg font-bold text-cyan-400">₸</span>
                     </div>
                 </div>
                 <div class="text-right">
-                    <span class="text-sm text-slate-300 font-bold bg-slate-800 px-3 py-1.5 rounded-lg" id="totalGuests">0 гостей</span>
+                    <span class="text-sm text-slate-300 font-bold bg-slate-800 px-3 py-1.5 rounded-lg"
+                        id="totalGuests">0 гостей</span>
                 </div>
             </div>
 
             <!-- Кнопки заявки -->
             <div class="grid grid-cols-1 gap-3 mt-4">
-                <button id="bookBtnWA" class="w-full btn-primary py-4 rounded-xl text-sm font-bold flex justify-center items-center gap-1.5 opacity-50 pointer-events-none cursor-pointer">
+                <button id="bookBtnWA"
+                    class="w-full btn-primary py-4 rounded-xl text-sm font-bold flex justify-center items-center gap-1.5 opacity-50 pointer-events-none cursor-pointer">
                     <i class="fa-brands fa-whatsapp text-lg"></i>
                     <span id="i18n_in_whatsapp">В WhatsApp</span>
                 </button>
@@ -579,13 +683,13 @@
         };
 
         const WHATSAPP_NUMBER = "77718133779";
-        
+
         const SUPABASE_URL = 'https://zlnxvraopnwyfebfhmdj.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_2q7uufBD_85Esjf-1Mwrvg_hItngDPG';
-        const supabaseClient = (typeof supabase !== 'undefined') 
-            ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
+        const supabaseClient = (typeof supabase !== 'undefined')
+            ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
             : null;
-        
+
         let tourists = [
             { id: Date.now(), lastName: '', firstName: '', middleName: '', dob: '', disability: 'none' }
         ];
@@ -594,7 +698,7 @@
 
         const visitDateInput = document.getElementById('visitDate');
         const tariffTypeInput = document.getElementById('tariffType');
-        
+
         const today = new Date();
         const todayStr = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
         visitDateInput.value = todayStr;
@@ -605,7 +709,7 @@
         function changeLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('client_lang', lang);
-            
+
             ['kz', 'ru', 'en'].forEach(l => {
                 const btn = document.getElementById('lang_' + l);
                 if (l === lang) {
@@ -616,7 +720,7 @@
             });
 
             const t = I18N[lang];
-            
+
             document.getElementById('i18n_purchase_tickets').textContent = t.purchase_tickets;
             document.getElementById('i18n_official_calculator').textContent = t.official_calculator;
             document.getElementById('i18n_visit_date').textContent = t.visit_date;
@@ -633,7 +737,7 @@
             document.getElementById('i18n_choose_sending_method').textContent = t.choose_sending_method;
             document.getElementById('i18n_date_warning').textContent = t.date_warning;
             document.getElementById('infoModalCloseBtn').textContent = t.understand_btn;
-            
+
             // Tourist info modal translations
             document.getElementById('i18n_info_btn_text').textContent = t.info_modal_title;
             document.getElementById('i18n_info_modal_title').innerHTML = `<i class="fa-solid fa-book-open text-brand-blue"></i> ${t.info_modal_title}`;
@@ -677,7 +781,7 @@
         function handleDobInput(id, input) {
             let val = input.value.replace(/\D/g, '');
             let formatted = '';
-            
+
             if (val.length > 0) {
                 formatted += val.substring(0, 2);
             }
@@ -687,9 +791,9 @@
             if (val.length > 4) {
                 formatted += '.' + val.substring(4, 8);
             }
-            
+
             input.value = formatted;
-            
+
             if (formatted.length === 10) {
                 const parts = formatted.split('.');
                 const isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
@@ -703,14 +807,14 @@
             const tourist = tourists.find(t => t.id === id);
             if (tourist) {
                 tourist[field] = value;
-                
+
                 // If dob is updated, check if we need to trigger birthday confetti
                 if (field === 'dob' && value) {
                     if (isBirthday(value, visitDateInput.value)) {
                         triggerConfetti();
                     }
                 }
-                
+
                 calculateTotal();
             }
         }
@@ -718,10 +822,10 @@
         function renderTouristsList() {
             const container = document.getElementById('touristsListContainer');
             if (!container) return;
-            
+
             const t = I18N[currentLang];
             container.innerHTML = '';
-            
+
             tourists.forEach((tourist, index) => {
                 const row = document.createElement('div');
                 row.className = "bg-black/20 p-4 rounded-xl border border-white/10 shadow-sm space-y-3 relative";
@@ -803,7 +907,7 @@
                 `;
                 container.appendChild(row);
             });
-            
+
             calculateTotal();
         }
 
@@ -857,10 +961,10 @@
         function openInfoModal(title, text) {
             document.getElementById('infoModalTitle').innerHTML = `<i class="fa-solid fa-circle-info text-brand-blue"></i> ${title}`;
             document.getElementById('infoModalText').innerHTML = text;
-            
+
             const modal = document.getElementById('infoModal');
             const content = document.getElementById('infoModalContent');
-            
+
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
@@ -878,10 +982,10 @@
         function closeInfoModal() {
             const modal = document.getElementById('infoModal');
             const content = document.getElementById('infoModalContent');
-            
+
             modal.classList.add('opacity-0');
             content.classList.add('scale-95');
-            
+
             setTimeout(() => {
                 modal.classList.add('hidden');
             }, 300);
@@ -903,10 +1007,10 @@
         function calculateTotal() {
             const date = visitDateInput.value;
             const tariffType = tariffTypeInput.value;
-            
+
             const adlPrice = getBasePrice(date, tariffType, 'ADL');
             const chldPrice = getBasePrice(date, tariffType, 'CHLD');
-            
+
             const docsWarning = document.getElementById('docsWarning');
             const dateWarning = document.getElementById('dateWarning');
             const totalPriceEl = document.getElementById('totalPrice');
@@ -916,7 +1020,7 @@
             const t = I18N[currentLang];
 
             let totalGuests = tourists.length;
-            
+
             if (adlPrice === -1 || chldPrice === -1) {
                 dateWarning.classList.remove('hidden');
                 totalPriceEl.textContent = "0";
@@ -939,7 +1043,7 @@
             const dateObj = new Date(date);
             const isVisitInJuly = dateObj.getMonth() === 6;
             const isPromoDate = isBookingWindow && isVisitInJuly;
-            
+
             const promoBadge = document.getElementById('promoBadge');
             if (isPromoDate) {
                 promoBadge.classList.remove('hidden');
@@ -954,7 +1058,7 @@
             tourists.forEach(tourist => {
                 const age = calculateAge(tourist.dob, date);
                 const isBday = isBirthday(tourist.dob, date);
-                
+
                 let price = 0;
                 let badgeHTML = '';
 
@@ -966,7 +1070,7 @@
                         const base = chldPrice;
                         let discRate = 1.0;
                         let subBadges = [];
-                        
+
                         if (isBday) {
                             discRate = 0.5;
                             subBadges.push(t.badge_bday);
@@ -977,9 +1081,9 @@
                             subBadges.push(`${t.badge_discount} 10%`);
                             hasPrivilegedTickets = true;
                         }
-                        
+
                         price = base * discRate;
-                        
+
                         if (subBadges.length > 0) {
                             badgeHTML = `<span class="inline-block bg-amber-50 text-amber-600 px-2 py-0.5 rounded font-extrabold text-[9px] uppercase mr-1">${subBadges.join(' / ')}</span>`;
                         }
@@ -988,7 +1092,7 @@
                         const base = adlPrice;
                         let discRate = 1.0;
                         let subBadges = [];
-                        
+
                         if (isPromoDate) {
                             discRate = 0.85;
                         }
@@ -1010,9 +1114,9 @@
                             subBadges.push(`${t.badge_discount} 10%`);
                             hasPrivilegedTickets = true;
                         }
-                        
+
                         price = base * discRate;
-                        
+
                         if (subBadges.length > 0) {
                             badgeHTML = `<span class="inline-block bg-amber-50 text-amber-600 px-2 py-0.5 rounded font-extrabold text-[9px] uppercase mr-1">${subBadges.join(' / ')}</span>`;
                         }
@@ -1022,7 +1126,7 @@
                         let discRate = 0.5; // Seniors get 50% discount automatically
                         let subBadges = [t.badge_senior];
                         hasPrivilegedTickets = true;
-                        
+
                         if (isBday) {
                             discRate = 0.5;
                             subBadges = [t.badge_bday];
@@ -1031,15 +1135,15 @@
                             discRate = 0;
                             subBadges.push(t.badge_free);
                         }
-                        
+
                         price = base * discRate;
                         badgeHTML = `<span class="inline-block bg-amber-50 text-amber-600 px-2 py-0.5 rounded font-extrabold text-[9px] uppercase mr-1">${subBadges.join(' / ')}</span>`;
                         badgeHTML += `<span class="inline-block bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-extrabold text-[9px] uppercase">${t.badge_adult}</span>`;
                     }
-                    
+
                     totalSum += price;
                 }
-                
+
                 // Update badge feedback text
                 const feedbackContainer = document.getElementById('badge_feedback_' + tourist.id);
                 if (feedbackContainer) {
@@ -1070,7 +1174,7 @@
         }
 
         const clientPhoneInput = document.getElementById('clientPhone');
-        
+
         // simple phone mask
         clientPhoneInput.addEventListener('input', function (e) {
             let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
@@ -1105,14 +1209,14 @@
                     return false;
                 }
             }
-            
+
             const phone = document.getElementById('clientPhone').value;
             if (!phone || phone.length < 16) {
                 openInfoModal(t.error_title, t.enter_phone_warning);
                 document.getElementById('clientPhone').focus();
                 return false;
             }
-            
+
             return true;
         }
 
@@ -1131,14 +1235,14 @@
                 const totalSumText = document.getElementById('totalPrice').textContent;
                 const totalSum = parseInt(totalSumText.replace(/\D/g, '')) || 0;
                 const phone = document.getElementById('clientPhone').value;
-                
+
                 const active = getActiveTourists();
                 const recordTourists = active.map(t => ({
                     fullName: [t.lastName, t.firstName, t.middleName].filter(Boolean).map(x => x.trim()).join(' '),
                     dob: t.dob,
                     disability: t.disability
                 }));
-                
+
                 const { error } = await supabaseClient.from('calculations').insert([{
                     created_at: new Date().toISOString(),
                     visit_date: dateStr,
@@ -1150,7 +1254,7 @@
                     promocode: '',
                     comment: phone ? `Телефон: ${phone}` : ''
                 }]);
-                
+
                 if (error) {
                     console.error("Supabase insert error:", error);
                 }
@@ -1170,7 +1274,7 @@
             let msg = `${formattedDate}\n`;
             msg += `${t.tariff_title}: ${tariffText}\n\n`;
             msg += `${t.wa_message_header}\n`;
-            
+
             const active = getActiveTourists();
             active.forEach((tourist, index) => {
                 const age = calculateAge(tourist.dob, dateStr);
@@ -1181,53 +1285,53 @@
                     else if (age >= 12 && age <= 59) desc = t.badge_adult;
                     else if (age >= 60) desc = t.badge_senior;
                 }
-                
+
                 let discounts = [];
                 if (isBirthday(tourist.dob, dateStr)) discounts.push(t.badge_bday);
                 if (tourist.disability === 'cat1') discounts.push(t.disability_cat1);
                 if (tourist.disability === 'cat2') discounts.push(t.disability_cat2);
                 if (tourist.disability === 'cat3') discounts.push(t.disability_cat3);
-                
+
                 const discountStr = discounts.length > 0 ? ` [${discounts.join(', ')}]` : '';
                 const fullName = [tourist.lastName, tourist.firstName, tourist.middleName].filter(Boolean).map(x => x.trim()).join(' ');
                 msg += `${index + 1}. ${fullName || 'Guest'} (${formatDateToDisplay(tourist.dob) || 'DOB'}) - ${desc}${discountStr}\n`;
             });
-            
+
             msg += `\n${t.wa_message_total}: ${totalSum} ₸`;
-            
+
             const phone = document.getElementById('clientPhone').value;
             if (phone) msg += `\n\n${t.wa_message_phone}: ${phone}`;
-            
+
             return { msg, formattedDate, tariffText, totalSum, phone };
         }
 
         document.getElementById('bookBtnWA').addEventListener('click', async () => {
             if (!validateTourists()) return;
-            
+
             const prevText = document.getElementById('bookBtnWA').innerHTML;
             document.getElementById('bookBtnWA').innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
             document.getElementById('bookBtnWA').disabled = true;
-            
+
             await saveRequestToSupabase();
-            
+
             document.getElementById('bookBtnWA').innerHTML = prevText;
             document.getElementById('bookBtnWA').disabled = false;
-            
+
             const { msg } = generateMessageText();
             let finalMsg = msg;
 
             // CYRILLIC HACK FOR WHATSAPP
             function cyrillicToLatinHack(str) {
                 const map = {
-                    'А':'A','В':'B','С':'C','Е':'E','О':'O','Р':'P','Т':'T','Х':'X','У':'Y','М':'M','Н':'H',
-                    'а':'a','с':'c','е':'e','о':'o','р':'p','х':'x','у':'y'
+                    'А': 'A', 'В': 'B', 'С': 'C', 'Е': 'E', 'О': 'O', 'Р': 'P', 'Т': 'T', 'Х': 'X', 'У': 'Y', 'М': 'M', 'Н': 'H',
+                    'а': 'a', 'с': 'c', 'е': 'e', 'о': 'o', 'р': 'p', 'х': 'x', 'у': 'y'
                 };
                 return str.split('').map(char => map[char] || char).join('');
             }
 
             const safeMsg = cyrillicToLatinHack(finalMsg);
             const safeText = encodeURIComponent(safeMsg);
-            
+
             const link = document.createElement('a');
             link.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${safeText}`;
             link.target = '_blank';
@@ -1238,7 +1342,7 @@
 
         document.getElementById('bookBtnTG').addEventListener('click', async () => {
             if (!validateTourists()) return;
-            
+
             const t = I18N[currentLang];
 
             const prevText = document.getElementById('bookBtnTG').innerHTML;
@@ -1306,4 +1410,5 @@
         changeLanguage(currentLang);
     </script>
 </body>
+
 </html>
