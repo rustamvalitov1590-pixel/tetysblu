@@ -175,9 +175,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const SUPABASE_URL = 'https://zlnxvraopnwyfebfhmdj.supabase.co';
-    // Временно используем legacy JWT anon-ключ вместо sb_publishable_... —
-    // проверяем, не в новом ли формате ключей причина CORS-ошибок на /rest/v1.
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpsbnh2cmFvcG53eWZlYmZobWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMDY0MTgsImV4cCI6MjA5ODg4MjQxOH0.npYssFPPcvk4PDzUjLpH9COKi4tRt_xlLkQUoDJCplU';
+    // Исправлено: старое значение было обрезано на 6 символов ("_hItng" пропало
+    // из середины ключа), из-за чего Supabase отвечал "Invalid API key".
+    const SUPABASE_ANON_KEY = 'sb_publishable_2q7uufBD_85Esjf-1Mwrvg_hItngDPG';
 
     // Инициализируем Supabase, если ключи не являются заглушками
     const supabaseClient = (typeof supabase !== 'undefined' && SUPABASE_URL !== 'ВАШ_SUPABASE_URL_ЗДЕСЬ')
