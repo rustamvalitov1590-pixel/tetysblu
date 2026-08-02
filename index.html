@@ -107,12 +107,6 @@
             }
         }
 
-        /* ------------------------------------------------------------
-           Typography — Manrope carries numbers & headings (a display
-           face with a bit of character), Inter carries dense UI/data.
-           -apple-system/BlinkMacSystemFont lead every stack so real
-           iOS/macOS devices render native SF Pro automatically.
-           ------------------------------------------------------------ */
         #appContent {
             font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
         }
@@ -130,10 +124,6 @@
             letter-spacing: -0.01em;
         }
 
-        /* ------------------------------------------------------------
-           Motion system — iOS-flavoured: a snappy "spring" for taps
-           and toggles, a smoother glide for cards entering/leaving.
-           ------------------------------------------------------------ */
         :root {
             --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
             --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -159,9 +149,6 @@
             transform: none !important;
         }
 
-        /* ------------------------------------------------------------
-           Page canvas
-           ------------------------------------------------------------ */
         body {
             overflow-x: hidden;
         }
@@ -171,8 +158,6 @@
             color: var(--ink);
         }
 
-        /* The dark underwater gradient used on the login screen (and on
-           <body> before login) — kept as its own, always-dark identity. */
         .underwater-bg {
             background: radial-gradient(circle at 50% -20%, rgba(0, 180, 216, 0.6) 0%, rgba(3, 40, 77, 1) 70%, rgba(1, 15, 33, 1) 100%);
             position: relative;
@@ -201,10 +186,7 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow:
-                0 0 50px rgba(0, 220, 255, 0.2),
-                inset 0 0 40px rgba(255, 255, 255, 0.1),
-                inset 0 0 10px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 50px rgba(0, 220, 255, 0.2), inset 0 0 40px rgba(255, 255, 255, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.2);
         }
 
         .glass-bubble {
@@ -212,9 +194,7 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow:
-                0 10px 30px rgba(0, 0, 0, 0.2),
-                inset 0 2px 10px rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 2px 10px rgba(255, 255, 255, 0.15);
             animation: float 6s infinite ease-in-out;
         }
 
@@ -245,11 +225,6 @@
             color: var(--sun) !important;
         }
 
-        /* ------------------------------------------------------------
-           Signature element — "the tide line": a thin animated wave
-           marking the threshold between the underwater arrival screen
-           and the daylight workspace. Sits under the header.
-           ------------------------------------------------------------ */
         .tide-line {
             position: relative;
             height: 6px;
@@ -264,9 +239,7 @@
             position: absolute;
             inset: 0;
             width: 200%;
-            background: repeating-linear-gradient(90deg,
-                    var(--aqua) 0, var(--aqua) 40px,
-                    var(--brand) 40px, var(--brand) 80px);
+            background: repeating-linear-gradient(90deg, var(--aqua) 0, var(--aqua) 40px, var(--brand) 40px, var(--brand) 80px);
             opacity: 0.55;
             animation: tide-drift 9s linear infinite;
         }
@@ -281,10 +254,6 @@
             }
         }
 
-        /* ------------------------------------------------------------
-           Dashboard surfaces (scoped to #appContent so the login
-           screen keeps its own dark identity untouched)
-           ------------------------------------------------------------ */
         #appContent header {
             background: rgba(255, 255, 255, 0.72) !important;
             border: 1px solid var(--line) !important;
@@ -363,9 +332,6 @@
             color: var(--ink-faint) !important;
         }
 
-        /* Force Tailwind text/bg utility classes used throughout the
-           dashboard (authored for a dark glass background) onto the
-           light-surface token palette. */
         #appContent .text-white,
         #appContent .text-slate-100,
         #appContent .text-slate-200,
@@ -485,9 +451,6 @@
             border-color: var(--aqua) !important;
         }
 
-        /* Only the neutral (slate-based) hover:text-white targets flip to ink —
-           colored buttons (rose/red/amber/blue solid-hover) correctly keep
-           white text on hover and must NOT be touched here. */
         #appContent .text-slate-300.hover\:text-white:hover,
         #appContent .text-slate-400.hover\:text-white:hover,
         #appContent #themeToggleBtn.hover\:text-white:hover {
@@ -511,7 +474,6 @@
             border: 1px solid var(--line) !important;
         }
 
-        /* Nav buttons */
         #appContent #navCalcBtn,
         #appContent #navDashboardBtn,
         #appContent #navDatabaseBtn,
@@ -519,12 +481,6 @@
             color: var(--ink-soft) !important;
         }
 
-        /* ------------------------------------------------------------
-           Dark-mode counterparts (toggle button inside the dashboard).
-           Tokens already flip via `body.dark-mode` above; these just
-           correct a few spots where a hard-coded light value would
-           otherwise win.
-           ------------------------------------------------------------ */
         body.dark-mode #appContent .glass-input,
         body.dark-mode #appContent select.glass-input option {
             background-color: var(--surface-soft) !important;
@@ -532,14 +488,6 @@
             color: var(--ink) !important;
         }
 
-        body.dark-mode #appContent #authScreen {
-            /* no-op guard, kept for clarity */
-        }
-
-        /* ------------------------------------------------------------
-           Glow buttons, pills, gradients, stat boxes — reusable across
-           both themes via tokens.
-           ------------------------------------------------------------ */
         .glow-btn-cyan {
             background: linear-gradient(135deg, var(--aqua) 0%, var(--brand) 100%) !important;
             border: 1px solid rgba(34, 211, 238, 0.5) !important;
@@ -618,12 +566,6 @@
             overflow: hidden;
         }
 
-        /* ------------------------------------------------------------
-           Analytics — editorial "graphs template" style: white cards,
-           big regular-weight numbers, small dot-legends, thick rounded
-           donut rings. Uses the same design tokens as the rest of the
-           app, so it follows the light/dark toggle automatically.
-           ------------------------------------------------------------ */
         #appContent .kpi-card {
             background: var(--surface);
             border: 1px solid var(--line);
@@ -702,7 +644,6 @@
             color: var(--ink-soft);
         }
 
-        /* Skeleton loading shimmer */
         @keyframes shimmer {
             0% {
                 background-position: -1000px 0;
@@ -741,7 +682,6 @@
             animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -808,7 +748,6 @@
             }
         }
 
-        /* iOS Safari Native Date Input Override to fix centering */
         .date-left-align::-webkit-date-and-time-value {
             text-align: left !important;
         }
@@ -828,7 +767,6 @@
             padding: 0;
         }
 
-        /* Micro-animations & toasts */
         @keyframes toast-slide-up {
             0% {
                 transform: translate(-50%, 20px) scale(0.95);
@@ -927,14 +865,11 @@
 
 <body class="min-h-screen relative flex flex-col underwater-bg">
 
-
     <!-- Underwater Auth Screen (Marine Glassmorphism) -->
     <div id="authScreen"
         class="fixed inset-0 z-[5000] flex items-center justify-center p-4 underwater-bg transition-opacity duration-300">
-        <!-- Floating Light Rays -->
         <div class="light-rays"></div>
 
-        <!-- Random tiny background bubbles -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden">
             <div class="absolute w-3 h-3 bg-white/20 rounded-full left-1/4 bottom-0"
                 style="animation: bubble-rise 4s infinite ease-in;"></div>
@@ -944,7 +879,6 @@
                 style="animation: bubble-rise 5s infinite ease-in 2s;"></div>
         </div>
 
-        <!-- Floating Decorative Bubbles (Left Side) -->
         <div class="absolute left-4 md:left-20 top-1/4 glass-bubble rounded-full p-4 hidden sm:flex items-center justify-center text-cyan-300"
             style="width: 80px; height: 80px; animation-delay: 0s;">
             <i class="fa-solid fa-ticket text-3xl opacity-80"></i>
@@ -954,7 +888,6 @@
             <i class="fa-solid fa-tornado text-4xl opacity-80"></i>
         </div>
 
-        <!-- Floating Decorative Bubbles (Right Side) -->
         <div class="absolute right-10 md:right-32 top-1/3 glass-bubble rounded-full flex flex-col items-center justify-center text-white hidden sm:flex"
             style="width: 110px; height: 110px; animation: float-delay-2 8s infinite ease-in-out;">
             <span class="text-[8px] uppercase tracking-widest opacity-80">Park Capacity</span>
@@ -968,11 +901,9 @@
             </div>
         </div>
 
-        <!-- Central Glowing Glass Orb -->
         <div
             class="glass-orb relative z-10 w-[90vw] max-w-[420px] aspect-square rounded-full flex flex-col items-center justify-center p-8 md:p-10">
             <div class="text-center mb-6 w-full">
-                <!-- Tetys Blue Logo Area -->
                 <div class="mb-2 relative flex justify-center">
                     <i
                         class="fa-solid fa-dolphin absolute -top-4 -left-2 text-cyan-300 text-xl transform -rotate-12 opacity-80"></i>
@@ -1023,12 +954,10 @@
     <div id="appContent"
         class="hidden h-screen w-full max-w-[1400px] mx-auto flex flex-col relative z-10 overflow-hidden text-slate-100">
 
-        <!-- Header wrapper with matching horizontal padding -->
         <div class="px-4 md:px-8 pt-3 flex-shrink-0">
             <!-- TOP NAVBAR -->
             <header
                 class="bg-transparent backdrop-blur-lg rounded-2xl border border-white/10 flex items-center justify-between px-4 py-3 md:px-6 z-50 shadow-lg">
-                <!-- Brand Logo -->
                 <div class="flex items-center space-x-3">
                     <img src="assets/logo.png" alt="Tetys Blu"
                         class="h-8 md:h-10 drop-shadow-md shrink-0 object-contain">
@@ -1038,7 +967,6 @@
                     </div>
                 </div>
 
-                <!-- Desktop Navigation Menu (Hidden on Mobile) -->
                 <nav class="hidden md:flex items-center space-x-2 flex-1 justify-center px-4">
                     <button id="navCalcBtn"
                         class="flex items-center space-x-2 px-3 py-2 bg-white/10 rounded-xl text-white font-bold transition-all border border-white/10 shadow-lg">
@@ -1062,9 +990,7 @@
                     </a>
                 </nav>
 
-                <!-- Right Controls -->
                 <div class="flex items-center gap-2 md:gap-4">
-                    <!-- Live Date and Time -->
                     <div class="hidden xl:block mr-2 border-r border-white/10 pr-4">
                         <h1 id="liveClockDisplay"
                             class="text-[11px] font-normal text-slate-300 tracking-wide font-sans"></h1>
@@ -1074,7 +1000,6 @@
                         title="Светлая/тёмная тема">
                         <i id="themeIcon" class="fa-solid fa-moon text-sm md:text-base"></i>
                     </button>
-                    <!-- Admin Profile -->
                     <div
                         class="flex items-center gap-2 md:gap-3 pl-2 sm:border-l sm:border-white/10 cursor-pointer group">
                         <img src="assets/admin_avatar.png" alt="Admin"
@@ -1084,7 +1009,6 @@
                             <p class="text-[9px] text-slate-400">(Admin)</p>
                         </div>
                     </div>
-                    <!-- Logout -->
                     <button id="logoutBtn"
                         class="w-8 h-8 md:w-auto md:px-3 md:py-2 flex items-center justify-center md:space-x-2 hover:bg-rose-500/20 rounded-xl text-rose-400 hover:text-rose-300 font-bold transition-all ml-1 md:ml-2">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i>
@@ -1101,10 +1025,6 @@
             <!-- SPA Views Container -->
             <div id="view-calculator"
                 class="app-view flex-1 flex flex-col w-full overflow-y-auto hide-scrollbar pt-6 md:pt-10">
-
-                <!-- Stat Cards moved to Dashboard view -->
-
-                <!-- 2-Column Responsive Dashboard Layout (Identical to Concept Grid) -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
                     <!-- LEFT COLUMN: "Your Visit Details" & Stats (4/12 wide) -->
@@ -1113,15 +1033,11 @@
 
                             <!-- Visit Details Form -->
                             <section class="neon-card-blue p-6 relative shrink-0">
-
                                 <h2 class="text-base font-bold text-white mb-5 flex items-center drop-shadow-md">
-                                    <i class="fa-solid fa-circle-info text-cyan-400 mr-2"></i>
-                                    Параметры посещения
+                                    <i class="fa-solid fa-circle-info text-cyan-400 mr-2"></i> Параметры посещения
                                 </h2>
 
                                 <div class="space-y-4">
-                                    <!-- Client Type -->
-                                    <!-- Client Type -->
                                     <div>
                                         <label
                                             class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 drop-shadow-sm">Тип
@@ -1140,7 +1056,6 @@
                                     </div>
 
                                     <div class="grid grid-cols-1 2xl:grid-cols-2 gap-4">
-                                        <!-- Visit Date -->
                                         <div>
                                             <label
                                                 class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 drop-shadow-sm">Дата
@@ -1158,7 +1073,6 @@
                                             </p>
                                         </div>
 
-                                        <!-- Tariff Type -->
                                         <div>
                                             <label
                                                 class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 drop-shadow-sm">Тип
@@ -1177,7 +1091,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Early Booking Toggle (Hidden by default) -->
                                     <div id="earlyBookingContainer"
                                         class="hidden bg-blue-900/30 border border-blue-400/30 rounded-xl p-3 flex items-center justify-between transition-all backdrop-blur-sm">
                                         <div class="flex items-center gap-2.5">
@@ -1197,11 +1110,10 @@
                                 </div>
                             </section>
 
-                            <!-- Bulk Add Form (Текстовый ввод) -->
+                            <!-- Bulk Add Form -->
                             <section class="neon-card-blue p-6 relative flex flex-col min-h-[180px]">
                                 <h2 class="text-base font-bold text-white mb-3 flex items-center drop-shadow-md">
-                                    <i class="fa-solid fa-file-text text-cyan-400 mr-2"></i>
-                                    Текстовый ввод гостей
+                                    <i class="fa-solid fa-file-text text-cyan-400 mr-2"></i> Текстовый ввод гостей
                                 </h2>
                                 <div
                                     class="glass-stat-box border border-white/5 mb-3 p-3 flex items-start gap-2.5 bg-white/5 rounded-xl">
@@ -1225,7 +1137,7 @@
                                     </button>
                                 </div>
                             </section>
-                        </div> <!-- End sticky left column wrapper -->
+                        </div>
                     </div>
 
                     <!-- RIGHT COLUMN: Tourist List, Total Price, Text Input (8/12 wide) -->
@@ -1237,15 +1149,13 @@
                                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                                 <div>
                                     <h2 class="text-base font-bold text-white flex items-center drop-shadow-md">
-                                        <i class="fa-solid fa-users text-cyan-400 mr-2"></i>
-                                        Список посетителей
+                                        <i class="fa-solid fa-users text-cyan-400 mr-2"></i> Список посетителей
                                     </h2>
                                     <p class="text-xs text-slate-300 mt-0.5 drop-shadow-sm">Добавьте гостей или
                                         загрузите текстовый реестр</p>
                                 </div>
 
                                 <div class="flex flex-wrap items-center justify-end gap-2 w-full sm:w-auto">
-                                    <!-- Detailed mode buttons wrapper -->
                                     <div id="detailedActionButtons"
                                         class="flex flex-wrap items-center justify-end gap-2 w-full sm:w-auto">
                                         <button id="addTouristBtn"
@@ -1258,7 +1168,6 @@
                                         </button>
                                     </div>
 
-                                    <!-- Quick mode buttons wrapper -->
                                     <button id="resetQuickBtn" onclick="resetQuickCounts()"
                                         class="hidden w-full sm:w-auto justify-center px-4 py-2.5 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-500 hover:text-white rounded-xl transition-colors border border-red-200 hover:border-red-500 flex items-center shadow-sm">
                                         <i class="fa-solid fa-rotate-left mr-1.5"></i> Сбросить количество
@@ -1266,7 +1175,6 @@
                                 </div>
                             </div>
 
-                            <!-- Mode Switcher Tabs & Search -->
                             <div
                                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 border-b border-white/10 pb-4 mb-6">
                                 <div
@@ -1291,9 +1199,7 @@
                                 </div>
                             </div>
 
-                            <!-- Detailed Mode Container -->
                             <div id="detailedModeContainer" class="w-full">
-                                <!-- Table-Style Header for Row Data -->
                                 <div
                                     class="hidden md:grid grid-cols-12 gap-3 mb-2 px-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest drop-shadow-sm">
                                     <div class="col-span-3">ФИО туриста</div>
@@ -1305,16 +1211,13 @@
                                     <div class="col-span-1 text-center"></div>
                                 </div>
 
-                                <!-- Tourist Dynamic Container -->
                                 <div id="touristList" class="space-y-3">
                                     <!-- Injected dynamically in app.js -->
                                 </div>
                             </div>
 
-                            <!-- Quick Mode Container -->
                             <div id="quickModeContainer" class="hidden space-y-4">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <!-- Adults Category -->
                                     <div
                                         class="flex flex-col p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10 hover:border-white/20">
                                         <div class="flex items-center justify-between">
@@ -1342,7 +1245,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Children Category -->
                                     <div
                                         class="flex flex-col p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10 hover:border-white/20">
                                         <div class="flex items-center justify-between">
@@ -1370,7 +1272,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Pensioners Category -->
                                     <div
                                         class="flex flex-col p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10 hover:border-white/20">
                                         <div class="flex items-center justify-between">
@@ -1398,7 +1299,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Infants Category -->
                                     <div
                                         class="flex flex-col p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10 hover:border-white/20">
                                         <div class="flex items-center justify-between">
@@ -1428,7 +1328,6 @@
                                 </div>
                             </div>
 
-                            <!-- Empty State Vector Illustration -->
                             <div id="emptyState"
                                 class="hidden flex flex-col items-center justify-center py-16 text-slate-400 text-center">
                                 <div class="relative w-20 h-20 mb-5">
@@ -1449,14 +1348,14 @@
                             </div>
                         </section>
 
-                        <!-- Top row: Итоговый расчет + Сводная статистика на одном уровне -->
+                        <!-- Bottom row: Итоговый расчет + Сводная статистика на одном уровне (ОБНОВЛЕННЫЙ БЛОК) -->
                         <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
 
-                            <!-- Calculated Estimate Summary (compact) -->
+                            <!-- Calculated Estimate Summary (compact & balanced) -->
                             <section
-                                class="xl:col-span-6 neon-card-blue p-4 rounded-2xl relative overflow-hidden shadow-sm border border-blue-500/20 flex flex-col justify-center">
+                                class="xl:col-span-5 neon-card-blue p-5 rounded-2xl relative overflow-hidden shadow-sm border border-cyan-500/30 bg-white flex flex-col justify-between">
                                 <!-- Concept Background Waves Inside Card -->
-                                <svg class="absolute inset-0 w-full h-full text-white/10 pointer-events-none"
+                                <svg class="absolute inset-0 w-full h-full text-cyan-500/5 pointer-events-none"
                                     viewBox="0 0 100 100" preserveAspectRatio="none">
                                     <path d="M0 80 Q 25 50 50 80 T 100 80 L 100 100 L 0 100 Z" fill="currentColor" />
                                     <path d="M0 60 Q 30 75 60 55 T 100 65 L 100 100 L 0 100 Z" fill="currentColor"
@@ -1464,128 +1363,148 @@
                                 </svg>
 
                                 <div class="relative z-10">
-                                    <div class="flex items-center gap-2 mb-0.5 flex-wrap">
-                                        <span
-                                            class="text-blue-200 text-[9px] font-bold uppercase tracking-widest block">Итоговый
-                                            расчет</span>
-                                        <!-- Early Booking Pulse Badge -->
-                                        <div id="earlyBookingBadge"
-                                            class="hidden bg-amber-400 text-slate-900 text-[8px] font-extrabold px-1.5 py-0.5 rounded-full shadow-md animate-pulse">
-                                            <i class="fa-solid fa-bolt mr-0.5"></i> -15%
+                                    <!-- Header row with badge -->
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span
+                                                class="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest block">Итоговый
+                                                расчет</span>
+                                            <!-- Early Booking Pulse Badge -->
+                                            <div id="earlyBookingBadge"
+                                                class="hidden bg-amber-400 text-slate-900 text-[8px] font-extrabold px-1.5 py-0.5 rounded-full shadow-md animate-pulse">
+                                                <i class="fa-solid fa-bolt mr-0.5"></i> -15%
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="flex items-baseline space-x-1.5 mt-0.5 mb-3">
-                                        <span
-                                            class="text-lg md:text-xl font-extrabold text-white tracking-tight drop-shadow-md"
-                                            id="totalPrice">0</span>
-                                        <span class="text-sm font-black text-amber-300 drop-shadow-sm">₸</span>
+
+                                        <!-- Total Guests Count Pill -->
+                                        <span id="totalGuestsBadge"
+                                            class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-cyan-50 text-cyan-700 border border-cyan-200 shadow-sm">
+                                            0 гостей
+                                        </span>
                                     </div>
 
-                                    <div class="flex flex-wrap items-center gap-1.5">
-                                        <!-- WhatsApp Action (Copy + Open) -->
-                                        <button id="whatsappShareBtn"
-                                            class="flex-1 justify-center bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 font-bold px-2 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm border border-emerald-400/30"
-                                            title="Отправить в WhatsApp">
-                                            <i class="fa-brands fa-whatsapp text-sm text-emerald-400"></i>
-                                        </button>
-                                        <!-- Download Action -->
-                                        <button id="downloadReceiptBtn"
-                                            class="flex-1 justify-center bg-blue-400/20 hover:bg-blue-400/40 text-blue-300 font-bold px-2 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm border border-blue-400/30"
-                                            title="Скачать PDF чек">
-                                            <i class="fa-solid fa-cloud-arrow-down text-blue-300 text-sm"></i>
-                                        </button>
-                                        <!-- Share Actions -->
-                                        <button id="nativeShareBtn"
-                                            class="flex-1 justify-center bg-white/10 hover:bg-white/20 text-white font-bold px-2 py-2 rounded-xl text-[11px] flex items-center transition-all shadow-sm backdrop-blur-sm border border-white/20"
-                                            title="Поделиться чеком">
-                                            <i class="fa-solid fa-share-nodes text-sm"></i>
-                                        </button>
+                                    <!-- Big Price Display -->
+                                    <div class="flex items-baseline space-x-1.5 my-3">
+                                        <span
+                                            class="text-3xl md:text-4xl font-black text-slate-800 tracking-tight drop-shadow-sm font-display tabular-nums"
+                                            id="totalPrice">0</span>
+                                        <span class="text-xl font-bold text-cyan-600">₸</span>
                                     </div>
+                                </div>
+
+                                <!-- Action Buttons Bar with clear text labels -->
+                                <div class="relative z-10 flex items-center gap-2 pt-4 border-t border-slate-100 mt-2">
+                                    <!-- WhatsApp Action -->
+                                    <button id="whatsappShareBtn"
+                                        class="flex-1 justify-center bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-sm shadow-emerald-500/20 active:scale-95"
+                                        title="Отправить в WhatsApp">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>WhatsApp</span>
+                                    </button>
+
+                                    <!-- Download Action -->
+                                    <button id="downloadReceiptBtn"
+                                        class="flex-1 justify-center bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold px-3 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition-all border border-sky-200 active:scale-95"
+                                        title="Скачать PDF чек">
+                                        <i class="fa-solid fa-cloud-arrow-down text-sm"></i>
+                                        <span>Чек</span>
+                                    </button>
+
+                                    <!-- Share Action -->
+                                    <button id="nativeShareBtn"
+                                        class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs flex items-center justify-center transition-all border border-slate-200 active:scale-95"
+                                        title="Поделиться чеком">
+                                        <i class="fa-solid fa-share-nodes text-sm"></i>
+                                    </button>
                                 </div>
                             </section>
 
                             <!-- Dynamic Stats Summary Panel -->
                             <section
-                                class="xl:col-span-6 neon-card-blue p-4 relative rounded-2xl shadow-sm flex flex-col h-full">
+                                class="xl:col-span-7 neon-card-blue p-5 relative rounded-2xl shadow-sm bg-white border border-slate-200 flex flex-col justify-between h-full">
                                 <h2
-                                    class="font-display text-sm font-bold text-white flex items-center drop-shadow-md mb-2">
-                                    <i class="fa-solid fa-chart-simple text-cyan-400 mr-2"></i>
+                                    class="font-display text-sm font-bold text-slate-800 flex items-center drop-shadow-sm mb-3">
+                                    <i class="fa-solid fa-chart-simple text-cyan-500 mr-2"></i>
                                     Сводная статистика
                                 </h2>
 
-                                <div class="grid grid-cols-3 gap-2 mt-1">
+                                <div class="grid grid-cols-3 gap-2.5">
                                     <!-- Взрослые -->
                                     <div
-                                        class="relative overflow-hidden p-2 text-center border border-white/10 bg-gradient-to-br from-blue-500/10 to-blue-900/10 hover:from-blue-500/20 hover:to-blue-900/20 rounded-xl transition-colors group">
-                                        <i class="fa-solid fa-user text-sm text-blue-400/70 block mb-0.5"></i>
+                                        class="relative overflow-hidden p-2.5 text-center border border-blue-100 bg-blue-50/50 hover:bg-blue-100/50 rounded-xl transition-colors group">
+                                        <i class="fa-solid fa-user text-xs text-blue-500 block mb-1"></i>
                                         <span
-                                            class="text-[9px] font-bold text-blue-200 uppercase tracking-wider block relative z-10 drop-shadow-md leading-tight break-words">Взрослые</span>
+                                            class="text-[9px] font-extrabold text-blue-600 uppercase tracking-wider block leading-tight break-words">Взрослые</span>
                                         <span
-                                            class="text-xl font-black text-white mt-0.5 block relative z-10 drop-shadow-lg"
+                                            class="text-xl font-black text-slate-800 mt-0.5 block font-display tabular-nums"
                                             id="statAdl">0</span>
                                     </div>
+
                                     <!-- Дети -->
                                     <div
-                                        class="relative overflow-hidden p-2 text-center border border-white/10 bg-gradient-to-br from-teal-500/10 to-teal-900/10 hover:from-teal-500/20 hover:to-teal-900/20 rounded-xl transition-colors group">
-                                        <i class="fa-solid fa-child text-sm text-teal-400/70 block mb-0.5"></i>
+                                        class="relative overflow-hidden p-2.5 text-center border border-teal-100 bg-teal-50/50 hover:bg-teal-100/50 rounded-xl transition-colors group">
+                                        <i class="fa-solid fa-child text-xs text-teal-500 block mb-1"></i>
                                         <span
-                                            class="text-[9px] font-bold text-teal-200 uppercase tracking-wider block relative z-10 drop-shadow-md leading-tight break-words">Дети</span>
+                                            class="text-[9px] font-extrabold text-teal-600 uppercase tracking-wider block leading-tight break-words">Дети</span>
                                         <span
-                                            class="text-xl font-black text-white mt-0.5 block relative z-10 drop-shadow-lg"
+                                            class="text-xl font-black text-slate-800 mt-0.5 block font-display tabular-nums"
                                             id="statChld">0</span>
                                     </div>
+
                                     <!-- Младенцы -->
                                     <div
-                                        class="relative overflow-hidden p-2 text-center border border-white/10 bg-gradient-to-br from-emerald-500/10 to-emerald-900/10 hover:from-emerald-500/20 hover:to-emerald-900/20 rounded-xl transition-colors group">
-                                        <i class="fa-solid fa-baby text-sm text-emerald-400/70 block mb-0.5"></i>
+                                        class="relative overflow-hidden p-2.5 text-center border border-emerald-100 bg-emerald-50/50 hover:bg-emerald-100/50 rounded-xl transition-colors group">
+                                        <i class="fa-solid fa-baby text-xs text-emerald-500 block mb-1"></i>
                                         <span
-                                            class="text-[9px] font-bold text-emerald-200 uppercase tracking-wider block relative z-10 drop-shadow-md leading-tight break-words">Младенцы</span>
+                                            class="text-[9px] font-extrabold text-emerald-600 uppercase tracking-wider block leading-tight break-words">Младенцы</span>
                                         <span
-                                            class="text-xl font-black text-white mt-0.5 block relative z-10 drop-shadow-lg"
+                                            class="text-xl font-black text-slate-800 mt-0.5 block font-display tabular-nums"
                                             id="statInf">0</span>
                                     </div>
+
                                     <!-- Пенсионеры -->
                                     <div
-                                        class="relative overflow-hidden p-2 text-center border border-white/10 bg-gradient-to-br from-purple-500/10 to-purple-900/10 hover:from-purple-500/20 hover:to-purple-900/20 rounded-xl transition-colors group">
-                                        <i class="fa-solid fa-person-cane text-sm text-purple-400/70 block mb-0.5"></i>
+                                        class="relative overflow-hidden p-2.5 text-center border border-purple-100 bg-purple-50/50 hover:bg-purple-100/50 rounded-xl transition-colors group">
+                                        <i class="fa-solid fa-person-cane text-xs text-purple-500 block mb-1"></i>
                                         <span
-                                            class="text-[9px] font-bold text-purple-200 uppercase tracking-wider block relative z-10 drop-shadow-md leading-tight break-words">Пенсионеры</span>
+                                            class="text-[9px] font-extrabold text-purple-600 uppercase tracking-wider block leading-tight break-words">Пенсионеры</span>
                                         <span
-                                            class="text-xl font-black text-white mt-0.5 block relative z-10 drop-shadow-lg"
+                                            class="text-xl font-black text-slate-800 mt-0.5 block font-display tabular-nums"
                                             id="statPens">0</span>
                                     </div>
+
                                     <!-- Инвалиды -->
                                     <div
-                                        class="relative overflow-hidden p-2 text-center border border-white/10 bg-gradient-to-br from-rose-500/10 to-rose-900/10 hover:from-rose-500/20 hover:to-rose-900/20 rounded-xl transition-colors group">
-                                        <i class="fa-solid fa-wheelchair text-sm text-rose-400/70 block mb-0.5"></i>
+                                        class="relative overflow-hidden p-2.5 text-center border border-rose-100 bg-rose-50/50 hover:bg-rose-100/50 rounded-xl transition-colors group">
+                                        <i class="fa-solid fa-wheelchair text-xs text-rose-500 block mb-1"></i>
                                         <span
-                                            class="text-[9px] font-bold text-rose-200 uppercase tracking-wider block relative z-10 drop-shadow-md leading-tight break-words">Инвалиды</span>
+                                            class="text-[9px] font-extrabold text-rose-600 uppercase tracking-wider block leading-tight break-words">Инвалиды</span>
                                         <span
-                                            class="text-xl font-black text-white mt-0.5 block relative z-10 drop-shadow-lg"
+                                            class="text-xl font-black text-slate-800 mt-0.5 block font-display tabular-nums"
                                             id="statInv">0</span>
                                     </div>
+
                                     <!-- Именинники -->
                                     <div
-                                        class="relative overflow-hidden p-2 text-center border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-amber-600/20 hover:from-amber-500/20 hover:to-amber-600/30 rounded-xl transition-colors group shadow-[0_0_15px_rgba(245,158,11,0.15)]">
-                                        <i class="fa-solid fa-cake-candles text-sm text-amber-400/70 block mb-0.5"></i>
+                                        class="relative overflow-hidden p-2.5 text-center border border-amber-200 bg-amber-50/70 hover:bg-amber-100/70 rounded-xl transition-colors group shadow-sm">
+                                        <i class="fa-solid fa-cake-candles text-xs text-amber-500 block mb-1"></i>
                                         <span
-                                            class="text-[9px] font-bold text-amber-400 uppercase tracking-wider block relative z-10 drop-shadow-md leading-tight break-words">Именинники</span>
+                                            class="text-[9px] font-extrabold text-amber-600 uppercase tracking-wider block leading-tight break-words">Именинники</span>
                                         <span
-                                            class="text-xl font-black text-amber-300 mt-0.5 block relative z-10 drop-shadow-lg"
+                                            class="text-xl font-black text-amber-600 mt-0.5 block font-display tabular-nums"
                                             id="statBday">0</span>
                                     </div>
                                 </div>
                             </section>
                         </div>
 
-                        <!-- Экспорт (CRM) — отдельная строка на всю ширину -->
+                        <!-- Экспорт (CRM) -->
                         <section class="neon-card-blue p-5 relative rounded-2xl shadow-sm flex flex-col">
                             <div
                                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-3">
                                 <h2
                                     class="text-sm font-bold text-white flex items-center whitespace-nowrap drop-shadow-md">
-                                    <i class="fa-solid fa-code text-slate-400 mr-2"></i>
-                                    Экспорт (CRM)
+                                    <i class="fa-solid fa-code text-slate-400 mr-2"></i> Экспорт (CRM)
                                 </h2>
                                 <div class="flex items-center gap-2 w-full sm:w-auto">
                                     <button id="emailExportBtn"
@@ -1605,17 +1524,13 @@
                                 placeholder="Тут появится текст для экспорта в CRM..."></textarea>
                         </section>
 
-
-
-
-                    </div> <!-- End RIGHT COLUMN -->
-                </div> <!-- End Main Grid -->
-            </div> <!-- End view-calculator -->
+                    </div>
+                </div>
+            </div>
 
             <!-- View: Database -->
             <div id="view-database"
                 class="app-view hidden w-full neon-card-blue mt-6 md:mt-10 flex-col flex-1 overflow-hidden">
-                <!-- Search & Actions -->
                 <div
                     class="flex items-center justify-between p-3 border-b border-white/10 bg-black/20 shrink-0 flex-wrap gap-2">
                     <div class="relative w-full sm:w-64">
@@ -1632,7 +1547,6 @@
                         </button>
                     </div>
                 </div>
-                <!-- Table -->
                 <div class="flex-1 overflow-auto min-h-0 custom-scrollbar">
                     <table class="w-full text-xs border-collapse min-w-[700px]" id="dbTable">
                         <thead class="sticky top-0 z-20">
@@ -1690,7 +1604,6 @@
                     </button>
                 </div>
                 <div class="flex-1 overflow-y-auto p-5 space-y-4 pt-4 custom-scrollbar" id="statisticsContent">
-                    <!-- Injected via JS -->
                     <div class="text-center text-slate-400 py-10"><i
                             class="fa-solid fa-spinner fa-spin text-3xl mb-3 opacity-50"></i>
                         <p class="text-sm font-semibold">Загрузка статистики...</p>
@@ -1700,14 +1613,14 @@
 
         </main>
 
-        <!-- Receipt Print Container (fixed off-screen for PDF generation) -->
+        <!-- Receipt Print Container -->
         <div id="receiptContainer" class="fixed top-[-9999px] left-[-9999px] opacity-0 pointer-events-none">
             <div id="receiptContent" class="w-[420px] text-slate-800 p-8 rounded-3xl font-sans bg-white relative">
                 <div class="text-center mb-8 mt-2">
                     <h1 class="text-[32px] font-black text-[#1e293b] tracking-wider mb-1">TETYS BLU</h1>
                 </div>
-                <div class="mb-6 space-y-2.5 text-[14px]" id="receiptMeta"><!-- Filled in JS --></div>
-                <div class="space-y-3 mb-8" id="receiptTourists"><!-- Filled in JS --></div>
+                <div class="mb-6 space-y-2.5 text-[14px]" id="receiptMeta"></div>
+                <div class="space-y-3 mb-8" id="receiptTourists"></div>
                 <div class="pt-5 border-t border-dashed border-slate-300 flex justify-between items-center mb-6"
                     id="receiptTotalContainer">
                     <span class="text-sm font-extrabold text-slate-500 uppercase tracking-wider">Итого к оплате:</span>
@@ -1732,7 +1645,7 @@
             </div>
         </div>
 
-        <!-- MOBILE BOTTOM NAV (Visible only on small screens) -->
+        <!-- MOBILE BOTTOM NAV -->
         <nav
             class="md:hidden fixed bottom-0 left-0 right-0 bg-[#0d1e36]/95 backdrop-blur-xl border-t border-white/10 flex items-center justify-around pb-safe z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
             <button id="mobNavCalcBtn" class="flex flex-col items-center justify-center py-2 px-1 w-16 text-cyan-400">
@@ -1752,7 +1665,7 @@
         </nav>
     </div>
 
-    <!-- Share Preview Modal (Fix for iOS Safari Async Gesture Block) -->
+    <!-- Share Preview Modal -->
     <div id="shareModal"
         class="fixed inset-0 z-[7000] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 opacity-0 p-4">
         <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl flex flex-col overflow-hidden transform scale-95 transition-transform duration-300"
