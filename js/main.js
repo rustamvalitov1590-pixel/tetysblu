@@ -127,11 +127,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (authBtn) authBtn.disabled = true;
 
         try {
-            onst { data, error } = await supabaseClient.functions.invoke('verify-login', {
-    body: {
-        login,
-        password
-    }
+            const { data, error } = await supabaseClient.functions.invoke('verify-login', {
+                body: { login, password }
             });
 
             if (error || !data || !data.ok) {
