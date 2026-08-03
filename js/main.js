@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // на сервере через Supabase Edge Function "verify-login".
     async function checkAuth() {
         const login = authLogin.value.trim().toLowerCase();
-        const pass = authPin.value;
+        const password = authPin.value;
 
         if (!supabaseClient) {
             authError.textContent = 'Нет подключения к серверу авторизации';
@@ -128,7 +128,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             const { data, error } = await supabaseClient.functions.invoke('verify-login', {
-                body: { login, pass }
+                body: {
+                    login,
+                    password
+                }
             });
 
             if (error || !data || !data.ok) {
@@ -226,9 +229,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 status: record.status
             };
 
-            let { error } = await supabaseClient
+            const { data, error } = await supabaseClient
                 .from('calculations')
-                .insert([insertData]);
+                .insert([insertData])
+                .select();
+
+            console.log('insertData =', insertData);
+            console.log('data =', data);
+            console.log('error =', error);
+
+            if (error) {
+                console.error(error);
+            }
 
             // Если ошибка связана с отсутствием новых колонок, пробуем без них
             if (error && error.message && (error.message.includes('column') || error.code === 'PGRST204' || error.code === '42703')) {
