@@ -1505,7 +1505,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             row.className = 'tourist-row p-1.5 md:p-1 flex flex-col md:grid md:grid-cols-12 gap-1.5 md:gap-1 items-start md:items-center transition-all relative hover:bg-white/5 border-b border-white/5 animate-row-in';
             row.innerHTML = `
                 <!-- Mobile Label: Delete Button -->
-                <div class="absolute top-1.5 right-1.5 md:static md:col-span-1 md:w-full flex justify-end md:order-last">
+                <div class="absolute top-1.5 right-3 md:static md:col-span-1 md:w-full flex justify-end md:order-last">
                     <button onclick="removeTourist('${t.id}', this)" class="btn-danger p-0.5 rounded-md text-slate-500 hover:text-rose-400 hover:bg-rose-500/20 transition-colors" title="Удалить">
                         <i class="fa-solid fa-trash-can text-xs pointer-events-none"></i>
                     </button>
@@ -1919,10 +1919,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!tabDetailed || !tabQuick) return;
 
         if (mode === 'detailed') {
-            tabDetailed.classList.add('bg-white/20', 'text-white', 'shadow-sm', 'border', 'border-white/10');
-            tabDetailed.classList.remove('text-slate-400', 'hover:text-white', 'border-transparent');
-            tabQuick.classList.add('text-slate-400', 'hover:text-white', 'border-transparent');
-            tabQuick.classList.remove('bg-white/20', 'text-white', 'shadow-sm', 'border', 'border-white/10');
+            // Active: bright solid blue with glow
+            tabDetailed.className = tabDetailed.className
+                .replace(/bg-\S+\s*/g, '').replace(/text-slate-400\s*/g, '').replace(/opacity-60\s*/g, '').replace(/hover:text-slate-200\s*/g, '').replace(/scale-95\s*/g, '').replace(/border-transparent\s*/g, '');
+            tabDetailed.classList.add('bg-blue-600', 'text-white', 'shadow-[0_4px_14px_rgba(0,118,186,0.5)]', 'border', 'border-blue-400/50', 'scale-100');
+            // Inactive: dimmed
+            tabQuick.className = tabQuick.className
+                .replace(/bg-blue-600\s*/g, '').replace(/text-white\s*/g, '').replace(/shadow-\[.*?\]\s*/g, '').replace(/border-blue-400\/50\s*/g, '').replace(/scale-100\s*/g, '');
+            tabQuick.classList.remove('bg-blue-600', 'text-white', 'border-blue-400/50', 'scale-100', 'opacity-100');
+            tabQuick.classList.add('text-slate-400', 'hover:text-slate-200', 'border-transparent', 'scale-95', 'opacity-60');
 
             detailedModeContainer.classList.remove('hidden');
             quickModeContainer.classList.add('hidden');
@@ -1933,10 +1938,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 syncQuickToDetailed();
             }
         } else {
-            tabQuick.classList.add('bg-white/20', 'text-white', 'shadow-sm', 'border', 'border-white/10');
-            tabQuick.classList.remove('text-slate-400', 'hover:text-white', 'border-transparent');
-            tabDetailed.classList.add('text-slate-400', 'hover:text-white', 'border-transparent');
-            tabDetailed.classList.remove('bg-white/20', 'text-white', 'shadow-sm', 'border', 'border-white/10');
+            // Active: bright solid blue with glow
+            tabQuick.className = tabQuick.className
+                .replace(/text-slate-400\s*/g, '').replace(/opacity-60\s*/g, '').replace(/hover:text-slate-200\s*/g, '').replace(/scale-95\s*/g, '').replace(/border-transparent\s*/g, '');
+            tabQuick.classList.remove('text-slate-400', 'border-transparent', 'scale-95', 'opacity-60');
+            tabQuick.classList.add('bg-blue-600', 'text-white', 'shadow-[0_4px_14px_rgba(0,118,186,0.5)]', 'border', 'border-blue-400/50', 'scale-100', 'opacity-100');
+            // Inactive: dimmed
+            tabDetailed.classList.remove('bg-blue-600', 'text-white', 'border-blue-400/50', 'scale-100', 'opacity-100');
+            tabDetailed.classList.add('text-slate-400', 'hover:text-slate-200', 'border-transparent', 'scale-95', 'opacity-60');
 
             detailedModeContainer.classList.add('hidden');
             quickModeContainer.classList.remove('hidden');
@@ -2666,6 +2675,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             return 0;
         });
 
+        // ── DUPLICATE DETECTION ─────────────────────────────────────────────
+        // Fingerprint: visitDate + totalSum + touristCount + first guest name
+        const fingerprintMap = {};
+        filtered.forEach(item => {
+            const firstGuest = (item.tourists && item.tourists[0]) ? (item.tourists[0].fullName || '').trim().toLowerCase() : '';
+            const fp = `${item.visitDate || ''}|${item.totalSum || 0}|${(item.tourists || []).length}|${firstGuest}`;
+            if (!fingerprintMap[fp]) fingerprintMap[fp] = [];
+            fingerprintMap[fp].push(item.id);
+        });
+        const duplicateIds = new Set();
+        Object.values(fingerprintMap).forEach(ids => {
+            if (ids.length > 1) ids.forEach(id => duplicateIds.add(id));
+        });
+        const dupGroupCount = Object.values(fingerprintMap).filter(ids => ids.length > 1).length;
+        // ────────────────────────────────────────────────────────────────────
+
         if (dbRecordCount) {
             dbRecordCount.textContent = `Всего записей: ${dbAllRecords.length}${q ? ` · Найдено: ${filtered.length}` : ''}`;
         }
@@ -2686,13 +2711,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         const DIS_LABELS = { '1': '100%', '2': '15%', '3': '10%' };
 
         const currentUser = localStorage.getItem('tetysUser');
-        dbTableBody.innerHTML = filtered.map((item, idx) => {
+
+        // Duplicate warning banner (injected as first fake row)
+        const dupBanner = dupGroupCount > 0 ? `
+            <tr id="dupWarningBanner">
+                <td colspan="9" class="px-4 py-3">
+                    <div class="flex items-center justify-between gap-3 bg-amber-500/15 border border-amber-400/40 rounded-xl px-4 py-3">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-400 text-base animate-pulse"></i>
+                            <div>
+                                <p class="text-amber-300 font-bold text-xs">Обнаружены возможные дубликаты!</p>
+                                <p class="text-amber-200/70 text-[11px] mt-0.5">Найдено ${dupGroupCount} группы дублирующихся заявок (выделены цветом). Проверьте и удалите лишние.</p>
+                            </div>
+                        </div>
+                        <button onclick="document.getElementById('dupWarningBanner').remove()" 
+                            class="text-amber-400/60 hover:text-amber-300 transition-colors shrink-0" title="Закрыть">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>` : '';
+
+        dbTableBody.innerHTML = dupBanner + filtered.map((item, idx) => {
             const dt = new Date(item.timestamp);
             const dateStr = `${dt.getDate().toString().padStart(2, '0')}.${(dt.getMonth() + 1).toString().padStart(2, '0')}.${dt.getFullYear()}`;
             const timeStr = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}`;
             const clientLabel = item.clientType === 'agent' ? 'Турагент' : 'Турист';
             const tariffLabel = item.tariffType === 'evening' ? 'Вечерний' : 'Дневной';
-            const rowBg = idx % 2 === 0 ? 'bg-white/5' : 'bg-transparent';
+
+            const isDuplicate = duplicateIds.has(item.id);
+            const rowBg = isDuplicate
+                ? 'bg-amber-500/10 border-l-2 border-l-amber-400'
+                : (idx % 2 === 0 ? 'bg-white/5' : 'bg-transparent');
 
             // Список гостей — каждый в отдельной строке внутри ячейки
             const tourists = item.tourists || [];
@@ -2724,10 +2774,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>`;
                 }).join('');
 
+            const dupBadge = isDuplicate
+                ? `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-400/20 text-amber-300 ml-1"><i class="fa-solid fa-copy text-[8px]"></i>Дубль</span>`
+                : '';
+
             return `<tr class="${rowBg} border-b border-white/10 hover:bg-white/10 transition-colors align-top">
                 <td class="px-4 py-3 text-slate-500 font-mono text-[10px] whitespace-nowrap">${filtered.length - idx}</td>
                 <td class="px-4 py-3 whitespace-nowrap">
-                    <div class="font-semibold text-white text-xs">${dateStr}</div>
+                    <div class="font-semibold text-white text-xs flex items-center gap-1">${dateStr}${dupBadge}</div>
                     <div class="text-[10px] text-slate-400">${timeStr}</div>
                 </td>
                 <td class="px-4 py-3 font-semibold text-white text-xs whitespace-nowrap">${item.visitDate || '—'}</td>
@@ -3256,6 +3310,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             }
 
+            // Build a short period label for KPI pills
+            const fmtShort = d => d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+            let periodLabelShort = 'Выбранный период';
+            if (fromStr && toStr && fromStr === toStr) {
+                const d = new Date(fromStr);
+                const today = new Date(); today.setHours(0,0,0,0);
+                const yesterday = new Date(today); yesterday.setDate(yesterday.getDate()-1);
+                d.setHours(0,0,0,0);
+                if (d.getTime() === today.getTime()) periodLabelShort = 'Сегодня';
+                else if (d.getTime() === yesterday.getTime()) periodLabelShort = 'Вчера';
+                else periodLabelShort = fmtShort(d);
+            } else if (fromStr && toStr) {
+                periodLabelShort = fmtShort(new Date(fromStr)) + ' — ' + fmtShort(new Date(toStr));
+            } else if (fromStr) {
+                periodLabelShort = 'С ' + fmtShort(new Date(fromStr));
+            } else if (toStr) {
+                periodLabelShort = 'По ' + fmtShort(new Date(toStr));
+            } else {
+                periodLabelShort = 'За всё время';
+            }
+
+
             if (history.length === 0) {
                 statisticsContent.innerHTML = '<div class="text-center text-slate-400 py-10"><i class="fa-solid fa-chart-pie text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Нет оплаченных заявок для выбранного периода</p></div>';
                 return;
@@ -3265,10 +3341,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             let totalProfit = 0;
             let totalDiscounts = 0;
             let totalClients = 0;
-            let currentMonthRevenue = 0;
-
-            const currentMonth = new Date().getMonth();
-            const currentYear = new Date().getFullYear();
 
             history.forEach(item => {
                 totalRevenue += item.totalSum;
@@ -3277,11 +3349,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const metrics = getRecordMetrics(item);
                 totalProfit += metrics.profit;
                 totalDiscounts += metrics.discountSum;
-
-                const d = new Date(item.timestamp);
-                if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
-                    currentMonthRevenue += item.totalSum;
-                }
             });
 
             const avgMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
@@ -3295,19 +3362,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <span class="kpi-dot" style="background:#f97316"></span>
                             <i class="fa-solid fa-arrow-trend-up kpi-icon"></i>
                         </div>
-                        <p class="kpi-label">Выручка (Всего)</p>
+                        <p class="kpi-label">Выручка за период</p>
                         <p class="kpi-value">${totalRevenue.toLocaleString('ru-RU')} <span class="kpi-unit">₸</span></p>
-                        <span class="kpi-pill" style="color:#c2410c;background:#fff3e8">За всё время</span>
+                        <span class="kpi-pill" style="color:#c2410c;background:#fff3e8">${periodLabelShort}</span>
                     </div>
-                    <!-- Revenue Month -->
+                    <!-- Revenue Orders -->
                     <div class="kpi-card">
                         <div class="flex items-center justify-between mb-4">
                             <span class="kpi-dot" style="background:#10b981"></span>
                             <i class="fa-solid fa-arrow-trend-up kpi-icon"></i>
                         </div>
-                        <p class="kpi-label">Выручка за месяц</p>
-                        <p class="kpi-value">${currentMonthRevenue.toLocaleString('ru-RU')} <span class="kpi-unit">₸</span></p>
-                        <span class="kpi-pill" style="color:#047857;background:#e9fbf3">Текущий месяц</span>
+                        <p class="kpi-label">Заявок за период</p>
+                        <p class="kpi-value">${history.length} <span class="kpi-unit">шт</span></p>
+                        <span class="kpi-pill" style="color:#047857;background:#e9fbf3">${periodLabelShort}</span>
                     </div>
                     <!-- Profit -->
                     <div class="kpi-card">
@@ -3798,11 +3865,83 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 
-    if (exportCsvBtn) {
-        exportCsvBtn.addEventListener('click', exportToExcel);
+    if (exportCsvBtn) exportCsvBtn.addEventListener('click', exportToExcel);
+
+    // ── STATS PERIOD PRESETS ──────────────────────────────────────────────
+    function setStatsPeriod(period) {
+        const statsDateFrom = document.getElementById('statsDateFrom');
+        const statsDateTo   = document.getElementById('statsDateTo');
+        const customRange   = document.getElementById('statsCustomRange');
+        const periodText    = document.getElementById('statsPeriodText');
+
+        const today = new Date();
+        const fmt = d => d.toISOString().split('T')[0]; // YYYY-MM-DD
+
+        // Update pill styles
+        document.querySelectorAll('.stats-preset-btn').forEach(btn => {
+            btn.classList.remove('bg-brand-blue', 'text-white', 'shadow-sm', 'active-preset');
+            btn.classList.add('text-slate-400');
+        });
+        const activeBtn = document.getElementById(`preset-${period}`);
+        if (activeBtn) {
+            activeBtn.classList.add('bg-brand-blue', 'text-white', 'shadow-sm', 'active-preset');
+            activeBtn.classList.remove('text-slate-400');
+        }
+
+        // Show/hide custom range inputs
+        if (customRange) {
+            if (period === 'custom') {
+                customRange.classList.remove('hidden');
+                customRange.classList.add('flex');
+            } else {
+                customRange.classList.add('hidden');
+                customRange.classList.remove('flex');
+            }
+        }
+
+        // Set date values & label
+        let from, to, label;
+        if (period === 'today') {
+            from = to = fmt(today);
+            label = 'Сегодня, ' + today.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+        } else if (period === 'yesterday') {
+            const y = new Date(today); y.setDate(y.getDate() - 1);
+            from = to = fmt(y);
+            label = 'Вчера, ' + y.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+        } else if (period === '7days') {
+            const d7 = new Date(today); d7.setDate(d7.getDate() - 6);
+            from = fmt(d7); to = fmt(today);
+            label = 'Последние 7 дней: ' + d7.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) + ' — ' + today.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+        } else if (period === '30days') {
+            const d30 = new Date(today); d30.setDate(d30.getDate() - 29);
+            from = fmt(d30); to = fmt(today);
+            label = 'Последние 30 дней: ' + d30.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) + ' — ' + today.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+        } else {
+            // custom — don't reset, just update label
+            label = 'Произвольный диапазон';
+            if (periodText) periodText.textContent = label;
+            return; // wait for user to pick dates
+        }
+
+        if (statsDateFrom) statsDateFrom.value = from;
+        if (statsDateTo)   statsDateTo.value   = to;
+        if (periodText)    periodText.textContent = label;
+
+        calculateStatistics();
     }
+    window.setStatsPeriod = setStatsPeriod;
+
     if (statsDateFrom) statsDateFrom.addEventListener('change', calculateStatistics);
-    if (statsDateTo) statsDateTo.addEventListener('change', calculateStatistics);
+    if (statsDateTo)   statsDateTo.addEventListener('change', calculateStatistics);
+
+    // Set default period to "today" when analytics view is opened
+    const _origSwitchAppView = window.switchAppView;
+    window.switchAppView = function(viewId) {
+        if (typeof _origSwitchAppView === 'function') _origSwitchAppView(viewId);
+        if (viewId === 'view-dashboard') {
+            setTimeout(() => setStatsPeriod('today'), 50);
+        }
+    };
 
     // --- PWA INSTALLATION LOGIC ---
     let deferredPrompt;
@@ -3843,17 +3982,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderTariffPriceTable(tariffType, periods) {
         const rows = periods.map((p, idx) => `
             <tr class="border-b border-slate-100 last:border-0">
-                <td class="py-2 pr-2 text-[11px] font-bold text-slate-500 whitespace-nowrap">${formatPeriodLabel(p)}</td>
-                <td class="py-2 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="tourist" data-cat="ADL" value="${p.tourist.ADL}"></td>
-                <td class="py-2 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="tourist" data-cat="CHLD" value="${p.tourist.CHLD}"></td>
-                <td class="py-2 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="agent" data-cat="ADL" value="${p.agent.ADL}"></td>
-                <td class="py-2 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="agent" data-cat="CHLD" value="${p.agent.CHLD}"></td>
-                <td class="py-2 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="net" data-cat="ADL" value="${p.net.ADL}"></td>
-                <td class="py-2 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="net" data-cat="CHLD" value="${p.net.CHLD}"></td>
+                <td class="py-1 pr-2 whitespace-nowrap">
+                    <div class="flex items-center gap-0.5">
+                        <input type="text" class="price-input !px-1 !py-0.5 w-[42px] text-center text-[10px] font-bold text-slate-500" data-tariff="${tariffType}" data-idx="${idx}" data-field="start" value="${p.start}" placeholder="ММ-ДД">
+                        <span class="text-slate-300 text-[10px]">-</span>
+                        <input type="text" class="price-input !px-1 !py-0.5 w-[42px] text-center text-[10px] font-bold text-slate-500" data-tariff="${tariffType}" data-idx="${idx}" data-field="end" value="${p.end}" placeholder="ММ-ДД">
+                    </div>
+                </td>
+                <td class="py-1 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="tourist" data-cat="ADL" value="${p.tourist.ADL}"></td>
+                <td class="py-1 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="tourist" data-cat="CHLD" value="${p.tourist.CHLD}"></td>
+                <td class="py-1 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="agent" data-cat="ADL" value="${p.agent.ADL}"></td>
+                <td class="py-1 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="agent" data-cat="CHLD" value="${p.agent.CHLD}"></td>
+                <td class="py-1 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="net" data-cat="ADL" value="${p.net.ADL}"></td>
+                <td class="py-1 px-1"><input class="price-input" type="number" data-tariff="${tariffType}" data-idx="${idx}" data-group="net" data-cat="CHLD" value="${p.net.CHLD}"></td>
             </tr>`).join('');
 
         return `
-        <div class="mb-6">
+        <div class="mb-4">
             <h3 class="text-xs font-black uppercase tracking-wider text-slate-500 mb-2">${tariffType === 'day' ? 'Дневной тариф' : 'Вечерний тариф'}</h3>
             <div class="overflow-x-auto -mx-1">
             <table class="w-full text-xs min-w-[560px]">
@@ -3883,11 +4028,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         panel.innerHTML = `
             ${renderTariffPriceTable('day', CONFIG.tariffs.day)}
             ${renderTariffPriceTable('evening', CONFIG.tariffs.evening)}
-            <div class="mb-4 pt-2 border-t border-slate-100">
-                <label class="block text-[11px] font-bold text-slate-500 mb-1 mt-3">Скидка «раннее бронирование» по умолчанию для ручного режима, %</label>
+            <div class="mb-3 pt-2 border-t border-slate-100">
+                <label class="block text-[11px] font-bold text-slate-500 mb-1 mt-2">Скидка «раннее бронирование» по умолчанию для ручного режима, %</label>
                 <input id="earlyBookingFallbackInput" type="number" class="price-input max-w-[120px] text-left" value="${CONFIG.discounts.earlyBooking}">
             </div>
-            <button onclick="window.savePricingPrices()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-xl transition-colors text-sm">
+            <button onclick="window.savePricingPrices()" class="w-full py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-xl transition-colors text-sm">
                 <i class="fa-solid fa-floppy-disk mr-1.5"></i>Сохранить цены
             </button>
             <p id="pricingSaveStatus" class="text-center text-xs mt-2"></p>
@@ -3897,8 +4042,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.savePricingPrices = async function () {
         const inputs = document.querySelectorAll('#pricingPricesPanel .price-input[data-tariff]');
         inputs.forEach(inp => {
-            const { tariff, idx, group, cat } = inp.dataset;
-            CONFIG.tariffs[tariff][idx][group][cat] = parseInt(inp.value) || 0;
+            const { tariff, idx, group, cat, field } = inp.dataset;
+            if (field) {
+                CONFIG.tariffs[tariff][idx][field] = inp.value.trim();
+            } else {
+                CONFIG.tariffs[tariff][idx][group][cat] = parseInt(inp.value) || 0;
+            }
         });
         const fallbackInput = document.getElementById('earlyBookingFallbackInput');
         if (fallbackInput) CONFIG.discounts.earlyBooking = parseInt(fallbackInput.value) || 0;
@@ -3987,15 +4136,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <input id="promoVisitEndInput" type="date" class="price-input text-left">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Реф. цена взрослый (необязательно)</label>
+                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Старая цена взр. (опц.)</label>
                         <input id="promoRefAdlInput" type="number" class="price-input text-left" placeholder="напр. 15000">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Реф. цена детский (необязательно)</label>
+                        <label class="block text-[10px] font-bold text-slate-500 mb-1">Старая цена дет. (опц.)</label>
                         <input id="promoRefChldInput" type="number" class="price-input text-left" placeholder="напр. 12000">
                     </div>
                 </div>
-                <p class="text-[10px] text-slate-400 mb-3">Реф. цена — если задана, скидка считается от неё вместо обычной сезонной цены (только для туристов). Оставьте пустым для обычной логики.</p>
+                <p class="text-[10px] text-slate-400 mb-3">Старая цена (зачёркнутая) — если задана, скидка считается от неё вместо обычной сезонной цены (только для туристов). Оставьте пустым для обычной логики.</p>
                 <button onclick="window.addPromo()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-xl transition-colors text-sm">
                     <i class="fa-solid fa-plus mr-1.5"></i>Добавить акцию
                 </button>
