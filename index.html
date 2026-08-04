@@ -946,8 +946,8 @@
 
         .price-input {
             width: 100%;
-            padding: 6px 8px;
-            font-size: 12.5px;
+            padding: 4px 6px;
+            font-size: 12px;
             font-weight: 700;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
@@ -959,6 +959,73 @@
             outline: none;
             border-color: #0284c7;
             box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+
+        /* --- Dark Mode Overrides for Pricing Admin Modal --- */
+        body.dark-mode #pricingAdminModal > div {
+            background-color: var(--surface);
+            border-color: var(--line);
+        }
+
+        body.dark-mode #pricingAdminModal h2,
+        body.dark-mode #pricingAdminModal h3 {
+            color: var(--ink);
+        }
+
+        body.dark-mode #pricingAdminModal .text-slate-900,
+        body.dark-mode #pricingAdminModal .text-slate-600,
+        body.dark-mode #pricingAdminModal .text-slate-500 {
+            color: var(--ink-soft) !important;
+        }
+
+        body.dark-mode #pricingAdminModal .text-slate-400,
+        body.dark-mode #pricingAdminModal .text-slate-300 {
+            color: var(--ink-faint) !important;
+        }
+
+        body.dark-mode #pricingAdminModal .border-slate-100 {
+            border-color: var(--line-soft) !important;
+        }
+
+        body.dark-mode .price-input {
+            background-color: var(--surface-soft);
+            color: var(--ink);
+            border-color: var(--line);
+        }
+
+        body.dark-mode .price-input:focus {
+            border-color: var(--brand);
+            background-color: var(--surface);
+        }
+
+        body.dark-mode .pricing-tab-btn {
+            color: var(--ink-faint);
+        }
+
+        body.dark-mode .pricing-tab-btn:hover {
+            color: var(--ink);
+        }
+
+        body.dark-mode .pricing-tab-btn.active {
+            color: var(--brand);
+            border-bottom-color: var(--brand);
+        }
+
+        /* --- Global Dark Mode Text Overrides for #appContent --- */
+        body.dark-mode #appContent .text-slate-900,
+        body.dark-mode #appContent .text-slate-800,
+        body.dark-mode #appContent .text-slate-700 {
+            color: var(--ink) !important;
+        }
+
+        body.dark-mode #appContent .text-slate-600,
+        body.dark-mode #appContent .text-slate-500 {
+            color: var(--ink-soft) !important;
+        }
+
+        body.dark-mode #appContent .text-slate-400,
+        body.dark-mode #appContent .text-slate-300 {
+            color: var(--ink-faint) !important;
         }
     </style>
 </head>
@@ -1052,7 +1119,7 @@
 
     <!-- Main Dashboard Container -->
     <div id="appContent"
-        class="hidden h-screen w-full max-w-[1400px] mx-auto flex flex-col relative z-10 overflow-hidden text-slate-100">
+        class="hidden h-screen w-full max-w-[1400px] mx-auto px-0 lg:px-12 xl:px-24 flex flex-col relative z-10 overflow-hidden text-slate-100">
 
         <div class="px-4 md:px-8 pt-3 flex-shrink-0">
             <!-- TOP NAVBAR -->
@@ -1061,10 +1128,7 @@
                 <div class="flex items-center space-x-3">
                     <img src="assets/logo.png" alt="Tetys Blu"
                         class="h-8 md:h-10 drop-shadow-md shrink-0 object-contain">
-                    <div class="border-l border-white/20 pl-3">
-                        <span class="text-[9px] md:text-[11px] font-black text-white uppercase tracking-widest">Tetys
-                            Blue<br><span class="text-[7px] md:text-[8px] text-cyan-300">Aquatic Park</span></span>
-                    </div>
+
                 </div>
 
                 <nav class="hidden md:flex items-center space-x-2 flex-1 justify-center px-4">
@@ -1081,19 +1145,19 @@
                     <button id="navDatabaseBtn"
                         class="flex items-center space-x-2 px-3 py-2 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white font-medium transition-all">
                         <i class="fa-solid fa-database text-amber-400 w-4 text-center"></i>
-                        <span class="text-xs">База данных</span>
+                        <span class="text-xs">Заявки</span>
                     </button>
                     <a href="client.html" target="_blank"
                         class="flex items-center space-x-2 px-3 py-2 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white font-medium transition-all">
                         <i class="fa-solid fa-up-right-from-square text-slate-400 w-4 text-center"></i>
-                        <span class="text-xs">Клиентам</span>
+                        <span class="text-xs">Туристам</span>
                     </a>
                 </nav>
 
                 <div class="flex items-center gap-2 md:gap-4">
                     <div class="hidden xl:block mr-2 border-r border-white/10 pr-4">
                         <h1 id="liveClockDisplay"
-                            class="text-[11px] font-normal text-slate-300 tracking-wide font-sans"></h1>
+                            class="text-[11px] font-normal text-slate-300 tracking-wide font-sans whitespace-nowrap"></h1>
                     </div>
                     <button id="pricingAdminBtn"
                         class="hidden w-8 h-8 md:w-10 md:h-10 items-center justify-center hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-all"
@@ -1228,7 +1292,7 @@
                                         возраст и отфильтрует лишнюю информацию.
                                     </p>
                                 </div>
-                                <textarea id="bulkText" class="w-full glass-input p-3 text-xs resize-none mb-3 h-[70px]"
+                                <textarea id="bulkText" class="w-full glass-input p-3 text-xs resize-none mb-3 h-[105px]"
                                     placeholder="Тетис на 06.06&#10;Kossymov Dias 15.04.2017 chld&#10;Otemissova Meruert 18.05.1998 adl"></textarea>
                                 <div class="flex flex-col sm:flex-row gap-2">
                                     <button id="parseBulkBtn"
@@ -1282,13 +1346,13 @@
                             <div
                                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 border-b border-white/10 pb-4 mb-6">
                                 <div
-                                    class="bg-black/30 p-1.5 rounded-xl flex items-center w-full sm:w-auto relative mb-2 sm:mb-0 border border-white/5 shadow-inner">
+                                    class="bg-black/40 p-1.5 rounded-xl flex items-center w-full sm:w-auto relative mb-2 sm:mb-0 border border-white/10 shadow-inner">
                                     <button id="tabDetailed" onclick="switchCalcMode('detailed')"
-                                        class="flex-1 sm:flex-none justify-center px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer z-10 bg-blue-500/20 text-white shadow-[0_2px_8px_rgba(0,0,0,0.2)] border border-blue-400/30 scale-100">
+                                        class="flex-1 sm:flex-none justify-center px-5 py-2.5 text-xs font-bold rounded-lg transition-all duration-200 flex items-center gap-1.5 cursor-pointer z-10 bg-blue-600 text-white shadow-[0_4px_14px_rgba(0,118,186,0.5)] border border-blue-400/50 scale-100">
                                         <i class="fa-solid fa-list-ul"></i> Посписочный ввод
                                     </button>
                                     <button id="tabQuick" onclick="switchCalcMode('quick')"
-                                        class="flex-1 sm:flex-none justify-center px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer z-10 text-slate-400 hover:text-white border-transparent scale-95">
+                                        class="flex-1 sm:flex-none justify-center px-5 py-2.5 text-xs font-bold rounded-lg transition-all duration-200 flex items-center gap-1.5 cursor-pointer z-10 text-slate-400 hover:text-slate-200 border-transparent scale-95 opacity-60">
                                         <i class="fa-solid fa-calculator"></i> Быстрый расчет
                                     </button>
                                 </div>
@@ -1694,20 +1758,57 @@
             <!-- View: Dashboard (Statistics / Analytics) -->
             <div id="view-dashboard"
                 class="app-view hidden w-full neon-card-blue mt-6 md:mt-10 flex-col flex-1 overflow-hidden">
-                <div
-                    class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-5 border-b border-white/10 shrink-0 gap-4">
-                    <div class="flex items-center gap-3 w-full sm:w-auto">
-                        <input type="date" id="statsDateFrom"
-                            class="glass-input px-3 py-1.5 text-xs rounded-lg focus:outline-none focus:border-cyan-400 bg-white/5 border border-white/10 text-white">
-                        <span class="text-slate-500">-</span>
-                        <input type="date" id="statsDateTo"
-                            class="glass-input px-3 py-1.5 text-xs rounded-lg focus:outline-none focus:border-cyan-400 bg-white/5 border border-white/10 text-white">
+                <div class="flex flex-col gap-3 p-4 border-b border-white/10 shrink-0">
+                    <!-- Date preset pills + date inputs row -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
+
+                        <!-- Preset pills -->
+                        <div class="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-xl p-1">
+                            <button onclick="setStatsPeriod('today')" id="preset-today"
+                                class="stats-preset-btn active-preset px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 bg-brand-blue text-white shadow-sm">
+                                Сегодня
+                            </button>
+                            <button onclick="setStatsPeriod('yesterday')" id="preset-yesterday"
+                                class="stats-preset-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10">
+                                Вчера
+                            </button>
+                            <button onclick="setStatsPeriod('7days')" id="preset-7days"
+                                class="stats-preset-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10">
+                                7 дней
+                            </button>
+                            <button onclick="setStatsPeriod('30days')" id="preset-30days"
+                                class="stats-preset-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10">
+                                30 дней
+                            </button>
+                            <button onclick="setStatsPeriod('custom')" id="preset-custom"
+                                class="stats-preset-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10">
+                                <i class="fa-solid fa-calendar-days mr-1"></i>Диапазон
+                            </button>
+                        </div>
+
+                        <!-- Right side: date inputs (shown only in custom mode) + Export -->
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <div id="statsCustomRange" class="hidden items-center gap-2">
+                                <input type="date" id="statsDateFrom"
+                                    class="glass-input px-2.5 py-1.5 text-xs rounded-lg focus:outline-none focus:border-cyan-400 bg-white/5 border border-white/10 text-white w-[130px]">
+                                <span class="text-slate-500 text-xs">—</span>
+                                <input type="date" id="statsDateTo"
+                                    class="glass-input px-2.5 py-1.5 text-xs rounded-lg focus:outline-none focus:border-cyan-400 bg-white/5 border border-white/10 text-white w-[130px]">
+                            </div>
+                            <button id="exportCsvBtn"
+                                class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold shadow-md hover:bg-emerald-700 transition-all flex items-center justify-center ml-auto sm:ml-0 whitespace-nowrap">
+                                <i class="fa-solid fa-file-excel mr-1.5"></i> Excel
+                            </button>
+                        </div>
                     </div>
-                    <button id="exportCsvBtn"
-                        class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold shadow-md hover:bg-emerald-700 transition-all flex items-center justify-center">
-                        <i class="fa-solid fa-file-excel mr-1.5"></i> Excel
-                    </button>
+
+                    <!-- Period label -->
+                    <div id="statsPeriodLabel" class="text-[11px] text-slate-400 font-medium flex items-center gap-1.5">
+                        <i class="fa-regular fa-clock text-cyan-400"></i>
+                        <span id="statsPeriodText">Сегодня</span>
+                    </div>
                 </div>
+
                 <div class="flex-1 overflow-y-auto p-5 space-y-4 pt-4 custom-scrollbar" id="statisticsContent">
                     <div class="text-center text-slate-400 py-10"><i
                             class="fa-solid fa-spinner fa-spin text-3xl mb-3 opacity-50"></i>
@@ -1765,7 +1866,7 @@
             <button id="mobNavDatabaseBtn"
                 class="flex flex-col items-center justify-center py-2 px-1 w-16 text-slate-400 hover:text-amber-400 transition-colors">
                 <i class="fa-solid fa-database text-lg mb-1"></i>
-                <span class="text-[9px] font-medium">База данных</span>
+                <span class="text-[9px] font-medium">Заявки</span>
             </button>
         </nav>
     </div>
@@ -1831,7 +1932,7 @@
     <!-- Pricing & Promotions Admin Modal -->
     <div id="pricingAdminModal"
         class="fixed inset-0 z-[8000] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-4xl max-h-[88vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+        <div class="bg-white w-full max-w-4xl max-h-[96vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
             <div class="p-5 border-b border-slate-100 flex justify-between items-center shrink-0">
                 <h2 class="text-lg font-black text-slate-900"><i class="fa-solid fa-tags text-cyan-600 mr-2"></i>Цены
                     и акции</h2>
