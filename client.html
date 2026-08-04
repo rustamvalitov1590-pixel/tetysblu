@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#03182f">
+    <meta name="color-scheme" content="light">
     <title>Покупка билетов | Caspian Dream Park</title>
 
     <link rel="icon" type="image/png" sizes="32x32" href="https://tetysblu.com/src/favicon/favicon-32x32.png">
@@ -35,60 +36,60 @@
 
     <!-- Tourist Info Modal -->
     <div id="touristInfoModal"
-        class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-2 sm:p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-2xl h-[90vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-300 shadow-2xl"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-2 sm:p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl h-[90vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-300 shadow-2xl"
             id="touristInfoModalContent">
-            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/5 shrink-0">
-                <h3 class="font-black text-white text-sm md:text-base flex items-center gap-2 drop-shadow-sm"
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+                <h3 class="font-black text-slate-800 text-sm md:text-base flex items-center gap-2 drop-shadow-sm"
                     id="i18n_info_modal_title">
-                    <i class="fa-solid fa-book-open text-cyan-400"></i> Памятка туристу
+                    <i class="fa-solid fa-book-open text-cyan-500"></i> Памятка туристу
                 </h3>
                 <button onclick="closeTouristInfoModal()"
-                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition-colors">
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <div class="p-4 sm:p-6 overflow-y-auto flex-1 flex flex-col gap-5 pb-10">
+            <div class="p-4 sm:p-6 overflow-y-auto flex-1 flex flex-col gap-5 pb-10 custom-scrollbar">
                 <!-- Prices -->
-                <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
-                    <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-tags text-cyan-400"></i> <span id="i18n_info_prices_title">Актуальные
+                <div class="bg-slate-50 rounded-xl shadow-sm border border-slate-100 p-5">
+                    <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2 drop-shadow-sm">
+                        <i class="fa-solid fa-tags text-cyan-500"></i> <span id="i18n_info_prices_title">Актуальные
                             цены</span>
                     </h4>
-                    <div id="i18n_info_prices_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
+                    <div id="i18n_info_prices_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- Included -->
-                <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
-                    <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-gift text-cyan-400"></i> <span id="i18n_info_included_title">Что входит в
+                <div class="bg-slate-50 rounded-xl shadow-sm border border-slate-100 p-5">
+                    <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2 drop-shadow-sm">
+                        <i class="fa-solid fa-gift text-cyan-500"></i> <span id="i18n_info_included_title">Что входит в
                             стоимость?</span>
                     </h4>
-                    <div id="i18n_info_included_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
+                    <div id="i18n_info_included_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- FAQ -->
-                <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
-                    <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-circle-question text-cyan-400"></i> <span id="i18n_info_faq_title">Часто
+                <div class="bg-slate-50 rounded-xl shadow-sm border border-slate-100 p-5">
+                    <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2 drop-shadow-sm">
+                        <i class="fa-solid fa-circle-question text-cyan-500"></i> <span id="i18n_info_faq_title">Часто
                             задаваемые вопросы</span>
                     </h4>
-                    <div id="i18n_info_faq_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
+                    <div id="i18n_info_faq_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- Rules -->
-                <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
-                    <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-clipboard-list text-cyan-400"></i> <span
+                <div class="bg-slate-50 rounded-xl shadow-sm border border-slate-100 p-5">
+                    <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2 drop-shadow-sm">
+                        <i class="fa-solid fa-clipboard-list text-cyan-500"></i> <span
                             id="i18n_info_rules_title">Правила и условия</span>
                     </h4>
-                    <div id="i18n_info_rules_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
+                    <div id="i18n_info_rules_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- Fast Track -->
-                <div class="bg-black/20 rounded-xl shadow-sm border border-white/10 p-5">
-                    <h4 class="font-black text-lg text-white mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-forward-fast text-cyan-400"></i> <span id="i18n_info_fasttrack_title">Fast
+                <div class="bg-slate-50 rounded-xl shadow-sm border border-slate-100 p-5">
+                    <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2 drop-shadow-sm">
+                        <i class="fa-solid fa-forward-fast text-cyan-500"></i> <span id="i18n_info_fasttrack_title">Fast
                             Track</span>
                     </h4>
-                    <div id="i18n_info_fasttrack_text" class="text-sm text-slate-300 space-y-2 leading-relaxed"></div>
+                    <div id="i18n_info_fasttrack_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
                 </div>
             </div>
         </div>
@@ -115,193 +116,122 @@
     </script>
 
     <style>
+        :root {
+            --ink: #0B2A43;
+            --ink-soft: #4B6478;
+            --ink-faint: #7C93A3;
+            --surface: #FFFFFF;
+            --surface-soft: #F3F8FB;
+            --canvas-a: #E9F3FA;
+            --canvas-b: #F8FBFD;
+            --brand: #0076BA;
+            --brand-dark: #02649C;
+            --aqua: #00B4D8;
+            --coral: #FF6F51;
+            --sun: #F2A900;
+            --line: #D8E6EF;
+            --line-soft: #E8F1F7;
+            --shadow-card: 0 10px 25px -10px rgba(11, 42, 67, 0.16);
+            --shadow-lift: 0 18px 34px -12px rgba(11, 42, 67, 0.22);
+            --radius-lg: 22px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+        }
+
         body {
-            background-color: #03182f !important;
-            background-image: url('assets/ocean_bg.png') !important;
-            background-size: cover !important;
-            background-position: center center !important;
-            background-attachment: fixed !important;
+            background: linear-gradient(180deg, var(--canvas-a) 0%, var(--canvas-b) 55%, var(--canvas-b) 100%) fixed !important;
             font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-            color: #f1f5f9;
-            overflow-x: hidden;
             min-height: 100vh;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: rgba(2, 18, 40, 0.62);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05) !important;
-            backdrop-filter: blur(24px) !important;
-            -webkit-backdrop-filter: blur(24px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            box-shadow:
-                0 10px 30px -5px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-            border-radius: 24px !important;
-            color: #f8fafc !important;
-        }
-
-        .neon-card-blue {
-            background: rgba(13, 27, 42, 0.7) !important;
-            backdrop-filter: blur(12px) !important;
-            border: 1px solid rgba(14, 165, 233, 0.2) !important;
-            box-shadow: 0 0 20px rgba(14, 165, 233, 0.1), inset 0 0 10px rgba(14, 165, 233, 0.05) !important;
-            border-radius: 24px !important;
-        }
-
-        .glass-input {
-            background: rgba(0, 0, 0, 0.2) !important;
-            border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 12px !important;
-            color: #ffffff !important;
-            font-weight: 500 !important;
-            transition: all 0.2s ease !important;
-        }
-
-        .glass-input:focus {
-            outline: none !important;
-            border-color: #0ea5e9 !important;
-            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2) !important;
-            background: rgba(0, 0, 0, 0.3) !important;
-        }
-
-        .glass-input::placeholder {
-            color: rgba(255, 255, 255, 0.5) !important;
-        }
-
-        .btn-glass-primary {
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.8) 0%, rgba(2, 132, 199, 0.9) 100%) !important;
-            backdrop-filter: blur(8px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            color: white !important;
-            font-weight: 600 !important;
-            transition: all 0.3s !important;
-            border-radius: 12px !important;
-            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-        }
-
-        .btn-glass-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-glass-primary:not(:disabled):hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.6) !important;
-        }
-
-        .btn-glass-primary:disabled {
-            background: rgba(148, 163, 184, 0.5) !important;
-            box-shadow: none !important;
-            cursor: not-allowed;
-        }
-
-        /* --- Light Theme Override for Sun Visibility --- */
-        body {
-            background-color: #f1f5f9 !important;
-            background-image: none !important;
-            color: #0f172a !important;
-        }
-
-        body::before {
-            display: none !important;
+            color: var(--ink) !important;
+            overflow-x: hidden;
         }
 
         .glass-panel,
         .neon-card-blue,
         .bg-\\[\\#0f172a\\]\\/95,
         .bg-black\\/20 {
-            background: #ffffff !important;
-            border: 1px solid #cbd5e1 !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-            color: #0f172a !important;
+            background: var(--surface) !important;
+            border: 1px solid var(--line) !important;
+            box-shadow: var(--shadow-card) !important;
+            color: var(--ink) !important;
+            border-radius: var(--radius-lg) !important;
             backdrop-filter: none !important;
             -webkit-backdrop-filter: none !important;
         }
 
         .glass-input {
-            background: #ffffff !important;
-            border: 1px solid #94a3b8 !important;
-            color: #0f172a !important;
+            background: var(--surface) !important;
+            border: 1.5px solid var(--line) !important;
+            border-radius: var(--radius-sm) !important;
+            color: var(--ink) !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
         }
 
         .glass-input:focus {
-            border-color: #0ea5e9 !important;
-            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2) !important;
-            background: #ffffff !important;
+            outline: none !important;
+            border-color: var(--aqua) !important;
+            box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.18) !important;
         }
 
         .glass-input::placeholder {
-            color: #64748b !important;
+            color: var(--ink-faint) !important;
         }
 
-        /* Force texts to be dark */
+        select option {
+            background-color: var(--surface) !important;
+            color: var(--ink) !important;
+        }
+
+        .btn-glass-primary {
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--brand) 100%) !important;
+            border: 1px solid rgba(34, 211, 238, 0.5) !important;
+            color: white !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.03em;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            border-radius: var(--radius-sm) !important;
+            box-shadow: 0 6px 18px rgba(0, 180, 216, 0.35) !important;
+        }
+
+        .btn-glass-primary:not(:disabled):hover {
+            box-shadow: 0 10px 24px rgba(0, 180, 216, 0.5) !important;
+            transform: translateY(-2px);
+        }
+
+        .btn-glass-primary:disabled {
+            background: rgba(148, 163, 184, 0.5) !important;
+            box-shadow: none !important;
+            cursor: not-allowed;
+            border-color: transparent !important;
+        }
+
+        /* Force texts to match ink */
         .text-white,
         .text-slate-100,
         .text-slate-200,
         .text-slate-300,
-        .text-slate-400,
+        .text-slate-400 {
+            color: var(--ink) !important;
+        }
+        
         .text-cyan-100,
         .text-cyan-200,
         .text-cyan-300,
-        .text-cyan-400,
-        .text-blue-100,
-        .text-blue-200,
-        .text-blue-300,
-        .text-blue-400,
-        .text-emerald-100,
-        .text-emerald-200,
-        .text-emerald-300,
-        .text-emerald-400,
-        .text-green-100,
-        .text-green-200,
-        .text-green-300,
-        .text-green-400,
-        .text-teal-100,
-        .text-teal-200,
-        .text-teal-300,
-        .text-teal-400,
-        .text-purple-100,
-        .text-purple-200,
-        .text-purple-300,
-        .text-purple-400,
-        .text-rose-100,
-        .text-rose-200,
-        .text-rose-300,
-        .text-rose-400,
-        .text-amber-100,
-        .text-amber-200,
-        .text-amber-300,
-        .text-amber-400,
-        .text-yellow-100,
-        .text-yellow-200,
-        .text-yellow-300,
-        .text-yellow-400 {
-            color: #1e293b !important;
+        .text-cyan-400 {
+            color: var(--brand-dark) !important;
         }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: var(--surface-soft); border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
     </style>
 </head>
 
 <body class="flex items-start justify-center p-4 sm:p-8 overflow-y-auto">
 
     <div class="glass-panel neon-card-blue w-full max-w-xl relative mb-10 mt-6 sm:mt-10">
-
-        <!-- Language Switcher -->
-        <div
-            class="absolute top-4 right-4 z-20 flex bg-black/20 p-0.5 rounded-lg border border-white/10 shadow-sm select-none text-[10px]">
-            <button onclick="changeLanguage('kz')" id="lang_kz"
-                class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer text-slate-400 hover:text-white">KZ</button>
-            <button onclick="changeLanguage('ru')" id="lang_ru"
-                class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer bg-white/20 text-white shadow-sm">RU</button>
-            <button onclick="changeLanguage('en')" id="lang_en"
-                class="px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer text-slate-400 hover:text-white">EN</button>
-        </div>
 
         <!-- Header -->
         <div class="bg-transparent p-6 text-center relative overflow-hidden rounded-t-[24px] border-b border-white/10">
@@ -314,138 +244,142 @@
                 <img src="assets/logo.png" alt="Tetys Blu" class="h-14 mb-3 drop-shadow-md">
                 <h1 id="i18n_purchase_tickets" class="text-2xl font-black tracking-tight text-white drop-shadow-sm">
                     Покупка билетов</h1>
-                <p id="i18n_official_calculator" class="text-xs text-slate-400 mt-1 font-medium">Официальный калькулятор
+                <p id="i18n_official_calculator" class="text-xs text-slate-400 mt-1 font-medium mb-5">Официальный калькулятор
                     парка</p>
-                <button type="button" onclick="openTouristInfoModal()"
-                    class="mt-4 px-5 py-2 bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 rounded-full text-xs font-bold flex items-center gap-2 hover:bg-cyan-500/30 hover:text-cyan-100 transition-colors shadow-sm cursor-pointer backdrop-blur-md">
-                    <i class="fa-solid fa-circle-info"></i> <span id="i18n_info_btn_text">Памятка туристу</span>
-                </button>
+
+                <!-- Language Switcher -->
+                <div class="flex bg-slate-800/50 p-1 rounded-xl border border-white/10 shadow-inner select-none mb-4 w-full max-w-[280px]">
+                    <button onclick="changeLanguage('kz')" id="lang_kz"
+                        class="flex-1 px-4 py-2.5 text-[13px] font-extrabold rounded-lg transition-all cursor-pointer text-slate-400 hover:text-white uppercase tracking-wider">ҚАЗАҚША</button>
+                    <button onclick="changeLanguage('ru')" id="lang_ru"
+                        class="flex-1 px-4 py-2.5 text-[13px] font-extrabold rounded-lg transition-all cursor-pointer bg-white text-slate-900 shadow-sm uppercase tracking-wider">РУССКИЙ</button>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-2 mt-2 w-full justify-center">
+                    <button type="button" onclick="openTouristInfoModal()"
+                        class="px-5 py-2.5 bg-cyan-500/10 text-cyan-600 border border-cyan-400/30 rounded-xl text-xs font-bold flex items-center justify-center gap-2 hover:bg-cyan-500/20 transition-colors shadow-sm cursor-pointer backdrop-blur-md">
+                        <i class="fa-solid fa-circle-info"></i> <span id="i18n_info_btn_text">Частые вопросы (FAQ)</span>
+                    </button>
+                    <a href="#" onclick="window.open('https://wa.me/' + WHATSAPP_NUMBER, '_blank')"
+                        class="px-5 py-2.5 bg-green-500/10 text-green-600 border border-green-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-2 hover:bg-green-500/20 transition-colors shadow-sm cursor-pointer backdrop-blur-md">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> <span id="i18n_quick_whatsapp_btn">Связь по WhatsApp</span>
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="p-6 sm:p-8 space-y-6">
+        <div class="p-6 sm:p-8 space-y-6 relative overflow-hidden" id="form-container" style="min-height: 400px;">
+            <!-- Progress Bar -->
+            <div class="flex items-center justify-between mb-8 relative z-10 px-2">
+                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-800 rounded-full -z-10"></div>
+                <div id="progressBarFill" class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-cyan-400 rounded-full -z-10 transition-all duration-500 w-[0%]"></div>
+                
+                <div id="step-indicator-1" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-cyan-500 text-white shadow-[0_0_10px_rgba(34,211,238,0.5)] transition-all" style="color: white !important;">1</div>
+                <div id="step-indicator-2" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-slate-200 text-slate-500 transition-all">2</div>
+                <div id="step-indicator-3" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-slate-200 text-slate-500 transition-all">3</div>
+            </div>
 
-            <!-- Дата и Тариф -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label id="i18n_visit_date"
-                        class="block text-[13px] font-extrabold text-white uppercase mb-1.5 drop-shadow-sm">Дата
-                        посещения</label>
-                    <div class="relative">
-                        <i
-                            class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
-                        <input type="date" id="visitDate" class="w-full pl-9 pr-3 py-3 glass-input text-sm">
+            <!-- Шаг 1: Дата и Тариф -->
+            <div id="step-1" class="step-container transition-all duration-300 transform translate-x-0 opacity-100">
+                <h2 id="i18n_step1_title" class="text-xl font-black text-white mb-4 drop-shadow-sm flex items-center gap-2"><i class="fa-regular fa-calendar-check text-cyan-400"></i> Шаг 1: Дата и Тариф</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <label id="i18n_visit_date" class="block text-[13px] font-extrabold text-white uppercase mb-1.5 drop-shadow-sm">Дата посещения</label>
+                        <div class="relative">
+                            <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
+                            <input type="date" id="visitDate" class="w-full pl-9 pr-3 py-3 glass-input text-sm">
+                        </div>
+                        <div id="promoBadge" class="hidden mt-2">
+                            <span class="inline-flex items-center gap-1 text-[10px] text-white bg-gradient-to-r from-pink-500 to-orange-400 font-bold px-2 py-1 rounded-md shadow-sm">
+                                <i class="fa-solid fa-fire"></i>
+                            </span>
+                        </div>
                     </div>
-                    <div id="promoBadge" class="hidden mt-2">
-                        <span
-                            class="inline-flex items-center gap-1 text-[10px] text-white bg-gradient-to-r from-pink-500 to-orange-400 font-bold px-2 py-1 rounded-md shadow-sm">
-                            <i class="fa-solid fa-fire"></i>
-                        </span>
+                    <div>
+                        <label id="i18n_tariff_label" class="flex items-center text-[11px] font-bold text-slate-400 uppercase mb-1.5 drop-shadow-sm">
+                            <span id="i18n_tariff_title">Тариф</span>
+                            <i class="fa-solid fa-circle-info text-cyan-400 ml-1 cursor-pointer hover:text-cyan-300 transition-colors text-xs" onclick="openInfoModalByTag('tariffs')"></i>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
+                            <select id="tariffType" class="w-full pl-9 pr-3 py-3 glass-input text-sm appearance-none cursor-pointer">
+                                <option value="day" id="i18n_day_tariff">Дневной (полный день)</option>
+                                <option value="evening" id="i18n_evening_tariff">Вечерний тариф</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <label id="i18n_tariff_label"
-                        class="flex items-center text-[11px] font-bold text-slate-400 uppercase mb-1.5 drop-shadow-sm">
-                        <span id="i18n_tariff_title">Тариф</span>
-                        <i class="fa-solid fa-circle-info text-cyan-400 ml-1 cursor-pointer hover:text-cyan-300 transition-colors text-xs"
-                            onclick="openInfoModalByTag('tariffs')"></i>
-                    </label>
-                    <div class="relative">
-                        <i class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
-                        <select id="tariffType"
-                            class="w-full pl-9 pr-3 py-3 glass-input text-sm appearance-none cursor-pointer">
-                            <option value="day" class="bg-slate-800" id="i18n_day_tariff">Дневной (полный день)</option>
-                            <option value="evening" class="bg-slate-800" id="i18n_evening_tariff">Вечерний тариф
-                            </option>
-                        </select>
-                        <i
-                            class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
-                    </div>
+                <p id="dateWarning" class="text-xs text-rose-400 font-semibold hidden mt-3"><i class="fa-solid fa-triangle-exclamation mr-1"></i><span id="i18n_date_warning">К сожалению, на выбранную дату парк не работает.</span></p>
+                <div class="mt-8">
+                    <button type="button" onclick="goToStep(2)" id="btnNext1" class="w-full btn-glass-primary py-3.5 rounded-xl text-sm font-bold opacity-50 pointer-events-none transition-all"><span id="i18n_btn_next1">Далее <i class="fa-solid fa-arrow-right ml-1"></i></span></button>
                 </div>
             </div>
 
-            <p id="dateWarning" class="text-xs text-rose-400 font-semibold hidden"><i
-                    class="fa-solid fa-triangle-exclamation mr-1"></i><span id="i18n_date_warning">К сожалению, на
-                    выбранную дату парк не работает.</span></p>
-
-            <div class="h-px w-full bg-white/10"></div>
-
-            <!-- Гости (Список на ввод) -->
-            <div>
+            <!-- Шаг 2: Гости -->
+            <div id="step-2" class="step-container absolute top-0 left-0 w-full hidden transition-all duration-300 transform translate-x-8 opacity-0 pointer-events-none px-6 sm:px-8">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 id="i18n_indicate_guests_count"
-                        class="text-sm font-bold text-white flex items-center drop-shadow-sm">
+                    <h2 id="i18n_indicate_guests_count" class="text-lg font-black text-white flex items-center drop-shadow-sm">
                         <i class="fa-solid fa-users text-cyan-400 mr-2"></i> Укажите гостей
                     </h2>
-                    <button onclick="addTouristRow()" id="addTouristBtn"
-                        class="px-3 py-1.5 btn-glass-primary rounded-xl text-xs flex items-center gap-1 cursor-pointer">
-                        <i class="fa-solid fa-user-plus text-[10px]"></i> <span id="i18n_add_guest_btn">Добавить
-                            гостя</span>
+                    <button onclick="addTouristRow()" id="addTouristBtn" class="px-3 py-1.5 btn-glass-primary rounded-xl text-xs flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-user-plus text-[10px]"></i> <span id="i18n_add_guest_btn">Добавить гостя</span>
                     </button>
                 </div>
 
-                <!-- Список гостей -->
-                <div id="touristsListContainer" class="space-y-4">
-                    <!-- Заполняется динамически через JS -->
+                <div id="touristsListContainer" class="space-y-4 max-h-[50vh] overflow-y-auto pr-1 pb-2">
+                    <!-- Заполняется динамически -->
                 </div>
 
-                <div id="docsWarning"
-                    class="hidden mt-4 bg-amber-500/20 border border-amber-500/30 rounded-xl p-3.5 flex items-start gap-2 shadow-sm">
-                    <i class="fa-solid fa-circle-exclamation text-amber-400 mt-0.5 text-lg"></i>
-                    <p id="i18n_docs_warning" class="text-xs text-amber-100 font-medium leading-snug">
-                        Вы выбрали льготные билеты. Пожалуйста, возьмите с собой <b class="text-amber-300">оригиналы
-                            документов</b> (свидетельство о рождении, пенсионное удостоверение и т.д.) для предъявления
-                        на кассе.
+                <div id="docsWarning" class="hidden mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3.5 flex items-start gap-2 shadow-sm">
+                    <i class="fa-solid fa-circle-exclamation text-amber-500 mt-0.5 text-lg"></i>
+                    <p id="i18n_docs_warning" class="text-xs text-amber-800 font-medium leading-snug">
+                        Вы выбрали льготные билеты. Пожалуйста, возьмите с собой <b class="text-amber-900">оригиналы документов</b> для предъявления на кассе.
                     </p>
                 </div>
-            </div>
-
-            <!-- Контакты -->
-            <div class="mt-4">
-                <label id="i18n_phone_label"
-                    class="block text-[11px] font-bold text-slate-400 uppercase mb-1.5 drop-shadow-sm">Ваш номер
-                    телефона (WhatsApp)</label>
-                <div class="relative">
-                    <i class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
-                    <input type="tel" id="clientPhone" placeholder="+7 (___) ___-__-__"
-                        class="w-full pl-9 pr-3 py-3 glass-input text-sm">
+                
+                <div class="grid grid-cols-2 gap-3 mt-6">
+                    <button type="button" onclick="goToStep(1)" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-3.5 rounded-xl text-sm font-bold border border-slate-200 transition-colors"><span id="i18n_btn_back2"><i class="fa-solid fa-arrow-left mr-1"></i> Назад</span></button>
+                    <button type="button" onclick="goToStep(3)" class="w-full btn-glass-primary py-3.5 rounded-xl text-sm font-bold"><span id="i18n_btn_next2">Далее <i class="fa-solid fa-arrow-right ml-1"></i></span></button>
                 </div>
             </div>
 
-            <!-- Итог -->
-            <div
-                class="bg-black/30 border border-white/10 rounded-2xl p-5 text-white flex items-center justify-between shadow-lg mt-4 backdrop-blur-md relative overflow-hidden">
-                <div
-                    class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent pointer-events-none">
-                </div>
-                <div class="relative z-10">
-                    <span id="i18n_total_to_pay"
-                        class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block mb-1">Итого к
-                        оплате</span>
-                    <div class="flex items-baseline gap-1.5">
-                        <span class="text-3xl font-black tracking-tight drop-shadow-md text-white"
-                            id="totalPrice">0</span>
-                        <span class="text-lg font-bold text-cyan-400">₸</span>
+            <!-- Шаг 3: Контакты и Итог -->
+            <div id="step-3" class="step-container absolute top-0 left-0 w-full hidden transition-all duration-300 transform translate-x-8 opacity-0 pointer-events-none px-6 sm:px-8">
+                <h2 id="i18n_step3_title" class="text-lg font-black text-white mb-4 drop-shadow-sm flex items-center gap-2"><i class="fa-solid fa-paper-plane text-cyan-400"></i> Контакты и Отправка</h2>
+                
+                <div class="mt-4">
+                    <label id="i18n_phone_label" class="block text-[11px] font-bold text-slate-400 uppercase mb-1.5 drop-shadow-sm">Ваш номер телефона (WhatsApp)</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400 text-sm"></i>
+                        <input type="tel" id="clientPhone" placeholder="+7 (___) ___-__-__" class="w-full pl-9 pr-3 py-3 glass-input text-sm">
                     </div>
                 </div>
-                <div class="text-right">
-                    <span class="text-sm text-slate-300 font-bold bg-slate-800 px-3 py-1.5 rounded-lg"
-                        id="totalGuests">0 гостей</span>
-                </div>
-            </div>
 
-            <!-- Кнопки заявки -->
-            <div class="grid grid-cols-1 gap-3 mt-4">
-                <button id="bookBtnWA"
-                    class="w-full btn-primary py-4 rounded-xl text-sm font-bold flex justify-center items-center gap-1.5 opacity-50 pointer-events-none cursor-pointer">
-                    <i class="fa-brands fa-whatsapp text-lg"></i>
-                    <span id="i18n_in_whatsapp">В WhatsApp</span>
-                </button>
-                <button id="bookBtnTG" class="hidden">
-                    <span id="i18n_send_request">Отправить заявку</span>
-                </button>
+                <div class="bg-black/30 border border-white/10 rounded-2xl p-5 text-white flex items-center justify-between shadow-lg mt-6 backdrop-blur-md relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent pointer-events-none"></div>
+                    <div class="relative z-10">
+                        <span id="i18n_total_to_pay" class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block mb-1">Итого к оплате</span>
+                        <div class="flex items-baseline gap-1.5">
+                            <span class="text-3xl font-black tracking-tight drop-shadow-md text-white" id="totalPrice">0</span>
+                            <span class="text-lg font-bold text-cyan-400">₸</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-bold bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg text-slate-700" id="totalGuests">0 гостей</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mt-8">
+                    <button type="button" onclick="goToStep(2)" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-3.5 rounded-xl text-sm font-bold border border-slate-200 transition-colors"><span id="i18n_btn_back3"><i class="fa-solid fa-arrow-left mr-1"></i> Назад</span></button>
+                    <button id="bookBtnWA" class="w-full btn-glass-primary py-3.5 rounded-xl text-sm font-bold flex justify-center items-center gap-1.5 cursor-pointer">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                        <span id="i18n_in_whatsapp">Отправить</span>
+                    </button>
+                </div>
+                <button id="bookBtnTG" class="hidden"><span id="i18n_send_request">Отправить заявку</span></button>
+                <p id="i18n_choose_sending_method" class="hidden"></p>
             </div>
-            <p id="i18n_choose_sending_method" class="hidden"></p>
         </div>
     </div>
 
@@ -459,16 +393,20 @@
                 day_tariff: "Дневной (полный день)",
                 evening_tariff: "Вечерний тариф",
                 indicate_guests_count: "Укажите гостей",
+                step1_title: "Шаг 1: Дата и Тариф",
+                step3_title: "Контакты и Отправка",
+                btn_next: "Далее",
+                btn_back: "Назад",
                 add_guest_btn: "Добавить гостя",
-                lastName_placeholder: "Фамилия",
-                firstName_placeholder: "Имя",
-                middleName_placeholder: "Отчество (необязательно)",
-                dob_label: "Дата рождения",
-                dob_placeholder: "ДД.ММ.ГГГГ",
-                disability_none: "Нет льгот по инвалидности",
-                disability_cat1: "Инвалидность 1-й группы (Бесплатно)",
-                disability_cat2: "Инвалидность 2-й группы (Скидка 15%)",
-                disability_cat3: "Инвалидность 3-й группы (Скидка 10%)",
+                age_placeholder: "Возраст (лет)",
+                privilege_none: "Нет льгот",
+                privilege_bday: "Именинник ({date}) -50%",
+                privilege_bday_hint: "Его день рождения должен совпадать с датой посещения парка",
+                privilege_pregnant: "Беременная (Бесплатно)",
+                privilege_large_family: "Многодетная семья (Скидка)",
+                privilege_cat1: "Инвалидность 1-й группы (Бесплатно)",
+                privilege_cat2: "Инвалидность 2-й группы (Скидка 15%)",
+                privilege_cat3: "Инвалидность 3-й группы (Скидка 10%)",
                 badge_infant: "Младенец",
                 badge_child: "Ребенок",
                 badge_adult: "Взрослый",
@@ -507,10 +445,11 @@
                 error_send_failed: "Не удалось отправить заявку. Пожалуйста, напишите нам в WhatsApp.",
                 error_network: "Ошибка сети при отправке заявки.",
                 docs_warning_title: "Требуются документы",
-                disability_hint: "Требуется оригинал справки об инвалидности",
-                enter_lastname_warning: "Пожалуйста, введите фамилию для гостя #{num}.",
-                enter_firstname_warning: "Пожалуйста, введите имя для гостя #{num}.",
-                enter_dob_warning: "Пожалуйста, укажите дату рождения для гостя #{num}.",
+                privilege_hint: "Льготу необходимо подтвердить оригиналом документа на кассе",
+                enter_age_warning: "Пожалуйста, укажите возраст для гостя #{num}.",
+                child_alone_warning: "Дети не могут посещать парк без сопровождения взрослых (18+).",
+                info_btn_text: "Частые вопросы (FAQ)",
+                quick_whatsapp_btn: "Связь по WhatsApp",
                 info_modal_title: "Памятка туристу",
                 info_prices_title: "Актуальные цены",
                 info_prices_text: "<b>Күндізгі / Дневной тариф (10:00 - 00:00)</b><br>Взрослый: 14 000 ₸<br>Детский (4-11 лет): 11 500 ₸<br><br><b>Кешкі / Вечерний тариф (17:00 - 00:00)</b><br>Взрослый: 9 500 ₸<br>Детский (4-11 лет): 7 500 ₸<br><br><b>Льготы</b><br>Именинникам: -50%<br>Пенсионерам: -50%<br>Лицам с инвалидностью: от -10%<br><br><b>Бесплатно</b><br>Беременным (при наличии справки)<br>Детям до 3 лет",
@@ -531,16 +470,20 @@
                 day_tariff: "Күндізгі (толық күн)",
                 evening_tariff: "Кешкі тариф",
                 indicate_guests_count: "Қонақтарды көрсетіңіз",
+                step1_title: "1-қадам: Күн және Тариф",
+                step3_title: "Байланыс және Жіберу",
+                btn_next: "Әрі қарай",
+                btn_back: "Артқа",
                 add_guest_btn: "Қонақ қосу",
-                lastName_placeholder: "Тегі (Фамилия)",
-                firstName_placeholder: "Есімі (Имя)",
-                middleName_placeholder: "Әкесінің аты (міндетті емес)",
-                dob_label: "Туған күні",
-                dob_placeholder: "КК.АА.ЖЖЖЖ",
-                disability_none: "Мүгедектік жеңілдігі жоқ",
-                disability_cat1: "1-топ мүгедектігі (Тегін)",
-                disability_cat2: "2-топ мүгедектігі (15% жеңілдік)",
-                disability_cat3: "3-топ мүгедектігі (10% жеңілдік)",
+                age_placeholder: "Жасы (неше жаста)",
+                privilege_none: "Жеңілдік жоқ",
+                privilege_bday: "Туған күн иесі ({date}) -50%",
+                privilege_bday_hint: "Туған күні парктің бару күнімен сәйкес келуі тиіс",
+                privilege_pregnant: "Жүкті әйел (Тегін)",
+                privilege_large_family: "Көпбалалы отбасы (Жеңілдік)",
+                privilege_cat1: "1-топ мүгедектігі (Тегін)",
+                privilege_cat2: "2-топ мүгедектігі (15% жеңілдік)",
+                privilege_cat3: "3-топ мүгедектігі (10% жеңілдік)",
                 badge_infant: "Бүлдіршін",
                 badge_child: "Бала",
                 badge_adult: "Ересек",
@@ -579,10 +522,11 @@
                 error_send_failed: "Өтінімді жіберу мүмкін болмады. WhatsApp арқылы жазыңыз.",
                 error_network: "Өтінімді жіберу кезінде желілік қателік орын алды.",
                 docs_warning_title: "Құжаттар қажет",
-                disability_hint: "Мүгедектік туралы анықтаманың түпнұсқасы қажет",
-                enter_lastname_warning: "Өтінеміз, #{num}-қонақтың тегін енгізіңіз.",
-                enter_firstname_warning: "Өтінеміз, #{num}-қонақтың есімін енгізіңіз.",
-                enter_dob_warning: "Өтінеміз, #{num}-қонақтың туған күнін көрсетіңіз.",
+                privilege_hint: "Жеңілдікті кассада құжаттың түпнұсқасымен растау қажет",
+                enter_age_warning: "Өтінеміз, #{num}-қонақтың жасын көрсетіңіз.",
+                child_alone_warning: "Балалар паркке ересектерсіз (18+) келе алмайды.",
+                info_btn_text: "Жиі қойылатын сұрақтар (FAQ)",
+                quick_whatsapp_btn: "WhatsApp-пен байланыс",
                 info_modal_title: "Туристке жадынама",
                 info_prices_title: "Ағымдағы бағалар",
                 info_prices_text: "<b>Күндізгі тариф (10:00 - 00:00)</b><br>Ересек: 14 000 ₸<br>Балалар (4-11 жас): 11 500 ₸<br><br><b>Кешкі тариф (17:00 - 00:00)</b><br>Ересек: 9 500 ₸<br>Балалар (4-11 жас): 7 500 ₸<br><br><b>Жеңілдіктер</b><br>Туған күн иелеріне: -50%<br>Зейнеткерлерге: -50%<br>Мүгедектігі бар адамдарға: -10% бастап<br><br><b>Тегін</b><br>Жүкті әйелдерге (анықтама болған жағдайда)<br>3 жасқа дейінгі балаларға",
@@ -603,16 +547,19 @@
                 day_tariff: "Day (full day)",
                 evening_tariff: "Evening tariff",
                 indicate_guests_count: "Indicate Guests",
+                step1_title: "Step 1: Date and Tariff",
+                step3_title: "Contacts and Submission",
+                btn_next: "Next",
+                btn_back: "Back",
                 add_guest_btn: "Add Guest",
-                lastName_placeholder: "Last Name",
-                firstName_placeholder: "First Name",
-                middleName_placeholder: "Middle Name (optional)",
-                dob_label: "Date of Birth",
-                dob_placeholder: "DD.MM.YYYY",
-                disability_none: "No Disability",
-                disability_cat1: "Disability Group 1 (Free)",
-                disability_cat2: "Disability Group 2 (15% Off)",
-                disability_cat3: "Disability Group 3 (10% Off)",
+                age_placeholder: "Age (years)",
+                privilege_none: "No Privileges",
+                privilege_bday: "Birthday (on visit day) -50%",
+                privilege_pregnant: "Pregnant (Free)",
+                privilege_large_family: "Large Family (Discount)",
+                privilege_cat1: "Disability Group 1 (Free)",
+                privilege_cat2: "Disability Group 2 (15% Off)",
+                privilege_cat3: "Disability Group 3 (10% Off)",
                 badge_infant: "Infant",
                 badge_child: "Child",
                 badge_adult: "Adult",
@@ -651,10 +598,11 @@
                 error_send_failed: "Failed to send request. Please contact us via WhatsApp.",
                 error_network: "Network error occurred while sending the request.",
                 docs_warning_title: "Documents Required",
-                disability_hint: "Original disability certificate is required",
-                enter_lastname_warning: "Please enter the last name for guest #{num}.",
-                enter_firstname_warning: "Please enter the first name for guest #{num}.",
-                enter_dob_warning: "Please select the date of birth for guest #{num}.",
+                privilege_hint: "Privilege must be confirmed with original document at ticket office",
+                enter_age_warning: "Please enter the age for guest #{num}.",
+                child_alone_warning: "Children cannot visit the park without adult supervision (18+).",
+                info_btn_text: "FAQ & Info",
+                quick_whatsapp_btn: "Contact via WhatsApp",
                 info_modal_title: "Tourist Memo",
                 info_prices_title: "Current Prices",
                 info_prices_text: "<b>Day Tariff (10:00 - 00:00)</b><br>Adult: 14 000 ₸<br>Child (4-11 years): 11 500 ₸<br><br><b>Evening Tariff (17:00 - 00:00)</b><br>Adult: 9 500 ₸<br>Child (4-11 years): 7 500 ₸<br><br><b>Discounts</b><br>Birthday: -50%<br>Seniors: -50%<br>Persons with disabilities: from -10%<br><br><b>Free</b><br>Pregnant women (with medical certificate)<br>Children under 3 years old",
@@ -671,14 +619,14 @@
 
         const tariffs = {
             day: [
-                { start: '05-23', end: '05-31', ADL: 11100, CHLD: 8860 },
-                { start: '06-01', end: '08-23', ADL: 14000, CHLD: 11500 },
-                { start: '08-24', end: '09-06', ADL: 11500, CHLD: 9200 },
-                { start: '09-07', end: '09-20', ADL: 9500, CHLD: 7500 },
-                { start: '09-21', end: '09-30', ADL: 8500, CHLD: 6700 },
+                { start: '05-23', end: '05-31', ADL: 11100, CHLD: 8860, AGENT_ADL: 10900, AGENT_CHLD: 8660 },
+                { start: '06-01', end: '08-23', ADL: 14000, CHLD: 11500, AGENT_ADL: 13300, AGENT_CHLD: 10700 },
+                { start: '08-24', end: '09-06', ADL: 11500, CHLD: 9200, AGENT_ADL: 11200, AGENT_CHLD: 8860 },
+                { start: '09-07', end: '09-20', ADL: 9500, CHLD: 7500, AGENT_ADL: 9200, AGENT_CHLD: 7300 },
+                { start: '09-21', end: '09-30', ADL: 8500, CHLD: 6700, AGENT_ADL: 8350, AGENT_CHLD: 6520 },
             ],
             evening: [
-                { start: '06-01', end: '08-31', ADL: 9500, CHLD: 7500 }
+                { start: '06-01', end: '08-31', ADL: 9500, CHLD: 7500, AGENT_ADL: 9000, AGENT_CHLD: 7180 }
             ]
         };
 
@@ -691,7 +639,7 @@
             : null;
 
         let tourists = [
-            { id: Date.now(), lastName: '', firstName: '', middleName: '', dob: '', disability: 'none' }
+            { id: Date.now(), age: '', privilege: 'none' }
         ];
 
         let currentLang = localStorage.getItem('client_lang') || 'ru';
@@ -703,19 +651,24 @@
         const todayStr = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
         visitDateInput.value = todayStr;
 
-        visitDateInput.addEventListener('change', calculateTotal);
+        visitDateInput.addEventListener('change', () => {
+            renderTouristsList();
+            calculateTotal();
+        });
         tariffTypeInput.addEventListener('change', calculateTotal);
 
         function changeLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('client_lang', lang);
 
-            ['kz', 'ru', 'en'].forEach(l => {
+            ['kz', 'ru'].forEach(l => {
                 const btn = document.getElementById('lang_' + l);
-                if (l === lang) {
-                    btn.className = "px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer bg-white text-slate-800 shadow-sm";
-                } else {
-                    btn.className = "px-2 py-1 font-extrabold rounded-md transition-all cursor-pointer text-slate-500 hover:text-slate-800";
+                if (btn) {
+                    if (l === lang) {
+                        btn.className = "flex-1 px-4 py-2.5 text-[13px] font-extrabold rounded-lg transition-all cursor-pointer bg-white text-slate-900 shadow-sm uppercase tracking-wider";
+                    } else {
+                        btn.className = "flex-1 px-4 py-2.5 text-[13px] font-extrabold rounded-lg transition-all cursor-pointer text-slate-400 hover:text-white uppercase tracking-wider";
+                    }
                 }
             });
 
@@ -737,10 +690,19 @@
             document.getElementById('i18n_choose_sending_method').textContent = t.choose_sending_method;
             document.getElementById('i18n_date_warning').textContent = t.date_warning;
             document.getElementById('infoModalCloseBtn').textContent = t.understand_btn;
+            document.getElementById('i18n_step1_title').innerHTML = `<i class="fa-regular fa-calendar-check text-cyan-400"></i> ${t.step1_title}`;
+            document.getElementById('i18n_step3_title').innerHTML = `<i class="fa-solid fa-paper-plane text-cyan-400"></i> ${t.step3_title}`;
+            document.getElementById('i18n_btn_next1').innerHTML = `${t.btn_next} <i class="fa-solid fa-arrow-right ml-1"></i>`;
+            document.getElementById('i18n_btn_next2').innerHTML = `${t.btn_next} <i class="fa-solid fa-arrow-right ml-1"></i>`;
+            document.getElementById('i18n_btn_back2').innerHTML = `<i class="fa-solid fa-arrow-left mr-1"></i> ${t.btn_back}`;
+            document.getElementById('i18n_btn_back3').innerHTML = `<i class="fa-solid fa-arrow-left mr-1"></i> ${t.btn_back}`;
 
             // Tourist info modal translations
-            document.getElementById('i18n_info_btn_text').textContent = t.info_modal_title;
-            document.getElementById('i18n_info_modal_title').innerHTML = `<i class="fa-solid fa-book-open text-brand-blue"></i> ${t.info_modal_title}`;
+            document.getElementById('i18n_info_btn_text').textContent = t.info_btn_text;
+            if (document.getElementById('i18n_quick_whatsapp_btn')) {
+                document.getElementById('i18n_quick_whatsapp_btn').textContent = t.quick_whatsapp_btn;
+            }
+            document.getElementById('i18n_info_modal_title').innerHTML = `<i class="fa-solid fa-book-open text-cyan-500"></i> ${t.info_modal_title}`;
             document.getElementById('i18n_info_prices_title').textContent = t.info_prices_title;
             document.getElementById('i18n_info_prices_text').innerHTML = t.info_prices_text;
             document.getElementById('i18n_info_included_title').textContent = t.info_included_title;
@@ -756,7 +718,7 @@
         }
 
         function addTouristRow() {
-            tourists.push({ id: Date.now(), lastName: '', firstName: '', middleName: '', dob: '', disability: 'none' });
+            tourists.push({ id: Date.now(), age: '', disability: 'none' });
             renderTouristsList();
         }
 
@@ -764,7 +726,7 @@
             if (tourists.length > 1) {
                 tourists = tourists.filter(t => t.id !== id);
             } else {
-                tourists = [{ id: Date.now(), lastName: '', firstName: '', middleName: '', dob: '', disability: 'none' }];
+                tourists = [{ id: Date.now(), age: '', disability: 'none' }];
             }
             renderTouristsList();
         }
@@ -806,15 +768,27 @@
         function updateTouristField(id, field, value) {
             const tourist = tourists.find(t => t.id === id);
             if (tourist) {
-                tourist[field] = value;
-
-                // If dob is updated, check if we need to trigger birthday confetti
-                if (field === 'dob' && value) {
-                    if (isBirthday(value, visitDateInput.value)) {
-                        triggerConfetti();
+                if (field === 'privilege' && value === 'bday') {
+                    const vDate = visitDateInput.value;
+                    if (vDate) {
+                        const parts = vDate.split('-');
+                        if (parts.length === 3) {
+                            const formattedDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+                            let msg = `У вас точно день рождения ${formattedDate} (в день посещения)?`;
+                            if (currentLang === 'kz') msg = `Сіздің туған күніңіз дәл ${formattedDate} (бару күні) ме?`;
+                            
+                            if (!confirm(msg)) {
+                                value = 'none';
+                                const selectElement = document.getElementById(`privilege_select_${id}`);
+                                if (selectElement) selectElement.value = 'none';
+                            } else {
+                                triggerConfetti();
+                            }
+                        }
                     }
                 }
 
+                tourist[field] = value;
                 calculateTotal();
             }
         }
@@ -826,9 +800,24 @@
             const t = I18N[currentLang];
             container.innerHTML = '';
 
+            let formattedVisitDate = currentLang === 'kz' ? 'келген күні' : 'в день посещения';
+            const vDate = visitDateInput.value;
+            if (vDate) {
+                const parts = vDate.split('-');
+                if (parts.length === 3) {
+                    formattedVisitDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+                }
+            }
+
             tourists.forEach((tourist, index) => {
                 const row = document.createElement('div');
                 row.className = "bg-black/20 p-4 rounded-xl border border-white/10 shadow-sm space-y-3 relative";
+
+                let currentHint = t.privilege_hint;
+                if (tourist.privilege === 'bday') {
+                    currentHint = t.privilege_bday_hint;
+                }
+
                 row.innerHTML = `
                     <!-- Row Header with Number and Delete Button -->
                     <div class="flex justify-between items-center">
@@ -843,59 +832,38 @@
                     <!-- Form Fields Grid -->
                     <!-- Form Fields Grid -->
                     <div class="grid grid-cols-1 gap-2.5">
-                        <!-- Last Name Input -->
-                        <div>
-                            <input type="text" value="${tourist.lastName || ''}" 
-                                placeholder="${t.lastName_placeholder}" 
-                                oninput="updateTouristField(${tourist.id}, 'lastName', this.value)"
-                                class="w-full px-3 py-2.5 glass-input text-xs" />
-                        </div>
-                        
-                        <!-- First Name Input -->
-                        <div>
-                            <input type="text" value="${tourist.firstName || ''}" 
-                                placeholder="${t.firstName_placeholder}" 
-                                oninput="updateTouristField(${tourist.id}, 'firstName', this.value)"
-                                class="w-full px-3 py-2.5 glass-input text-xs" />
-                        </div>
-
-                        <!-- Middle Name Input -->
-                        <div>
-                            <input type="text" value="${tourist.middleName || ''}" 
-                                placeholder="${t.middleName_placeholder}" 
-                                oninput="updateTouristField(${tourist.id}, 'middleName', this.value)"
-                                class="w-full px-3 py-2.5 glass-input text-xs" />
-                        </div>
-                        
-                        <!-- Date of Birth Input -->
+                        <!-- Age Input -->
                         <div class="relative">
-                            <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
-                            <input type="text" 
-                                value="${formatDateToDisplay(tourist.dob)}" 
-                                placeholder="${t.dob_placeholder}" 
+                            <i class="fa-regular fa-user absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                            <input type="number" 
+                                value="${tourist.age || ''}" 
+                                placeholder="${t.age_placeholder}" 
                                 inputmode="numeric"
-                                oninput="handleDobInput(${tourist.id}, this)"
+                                oninput="updateTouristField(${tourist.id}, 'age', this.value)"
                                 class="w-full pl-8 pr-3 py-2.5 glass-input text-xs" />
                         </div>
                     </div>
                     
                     <!-- Optional Privilege Selector / Status feedback -->
                     <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between pt-1">
-                        <!-- Disability selector -->
+                        <!-- Privilege selector -->
                         <div class="relative w-full sm:max-w-xs flex flex-col">
                             <div class="relative">
-                                <select onchange="updateTouristField(${tourist.id}, 'disability', this.value)" 
+                                <select id="privilege_select_${tourist.id}" onchange="updateTouristField(${tourist.id}, 'privilege', this.value)" 
                                     class="w-full px-3 py-2 glass-input text-[11px] appearance-none cursor-pointer pr-8">
-                                    <option value="none" class="bg-slate-800" ${tourist.disability === 'none' ? 'selected' : ''}>${t.disability_none}</option>
-                                    <option value="cat1" class="bg-slate-800" ${tourist.disability === 'cat1' ? 'selected' : ''}>${t.disability_cat1}</option>
-                                    <option value="cat2" class="bg-slate-800" ${tourist.disability === 'cat2' ? 'selected' : ''}>${t.disability_cat2}</option>
-                                    <option value="cat3" class="bg-slate-800" ${tourist.disability === 'cat3' ? 'selected' : ''}>${t.disability_cat3}</option>
+                                    <option value="none" class="bg-slate-800" ${tourist.privilege === 'none' ? 'selected' : ''}>${t.privilege_none}</option>
+                                    <option value="bday" class="bg-slate-800" ${tourist.privilege === 'bday' ? 'selected' : ''}>${t.privilege_bday.replace('{date}', formattedVisitDate)}</option>
+                                    <option value="pregnant" class="bg-slate-800" ${tourist.privilege === 'pregnant' ? 'selected' : ''}>${t.privilege_pregnant}</option>
+                                    <option value="large_family" class="bg-slate-800" ${tourist.privilege === 'large_family' ? 'selected' : ''}>${t.privilege_large_family}</option>
+                                    <option value="cat1" class="bg-slate-800" ${tourist.privilege === 'cat1' ? 'selected' : ''}>${t.privilege_cat1}</option>
+                                    <option value="cat2" class="bg-slate-800" ${tourist.privilege === 'cat2' ? 'selected' : ''}>${t.privilege_cat2}</option>
+                                    <option value="cat3" class="bg-slate-800" ${tourist.privilege === 'cat3' ? 'selected' : ''}>${t.privilege_cat3}</option>
                                 </select>
                                 <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] pointer-events-none"></i>
                             </div>
-                            <div id="disability_hint_${tourist.id}" class="text-[9px] text-amber-400 font-bold mt-1.5 hidden flex items-center gap-1 drop-shadow-sm">
+                            <div id="privilege_hint_${tourist.id}" class="text-[9px] text-amber-600 font-bold mt-1.5 hidden flex items-center gap-1 drop-shadow-sm">
                                 <i class="fa-solid fa-triangle-exclamation"></i>
-                                <span>${t.disability_hint}</span>
+                                <span>${currentHint}</span>
                             </div>
                         </div>
                         
@@ -1004,18 +972,120 @@
             return currentTariff[category] || 0;
         }
 
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        function goToStep(step) {
+            // Валидация перед переходом с шага 2 на шаг 3
+            if (step === 3 && currentStep === 2) {
+                if (!validateTouristsForNextStep()) {
+                    return; // Не пускаем дальше, если данные гостей не заполнены
+                }
+            }
+
+            // Hide all steps
+            for (let i = 1; i <= totalSteps; i++) {
+                const el = document.getElementById(`step-${i}`);
+                el.classList.add('opacity-0', 'pointer-events-none');
+                
+                // Направление анимации выезда
+                if (i < step) {
+                    el.classList.add('-translate-x-8');
+                    el.classList.remove('translate-x-8', 'translate-x-0');
+                } else if (i > step) {
+                    el.classList.add('translate-x-8');
+                    el.classList.remove('-translate-x-8', 'translate-x-0');
+                }
+                
+                // Hide completely after transition
+                setTimeout(() => {
+                    if (currentStep !== i) {
+                        el.classList.add('hidden');
+                        el.classList.remove('absolute', 'top-0', 'left-0', 'w-full');
+                    }
+                }, 300);
+            }
+
+            currentStep = step;
+
+            // Show current step
+            const currentEl = document.getElementById(`step-${currentStep}`);
+            currentEl.classList.remove('hidden');
+            currentEl.classList.add('absolute', 'top-0', 'left-0', 'w-full');
+            
+            // Allow browser to render display:block before starting opacity transition
+            setTimeout(() => {
+                currentEl.classList.remove('opacity-0', 'pointer-events-none', 'translate-x-8', '-translate-x-8');
+                currentEl.classList.add('opacity-100', 'translate-x-0');
+                // После анимации можно снять position absolute для нормального потока
+                setTimeout(() => {
+                    if (currentStep === step) {
+                        currentEl.classList.remove('absolute', 'top-0', 'left-0', 'w-full');
+                    }
+                }, 300);
+            }, 10);
+
+            // Update Progress bar & Indicators
+            const progressPercent = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressBarFill').style.width = `${progressPercent}%`;
+
+            for (let i = 1; i <= totalSteps; i++) {
+                const indicator = document.getElementById(`step-indicator-${i}`);
+                if (i <= currentStep) {
+                    indicator.classList.remove('bg-slate-200', 'text-slate-500');
+                    indicator.classList.add('bg-cyan-500', 'text-white', 'shadow-[0_0_10px_rgba(34,211,238,0.5)]');
+                    indicator.style.setProperty('color', 'white', 'important');
+                } else {
+                    indicator.classList.add('bg-slate-200', 'text-slate-500');
+                    indicator.classList.remove('bg-cyan-500', 'text-white', 'shadow-[0_0_10px_rgba(34,211,238,0.5)]');
+                    indicator.style.removeProperty('color');
+                }
+            }
+        }
+
+        function validateTouristsForNextStep() {
+            const active = getActiveTourists();
+            const t = I18N[currentLang];
+            let hasAdult = false;
+            let hasChild = false;
+            
+            for (let i = 0; i < active.length; i++) {
+                const tourist = active[i];
+                if (tourist.age === '' || tourist.age === null || tourist.age === undefined) {
+                    openInfoModal(t.error_title, t.enter_age_warning.replace('{num}', i + 1));
+                    return false;
+                }
+                const age = parseInt(tourist.age, 10);
+                if (age >= 18) {
+                    hasAdult = true;
+                } else {
+                    hasChild = true;
+                }
+            }
+            
+            if (hasChild && !hasAdult) {
+                openInfoModal(t.error_title, t.child_alone_warning);
+                return false;
+            }
+            
+            return true;
+        }
+
         function calculateTotal() {
             const date = visitDateInput.value;
             const tariffType = tariffTypeInput.value;
 
             const adlPrice = getBasePrice(date, tariffType, 'ADL');
             const chldPrice = getBasePrice(date, tariffType, 'CHLD');
+            const agentAdlPrice = getBasePrice(date, tariffType, 'AGENT_ADL') || adlPrice;
+            const agentChldPrice = getBasePrice(date, tariffType, 'AGENT_CHLD') || chldPrice;
 
             const docsWarning = document.getElementById('docsWarning');
             const dateWarning = document.getElementById('dateWarning');
             const totalPriceEl = document.getElementById('totalPrice');
             const bookBtnWA = document.getElementById('bookBtnWA');
             const bookBtnTG = document.getElementById('bookBtnTG');
+            const btnNext1 = document.getElementById('btnNext1');
             const totalGuestsEl = document.getElementById('totalGuests');
             const t = I18N[currentLang];
 
@@ -1024,17 +1094,33 @@
             if (adlPrice === -1 || chldPrice === -1) {
                 dateWarning.classList.remove('hidden');
                 totalPriceEl.textContent = "0";
-                bookBtnWA.classList.add('opacity-50', 'pointer-events-none');
-                bookBtnWA.disabled = true;
-                bookBtnTG.classList.add('opacity-50', 'pointer-events-none');
-                bookBtnTG.disabled = true;
+                if(bookBtnWA) {
+                    bookBtnWA.classList.add('opacity-50', 'pointer-events-none');
+                    bookBtnWA.disabled = true;
+                }
+                if(bookBtnTG) {
+                    bookBtnTG.classList.add('opacity-50', 'pointer-events-none');
+                    bookBtnTG.disabled = true;
+                }
+                if(btnNext1) {
+                    btnNext1.classList.add('opacity-50', 'pointer-events-none');
+                    btnNext1.disabled = true;
+                }
                 return;
             } else {
                 dateWarning.classList.add('hidden');
-                bookBtnWA.classList.remove('opacity-50', 'pointer-events-none');
-                bookBtnWA.disabled = false;
-                bookBtnTG.classList.remove('opacity-50', 'pointer-events-none');
-                bookBtnTG.disabled = false;
+                if(bookBtnWA) {
+                    bookBtnWA.classList.remove('opacity-50', 'pointer-events-none');
+                    bookBtnWA.disabled = false;
+                }
+                if(bookBtnTG) {
+                    bookBtnTG.classList.remove('opacity-50', 'pointer-events-none');
+                    bookBtnTG.disabled = false;
+                }
+                if(btnNext1) {
+                    btnNext1.classList.remove('opacity-50', 'pointer-events-none');
+                    btnNext1.disabled = false;
+                }
             }
 
             // Early booking action rules (booking between June 24-30, visiting in July)
@@ -1056,8 +1142,7 @@
             let hasPrivilegedTickets = false;
 
             tourists.forEach(tourist => {
-                const age = calculateAge(tourist.dob, date);
-                const isBday = isBirthday(tourist.dob, date);
+                const age = tourist.age ? parseInt(tourist.age, 10) : null;
 
                 let price = 0;
                 let badgeHTML = '';
@@ -1067,17 +1152,35 @@
                         price = 0;
                         badgeHTML = `<span class="inline-block bg-teal-50 text-teal-600 px-2 py-0.5 rounded font-extrabold text-[9px] uppercase">${t.badge_infant} (${t.badge_free})</span>`;
                     } else if (age >= 4 && age <= 11) {
-                        const base = chldPrice;
+                        let base = chldPrice;
                         let discRate = 1.0;
                         let subBadges = [];
 
-                        if (isBday) {
+                        if (tourist.privilege === 'bday') {
                             discRate = 0.5;
                             subBadges.push(t.badge_bday);
                             hasPrivilegedTickets = true;
                         }
-                        if (tourist.disability !== 'none') {
-                            discRate = Math.min(discRate, 0.90); // Child disability is 10% off
+                        if (tourist.privilege === 'pregnant') {
+                            discRate = 0;
+                            subBadges.push(t.badge_free);
+                            hasPrivilegedTickets = true;
+                        }
+                        if (tourist.privilege === 'large_family') {
+                            base = agentChldPrice;
+                            subBadges.push(t.badge_discount);
+                            hasPrivilegedTickets = true;
+                        }
+                        if (tourist.privilege === 'cat1') {
+                            discRate = 0;
+                            subBadges.push(t.badge_free);
+                            hasPrivilegedTickets = true;
+                        } else if (tourist.privilege === 'cat2') {
+                            discRate = Math.min(discRate, 0.85); // 15% off
+                            subBadges.push(`${t.badge_discount} 15%`);
+                            hasPrivilegedTickets = true;
+                        } else if (tourist.privilege === 'cat3') {
+                            discRate = Math.min(discRate, 0.90); // 10% off
                             subBadges.push(`${t.badge_discount} 10%`);
                             hasPrivilegedTickets = true;
                         }
@@ -1089,27 +1192,38 @@
                         }
                         badgeHTML += `<span class="inline-block bg-blue-50 text-brand-blue px-2 py-0.5 rounded font-extrabold text-[9px] uppercase">${t.badge_child}</span>`;
                     } else if (age >= 12 && age <= 59) {
-                        const base = adlPrice;
+                        let base = adlPrice;
                         let discRate = 1.0;
                         let subBadges = [];
 
                         if (isPromoDate) {
                             discRate = 0.85;
                         }
-                        if (isBday) {
+                        
+                        if (tourist.privilege === 'bday') {
                             discRate = 0.5;
                             subBadges.push(t.badge_bday);
                             hasPrivilegedTickets = true;
                         }
-                        if (tourist.disability === 'cat1') {
+                        if (tourist.privilege === 'pregnant') {
                             discRate = 0;
                             subBadges.push(t.badge_free);
                             hasPrivilegedTickets = true;
-                        } else if (tourist.disability === 'cat2') {
+                        }
+                        if (tourist.privilege === 'large_family') {
+                            base = agentAdlPrice;
+                            subBadges.push(t.badge_discount);
+                            hasPrivilegedTickets = true;
+                        }
+                        if (tourist.privilege === 'cat1') {
+                            discRate = 0;
+                            subBadges.push(t.badge_free);
+                            hasPrivilegedTickets = true;
+                        } else if (tourist.privilege === 'cat2') {
                             discRate = Math.min(discRate, 0.85);
                             subBadges.push(`${t.badge_discount} 15%`);
                             hasPrivilegedTickets = true;
-                        } else if (tourist.disability === 'cat3') {
+                        } else if (tourist.privilege === 'cat3') {
                             discRate = Math.min(discRate, 0.90);
                             subBadges.push(`${t.badge_discount} 10%`);
                             hasPrivilegedTickets = true;
@@ -1122,16 +1236,20 @@
                         }
                         badgeHTML += `<span class="inline-block bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-extrabold text-[9px] uppercase">${t.badge_adult}</span>`;
                     } else if (age >= 60) {
-                        const base = adlPrice;
+                        let base = adlPrice;
                         let discRate = 0.5; // Seniors get 50% discount automatically
                         let subBadges = [t.badge_senior];
                         hasPrivilegedTickets = true;
 
-                        if (isBday) {
+                        if (tourist.privilege === 'bday') {
                             discRate = 0.5;
                             subBadges = [t.badge_bday];
                         }
-                        if (tourist.disability === 'cat1') {
+                        if (tourist.privilege === 'pregnant') {
+                            discRate = 0;
+                            subBadges = [t.badge_free];
+                        }
+                        if (tourist.privilege === 'cat1') {
                             discRate = 0;
                             subBadges.push(t.badge_free);
                         }
@@ -1150,10 +1268,10 @@
                     feedbackContainer.innerHTML = badgeHTML;
                 }
 
-                // Show/hide disability hint
-                const hintContainer = document.getElementById('disability_hint_' + tourist.id);
+                // Show/hide privilege hint
+                const hintContainer = document.getElementById('privilege_hint_' + tourist.id);
                 if (hintContainer) {
-                    if (tourist.disability !== 'none') {
+                    if (tourist.privilege !== 'none') {
                         hintContainer.classList.remove('hidden');
                     } else {
                         hintContainer.classList.add('hidden');
@@ -1186,31 +1304,21 @@
         function getActiveTourists() {
             return tourists.filter((tourist, index) => {
                 const isFirst = index === 0;
-                const isEmpty = (tourist.lastName || '').trim() === '' && (tourist.firstName || '').trim() === '' && tourist.dob === '';
+                const isEmpty = tourist.age === '' || tourist.age === null;
                 return isFirst || !isEmpty;
             });
         }
 
         function validateTourists() {
-            const active = getActiveTourists();
-            const t = I18N[currentLang];
-            for (let i = 0; i < active.length; i++) {
-                const tourist = active[i];
-                if ((tourist.lastName || '').trim() === '') {
-                    openInfoModal(t.error_title, t.enter_lastname_warning.replace('{num}', i + 1));
-                    return false;
-                }
-                if ((tourist.firstName || '').trim() === '') {
-                    openInfoModal(t.error_title, t.enter_firstname_warning.replace('{num}', i + 1));
-                    return false;
-                }
-                if (!tourist.dob) {
-                    openInfoModal(t.error_title, t.enter_dob_warning.replace('{num}', i + 1));
-                    return false;
-                }
+            // Already validated partially in step 2->3 transition, 
+            // but we double check everything including phone here
+            if (!validateTouristsForNextStep()) {
+                goToStep(2);
+                return false;
             }
 
             const phone = document.getElementById('clientPhone').value;
+            const t = I18N[currentLang];
             if (!phone || phone.length < 16) {
                 openInfoModal(t.error_title, t.enter_phone_warning);
                 document.getElementById('clientPhone').focus();
@@ -1238,9 +1346,9 @@
 
                 const active = getActiveTourists();
                 const recordTourists = active.map(t => ({
-                    fullName: [t.lastName, t.firstName, t.middleName].filter(Boolean).map(x => x.trim()).join(' '),
-                    dob: t.dob,
-                    disability: t.disability
+                    fullName: "Гость",
+                    age: t.age,
+                    disability: t.privilege // Map back to disability field for backend
                 }));
 
                 const { error } = await supabaseClient.from('calculations').insert([{
@@ -1277,7 +1385,7 @@
 
             const active = getActiveTourists();
             active.forEach((tourist, index) => {
-                const age = calculateAge(tourist.dob, dateStr);
+                const age = tourist.age ? parseInt(tourist.age, 10) : null;
                 let desc = '';
                 if (age !== null) {
                     if (age <= 3) desc = t.badge_infant;
@@ -1287,14 +1395,14 @@
                 }
 
                 let discounts = [];
-                if (isBirthday(tourist.dob, dateStr)) discounts.push(t.badge_bday);
                 if (tourist.disability === 'cat1') discounts.push(t.disability_cat1);
                 if (tourist.disability === 'cat2') discounts.push(t.disability_cat2);
                 if (tourist.disability === 'cat3') discounts.push(t.disability_cat3);
 
                 const discountStr = discounts.length > 0 ? ` [${discounts.join(', ')}]` : '';
-                const fullName = [tourist.lastName, tourist.firstName, tourist.middleName].filter(Boolean).map(x => x.trim()).join(' ');
-                msg += `${index + 1}. ${fullName || 'Guest'} (${formatDateToDisplay(tourist.dob) || 'DOB'}) - ${desc}${discountStr}\n`;
+                const fullName = 'Гость';
+                const ageStr = tourist.age ? `${tourist.age} лет/жыл` : 'Возраст не указан';
+                msg += `${index + 1}. ${fullName} (${ageStr}) - ${desc}${discountStr}\n`;
             });
 
             msg += `\n${t.wa_message_total}: ${totalSum} ₸`;
