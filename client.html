@@ -13,21 +13,21 @@
     <!-- Info Modal -->
     <div id="infoModal"
         class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300"
+        <div class="bg-white border border-slate-200 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300"
             id="infoModalContent">
-            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
-                <h3 class="font-black text-white text-sm flex items-center gap-2 drop-shadow-sm" id="infoModalTitle">
-                    <i class="fa-solid fa-circle-info text-cyan-400"></i>
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-black text-slate-800 text-sm flex items-center gap-2 drop-shadow-sm" id="infoModalTitle">
+                    <i class="fa-solid fa-circle-info text-cyan-500"></i>
                 </h3>
                 <button onclick="closeInfoModal()"
-                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition-colors">
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div class="p-5 text-sm text-slate-300 leading-relaxed" id="infoModalText">
+            <div class="p-5 text-sm text-slate-600 leading-relaxed font-medium" id="infoModalText">
                 <!-- Filled dynamically -->
             </div>
-            <div class="p-4 bg-white/5 border-t border-white/10 text-center">
+            <div class="p-4 bg-slate-50 border-t border-slate-100 text-center">
                 <button onclick="closeInfoModal()" id="infoModalCloseBtn"
                     class="btn-glass-primary w-full py-3 rounded-xl font-bold text-sm">Понятно</button>
             </div>
@@ -54,40 +54,35 @@
                 <!-- Prices -->
                 <div class="bg-slate-50 rounded-xl shadow-sm border border-slate-100 p-5">
                     <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-tags text-cyan-500"></i> <span id="i18n_info_prices_title">Актуальные
-                            цены</span>
+                        <span id="i18n_info_prices_title">Актуальные цены</span>
                     </h4>
                     <div id="i18n_info_prices_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- Included -->
                 <div class="bg-slate-50 rounded-xl shadow-sm border border-slate-100 p-5">
                     <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-gift text-cyan-500"></i> <span id="i18n_info_included_title">Что входит в
-                            стоимость?</span>
+                        <span id="i18n_info_included_title">Что входит в стоимость?</span>
                     </h4>
                     <div id="i18n_info_included_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- FAQ -->
                 <div class="bg-slate-50 rounded-xl shadow-sm border border-slate-100 p-5">
                     <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-circle-question text-cyan-500"></i> <span id="i18n_info_faq_title">Часто
-                            задаваемые вопросы</span>
+                        <span id="i18n_info_faq_title">Часто задаваемые вопросы</span>
                     </h4>
                     <div id="i18n_info_faq_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- Rules -->
                 <div class="bg-slate-50 rounded-xl shadow-sm border border-slate-100 p-5">
                     <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-clipboard-list text-cyan-500"></i> <span
-                            id="i18n_info_rules_title">Правила и условия</span>
+                        <span id="i18n_info_rules_title">Правила и условия</span>
                     </h4>
                     <div id="i18n_info_rules_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
                 </div>
                 <!-- Fast Track -->
                 <div class="bg-slate-50 rounded-xl shadow-sm border border-slate-100 p-5">
                     <h4 class="font-black text-lg text-slate-800 mb-3 flex items-center gap-2 drop-shadow-sm">
-                        <i class="fa-solid fa-forward-fast text-cyan-500"></i> <span id="i18n_info_fasttrack_title">Fast
-                            Track</span>
+                        <span id="i18n_info_fasttrack_title">Fast Track</span>
                     </h4>
                     <div id="i18n_info_fasttrack_text" class="text-sm text-slate-600 space-y-2 leading-relaxed"></div>
                 </div>
@@ -226,6 +221,18 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: var(--surface-soft); border-radius: 8px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+        
+        .text-real-white { color: #ffffff !important; }
+        .text-real-cyan { color: #22d3ee !important; }
+        .text-real-cyan-light { color: #cffafe !important; }
+        
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateY(-15px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-new-row {
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
     </style>
 </head>
 
@@ -268,7 +275,7 @@
             </div>
         </div>
 
-        <div class="p-6 sm:p-8 space-y-6 relative overflow-hidden" id="form-container" style="min-height: 400px;">
+        <div class="p-6 sm:p-8 space-y-6 relative" id="form-container" style="min-height: 400px;">
             <!-- Progress Bar -->
             <div class="flex items-center justify-between mb-8 relative z-10 px-2">
                 <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-800 rounded-full -z-10"></div>
@@ -322,9 +329,14 @@
                     <h2 id="i18n_indicate_guests_count" class="text-lg font-black text-white flex items-center drop-shadow-sm">
                         <i class="fa-solid fa-users text-cyan-400 mr-2"></i> Укажите гостей
                     </h2>
-                    <button onclick="addTouristRow()" id="addTouristBtn" class="px-3 py-1.5 btn-glass-primary rounded-xl text-xs flex items-center gap-1 cursor-pointer">
-                        <i class="fa-solid fa-user-plus text-[10px]"></i> <span id="i18n_add_guest_btn">Добавить гостя</span>
-                    </button>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="clearAllTourists()" id="clearAllBtn" title="Очистить список" class="px-3 py-1.5 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl text-xs flex items-center gap-1 cursor-pointer transition-colors" style="color: #ef4444 !important;">
+                            <i class="fa-solid fa-trash-can text-[11px]"></i>
+                        </button>
+                        <button type="button" onclick="addTouristRow()" id="addTouristBtn" class="px-3 py-1.5 btn-glass-primary rounded-xl text-xs flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-user-plus text-[10px]"></i> <span id="i18n_add_guest_btn">Добавить гостя</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div id="touristsListContainer" class="space-y-4 max-h-[50vh] overflow-y-auto pr-1 pb-2">
@@ -356,17 +368,20 @@
                     </div>
                 </div>
 
-                <div class="bg-black/30 border border-white/10 rounded-2xl p-5 text-white flex items-center justify-between shadow-lg mt-6 backdrop-blur-md relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent pointer-events-none"></div>
-                    <div class="relative z-10">
-                        <span id="i18n_total_to_pay" class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block mb-1">Итого к оплате</span>
-                        <div class="flex items-baseline gap-1.5">
-                            <span class="text-3xl font-black tracking-tight drop-shadow-md text-white" id="totalPrice">0</span>
-                            <span class="text-lg font-bold text-cyan-400">₸</span>
+                <div class="bg-gradient-to-br from-brand-sky to-brand-blue rounded-2xl p-6 flex flex-col shadow-[0_10px_30px_-10px_rgba(0,118,186,0.5)] mt-6 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] opacity-30 pointer-events-none"></div>
+                    <div class="relative z-10 w-full">
+                        <div class="flex justify-between items-center mb-4">
+                            <span id="i18n_total_to_pay" class="text-[11px] text-real-cyan-light font-bold uppercase tracking-widest block">Итого к оплате</span>
+                            <span class="text-xs font-black bg-white text-brand-blue px-3 py-1.5 rounded-lg shadow-sm" id="totalGuests" style="color: var(--brand-dark) !important;">0 гостей</span>
                         </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-sm font-bold bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg text-slate-700" id="totalGuests">0 гостей</span>
+                        <div id="step3GuestsList" class="flex flex-col gap-2 mb-4">
+                            <!-- Injected dynamically -->
+                        </div>
+                        <div class="flex items-baseline gap-2 border-t border-white/20 pt-4 mt-2">
+                            <span class="text-4xl font-black tracking-tight drop-shadow-md text-real-white" id="totalPrice">0</span>
+                            <span class="text-xl font-bold text-real-cyan">₸</span>
+                        </div>
                     </div>
                 </div>
 
@@ -452,7 +467,7 @@
                 quick_whatsapp_btn: "Связь по WhatsApp",
                 info_modal_title: "Памятка туристу",
                 info_prices_title: "Актуальные цены",
-                info_prices_text: "<b>Күндізгі / Дневной тариф (10:00 - 00:00)</b><br>Взрослый: 14 000 ₸<br>Детский (4-11 лет): 11 500 ₸<br><br><b>Кешкі / Вечерний тариф (17:00 - 00:00)</b><br>Взрослый: 9 500 ₸<br>Детский (4-11 лет): 7 500 ₸<br><br><b>Льготы</b><br>Именинникам: -50%<br>Пенсионерам: -50%<br>Лицам с инвалидностью: от -10%<br><br><b>Бесплатно</b><br>Беременным (при наличии справки)<br>Детям до 3 лет",
+                info_prices_text: "<b>Дневной тариф (10:00 - 00:00)</b><br>Взрослый: 14 000 ₸<br>Детский (4-11 лет): 11 500 ₸<br><br><b>Вечерний тариф (17:00 - 00:00)</b><br>Взрослый: 10 450 ₸<br>Детский (4-11 лет): 8 438 ₸<br><br><b>Льготы</b><br>Именинникам: -50%<br>Пенсионерам: -50%<br>Лицам с инвалидностью: от -10%<br><br><b>Бесплатно</b><br>Беременным (при наличии справки)<br>Детям до 3 лет",
                 info_included_title: "Что входит в стоимость?",
                 info_included_text: "<b>Электронный билет и быстрый вход в Парк</b><br><br><b>Все 16 аттракционов бесплатны:</b><br>• Захватывающие аттракционы для всей семьи<br>• Экстремальные аттракционы для взрослых<br>• Шоу-программы и анимация для детей<br><br><b>Аквапарк, волновой бассейн, водные горки:</b><br>• Удобные места для загара и отдыха у воды<br>• Бесплатные зоны отдыха и парковочные места<br>• Чистые туалеты и раздевалки<br><br><b>Безопасность и комфорт:</b><br>• Спасатели и медицинский персонал на дежурстве",
                 info_faq_title: "Часто задаваемые вопросы",
@@ -527,16 +542,16 @@
                 child_alone_warning: "Балалар паркке ересектерсіз (18+) келе алмайды.",
                 info_btn_text: "Жиі қойылатын сұрақтар (FAQ)",
                 quick_whatsapp_btn: "WhatsApp-пен байланыс",
-                info_modal_title: "Туристке жадынама",
+                info_modal_title: "Туристке арналған жадынама",
                 info_prices_title: "Ағымдағы бағалар",
-                info_prices_text: "<b>Күндізгі тариф (10:00 - 00:00)</b><br>Ересек: 14 000 ₸<br>Балалар (4-11 жас): 11 500 ₸<br><br><b>Кешкі тариф (17:00 - 00:00)</b><br>Ересек: 9 500 ₸<br>Балалар (4-11 жас): 7 500 ₸<br><br><b>Жеңілдіктер</b><br>Туған күн иелеріне: -50%<br>Зейнеткерлерге: -50%<br>Мүгедектігі бар адамдарға: -10% бастап<br><br><b>Тегін</b><br>Жүкті әйелдерге (анықтама болған жағдайда)<br>3 жасқа дейінгі балаларға",
-                info_included_title: "Құнға не кіреді?",
-                info_included_text: "<b>Электрондық билет және Паркке жылдам кіру</b><br><br><b>Барлық 16 аттракцион тегін:</b><br>• Бүкіл отбасына арналған қызықты аттракциондар<br>• Ересектерге арналған экстремалды аттракциондар<br>• Балаларға арналған шоу-бағдарламалар мен анимация<br><br><b>Аквапарк, толқынды бассейн, су сырғанақтары:</b><br>• Күнге күюге және су жанында демалуға ыңғайлы орындар<br>• Тегін демалыс аймақтары мен тұрақ орындары<br>• Таза дәретханалар мен киім ауыстыратын бөлмелер<br><br><b>Қауіпсіздік пен жайлылық:</b><br>• Кезекшіліктегі құтқарушылар мен медицина қызметкерлері",
+                info_prices_text: "<b>Күндізгі тариф (10:00 - 00:00)</b><br>Ересектерге: 14 000 ₸<br>Балаларға (4-11 жас): 11 500 ₸<br><br><b>Кешкі тариф (17:00 - 00:00)</b><br>Ересектерге: 10 450 ₸<br>Балаларға (4-11 жас): 8 438 ₸<br><br><b>Жеңілдіктер</b><br>Туған күн иелеріне: -50%<br>Зейнеткерлерге: -50%<br>Мүгедектігі бар адамдарға: -10%-дан бастап<br><br><b>Тегін</b><br>Жүкті әйелдерге (анықтамасы болған жағдайда)<br>3 жасқа дейінгі балаларға",
+                info_included_title: "Құнына не кіреді?",
+                info_included_text: "<b>Электрондық билет және паркке жылдам кіру</b><br><br><b>Барлық 16 аттракцион тегін:</b><br>• Бүкіл отбасыға арналған қызықты аттракциондар<br>• Ересектерге арналған экстремалды аттракциондар<br>• Балаларға арналған шоу-бағдарламалар мен анимация<br><br><b>Аквапарк, толқынды бассейн, су сырғанақтары:</b><br>• Күнге күюге және су жанында демалуға ыңғайлы орындар<br>• Тегін демалыс аймақтары мен тұрақ орындары<br>• Таза дәретханалар мен киім ауыстыратын бөлмелер<br><br><b>Қауіпсіздік пен жайлылық:</b><br>• Кезекшіліктегі құтқарушылар мен медицина қызметкерлері",
                 info_faq_title: "Жиі қойылатын сұрақтар",
-                info_faq_text: "<b>1. Бұл ресми ме?</b><br>Иә, біз — TETYS BLU серіктестеріміз. Қаласаңыз, парк әкімшілігінен ақпаратты нақтылай аласыз.<br><br><b>2. Неге кассадан арзан?</b><br>Біз билеттерді серіктестік бағамен сатамыз, сондықтан олар кассадағыдан тиімдірек.<br><br><b>3. Тарифтердің айырмашылығы неде?</b><br>Күндізгі тариф: 10:00 - 00:00<br>Кешкі тариф: 17:00 - 00:00<br>Аквапарк аймағы: 10:00 - 20:00<br>Аттракциондар аймағы: 12:00 - 00:00<br><br><b>4. Ваучерді қашан аламын?</b><br>Төлегеннен кейін бірден оны сізге WhatsApp-қа жібереміз.<br><br><b>5. Білезікті қалай алуға болады?</b><br>Ваучерді парк аумағындағы «Агентство» кассасында көрсетіңіз — сол жерде сізге білезік береді.<br><br><b>6. Парк қайда орналасқан?</b><br>Rixos Water World Aktau жанында.",
+                info_faq_text: "<b>1. Бұл ресми ме?</b><br>Иә, біз — TETYS BLU серіктестігіміз. Қаласаңыз, ақпаратты парк әкімшілігінен нақтылай аласыз.<br><br><b>2. Неге кассадан арзан?</b><br>Біз билеттерді серіктестік бағамен сатамыз, сондықтан олар кассадағыдан тиімдірек.<br><br><b>3. Тарифтердің айырмашылығы неде?</b><br>Күндізгі тариф: 10:00 - 00:00<br>Кешкі тариф: 17:00 - 00:00<br>Аквапарк аймағы: 10:00 - 20:00<br>Аттракциондар аймағы: 12:00 - 00:00<br><br><b>4. Ваучерді қашан аламын?</b><br>Төлем жасалғаннан кейін бірден оны сізге WhatsApp арқылы жібереміз.<br><br><b>5. Білезікті қалай алуға болады?</b><br>Ваучерді парк аумағындағы «Агентство» кассасында көрсетіңіз — сол жерде сізге білезік береді.<br><br><b>6. Парк қайда орналасқан?</b><br>Rixos Water World Aktau жанында.",
                 info_rules_title: "Ережелер мен шарттар",
-                info_rules_text: "<b>1.</b> Ыңғайлы болу үшін өзіңізбен бірге: сүлгі, шәрке, су киімін алуды ұсынамыз.<br><b>2.</b> Билеттер үшін ақшаны қайтару қарастырылмаған. 24 сағаттан кешіктірмей жүгінген кезде күнін ауыстыруға болады.<br><b>3.</b> Душ пен киім ауыстыратын бөлмелерде ыстық су қарастырылмаған. Бассейндердегі су жылытылады.<br><b>4.</b> Шкафтар ақылы. Құны 5000 ₸ (3000 пайдалану, 2000 депозит). Кілтті сағат 21:00-ге дейін қайтарған кезде 2000 ₸ депозит қайтарылады.<br><b>5.</b> Баға барлық аймақтарды шектеусіз пайдалануды қамтиды.<br><b>6.</b> Бір қонаққа 0,5 л ауыз су алып өтуге рұқсат етіледі. Тамақ әкелуге тыйым салынады.",
-                info_fasttrack_title: "Fast Track (Кезексиз кіру)",
+                info_rules_text: "<b>1.</b> Ыңғайлы болу үшін өзіңізбен бірге: сүлгі, шәрке, шомылу киімін алуды ұсынамыз.<br><b>2.</b> Билеттерге ақшаны қайтару қарастырылмаған. Сапар күнін 24 сағаттан кешіктірмей хабарласқан жағдайда ауыстыруға болады.<br><b>3.</b> Душ пен киім ауыстыратын бөлмелерде ыстық су қарастырылмаған. Бассейндердегі су жылытылады.<br><b>4.</b> Шкафтар ақылы. Құны 5000 ₸ (3000 ₸ пайдалану, 2000 ₸ депозит). Кілтті сағат 21:00-ге дейін қайтарған жағдайда депозит қайтарылады.<br><b>5.</b> Құнына барлық аймақтарды шектеусіз пайдалану кіреді.<br><b>6.</b> Бір қонаққа 0,5 л ауыз су алып өтуге рұқсат етіледі. Тамақ алып кіруге тыйым салынады.",
+                info_fasttrack_title: "Fast Track (Кезексіз кіру)",
                 info_fasttrack_text: "<b>DRY</b> (Аттракциондар) — 4500 ₸<br><b>AQUA</b> (Аквапарк) — 4000 ₸<br><b>FULL</b> (Аквапарк + Аттракциондар) — 7000 ₸<br><br>Fast Track басымдықты кіруді қамтамасыз етеді, кезекте тұрмай демалуға мүмкіндік береді!"
             },
             en: {
@@ -605,7 +620,7 @@
                 quick_whatsapp_btn: "Contact via WhatsApp",
                 info_modal_title: "Tourist Memo",
                 info_prices_title: "Current Prices",
-                info_prices_text: "<b>Day Tariff (10:00 - 00:00)</b><br>Adult: 14 000 ₸<br>Child (4-11 years): 11 500 ₸<br><br><b>Evening Tariff (17:00 - 00:00)</b><br>Adult: 9 500 ₸<br>Child (4-11 years): 7 500 ₸<br><br><b>Discounts</b><br>Birthday: -50%<br>Seniors: -50%<br>Persons with disabilities: from -10%<br><br><b>Free</b><br>Pregnant women (with medical certificate)<br>Children under 3 years old",
+                info_prices_text: "<b>Day Tariff (10:00 - 00:00)</b><br>Adult: 14 000 ₸<br>Child (4-11 years): 11 500 ₸<br><br><b>Evening Tariff (17:00 - 00:00)</b><br>Adult: 10 450 ₸<br>Child (4-11 years): 8 438 ₸<br><br><b>Discounts</b><br>Birthday: -50%<br>Seniors: -50%<br>Persons with disabilities: from -10%<br><br><b>Free</b><br>Pregnant women (with medical certificate)<br>Children under 3 years old",
                 info_included_title: "What's Included?",
                 info_included_text: "<b>Electronic ticket and fast track into the Park</b><br><br><b>All 16 attractions are free:</b><br>• Thrilling rides for the whole family<br>• Extreme rides for adults<br>• Show programs and animation for children<br><br><b>Water park, wave pool, water slides:</b><br>• Comfortable places for sunbathing and relaxing by the water<br>• Free recreation areas and parking spaces<br>• Clean toilets and changing rooms<br><br><b>Safety and comfort:</b><br>• Lifeguards and medical staff on duty",
                 info_faq_title: "Frequently Asked Questions",
@@ -626,7 +641,9 @@
                 { start: '09-21', end: '09-30', ADL: 8500, CHLD: 6700, AGENT_ADL: 8350, AGENT_CHLD: 6520 },
             ],
             evening: [
-                { start: '06-01', end: '08-31', ADL: 9500, CHLD: 7500, AGENT_ADL: 9000, AGENT_CHLD: 7180 }
+                { start: '06-01', end: '07-31', ADL: 9500, CHLD: 7500, AGENT_ADL: 9000, AGENT_CHLD: 7180 },
+                { start: '08-01', end: '08-23', ADL: 10450, CHLD: 8438, AGENT_ADL: 9900, AGENT_CHLD: 8000 },
+                { start: '08-24', end: '08-31', ADL: 9500, CHLD: 7500, AGENT_ADL: 9000, AGENT_CHLD: 7180 }
             ]
         };
 
@@ -643,6 +660,34 @@
         ];
 
         let currentLang = localStorage.getItem('client_lang') || 'ru';
+
+        let remoteDiscounts = {
+            bday: 50,
+            pregnant: 100,
+            cat1: 100,
+            cat2: 15,
+            cat3: 10,
+            large_family: 15,
+            pensioner: 50
+        };
+
+        async function fetchDiscountsFromSupabase() {
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('app_settings')
+                    .select('value')
+                    .eq('key', 'discounts')
+                    .maybeSingle();
+                
+                if (data && data.value) {
+                    Object.assign(remoteDiscounts, data.value);
+                }
+            } catch(e) {
+                console.error('Error fetching discounts:', e);
+            }
+            calculateTotal();
+        }
 
         const visitDateInput = document.getElementById('visitDate');
         const tariffTypeInput = document.getElementById('tariffType');
@@ -718,16 +763,30 @@
         }
 
         function addTouristRow() {
-            tourists.push({ id: Date.now(), age: '', disability: 'none' });
+            tourists.push({ id: Date.now(), age: '', privilege: 'none', isNew: true });
             renderTouristsList();
+            
+            setTimeout(() => {
+                const container = document.getElementById('touristsListContainer');
+                if (container) {
+                    container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+                }
+                const last = tourists[tourists.length - 1];
+                if(last) last.isNew = false;
+            }, 50);
         }
 
         function removeTouristRow(id) {
             if (tourists.length > 1) {
                 tourists = tourists.filter(t => t.id !== id);
             } else {
-                tourists = [{ id: Date.now(), age: '', disability: 'none' }];
+                tourists = [{ id: Date.now(), age: '', privilege: 'none' }]; // fixed disability to privilege
             }
+            renderTouristsList();
+        }
+
+        function clearAllTourists() {
+            tourists = [{ id: Date.now(), age: '', privilege: 'none' }];
             renderTouristsList();
         }
 
@@ -812,6 +871,9 @@
             tourists.forEach((tourist, index) => {
                 const row = document.createElement('div');
                 row.className = "bg-black/20 p-4 rounded-xl border border-white/10 shadow-sm space-y-3 relative";
+                if (tourist.isNew) {
+                    row.classList.add('animate-new-row');
+                }
 
                 let currentHint = t.privilege_hint;
                 if (tourist.privilege === 'bday') {
@@ -1157,31 +1219,31 @@
                         let subBadges = [];
 
                         if (tourist.privilege === 'bday') {
-                            discRate = 0.5;
-                            subBadges.push(t.badge_bday);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.bday / 100));
+                            subBadges.push(remoteDiscounts.bday === 100 ? t.badge_free : t.badge_bday);
                             hasPrivilegedTickets = true;
                         }
                         if (tourist.privilege === 'pregnant') {
-                            discRate = 0;
-                            subBadges.push(t.badge_free);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.pregnant / 100));
+                            subBadges.push(remoteDiscounts.pregnant === 100 ? t.badge_free : `${t.badge_discount} ${remoteDiscounts.pregnant}%`);
                             hasPrivilegedTickets = true;
                         }
                         if (tourist.privilege === 'large_family') {
-                            base = agentChldPrice;
-                            subBadges.push(t.badge_discount);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.large_family / 100));
+                            subBadges.push(`${t.badge_discount} ${remoteDiscounts.large_family}%`);
                             hasPrivilegedTickets = true;
                         }
                         if (tourist.privilege === 'cat1') {
-                            discRate = 0;
-                            subBadges.push(t.badge_free);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.cat1 / 100));
+                            subBadges.push(remoteDiscounts.cat1 === 100 ? t.badge_free : `${t.badge_discount} ${remoteDiscounts.cat1}%`);
                             hasPrivilegedTickets = true;
                         } else if (tourist.privilege === 'cat2') {
-                            discRate = Math.min(discRate, 0.85); // 15% off
-                            subBadges.push(`${t.badge_discount} 15%`);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.cat2 / 100));
+                            subBadges.push(`${t.badge_discount} ${remoteDiscounts.cat2}%`);
                             hasPrivilegedTickets = true;
                         } else if (tourist.privilege === 'cat3') {
-                            discRate = Math.min(discRate, 0.90); // 10% off
-                            subBadges.push(`${t.badge_discount} 10%`);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.cat3 / 100));
+                            subBadges.push(`${t.badge_discount} ${remoteDiscounts.cat3}%`);
                             hasPrivilegedTickets = true;
                         }
 
@@ -1201,31 +1263,31 @@
                         }
                         
                         if (tourist.privilege === 'bday') {
-                            discRate = 0.5;
-                            subBadges.push(t.badge_bday);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.bday / 100));
+                            subBadges.push(remoteDiscounts.bday === 100 ? t.badge_free : t.badge_bday);
                             hasPrivilegedTickets = true;
                         }
                         if (tourist.privilege === 'pregnant') {
-                            discRate = 0;
-                            subBadges.push(t.badge_free);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.pregnant / 100));
+                            subBadges.push(remoteDiscounts.pregnant === 100 ? t.badge_free : `${t.badge_discount} ${remoteDiscounts.pregnant}%`);
                             hasPrivilegedTickets = true;
                         }
                         if (tourist.privilege === 'large_family') {
-                            base = agentAdlPrice;
-                            subBadges.push(t.badge_discount);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.large_family / 100));
+                            subBadges.push(`${t.badge_discount} ${remoteDiscounts.large_family}%`);
                             hasPrivilegedTickets = true;
                         }
                         if (tourist.privilege === 'cat1') {
-                            discRate = 0;
-                            subBadges.push(t.badge_free);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.cat1 / 100));
+                            subBadges.push(remoteDiscounts.cat1 === 100 ? t.badge_free : `${t.badge_discount} ${remoteDiscounts.cat1}%`);
                             hasPrivilegedTickets = true;
                         } else if (tourist.privilege === 'cat2') {
-                            discRate = Math.min(discRate, 0.85);
-                            subBadges.push(`${t.badge_discount} 15%`);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.cat2 / 100));
+                            subBadges.push(`${t.badge_discount} ${remoteDiscounts.cat2}%`);
                             hasPrivilegedTickets = true;
                         } else if (tourist.privilege === 'cat3') {
-                            discRate = Math.min(discRate, 0.90);
-                            subBadges.push(`${t.badge_discount} 10%`);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.cat3 / 100));
+                            subBadges.push(`${t.badge_discount} ${remoteDiscounts.cat3}%`);
                             hasPrivilegedTickets = true;
                         }
 
@@ -1237,21 +1299,21 @@
                         badgeHTML += `<span class="inline-block bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-extrabold text-[9px] uppercase">${t.badge_adult}</span>`;
                     } else if (age >= 60) {
                         let base = adlPrice;
-                        let discRate = 0.5; // Seniors get 50% discount automatically
-                        let subBadges = [t.badge_senior];
+                        let discRate = 1 - (remoteDiscounts.pensioner / 100);
+                        let subBadges = [remoteDiscounts.pensioner === 100 ? t.badge_free : t.badge_senior];
                         hasPrivilegedTickets = true;
 
                         if (tourist.privilege === 'bday') {
-                            discRate = 0.5;
-                            subBadges = [t.badge_bday];
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.bday / 100));
+                            subBadges = [remoteDiscounts.bday === 100 ? t.badge_free : t.badge_bday];
                         }
                         if (tourist.privilege === 'pregnant') {
-                            discRate = 0;
-                            subBadges = [t.badge_free];
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.pregnant / 100));
+                            subBadges = [remoteDiscounts.pregnant === 100 ? t.badge_free : `${t.badge_discount} ${remoteDiscounts.pregnant}%`];
                         }
                         if (tourist.privilege === 'cat1') {
-                            discRate = 0;
-                            subBadges.push(t.badge_free);
+                            discRate = Math.min(discRate, 1 - (remoteDiscounts.cat1 / 100));
+                            subBadges.push(remoteDiscounts.cat1 === 100 ? t.badge_free : `${t.badge_discount} ${remoteDiscounts.cat1}%`);
                         }
 
                         price = base * discRate;
@@ -1288,6 +1350,25 @@
             totalPriceEl.textContent = Math.round(totalSum).toLocaleString('ru-RU');
             if (totalGuestsEl) {
                 totalGuestsEl.textContent = t.guests_count.replace('{count}', totalGuests);
+            }
+            
+            // Populate Step 3 guests list
+            const step3GuestsList = document.getElementById('step3GuestsList');
+            if (step3GuestsList) {
+                step3GuestsList.innerHTML = '';
+                tourists.forEach((tourist, index) => {
+                    if (tourist.age !== null && tourist.age !== '') {
+                        const ageStr = tourist.age ? tourist.age + ' лет' : '';
+                        const rowHTML = `
+                        <div class="flex justify-between items-center bg-white/10 rounded-lg p-2.5 shadow-sm border border-white/20">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-white text-brand-blue font-bold text-[10px] px-2 py-0.5 rounded shadow-sm" style="color: var(--brand-dark) !important;"># ${index + 1}</span>
+                                <span class="text-xs font-bold text-real-white">Возраст: ${ageStr}</span>
+                            </div>
+                        </div>`;
+                        step3GuestsList.insertAdjacentHTML('beforeend', rowHTML);
+                    }
+                });
             }
         }
 
@@ -1514,8 +1595,14 @@
             }, 300);
         }
 
+        // Set minimum date to today to prevent selecting past dates
+        const localDate = new Date();
+        localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
+        document.getElementById('visitDate').min = localDate.toISOString().split('T')[0];
+
         // Initialize form layout and translations
         changeLanguage(currentLang);
+        fetchDiscountsFromSupabase();
     </script>
 </body>
 
