@@ -1941,15 +1941,18 @@
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
-            <div class="flex border-b border-slate-100 px-5 gap-1 shrink-0">
+            <div class="flex border-b border-slate-100 px-5 gap-1 shrink-0 overflow-x-auto">
                 <button id="pricingTabPricesBtn" onclick="window.switchPricingTab('prices')"
-                    class="pricing-tab-btn active">Цены тарифов</button>
+                    class="pricing-tab-btn active whitespace-nowrap">Цены тарифов</button>
                 <button id="pricingTabPromosBtn" onclick="window.switchPricingTab('promos')"
-                    class="pricing-tab-btn">Акции раннего бронирования</button>
+                    class="pricing-tab-btn whitespace-nowrap">Акции раннего бронирования</button>
+                <button id="pricingTabDiscountsBtn" onclick="window.switchPricingTab('discounts')"
+                    class="pricing-tab-btn whitespace-nowrap">Льготы и скидки</button>
             </div>
             <div class="flex-1 overflow-y-auto p-5">
                 <div id="pricingPricesPanel"></div>
                 <div id="pricingPromosPanel" class="hidden"></div>
+                <div id="pricingDiscountsPanel" class="hidden"></div>
             </div>
         </div>
     </div>
