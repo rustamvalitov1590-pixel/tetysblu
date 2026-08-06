@@ -583,7 +583,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const timeout = new Promise((resolve) => setTimeout(() => resolve(null), 4000));
             const fetchPromise = Promise.all([
-                supabaseClient.from('app_settings').select('value').eq('key', 'tariffs').maybeSingle(),
+                supabaseClient.from('app_settings').select('key, value').in('key', ['tariffs', 'discounts']),
                 supabaseClient.from('promotions').select('*').order('created_at', { ascending: false })
             ]);
 
@@ -594,13 +594,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             const [settingsRes, promosRes] = result;
 
-            if (settingsRes && settingsRes.data && settingsRes.data.value) {
-                const remote = settingsRes.data.value;
-                if (remote.day) CONFIG.tariffs.day = remote.day;
-                if (remote.evening) CONFIG.tariffs.evening = remote.evening;
-                if (typeof remote.earlyBookingFallback === 'number') {
-                    CONFIG.discounts.earlyBooking = remote.earlyBookingFallback;
-                }
+            if (settingsRes && settingsRes.data) {
+                settingsRes.data.forEach(setting => {
+                    if (setting.key === 'tariffs' && setting.value) {
+                        const remote = setting.value;
+                        if (remote.day) CONFIG.tariffs.day = remote.day;
+                        if (remote.evening) CONFIG.tariffs.evening = remote.evening;
+                        if (typeof remote.earlyBookingFallback === 'number') {
+                            CONFIG.discounts.earlyBooking = remote.earlyBookingFallback;
+                        }
+                    } else if (setting.key === 'discounts' && setting.value) {
+                        Object.assign(CONFIG.discounts, setting.value);
+                    }
+                });
             }
 
             if (promosRes && promosRes.data) {
@@ -4208,6 +4214,103 @@ document.addEventListener('DOMContentLoaded', async () => {
         render();
     };
 
+    window.renderPricingDiscountsPanel = function () {
+        const panel = document.getElementById('pricingDiscountsPanel');
+        if (!panel) return;
+        
+        const d = CONFIG.discounts;
+
+        panel.innerHTML = `
+            <div class="border border-slate-100 rounded-xl p-5 mb-5 bg-slate-50/50">
+                <h3 class="text-sm font-black text-slate-800 mb-4">Настройки скидок (%)</h3>
+                <p class="text-xs text-slate-500 mb-4">Укажите размер скидки для каждой льготной категории. Эти проценты будут вычитаться из базовой стоимости билета на текущий день.<br/>Например, для именинников укажите <b>50</b> (скидка 50%), для беременных — <b>100</b> (бесплатно).</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Именинники</label>
+                        <input id="discountBday" type="number" min="0" max="100" class="price-input text-left" value="${d.bday || 0}">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Пенсионеры</label>
+                        <input id="discountPensioner" type="number" min="0" max="100" class="price-input text-left" value="${d.pensioner || 0}">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Многодетные семьи</label>
+                        <input id="discountLargeFamily" type="number" min="0" max="100" class="price-input text-left" value="${d.large_family || 0}">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Беременные (справка)</label>
+                        <input id="discountPregnant" type="number" min="0" max="100" class="price-input text-left" value="${d.pregnant || 0}">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Инвалиды (1 категория)</label>
+                        <input id="discountCat1" type="number" min="0" max="100" class="price-input text-left" value="${d.cat1 || 0}">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Инвалиды (2 категория)</label>
+                        <input id="discountCat2" type="number" min="0" max="100" class="price-input text-left" value="${d.cat2 || 0}">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Инвалиды (3 категория)</label>
+                        <input id="discountCat3" type="number" min="0" max="100" class="price-input text-left" value="${d.cat3 || 0}">
+                    </div>
+                </div>
+                <button onclick="window.saveDiscountsConfig()" class="w-full mt-5 py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-xl transition-colors text-sm">
+                    <i class="fa-solid fa-save mr-1.5"></i>Сохранить настройки скидок
+                </button>
+                <p id="discountsSaveStatus" class="text-center text-xs mt-2"></p>
+            </div>
+        `;
+    };
+
+    window.saveDiscountsConfig = async function () {
+        const btn = event.currentTarget;
+        const status = document.getElementById('discountsSaveStatus');
+        
+        const newDiscounts = {
+            ...CONFIG.discounts,
+            bday: parseInt(document.getElementById('discountBday').value) || 0,
+            pensioner: parseInt(document.getElementById('discountPensioner').value) || 0,
+            large_family: parseInt(document.getElementById('discountLargeFamily').value) || 0,
+            pregnant: parseInt(document.getElementById('discountPregnant').value) || 0,
+            cat1: parseInt(document.getElementById('discountCat1').value) || 0,
+            cat2: parseInt(document.getElementById('discountCat2').value) || 0,
+            cat3: parseInt(document.getElementById('discountCat3').value) || 0
+        };
+
+        if (!supabaseClient) {
+            status.textContent = 'Ошибка: Supabase не инициализирован';
+            status.className = 'text-center text-xs mt-2 text-rose-600 font-bold';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i>Сохранение...';
+
+        try {
+            const { error } = await supabaseClient.from('app_settings').upsert({
+                key: 'discounts',
+                value: newDiscounts,
+                updated_at: new Date().toISOString()
+            });
+
+            if (error) throw error;
+            
+            CONFIG.discounts = newDiscounts;
+            status.textContent = 'Успешно сохранено!';
+            status.className = 'text-center text-xs mt-2 text-emerald-600 font-bold';
+            setTimeout(() => {
+                if (status) status.textContent = '';
+            }, 3000);
+        } catch (e) {
+            console.error('Save discounts error:', e);
+            status.textContent = 'Ошибка сохранения';
+            status.className = 'text-center text-xs mt-2 text-rose-600 font-bold';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-save mr-1.5"></i>Сохранить настройки скидок';
+        }
+    };
+
     window.openPricingAdminModal = function () {
         const modal = document.getElementById('pricingAdminModal');
         if (!modal) return;
@@ -4215,6 +4318,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         modal.classList.add('flex');
         renderPricingPricesPanel();
         renderPricingPromosPanel();
+        renderPricingDiscountsPanel();
     };
 
     window.closePricingAdminModal = function () {
@@ -4227,19 +4331,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.switchPricingTab = function (tab) {
         const pricesPanel = document.getElementById('pricingPricesPanel');
         const promosPanel = document.getElementById('pricingPromosPanel');
+        const discountsPanel = document.getElementById('pricingDiscountsPanel');
         const pricesBtn = document.getElementById('pricingTabPricesBtn');
         const promosBtn = document.getElementById('pricingTabPromosBtn');
-        if (!pricesPanel || !promosPanel) return;
+        const discountsBtn = document.getElementById('pricingTabDiscountsBtn');
+        
+        if (!pricesPanel || !promosPanel || !discountsPanel) return;
+        
+        // Hide all
+        pricesPanel.classList.add('hidden');
+        promosPanel.classList.add('hidden');
+        discountsPanel.classList.add('hidden');
+        pricesBtn.classList.remove('active');
+        promosBtn.classList.remove('active');
+        discountsBtn.classList.remove('active');
+
         if (tab === 'prices') {
             pricesPanel.classList.remove('hidden');
-            promosPanel.classList.add('hidden');
             pricesBtn.classList.add('active');
-            promosBtn.classList.remove('active');
-        } else {
-            pricesPanel.classList.add('hidden');
+        } else if (tab === 'promos') {
             promosPanel.classList.remove('hidden');
-            pricesBtn.classList.remove('active');
             promosBtn.classList.add('active');
+        } else if (tab === 'discounts') {
+            discountsPanel.classList.remove('hidden');
+            discountsBtn.classList.add('active');
         }
     };
 
