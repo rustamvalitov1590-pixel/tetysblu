@@ -1,49 +1,152 @@
-// === НАСТРОЙКИ (ГЛОБАЛЬНЫЕ) ===
-const CONFIG = {
-    // Себестоимость билета (для расчета маржинальности и чистой прибыли) берется из 'net'
-    tariffs: {
-        day: [
-            { start: '05-23', end: '05-31', tourist: { ADL: 11100, CHLD: 8860 }, agent: { ADL: 10900, CHLD: 8660 }, net: { ADL: 10200, CHLD: 8160 } },
-            { start: '06-01', end: '08-23', tourist: { ADL: 14000, CHLD: 11500 }, agent: { ADL: 13300, CHLD: 10700 }, net: { ADL: 12750, CHLD: 10200 } },
-            { start: '08-24', end: '09-06', tourist: { ADL: 11500, CHLD: 9200 }, agent: { ADL: 11200, CHLD: 8860 }, net: { ADL: 10200, CHLD: 8160 } },
-            { start: '09-07', end: '09-20', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9200, CHLD: 7300 }, net: { ADL: 8500, CHLD: 6800 } },
-            { start: '09-21', end: '09-30', tourist: { ADL: 8500, CHLD: 6700 }, agent: { ADL: 8350, CHLD: 6520 }, net: { ADL: 7650, CHLD: 6120 } },
-        ],
-        evening: [
-            { start: '06-01', end: '07-31', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9000, CHLD: 7180 }, net: { ADL: 8500, CHLD: 6800 } },
-            { start: '08-01', end: '08-23', tourist: { ADL: 10450, CHLD: 8438 }, agent: { ADL: 9900, CHLD: 8000 }, net: { ADL: 8500, CHLD: 6800 } },
-            { start: '08-24', end: '08-31', tourist: { ADL: 9500, CHLD: 7500 }, agent: { ADL: 9000, CHLD: 7180 }, net: { ADL: 8500, CHLD: 6800 } }
-        ]
-    },
-    discounts: {
-        earlyBooking: 15,
-        pensioner: 50,
-        birthday: 100,
-        disabled: 100
-    },
-    // Логины/пароли и telegram-токен больше НЕ хранятся здесь.
-    // Проверка логина и отправка Telegram-алертов происходит через
-    // Supabase Edge Functions (см. supabase/functions/verify-login и
-    // supabase/functions/telegram-alert), секреты лежат только на сервере Supabase.
-    promocodes: {
-        'SUMMER10': { type: 'percent', value: 10 },
-        'TETYS2000': { type: 'fixed', value: 2000 }
-    },
-    telegram: {
-        minSumForAlert: 50000 // порог не секретный, можно оставить в клиенте
+window.showToast = function (message, icon = '', bgColor = 'bg-blue-600') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'fixed bottom-5 right-5 z-[9999] flex flex-col gap-2.5';
+        document.body.appendChild(container);
     }
+
+    const toast = document.createElement('div');
+    toast.className = `flex items-center gap-3 px-4 py-3 rounded-lg text-white shadow-lg transition-all duration-300 transform translate-y-5 opacity-0 ${bgColor}`;
+    toast.style.minWidth = '280px';
+    toast.style.maxWidth = '400px';
+
+    let iconHtml = '';
+    if (icon) {
+        if (icon.startsWith('fa-')) {
+            iconHtml = `<i class="fa-solid ${icon}"></i>`;
+        } else {
+            iconHtml = icon;
+        }
+    }
+
+    toast.innerHTML = `
+            ${iconHtml ? `<div class="text-lg">${iconHtml}</div>` : ''}
+            <div class="flex-1 font-sans text-sm">${message}</div>
+        `;
+
+    container.appendChild(toast);
+
+    // Trigger reflow
+    toast.offsetHeight;
+
+    // Animate in
+    toast.classList.remove('translate-y-5', 'opacity-0');
+
+    setTimeout(() => {
+        // Animate out
+        toast.classList.add('-translate-y-5', 'opacity-0');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 4000);
 };
 
-const tariffs = CONFIG.tariffs;
+function transliterate(text) {
+    if (!text) return '';
+    return text.split('').map(char => cyrillicToLatinMap[char] !== undefined ? cyrillicToLatinMap[char] : char.toUpperCase()).join('');
+}
 
-// Транслитерация
-const cyrillicToLatinMap = {
-    'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'E', 'Ж': 'ZH', 'З': 'Z', 'И': 'I',
-    'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T',
-    'У': 'U', 'Ф': 'F', 'Х': 'KH', 'Ц': 'TS', 'Ч': 'CH', 'Ш': 'SH', 'Щ': 'SHCH', 'Ъ': '', 'Ы': 'Y', 'Ь': '',
-    'Э': 'E', 'Ю': 'YU', 'Я': 'YA', 'Ә': 'A', 'І': 'I', 'Ң': 'NG', 'Ғ': 'GH', 'Ү': 'U', 'Ұ': 'U', 'Қ': 'Q', 'Ө': 'O', 'Һ': 'H',
-    'а': 'A', 'б': 'B', 'в': 'V', 'г': 'G', 'д': 'D', 'е': 'E', 'ё': 'E', 'ж': 'ZH', 'з': 'Z', 'и': 'I',
-    'й': 'Y', 'к': 'K', 'л': 'L', 'м': 'M', 'н': 'N', 'о': 'O', 'п': 'P', 'р': 'R', 'с': 'S', 'т': 'T',
-    'у': 'U', 'ф': 'F', 'х': 'KH', 'ц': 'TS', 'ч': 'CH', 'ш': 'SH', 'щ': 'SHCH', 'ъ': '', 'ы': 'Y', 'ь': '',
-    'э': 'E', 'ю': 'YU', 'я': 'YA', 'ә': 'A', 'і': 'I', 'ң': 'NG', 'ғ': 'GH', 'ү': 'U', 'ұ': 'U', 'қ': 'Q', 'ө': 'O', 'һ': 'H'
+function sanitizeProfanity(text) {
+    if (!text) return text;
+    const badWords = [
+        'хуй', 'хуя', 'хуе', 'нахуй', 'похуй', 'дохуя', 'пизда', 'пизде', 'пизду', 'пизды', 'пиздец', 'ебать', 'ебан', 'ебану', 'долбоеб', 'долбоёб', 'уебан', 'бля', 'блять', 'блядь', 'сука', 'суку', 'суки', 'пидор', 'пидарас', 'пидорас', 'гандон', 'шлюха', 'шлюхи', 'шалава', 'шалавы', 'шмара', 'курва', 'залупа', 'говно', 'мразь', 'ублюдок', 'чмо', 'хуесос', 'хуйло', 'педик', 'пиздюк',
+        'қотақ', 'котак', 'қотағым', 'котагым', 'қотақбас', 'котакбас', 'ам', 'амы', 'сігіс', 'сигис', 'шешең', 'шешен', 'шешеңді', 'шешенди', 'көт', 'көті', 'коти', 'жалеп', 'амшык', 'амшық',
+        'fuck', 'fucker', 'fucking', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'cock', 'pussy', 'whore', 'slut'
+    ];
+    let sanitized = text;
+    badWords.forEach(word => {
+        const regex = new RegExp('(^|[^\\p{L}])(' + word + ')($|[^\\p{L}])', 'giu');
+        sanitized = sanitized.replace(regex, '$1***$3');
+        sanitized = sanitized.replace(regex, '$1***$3'); // second pass for overlaps
+    });
+    return sanitized;
+}
+// ---------------
+function guessGender(name) {
+    if (!name) return 'male';
+    const cleanName = name.trim().toLowerCase();
+    const words = cleanName.split(/\s+/);
+
+    for (let word of words) {
+        // 1. Женские окончания (казахские отчества и фамилии)
+        if (word.endsWith('қызы') || word.endsWith('kyzy') || word.endsWith('qyzy')) return 'female';
+        // 2. Мужские окончания (казахские отчества)
+        if (word.endsWith('ұлы') || word.endsWith('uly') || word.endsWith('улы')) return 'male';
+
+        // 3. Русские отчества
+        if (word.endsWith('овна') || word.endsWith('евна') || word.endsWith('ична')) return 'female';
+        if (word.endsWith('ович') || word.endsWith('евич') || word.endsWith('ич')) return 'male';
+        if (word.endsWith('ovna') || word.endsWith('evna') || word.endsWith('ichna')) return 'female';
+        if (word.endsWith('ovich') || word.endsWith('evich') || word.endsWith('ich')) return 'male';
+
+        // 4. Русские/казахские фамилии на ova/eva/ina/aya/ова/ева/ина/ая
+        if (word.endsWith('ова') || word.endsWith('ева') || word.endsWith('ина') || word.endsWith('ая')) return 'female';
+        if (word.endsWith('ova') || word.endsWith('eva') || word.endsWith('ina') || word.endsWith('aya')) return 'female';
+
+        // 5. Окончания казахских женских имен (нұр/нур/nur, гүл/гул/gul, ым/ім/ym/im)
+        if (word.endsWith('нұр') || word.endsWith('нур') || word.endsWith('nur')) return 'female';
+        if (word.endsWith('гүл') || word.endsWith('гул') || word.endsWith('gul')) return 'female';
+        if (word.endsWith('ным') || word.endsWith('лым') || word.endsWith('рым') || word.endsWith('ным')) return 'female';
+
+        // Известные женские имена без четких окончаний
+        if (word.endsWith('айым') || word.endsWith('ару') || word.endsWith('аружан') || word.endsWith('улжан') ||
+            word.endsWith('ұлжан') || word.endsWith('асем') || word.endsWith('әсем') || word.endsWith('асель') ||
+            word.endsWith('әсел') || word.endsWith('айгерім') || word.endsWith('айгерим') || word.endsWith('арайлым')) {
+            return 'female';
+        }
+
+        // 6. Окончания мужских имен/фамилий на ов/ев/ин/ий
+        if (word.endsWith('ов') || word.endsWith('ев') || word.endsWith('ин') || word.endsWith('ий')) return 'male';
+        if (word.endsWith('ov') || word.endsWith('ev') || word.endsWith('in') || word.endsWith('iy') || word.endsWith('y')) {
+            // Если это Seidaly - это фамилия, может быть и мужской и женской. Но по дефолту оставим male.
+        }
+    }
+
+    // Вторая итерация по отдельным словам для поиска женских окончаний на -а / -я в именах
+    for (let word of words) {
+        if (word.length > 2 && (word.endsWith('а') || word.endsWith('я') || word.endsWith('a') || word.endsWith('ya'))) {
+            // Исключаем мужские имена/отчества
+            if (!word.endsWith('овича') && !word.endsWith('евича') && !word.endsWith('ича') &&
+                !word.endsWith('илья') && !word.endsWith('никита') && !word.endsWith('данила') && !word.endsWith('баха')) {
+                return 'female';
+            }
+        }
+    }
+
+    return 'male';
+}
+
+function calculateAge(dobStr, visitDateStr) {
+    if (!dobStr || !visitDateStr) return null;
+    const dob = new Date(dobStr);
+    const visit = new Date(visitDateStr);
+    let age = visit.getFullYear() - dob.getFullYear();
+
+    if (visit.getMonth() < dob.getMonth() || (visit.getMonth() === dob.getMonth() && visit.getDate() < dob.getDate())) {
+        age--;
+    }
+
+    return age;
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+        return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    }
+    return dateStr;
+}
+
+window.showToast = function (message, icon = 'fa-check', bgClass = 'bg-[#1ebd5a]') {
+    const toast = document.createElement('div');
+    toast.className = `toast-notification ${bgClass} text-white px-5 py-3 rounded-2xl shadow-xl flex items-center font-bold text-sm`;
+    toast.innerHTML = `<i class="fa-solid ${icon} mr-2.5 text-lg"></i> ${message}`;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 3000);
 };
+
