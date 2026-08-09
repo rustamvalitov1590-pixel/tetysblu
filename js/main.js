@@ -72,6 +72,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     // -------------------
 
+    // Клик по аватару админа (розыгрыш)
+    const adminAvatar = document.getElementById('adminAvatarImg');
+    if (adminAvatar) {
+        adminAvatar.addEventListener('click', () => {
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center cursor-zoom-out opacity-0 transition-opacity duration-300';
+            
+            const img = document.createElement('img');
+            img.src = 'assets/admin_avatar.png?t=' + Date.now();
+            img.className = 'max-w-[90%] max-h-[90%] rounded-2xl shadow-2xl transition-transform duration-300 scale-90 object-contain';
+            
+            overlay.appendChild(img);
+            document.body.appendChild(overlay);
+            
+            // Запуск анимации
+            overlay.offsetHeight;
+            overlay.classList.remove('opacity-0');
+            img.classList.remove('scale-90');
+            
+            overlay.addEventListener('click', () => {
+                overlay.classList.add('opacity-0');
+                img.classList.add('scale-90');
+                setTimeout(() => {
+                    overlay.remove();
+                }, 300);
+            });
+        });
+    }
+
 
     // Состояние приложения
 
@@ -666,7 +695,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const today = new Date();
     // Форматируем с учетом локальной зоны (для корректного отображения YYYY-MM-DD)
     const todayStr = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-    visitDateInput.value = todayStr;
+    if (visitDateInput) {
+        visitDateInput.value = todayStr;
+        visitDateInput.min = todayStr;
+    }
 
     // Автоматический год сезона
     const currentSeasonYearEl = document.getElementById('currentSeasonYear');
@@ -1194,10 +1226,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (confirm('Вы уверены, что хотите удалить всех гостей и начать заново?')) {
             tourists = [];
 
-            // Сбрасываем дату визита на сегодня
-            const today = new Date();
-            const todayStr = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-            if (visitDateInput) visitDateInput.value = todayStr;
+            // Сбрасываем текстовое поле
+            if (bulkText) bulkText.value = '';
+            lastAttemptedText = '';
+
+            // Сбрасываем быстрый режим
+            quickCounts = { adl: 0, chld: 0, pens: 0, inf: 0 };
+            quickStatuses = { adl: [], chld: [], pens: [], inf: [] };
+            updateQuickInputsDOM();
 
             render();
         }
@@ -1497,8 +1533,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             }
 
-            // Динамический бейдж с микро-анимацией (свечение)
-            // Динамический стиль для выпадающего списка типа (бейдж)
+            let catBadgeClass = 'bg-slate-500/20 text-slate-400';
+            if (category === 'ADL') catBadgeClass = 'bg-blue-500/20 text-blue-300 border border-blue-400/30';
+            if (category === 'SNR') catBadgeClass = 'bg-purple-500/20 text-purple-300 border border-purple-400/30';
+            if (category === 'CHLD') catBadgeClass = 'bg-teal-500/20 text-teal-300 border border-teal-400/30';
+            if (category === 'INF') catBadgeClass = 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30';
+            if (category === 'INV') catBadgeClass = 'bg-rose-500/20 text-rose-300 border border-rose-400/30';
+
             let catSelectClass = 'border-transparent text-slate-300 bg-white/5';
             if (category === 'ADL') catSelectClass = 'bg-blue-500/20 text-blue-400 border-blue-400/20';
             if (category === 'SNR') catSelectClass = 'bg-purple-500/20 text-purple-400 border-purple-400/20';
@@ -1508,51 +1549,45 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Создание DOM элемента строки
             const row = document.createElement('div');
-            row.className = 'tourist-row p-1.5 md:p-1 flex flex-col md:grid md:grid-cols-12 gap-1.5 md:gap-1 items-start md:items-center transition-all relative hover:bg-white/5 border-b border-white/5 animate-row-in';
+            row.className = 'tourist-row animate-row-in';
             row.innerHTML = `
-                <!-- Mobile Label: Delete Button -->
-                <div class="absolute top-1.5 right-3 md:static md:col-span-1 md:w-full flex justify-end md:order-last">
-                    <button onclick="removeTourist('${t.id}', this)" class="btn-danger p-0.5 rounded-md text-slate-500 hover:text-rose-400 hover:bg-rose-500/20 transition-colors" title="Удалить">
-                        <i class="fa-solid fa-trash-can text-xs pointer-events-none"></i>
-                    </button>
-                </div>
-                
-                <div class="w-full flex gap-2 pr-6 md:pr-0 md:contents">
-                    <!-- Full Name -->
-                    <div class="flex-1 md:col-span-3 w-full relative">
-                        <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block drop-shadow-sm">ФИО (Рус/Каз)</label>
+                <!-- ===== MOBILE CARD (скрыт на md+) ===== -->
+                <div class="md:hidden bg-white/5 border border-white/10 rounded-2xl overflow-hidden shadow-sm transition-all hover:border-white/20">
+
+                    <!-- Card Header: Name + DOB + Delete -->
+                    <div class="flex items-center gap-2 px-3 pt-3 pb-2 border-b border-white/5">
+                        <span class="text-[10px] font-bold text-slate-500 shrink-0">#${index + 1}</span>
                         <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
                             onblur="updateTourist('${t.id}', 'fullName', this.value)"
-                            class="w-full text-left bg-transparent text-white border ${!t.fullName ? 'border-rose-500 bg-rose-500/20' : 'border-transparent'} hover:border-white/20 focus:border-cyan-400 focus:bg-black/20 focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors ${discountInfo.isBirthday ? 'pr-7' : ''}">
-                        ${discountInfo.isBirthday ? '<div class="absolute right-2 top-[calc(50%+4px)] md:top-1/2 -translate-y-1/2 text-amber-400 text-[10px]" title="Именинник"><i class="fa-solid fa-cake-candles"></i></div>' : ''}
-                    </div>
-                    
-                    <!-- DOB -->
-                    <div class="w-[100px] shrink-0 md:w-full md:col-span-2">
-                        <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5 block drop-shadow-sm">Дата рожд.</label>
-                        <input type="text" value="${displayDob}" 
-                            placeholder="дд.мм.гггг или гггг"
-                            onblur="updateTouristDobDirect('${t.id}', this.value)"
-                            class="w-full text-left bg-transparent text-white border ${(!t.dob && t.age === undefined && t.year === undefined) ? 'border-rose-500 bg-rose-500/20' : 'border-transparent'} hover:border-white/20 focus:border-cyan-400 focus:bg-black/20 focus:outline-none rounded-lg px-0.5 py-1 text-xs font-medium transition-colors">
-                    </div>
-                </div>
-                
-                <!-- Stats Row (Age, Category, Price) -->
-                <div class="col-span-12 w-full flex flex-wrap justify-between items-center mt-1 md:mt-0 md:contents pt-1.5 md:pt-0">
-                    <div class="flex space-x-2 sm:space-x-4 md:space-x-6 md:contents">
-                        <!-- Age -->
-                        <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center">
-                            <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Возраст</label>
-                            <span class="text-xs font-bold ${age === null ? 'text-slate-500' : 'text-cyan-400'}">
-                                ${age !== null ? age : '-'}
-                            </span>
+                            class="flex-1 min-w-0 bg-transparent text-white border-b ${!t.fullName ? 'border-rose-500' : 'border-transparent'} hover:border-white/30 focus:border-cyan-400 focus:outline-none py-0.5 text-xs font-semibold transition-colors placeholder:text-slate-600">
+                        ${discountInfo.isBirthday ? '<span class="text-amber-400 text-xs shrink-0" title="Именинник"><i class="fa-solid fa-cake-candles"></i></span>' : ''}
+                        <div class="shrink-0 w-[90px]">
+                            <input type="text" value="${displayDob}" 
+                                placeholder="дд.мм.гггг"
+                                onblur="updateTouristDobDirect('${t.id}', this.value)"
+                                class="w-full bg-transparent text-slate-300 border-b ${(!t.dob && t.age === undefined && t.year === undefined) ? 'border-rose-500' : 'border-transparent'} hover:border-white/30 focus:border-cyan-400 focus:outline-none py-0.5 text-xs text-right transition-colors placeholder:text-slate-600">
                         </div>
-                        
-                        <!-- Category -->
-                        <div class="md:col-span-1 text-left md:text-center flex flex-col items-start md:items-center w-full md:w-auto">
-                            <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Тип</label>
+                        <button onclick="removeTourist('${t.id}', this)" class="btn-danger shrink-0 ml-1 p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/20 transition-colors" title="Удалить">
+                            <i class="fa-solid fa-trash-can text-[11px] pointer-events-none"></i>
+                        </button>
+                    </div>
+
+                    <!-- Card Body: Age + Category + Price -->
+                    <div class="flex items-center px-3 py-2.5 gap-3">
+                        <!-- Age block -->
+                        <div class="flex flex-col items-center shrink-0 min-w-[36px]">
+                            <span class="text-2xl font-black leading-none ${age === null ? 'text-slate-600' : 'text-cyan-400'}">${age !== null ? age : '—'}</span>
+                            <span class="text-[8px] text-slate-500 uppercase font-semibold mt-0.5">лет</span>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="w-px h-8 bg-white/10 shrink-0"></div>
+
+                        <!-- Category select -->
+                        <div class="flex flex-col gap-1 shrink-0">
+                            <span class="text-[8px] text-slate-500 uppercase font-semibold">Тип</span>
                             <select onchange="updateTouristCategory('${t.id}', this.value)"
-                                class="text-[9px] font-bold px-1.5 py-0.5 rounded border ${catSelectClass} focus:outline-none transition-all duration-300 cursor-pointer text-center w-full md:w-auto">
+                                class="text-[10px] font-bold px-2 py-1 rounded-lg border ${catSelectClass} focus:outline-none cursor-pointer">
                                 <option value="ADL" class="bg-slate-800" ${category === 'ADL' ? 'selected' : ''}>ADL</option>
                                 <option value="CHLD" class="bg-slate-800" ${category === 'CHLD' ? 'selected' : ''}>CHLD</option>
                                 <option value="INF" class="bg-slate-800" ${category === 'INF' ? 'selected' : ''}>INF</option>
@@ -1561,22 +1596,85 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </select>
                         </div>
 
-                        <!-- Disability -->
-                        <div class="md:col-span-2 text-left md:text-center flex flex-col items-start md:items-center w-full md:w-auto">
-                            ${category === 'INV' ? `
-                            <label class="md:hidden text-[8px] text-slate-400 uppercase font-semibold mb-0.5">Льгота</label>
-                            <select onchange="updateTourist('${t.id}', 'disability', this.value)"
-                                class="text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/5 bg-white/5 text-slate-300 focus:outline-none transition-all duration-300 cursor-pointer text-center w-full md:w-auto">
-                                <option value="1" class="bg-slate-800" ${t.disability === '1' || t.disability === 'none' ? 'selected' : ''}>Инв 1 кат. (100%)</option>
-                                <option value="2" class="bg-slate-800" ${t.disability === '2' ? 'selected' : ''}>Инв 2 кат. (15%)</option>
-                                <option value="3" class="bg-slate-800" ${t.disability === '3' ? 'selected' : ''}>Инв 3 кат. (10%)</option>
-                            </select>
-                            ` : ''}
+                        <!-- Spacer -->
+                        <div class="flex-1"></div>
+
+                        <!-- Price block -->
+                        <div class="flex flex-col items-end shrink-0">
+                            ${t.isManualPrice ? '<span class="text-[9px] text-amber-400 font-bold mb-0.5">Ручная цена</span>' : (discountPercent > 0 ? `<span class="text-[9px] text-emerald-400 font-bold mb-0.5">-${discountPercent}%</span>` : '')}
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-lg font-black leading-none ${finalPrice > 0 ? 'text-white' : 'text-slate-500'}">${basePrice === -1 ? '—' : Math.round(finalPrice).toLocaleString('ru-RU')}<span class="text-sm text-slate-400 font-semibold ml-0.5">₸</span></span>
+                                <button onclick="openManualPriceModal('${t.id}', ${finalPrice})" class="text-slate-500 hover:text-amber-400 transition-colors cursor-pointer" title="Индивидуальная цена">
+                                    <i class="fa-solid fa-pencil text-[10px]"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    
+
+                    <!-- Disability row (only for INV) -->
+                    ${category === 'INV' ? `
+                    <div class="flex items-center gap-2 px-3 pb-2.5">
+                        <span class="text-[9px] text-slate-500">Льгота:</span>
+                        <select onchange="updateTourist('${t.id}', 'disability', this.value)"
+                            class="text-[9px] font-bold px-2 py-0.5 rounded-lg border border-white/10 bg-white/5 text-slate-300 focus:outline-none cursor-pointer">
+                            <option value="1" class="bg-slate-800" ${t.disability === '1' || t.disability === 'none' ? 'selected' : ''}>1 кат. (100%)</option>
+                            <option value="2" class="bg-slate-800" ${t.disability === '2' ? 'selected' : ''}>2 кат. (15%)</option>
+                            <option value="3" class="bg-slate-800" ${t.disability === '3' ? 'selected' : ''}>3 кат. (10%)</option>
+                        </select>
+                    </div>
+                    ` : ''}
+                </div>
+
+                <!-- ===== DESKTOP ROW (скрыт на мобиле) ===== -->
+                <div class="hidden md:grid md:grid-cols-12 gap-1 items-center relative hover:bg-white/5 border-b border-white/5 p-1 transition-all">
+                    <!-- Delete -->
+                    <div class="col-span-1 flex justify-end order-last">
+                        <button onclick="removeTourist('${t.id}', this)" class="btn-danger p-0.5 rounded-md text-slate-500 hover:text-rose-400 hover:bg-rose-500/20 transition-colors" title="Удалить">
+                            <i class="fa-solid fa-trash-can text-xs pointer-events-none"></i>
+                        </button>
+                    </div>
+                    <!-- Full Name -->
+                    <div class="col-span-3 relative">
+                        <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
+                            onblur="updateTourist('${t.id}', 'fullName', this.value)"
+                            class="w-full text-left bg-transparent text-white border ${!t.fullName ? 'border-rose-500 bg-rose-500/20' : 'border-transparent'} hover:border-white/20 focus:border-cyan-400 focus:bg-black/20 focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors ${discountInfo.isBirthday ? 'pr-7' : ''}">
+                        ${discountInfo.isBirthday ? '<div class="absolute right-2 top-1/2 -translate-y-1/2 text-amber-400 text-[10px]" title="Именинник"><i class="fa-solid fa-cake-candles"></i></div>' : ''}
+                    </div>
+                    <!-- DOB -->
+                    <div class="col-span-2">
+                        <input type="text" value="${displayDob}" 
+                            placeholder="дд.мм.гггг или гггг"
+                            onblur="updateTouristDobDirect('${t.id}', this.value)"
+                            class="w-full text-left bg-transparent text-white border ${(!t.dob && t.age === undefined && t.year === undefined) ? 'border-rose-500 bg-rose-500/20' : 'border-transparent'} hover:border-white/20 focus:border-cyan-400 focus:bg-black/20 focus:outline-none rounded-lg px-0.5 py-1 text-xs font-medium transition-colors">
+                    </div>
+                    <!-- Age -->
+                    <div class="col-span-1 text-center">
+                        <span class="text-xs font-bold ${age === null ? 'text-slate-500' : 'text-cyan-400'}">${age !== null ? age : '-'}</span>
+                    </div>
+                    <!-- Category -->
+                    <div class="col-span-1 text-center">
+                        <select onchange="updateTouristCategory('${t.id}', this.value)"
+                            class="text-[9px] font-bold px-1.5 py-0.5 rounded border ${catSelectClass} focus:outline-none transition-all duration-300 cursor-pointer text-center w-full">
+                            <option value="ADL" class="bg-slate-800" ${category === 'ADL' ? 'selected' : ''}>ADL</option>
+                            <option value="CHLD" class="bg-slate-800" ${category === 'CHLD' ? 'selected' : ''}>CHLD</option>
+                            <option value="INF" class="bg-slate-800" ${category === 'INF' ? 'selected' : ''}>INF</option>
+                            <option value="SNR" class="bg-slate-800" ${category === 'SNR' ? 'selected' : ''}>SNR</option>
+                            <option value="INV" class="bg-slate-800" ${category === 'INV' ? 'selected' : ''}>INV</option>
+                        </select>
+                    </div>
+                    <!-- Disability -->
+                    <div class="col-span-2 text-center">
+                        ${category === 'INV' ? `
+                        <select onchange="updateTourist('${t.id}', 'disability', this.value)"
+                            class="text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/5 bg-white/5 text-slate-300 focus:outline-none transition-all duration-300 cursor-pointer text-center w-full">
+                            <option value="1" class="bg-slate-800" ${t.disability === '1' || t.disability === 'none' ? 'selected' : ''}>Инв 1 (100%)</option>
+                            <option value="2" class="bg-slate-800" ${t.disability === '2' ? 'selected' : ''}>Инв 2 (15%)</option>
+                            <option value="3" class="bg-slate-800" ${t.disability === '3' ? 'selected' : ''}>Инв 3 (10%)</option>
+                        </select>
+                        ` : ''}
+                    </div>
                     <!-- Price -->
-                    <div class="md:col-span-2 text-right flex flex-col items-end justify-center pr-2">
+                    <div class="col-span-2 text-right flex flex-col items-end justify-center pr-2">
                         ${t.isManualPrice ? `<span class="badge-discount bg-amber-500/20 text-amber-400 border border-amber-400/20 text-[8px] px-1.5 py-0.5 rounded-full mb-0.5 leading-none font-bold whitespace-nowrap">Ручная цена</span>` :
                     (discountPercent > 0 ? `<span class="badge-discount bg-emerald-500/20 text-emerald-400 border border-emerald-400/20 text-[8px] px-1.5 py-0.5 rounded-full mb-0.5 leading-none font-bold">-${discountPercent}%</span>` : '')}
                         <div class="flex items-center gap-1">
@@ -1628,6 +1726,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         animateValue(stats.pens, counts.pens);
         if (stats.inv) animateValue(stats.inv, counts.inv || 0);
         animateValue(stats.bday, counts.bday);
+
+        // Обновление общего количества гостей в бейдже
+        const totalGuestsEl = document.getElementById('totalGuestsBadge');
+        if (totalGuestsEl) {
+            const totalGuests = counts.adl + counts.chld + counts.inf + counts.pens;
+            totalGuestsEl.textContent = `${totalGuests} гостей`;
+        }
+
 
         let exportText = `${visitDate ? formatDate(visitDate) : 'Не указана'}\n`;
         exportText += `Тариф: ${tariffType === 'evening' ? 'Вечерний' : 'Дневной'}\n\n`;
@@ -1925,14 +2031,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!tabDetailed || !tabQuick) return;
 
         if (mode === 'detailed') {
-            // Active: bright solid blue with glow
-            tabDetailed.className = tabDetailed.className
-                .replace(/bg-\S+\s*/g, '').replace(/text-slate-400\s*/g, '').replace(/opacity-60\s*/g, '').replace(/hover:text-slate-200\s*/g, '').replace(/scale-95\s*/g, '').replace(/border-transparent\s*/g, '');
-            tabDetailed.classList.add('bg-blue-600', 'text-white', 'shadow-[0_4px_14px_rgba(0,118,186,0.5)]', 'border', 'border-blue-400/50', 'scale-100');
+            // Active: glow-btn-cyan (same as "Добавить гостя")
+            tabDetailed.classList.remove('text-slate-400', 'hover:text-slate-200', 'border-transparent', 'scale-95', 'opacity-60');
+            tabDetailed.classList.add('glow-btn-cyan', 'scale-100');
             // Inactive: dimmed
-            tabQuick.className = tabQuick.className
-                .replace(/bg-blue-600\s*/g, '').replace(/text-white\s*/g, '').replace(/shadow-\[.*?\]\s*/g, '').replace(/border-blue-400\/50\s*/g, '').replace(/scale-100\s*/g, '');
-            tabQuick.classList.remove('bg-blue-600', 'text-white', 'border-blue-400/50', 'scale-100', 'opacity-100');
+            tabQuick.classList.remove('glow-btn-cyan', 'scale-100', 'opacity-100');
             tabQuick.classList.add('text-slate-400', 'hover:text-slate-200', 'border-transparent', 'scale-95', 'opacity-60');
 
             detailedModeContainer.classList.remove('hidden');
@@ -1944,13 +2047,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 syncQuickToDetailed();
             }
         } else {
-            // Active: bright solid blue with glow
-            tabQuick.className = tabQuick.className
-                .replace(/text-slate-400\s*/g, '').replace(/opacity-60\s*/g, '').replace(/hover:text-slate-200\s*/g, '').replace(/scale-95\s*/g, '').replace(/border-transparent\s*/g, '');
+            // Active: glow-btn-cyan (same as "Добавить гостя")
             tabQuick.classList.remove('text-slate-400', 'border-transparent', 'scale-95', 'opacity-60');
-            tabQuick.classList.add('bg-blue-600', 'text-white', 'shadow-[0_4px_14px_rgba(0,118,186,0.5)]', 'border', 'border-blue-400/50', 'scale-100', 'opacity-100');
+            tabQuick.classList.add('glow-btn-cyan', 'scale-100', 'opacity-100');
             // Inactive: dimmed
-            tabDetailed.classList.remove('bg-blue-600', 'text-white', 'border-blue-400/50', 'scale-100', 'opacity-100');
+            tabDetailed.classList.remove('glow-btn-cyan', 'scale-100', 'opacity-100');
             tabDetailed.classList.add('text-slate-400', 'hover:text-slate-200', 'border-transparent', 'scale-95', 'opacity-60');
 
             detailedModeContainer.classList.add('hidden');
@@ -2229,6 +2330,53 @@ document.addEventListener('DOMContentLoaded', async () => {
         emailExportBtn.addEventListener('click', sendToEmail);
     }
 
+    function sendToAquapark() {
+        if (!validateAccompaniment()) return;
+        saveToHistory();
+        const text = exportDataEl.value;
+        if (!text) return;
+
+        const lines = text.split('\n');
+        
+        let isGuestList = false;
+        let guestLines = [];
+        let dateStr = lines[0].trim();
+        let tariffStr = '';
+        
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].startsWith('Тариф:')) {
+                tariffStr = lines[i].trim();
+            } else if (lines[i].startsWith('Список гостей:') || lines[i].startsWith('Состав гостей:')) {
+                isGuestList = true;
+                continue;
+            }
+            if (isGuestList) {
+                if (lines[i].trim() === '' || lines[i].startsWith('Промокод:') || lines[i].startsWith('Комментарий:') || lines[i].startsWith('ИТОГО:')) {
+                    break;
+                }
+                guestLines.push(lines[i]);
+            }
+        }
+
+        let bodyText = `Список гостей:\n${guestLines.join('\n')}\n\nС уважением, Жумасилов Талгат\n+77027477339`;
+        const subject = `${dateStr} | ${tariffStr}`;
+        const email = "sales.department@tetysblu.com";
+
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        if (isMobile) {
+            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+        } else {
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+            window.open(gmailUrl, '_blank');
+        }
+    }
+
+    const aquaparkEmailBtn = document.getElementById('aquaparkEmailBtn');
+    if (aquaparkEmailBtn) {
+        aquaparkEmailBtn.addEventListener('click', sendToAquapark);
+    }
+
     async function generateImageForShare() {
         return new Promise((resolve, reject) => {
             const container = document.getElementById('receiptContainer');
@@ -2456,8 +2604,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             content.classList.add('opacity-0', 'pointer-events-none');
             container.appendChild(content);
 
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            if (isIOS) {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1024;
+            if (isMobile) {
                 const shareModal = document.getElementById('shareModal');
                 const shareModalContent = document.getElementById('shareModalContent');
                 const sharePreviewImg = document.getElementById('sharePreviewImg');
@@ -2642,12 +2790,43 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderDbTable(query = '') {
         if (!dbTableBody) return;
         const q = query.toLowerCase().trim();
-        let filtered = q ? dbAllRecords.filter(r => {
-            const names = (r.tourists || []).map(t => t.fullName || '').join(' ').toLowerCase();
-            const visit = (r.visitDate || '').toLowerCase();
-            const ts = new Date(r.timestamp).toLocaleDateString('ru-RU');
-            return names.includes(q) || visit.includes(q) || ts.includes(q);
-        }) : [...dbAllRecords];
+
+        // Read filter values
+        const filterVisit   = (document.getElementById('dbFilterVisitDate')?.value  || '').trim();
+        const filterTariff  = (document.getElementById('dbFilterTariff')?.value     || '').trim();
+        const filterClient  = (document.getElementById('dbFilterClient')?.value     || '').trim();
+        const filterGMin    = parseInt(document.getElementById('dbFilterGuestsMin')?.value || '', 10);
+        const filterGMax    = parseInt(document.getElementById('dbFilterGuestsMax')?.value || '', 10);
+        const filterDateFrom = (document.getElementById('dbFilterDateFrom')?.value || '').trim();
+        const filterDateTo   = (document.getElementById('dbFilterDateTo')?.value   || '').trim();
+        // Convert date strings to timestamp boundaries
+        const tsFrom = filterDateFrom ? new Date(filterDateFrom + 'T00:00:00').getTime() : null;
+        const tsTo   = filterDateTo   ? new Date(filterDateTo   + 'T23:59:59').getTime() : null;
+
+        let filtered = dbAllRecords.filter(r => {
+            // Text search
+            if (q) {
+                const names = (r.tourists || []).map(t => t.fullName || '').join(' ').toLowerCase();
+                const visit = (r.visitDate || '').toLowerCase();
+                const ts = new Date(r.timestamp).toLocaleDateString('ru-RU');
+                if (!names.includes(q) && !visit.includes(q) && !ts.includes(q)) return false;
+            }
+            // Creation date range
+            const rTs = new Date(r.timestamp).getTime();
+            if (tsFrom !== null && rTs < tsFrom) return false;
+            if (tsTo   !== null && rTs > tsTo)   return false;
+            // Visit date filter
+            if (filterVisit && r.visitDate !== filterVisit) return false;
+            // Tariff filter
+            if (filterTariff && (r.tariffType || '') !== filterTariff) return false;
+            // Client filter
+            if (filterClient && (r.clientType || '') !== filterClient) return false;
+            // Guests range
+            const gCount = (r.tourists || []).length;
+            if (!isNaN(filterGMin) && gCount < filterGMin) return false;
+            if (!isNaN(filterGMax) && gCount > filterGMax) return false;
+            return true;
+        });
 
         // Apply sorting
         filtered.sort((a, b) => {
@@ -2783,6 +2962,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             const dupBadge = isDuplicate
                 ? `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-400/20 text-amber-300 ml-1"><i class="fa-solid fa-copy text-[8px]"></i>Дубль</span>`
                 : '';
+                
+            const isVoucherTrue = (item.voucher_status === true || item.voucher_status === 'true' || item.voucher_status === 1);
+            const voucherBadge = isVoucherTrue 
+                ? `<div class="mt-1">
+                    ${item.voucher_url 
+                        ? `<a href="${item.voucher_url}" target="_blank" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors" title="Открыть ваучер"><i class="fa-solid fa-ticket"></i>Ваучер</a>` 
+                        : `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300" title="Ваучер выписан аквапарком"><i class="fa-solid fa-ticket"></i>Ваучер</span>`
+                    }
+                   </div>`
+                : `<div class="mt-1"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-500/20 text-rose-300" title="Ваучер не выписан"><i class="fa-solid fa-ticket"></i>Нет ваучера</span></div>`;
 
             return `<tr class="${rowBg} border-b border-white/10 hover:bg-white/10 transition-colors align-top">
                 <td class="px-4 py-3 text-slate-500 font-mono text-[10px] whitespace-nowrap">${filtered.length - idx}</td>
@@ -2790,7 +2979,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="font-semibold text-white text-xs flex items-center gap-1">${dateStr}${dupBadge}</div>
                     <div class="text-[10px] text-slate-400">${timeStr}</div>
                 </td>
-                <td class="px-4 py-3 font-semibold text-white text-xs whitespace-nowrap">${item.visitDate || '—'}</td>
+                <td class="px-4 py-3 font-semibold text-white text-xs whitespace-nowrap">
+                    ${item.visitDate || '—'}
+                    ${voucherBadge}
+                </td>
                 <td class="px-4 py-3 whitespace-nowrap">
                     <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${item.clientType === 'agent' ? 'bg-indigo-500/20 text-indigo-300' : 'bg-purple-500/20 text-purple-300'}">${clientLabel}</span>
                 </td>
@@ -2915,36 +3107,504 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // Filters
+    function onDbFilter() { renderDbTable(dbSearchInput ? dbSearchInput.value : ''); }
+    ['dbFilterVisitDate', 'dbFilterTariff', 'dbFilterClient', 'dbFilterGuestsMin', 'dbFilterGuestsMax', 'dbFilterDateFrom', 'dbFilterDateTo'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', onDbFilter);
+        if (el && el.type === 'number') el.addEventListener('input', onDbFilter);
+    });
+    const dbFilterResetBtn = document.getElementById('dbFilterResetBtn');
+    if (dbFilterResetBtn) {
+        dbFilterResetBtn.addEventListener('click', () => {
+            const ids = ['dbFilterVisitDate', 'dbFilterTariff', 'dbFilterClient', 'dbFilterGuestsMin', 'dbFilterGuestsMax', 'dbFilterDateFrom', 'dbFilterDateTo'];
+            ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            if (dbSearchInput) dbSearchInput.value = '';
+            renderDbTable('');
+        });
+    }
+
     // CSV Export
     if (dbExportBtn) {
-        dbExportBtn.addEventListener('click', () => {
+        dbExportBtn.addEventListener('click', async () => {
             if (!dbAllRecords.length) return;
-            const headers = ['#', 'Дата', 'Время', 'Визит', 'Клиент', 'Тариф', 'Гостей', 'Первый гость', 'Сумма', 'Статус'];
-            const rows = dbAllRecords.map((item, i) => {
-                const dt = new Date(item.timestamp);
-                const dateStr = `${dt.getDate().toString().padStart(2, '0')}.${(dt.getMonth() + 1).toString().padStart(2, '0')}.${dt.getFullYear()}`;
-                const timeStr = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}`;
-                const firstName = (item.tourists || [])[0]?.fullName || '';
-                return [
-                    dbAllRecords.length - i,
-                    dateStr, timeStr,
-                    item.visitDate || '',
-                    item.clientType === 'agent' ? 'Турагент' : 'Турист',
-                    item.tariffType === 'evening' ? 'Вечерний' : 'Дневной',
-                    (item.tourists || []).length,
-                    firstName,
-                    item.totalSum || 0,
-                    item.status || 'Оформлено'
-                ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
-            });
-            const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `TetysBlu_DB_${new Date().toLocaleDateString('ru-RU').replace(/\./g, '-')}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
+
+            // Найти оригинальный текст кнопки для эффекта загрузки
+            const originalBtnHtml = dbExportBtn.innerHTML;
+            dbExportBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Экспорт...</span>';
+            dbExportBtn.style.pointerEvents = 'none';
+
+            try {
+                // Инициализация ExcelJS Workbook
+                const workbook = new ExcelJS.Workbook();
+                const sheet = workbook.addWorksheet('Заявки');
+
+                // Загрузка логотипа через fetch (надежный способ получить base64)
+                let logoBase64 = null;
+                try {
+                    const response = await fetch('assets/pdf_logo.png');
+                    const blob = await response.blob();
+                    logoBase64 = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (e) {
+                    console.warn('Не удалось загрузить логотип для Excel', e);
+                }
+
+                // Добавляем логотип, если он загрузился
+                if (logoBase64) {
+                    const imageId = workbook.addImage({
+                        base64: logoBase64,
+                        extension: 'png'
+                    });
+                    // Помещаем логотип в левый верхний угол (A1:B3)
+                    sheet.addImage(imageId, {
+                        tl: { col: 0, row: 0 },
+                        ext: { width: 180, height: 60 }
+                    });
+                }
+
+                // Настройка заголовка отчета
+                sheet.mergeCells('C1:H2');
+                const titleCell = sheet.getCell('C1');
+                titleCell.value = 'Выгрузка заявок'; // По запросу пользователя в плане
+                titleCell.font = { name: 'Arial', size: 16, bold: true, color: { argb: 'FF0B2A43' } };
+                titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+                // Оставляем несколько пустых строк сверху под логотип и заголовок
+                sheet.addRow([]);
+                sheet.addRow([]);
+
+                // Формируем шапку таблицы
+                const headers = ['#', 'ДАТА / ВРЕМЯ', 'ВИЗИТ', 'КЛИЕНТ', 'ТАРИФ', 'ГОСТЕЙ', 'СПИСОК ГОСТЕЙ (ФИО - ДАТА РОЖДЕНИЯ - КАТ.)', 'СУММА'];
+                const headerRow = sheet.addRow(headers);
+                
+                // Стилизация шапки
+                headerRow.eachCell((cell) => {
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FF0B2A43' } // Темно-синий
+                    };
+                    cell.font = {
+                        name: 'Arial',
+                        size: 11,
+                        bold: true,
+                        color: { argb: 'FFFFFFFF' } // Белый текст
+                    };
+                    cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                    cell.border = {
+                        top: { style: 'thin' },
+                        left: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        right: { style: 'thin' }
+                    };
+                });
+                headerRow.height = 30;
+
+                // Настройка ширины колонок
+                sheet.getColumn(1).width = 5;  // #
+                sheet.getColumn(2).width = 15; // Дата/Время
+                sheet.getColumn(3).width = 12; // Визит
+                sheet.getColumn(4).width = 12; // Клиент
+                sheet.getColumn(5).width = 12; // Тариф
+                sheet.getColumn(6).width = 10; // Гостей
+                sheet.getColumn(7).width = 50; // Список гостей (самая широкая)
+                sheet.getColumn(8).width = 15; // Сумма
+
+                // Заполнение данных
+                dbAllRecords.forEach((item, index) => {
+                    const dt = new Date(item.timestamp);
+                    const dateStr = `${dt.getDate().toString().padStart(2, '0')}.${(dt.getMonth() + 1).toString().padStart(2, '0')}.${dt.getFullYear()}`;
+                    const timeStr = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}`;
+                    
+                    // Формируем красивый список гостей
+                    let guestsStr = '';
+                    if (item.tourists && item.tourists.length > 0) {
+                        guestsStr = item.tourists.map(t => {
+                            let formattedDob = t.formattedDob || '';
+                            let cat = t.category ? t.category.toUpperCase() : '';
+                            return `${t.fullName} (${formattedDob}) - ${cat}`;
+                        }).join('\n');
+                    } else {
+                        guestsStr = 'Нет данных';
+                    }
+
+                    const clientType = item.clientType === 'agent' ? 'Турагент' : 'Турист';
+                    const tariffType = item.tariffType === 'evening' ? 'Вечерний' : 'Дневной';
+
+                    const row = sheet.addRow([
+                        dbAllRecords.length - index,
+                        `${dateStr}\n${timeStr}`,
+                        item.visitDate || '',
+                        clientType,
+                        tariffType,
+                        (item.tourists || []).length,
+                        guestsStr,
+                        item.totalSum || 0
+                    ]);
+
+                    // Стилизация строк данных
+                    row.eachCell((cell, colNumber) => {
+                        cell.font = { name: 'Arial', size: 10 };
+                        cell.border = {
+                            top: { style: 'thin', color: { argb: 'FFDDDDDD' } },
+                            left: { style: 'thin', color: { argb: 'FFDDDDDD' } },
+                            bottom: { style: 'thin', color: { argb: 'FFDDDDDD' } },
+                            right: { style: 'thin', color: { argb: 'FFDDDDDD' } }
+                        };
+                        
+                        // Выравнивание по центру для всех колонок, кроме списка гостей
+                        if (colNumber === 7) {
+                            cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+                        } else if (colNumber === 8) {
+                            cell.alignment = { vertical: 'middle', horizontal: 'right' };
+                            cell.numFmt = '#,##0.00 ₸'; // Формат валюты
+                        } else {
+                            cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                        }
+                    });
+                });
+
+                // Генерация файла и скачивание
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Выгрузка_заявок_${new Date().toLocaleDateString('ru-RU').replace(/\./g, '-')}.xlsx`;
+                a.click();
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                console.error("Ошибка генерации Excel:", err);
+                if (window.showToast) window.showToast("Ошибка генерации Excel файла", "error");
+            } finally {
+                dbExportBtn.innerHTML = originalBtnHtml;
+                dbExportBtn.style.pointerEvents = 'auto';
+            }
+        });
+    }
+    // --- СВЕРКА С АКВАПАРКОМ ---
+    const cyrillicToLatinMap = {
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+        'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+        'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+        'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch',
+        'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+        'ә': 'a', 'ғ': 'g', 'қ': 'q', 'ң': 'n', 'ө': 'o', 'ұ': 'u', 'ү': 'u', 'һ': 'h', 'і': 'i'
+    };
+
+    function transliterate(text) {
+        if (!text) return '';
+        return text.toLowerCase().split('').map(char => cyrillicToLatinMap[char] || char).join('').replace(/[^a-z0-9]/g, '');
+    }
+
+    if (reconciliationBtn && reconciliationFileInput) {
+        reconciliationBtn.addEventListener('click', () => {
+            reconciliationFileInput.click();
+        });
+
+        reconciliationFileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const originalBtnHtml = reconciliationBtn.innerHTML;
+            reconciliationBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Сверка...</span>';
+            reconciliationBtn.style.pointerEvents = 'none';
+
+            try {
+                const workbookIn = new ExcelJS.Workbook();
+                await workbookIn.xlsx.load(file);
+                const sheetIn = workbookIn.worksheets[0];
+
+                const aquaparkRecords = [];
+                let colMap = {};
+
+                sheetIn.eachRow((row, rowNumber) => {
+                    if (rowNumber === 1) {
+                        // Маппинг колонок по заголовку
+                        row.eachCell((cell, colNumber) => {
+                            const val = (cell.value || '').toString().trim();
+                            if (val === 'Дата') colMap.date = colNumber;
+                            if (val === 'Имя резервации') colMap.name = colNumber;
+                            if (val === 'Статус резервации') colMap.status = colNumber;
+                            if (val === 'Сумма в валюте') colMap.sum = colNumber;
+                            if (val === 'Сумма') colMap.desc = colNumber;
+                        });
+                        
+                        // Fallback если колонки не найдены (старый формат)
+                        if (!colMap.name) colMap = { date: 1, name: 5, status: 10, sum: 7, desc: 9 };
+                        return;
+                    }
+
+                    const dateVal = row.getCell(colMap.date).value;
+                    let dateStr = '';
+                    if (dateVal instanceof Date) {
+                        dateStr = `${dateVal.getFullYear()}-${(dateVal.getMonth()+1).toString().padStart(2,'0')}-${dateVal.getDate().toString().padStart(2,'0')}`;
+                    } else if (typeof dateVal === 'string') {
+                        if (dateVal.match(/^\d{2}\.\d{2}\.\d{4}/)) {
+                            const [d, m, y] = dateVal.split(' ')[0].split('.');
+                            dateStr = `${y}-${m}-${d}`;
+                        } else {
+                            dateStr = dateVal.split(' ')[0];
+                        }
+                    } else if (typeof dateVal === 'number') {
+                        const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+                        const jsDate = new Date(excelEpoch.getTime() + dateVal * 86400000);
+                        dateStr = `${jsDate.getUTCFullYear()}-${(jsDate.getUTCMonth()+1).toString().padStart(2,'0')}-${jsDate.getUTCDate().toString().padStart(2,'0')}`;
+                    }
+
+                    const name = (row.getCell(colMap.name).value || '').toString().trim();
+                    const status = (row.getCell(colMap.status).value || '').toString().trim();
+                    const sum = row.getCell(colMap.sum).value || 0;
+                    const desc = (row.getCell(colMap.desc).value || '').toString().trim();
+
+                    if (name) {
+                        aquaparkRecords.push({
+                            name,
+                            nameTrans: transliterate(name),
+                            status,
+                            date: dateStr,
+                            sum,
+                            desc,
+                            matched: false
+                        });
+                    }
+                });
+
+                const reportWorkbook = new ExcelJS.Workbook();
+                const reportSheet = reportWorkbook.addWorksheet('Результат Сверки');
+
+                const headers = ['Статус Сверки', 'ФИО (Аквапарк)', 'ФИО (Локально)', 'Дата визита', 'Статус (Аквапарк)', 'Статус (Локально)', 'Сумма (Аквапарк)', 'Сумма (Локально)'];
+                const headerRow = reportSheet.addRow(headers);
+                
+                headerRow.eachCell((cell) => {
+                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF475569' } };
+                    cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                    cell.border = { top: {style:'thin'}, left: {style:'thin'}, bottom: {style:'thin'}, right: {style:'thin'} };
+                });
+
+                reportSheet.getColumn(1).width = 30;
+                reportSheet.getColumn(2).width = 30;
+                reportSheet.getColumn(3).width = 30;
+                reportSheet.getColumn(4).width = 15;
+                reportSheet.getColumn(5).width = 15;
+                reportSheet.getColumn(6).width = 15;
+                reportSheet.getColumn(7).width = 15;
+                reportSheet.getColumn(8).width = 15;
+
+                const addReportRow = (statusText, colorHex, aquaName, localName, date, aquaStatus, localStatus, aquaSum, localSum) => {
+                    const row = reportSheet.addRow([statusText, aquaName, localName, date, aquaStatus, localStatus, aquaSum, localSum]);
+                    row.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: colorHex } };
+                    row.getCell(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                    row.eachCell((cell, colNum) => {
+                        cell.border = { top: {style:'thin', color:{argb:'FFDDDDDD'}}, left: {style:'thin', color:{argb:'FFDDDDDD'}}, bottom: {style:'thin', color:{argb:'FFDDDDDD'}}, right: {style:'thin', color:{argb:'FFDDDDDD'}} };
+                        if (colNum >= 7) cell.numFmt = '#,##0.00 ₸';
+                    });
+                };
+
+                dbAllRecords.forEach(localRecord => {
+                    const localTourists = localRecord.tourists || [];
+                    if (localTourists.length === 0) return;
+                    
+                    const firstGuestName = localTourists[0].fullName;
+                    const firstGuestTrans = transliterate(firstGuestName);
+                    const localStatus = localRecord.status || 'Оформлено';
+                    const isLocalPaid = localStatus !== 'Отменена';
+
+                    const aquaMatch = aquaparkRecords.find(ar => !ar.matched && (ar.nameTrans.includes(firstGuestTrans) || firstGuestTrans.includes(ar.nameTrans)) && ar.date === localRecord.visitDate);
+
+                    if (aquaMatch) {
+                        aquaMatch.matched = true;
+                        const isAquaPaid = aquaMatch.status === 'İşlem' || aquaMatch.status === 'Check-Out';
+                        const isAquaCanceled = aquaMatch.status === 'İptal' || aquaMatch.status === 'İade';
+
+                        if (isLocalPaid && isAquaPaid) {
+                            addReportRow('ОК (ОПЛАЧЕНО)', 'FF22C55E', aquaMatch.name, firstGuestName, localRecord.visitDate, aquaMatch.status, localStatus, aquaMatch.sum, localRecord.totalSum);
+                        } else if (isLocalPaid && isAquaCanceled) {
+                            addReportRow('ОТМЕНА В АКВАПАРКЕ', 'FFEF4444', aquaMatch.name, firstGuestName, localRecord.visitDate, aquaMatch.status, localStatus, aquaMatch.sum, localRecord.totalSum);
+                        } else if (!isLocalPaid && isAquaPaid) {
+                            addReportRow('ОТМЕНА ЛОКАЛЬНО, НО ОПЛАЧЕНО В АКВАПАРКЕ', 'FFF97316', aquaMatch.name, firstGuestName, localRecord.visitDate, aquaMatch.status, localStatus, aquaMatch.sum, localRecord.totalSum);
+                        } else {
+                            addReportRow('ОТМЕНЕНО ОБЕИМИ СТОРОНАМИ', 'FF64748B', aquaMatch.name, firstGuestName, localRecord.visitDate, aquaMatch.status, localStatus, aquaMatch.sum, localRecord.totalSum);
+                        }
+                    } else {
+                        if (isLocalPaid) {
+                            addReportRow('НЕТ В АКВАПАРКЕ', 'FFEAB308', '-', firstGuestName, localRecord.visitDate, '-', localStatus, '-', localRecord.totalSum);
+                        }
+                    }
+                });
+
+                aquaparkRecords.forEach(ar => {
+                    if (!ar.matched) {
+                        const isAquaPaid = ar.status === 'İşlem' || ar.status === 'Check-Out';
+                        if (isAquaPaid) {
+                            addReportRow('НЕТ ЛОКАЛЬНО', 'FF8B5CF6', ar.name, '-', ar.date, ar.status, '-', ar.sum, '-');
+                        }
+                    }
+                });
+
+                const buffer = await reportWorkbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Отчет_Сверка_Аквапарк_${new Date().toLocaleDateString('ru-RU').replace(/\./g, '-')}.xlsx`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+            } catch (err) {
+                console.error("Ошибка сверки:", err);
+                if (window.showToast) window.showToast("Ошибка при чтении файла аквапарка", "error");
+            } finally {
+                reconciliationBtn.innerHTML = originalBtnHtml;
+                reconciliationBtn.style.pointerEvents = 'auto';
+                e.target.value = '';
+            }
+        });
+    }
+    // --- СВЕРКА С БАНКОМ ---
+    const bankReconciliationBtn = document.getElementById('bankReconciliationBtn');
+    const bankReconciliationFileInput = document.getElementById('bankReconciliationFileInput');
+
+    if (bankReconciliationBtn && bankReconciliationFileInput) {
+        bankReconciliationBtn.addEventListener('click', () => {
+            bankReconciliationFileInput.click();
+        });
+
+        bankReconciliationFileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const originalBtnHtml = bankReconciliationBtn.innerHTML;
+            bankReconciliationBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Сверка...</span>';
+            bankReconciliationBtn.style.pointerEvents = 'none';
+
+            try {
+                let bankRecords = [];
+                const ext = file.name.split('.').pop().toLowerCase();
+                
+                if (ext === 'xlsx') {
+                    const workbookIn = new ExcelJS.Workbook();
+                    await workbookIn.xlsx.load(file);
+                    const sheetIn = workbookIn.worksheets[0];
+
+                    sheetIn.eachRow((row, rowNumber) => {
+                        let dateStr = '';
+                        let amount = 0;
+                        let desc = '';
+                        row.eachCell((cell) => {
+                            const val = cell.value;
+                            if (val instanceof Date) {
+                                dateStr = `${val.getFullYear()}-${(val.getMonth()+1).toString().padStart(2,'0')}-${val.getDate().toString().padStart(2,'0')}`;
+                            } else if (typeof val === 'number') {
+                                if (val > 500) amount = val;
+                            } else if (typeof val === 'string') {
+                                if (val.match(/^\d{2}\.\d{2}\.\d{4}/)) {
+                                    const [d, m, y] = val.split(' ')[0].split('.');
+                                    dateStr = `${y}-${m}-${d}`;
+                                } else if (val.length > 5 && !val.match(/^\d+$/)) {
+                                    if(desc.length < 50) desc += val + ' ';
+                                }
+                            }
+                        });
+                        if (amount > 0) {
+                            bankRecords.push({ date: dateStr, amount, desc: desc.trim(), matched: false });
+                        }
+                    });
+                }
+
+                const reportWorkbook = new ExcelJS.Workbook();
+                const reportSheet = reportWorkbook.addWorksheet('Сверка Банк');
+                const headers = ['Статус Сверки', 'Сумма (Банк)', 'Сумма (База)', 'Описание (Банк)', 'ФИО Клиента (База)'];
+                const headerRow = reportSheet.addRow(headers);
+                
+                headerRow.eachCell((cell) => {
+                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF475569' } };
+                    cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                    cell.border = { top: {style:'thin'}, left: {style:'thin'}, bottom: {style:'thin'}, right: {style:'thin'} };
+                });
+                reportSheet.getColumn(1).width = 30;
+                reportSheet.getColumn(2).width = 15;
+                reportSheet.getColumn(3).width = 15;
+                reportSheet.getColumn(4).width = 40;
+                reportSheet.getColumn(5).width = 30;
+
+                const addReportRow = (statusText, colorHex, bankSum, localSum, bankDesc, localName) => {
+                    const row = reportSheet.addRow([statusText, bankSum, localSum, bankDesc, localName]);
+                    row.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: colorHex } };
+                    row.getCell(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                    row.eachCell((cell, colNum) => {
+                        cell.border = { top: {style:'thin', color:{argb:'FFDDDDDD'}}, left: {style:'thin', color:{argb:'FFDDDDDD'}}, bottom: {style:'thin', color:{argb:'FFDDDDDD'}}, right: {style:'thin', color:{argb:'FFDDDDDD'}} };
+                        if (colNum === 2 || colNum === 3) {
+                            if(typeof cell.value === 'number') cell.numFmt = '#,##0.00 ₸';
+                        }
+                    });
+                };
+
+                const matchedIds = [];
+                dbAllRecords.forEach(localRecord => {
+                    const localStatus = localRecord.status || 'Оформлено';
+                    if (localStatus === 'Отменена') return;
+                    const localSum = parseInt(localRecord.totalSum) || 0;
+                    const firstGuestName = localRecord.tourists && localRecord.tourists.length > 0 ? localRecord.tourists[0].fullName : 'Неизвестно';
+
+                    const bankMatch = bankRecords.find(br => !br.matched && br.amount === localSum);
+
+                    if (bankMatch) {
+                        bankMatch.matched = true;
+                        matchedIds.push(localRecord.id);
+                        addReportRow('СОВПАДЕНИЕ ПО СУММЕ', 'FF22C55E', bankMatch.amount, localSum, bankMatch.desc, firstGuestName);
+                    } else {
+                        addReportRow('НЕТ ОПЛАТЫ В БАНКЕ', 'FFEF4444', '-', localSum, '-', firstGuestName);
+                    }
+                });
+
+                bankRecords.forEach(br => {
+                    if (!br.matched) {
+                        addReportRow('НЕИЗВЕСТНЫЙ ПЛАТЕЖ', 'FFEAB308', br.amount, '-', br.desc, '-');
+                    }
+                });
+
+                const buffer = await reportWorkbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Отчет_Сверка_Банк_${new Date().toLocaleDateString('ru-RU').replace(/\./g, '-')}.xlsx`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                // Автоматическое обновление статусов в базе данных Supabase
+                if (matchedIds.length > 0 && supabaseClient) {
+                    const { error } = await supabaseClient
+                        .from('calculations')
+                        .update({ status: 'Оплачено' })
+                        .in('id', matchedIds);
+
+                    if (error) {
+                        console.error("Ошибка при обновлении статусов в Supabase:", error);
+                        if (window.showToast) window.showToast("Ошибка при сохранении статусов в БД", "fa-triangle-exclamation", "bg-red-500");
+                    } else {
+                        if (window.showToast) window.showToast(`Сверка успешна! Обновлено оплат: ${matchedIds.length}`, "fa-check", "bg-emerald-500");
+                        // Обновляем локальный кэш записей и перерисовываем таблицу
+                        dbAllRecords = await getHistoryData(0);
+                        renderDbTable(dbSearchInput ? dbSearchInput.value : '');
+                    }
+                } else if (matchedIds.length === 0) {
+                    if (window.showToast) window.showToast("Совпадений с базой не найдено", "fa-triangle-exclamation", "bg-yellow-500");
+                }
+
+            } catch (err) {
+                console.error("Ошибка банковской сверки:", err);
+                if (window.showToast) window.showToast("Ошибка при чтении банковской выписки", "error");
+            } finally {
+                bankReconciliationBtn.innerHTML = originalBtnHtml;
+                bankReconciliationBtn.style.pointerEvents = 'auto';
+                e.target.value = '';
+            }
         });
     }
 
