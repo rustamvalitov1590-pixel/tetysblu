@@ -242,7 +242,6 @@
         #appContent .neon-card-green,
         #appContent .neon-card-amber,
         #appContent .neon-card-rose,
-        #appContent .tourist-row,
         #appContent .glass-stat-box {
             background: var(--surface) !important;
             border: 1px solid var(--line) !important;
@@ -276,7 +275,6 @@
 
         #appContent .glass-panel:hover,
         #appContent .neon-card-blue:hover,
-        #appContent .tourist-row:hover,
         #appContent .glass-stat-box:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-lift) !important;
@@ -1124,65 +1122,83 @@
         <div class="px-4 md:px-8 pt-3 flex-shrink-0">
             <!-- TOP NAVBAR -->
             <header
-                class="bg-transparent backdrop-blur-lg rounded-2xl border border-white/10 flex items-center justify-between px-4 py-3 md:px-6 z-50 shadow-lg">
-                <div class="flex items-center space-x-3">
-                    <img src="assets/logo.png" alt="Tetys Blu"
-                        class="h-8 md:h-10 drop-shadow-md shrink-0 object-contain">
-
-                </div>
-
-                <nav class="hidden md:flex items-center space-x-2 flex-1 justify-center px-4">
-                    <button id="navCalcBtn"
-                        class="flex items-center space-x-2 px-3 py-2 bg-white/10 rounded-xl text-white font-bold transition-all border border-white/10 shadow-lg">
-                        <i class="fa-solid fa-calculator text-cyan-400 w-4 text-center"></i>
-                        <span class="text-xs">Калькулятор</span>
-                    </button>
-                    <button id="navDashboardBtn"
-                        class="flex items-center space-x-2 px-3 py-2 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white font-medium transition-all">
-                        <i class="fa-solid fa-chart-simple text-emerald-400 w-4 text-center"></i>
-                        <span class="text-xs">Аналитика</span>
-                    </button>
-                    <button id="navDatabaseBtn"
-                        class="flex items-center space-x-2 px-3 py-2 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white font-medium transition-all">
-                        <i class="fa-solid fa-database text-amber-400 w-4 text-center"></i>
-                        <span class="text-xs">Заявки</span>
-                    </button>
-                    <a href="client.html" target="_blank"
-                        class="flex items-center space-x-2 px-3 py-2 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white font-medium transition-all">
-                        <i class="fa-solid fa-up-right-from-square text-slate-400 w-4 text-center"></i>
-                        <span class="text-xs">Туристам</span>
-                    </a>
-                </nav>
-
-                <div class="flex items-center gap-2 md:gap-4">
-                    <div class="hidden xl:block mr-2 border-r border-white/10 pr-4">
-                        <h1 id="liveClockDisplay"
-                            class="text-[11px] font-normal text-slate-300 tracking-wide font-sans whitespace-nowrap"></h1>
-                    </div>
-                    <button id="pricingAdminBtn"
-                        class="hidden w-8 h-8 md:w-10 md:h-10 items-center justify-center hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-all"
-                        title="Цены и акции">
-                        <i class="fa-solid fa-tags text-sm md:text-base"></i>
-                    </button>
-                    <button id="themeToggleBtn"
-                        class="flex w-8 h-8 md:w-10 md:h-10 items-center justify-center hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-all"
-                        title="Светлая/тёмная тема">
-                        <i id="themeIcon" class="fa-solid fa-moon text-sm md:text-base"></i>
-                    </button>
-                    <div
-                        class="flex items-center gap-2 md:gap-3 pl-2 sm:border-l sm:border-white/10 cursor-pointer group">
-                        <img src="assets/admin_avatar.png" alt="Admin"
-                            class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-transparent group-hover:border-cyan-400 transition-colors shadow-lg">
-                        <div class="hidden sm:block">
-                            <p class="text-xs font-bold text-white leading-tight">Администратор</p>
-                            <p class="text-[9px] text-slate-400">(Admin)</p>
+                class="bg-transparent backdrop-blur-lg rounded-2xl border border-white/10 flex flex-col z-50 shadow-lg overflow-hidden">
+                
+                <!-- TOP ROW: Logo & Tools -->
+                <div class="flex items-center justify-between px-4 py-3 md:px-6 w-full">
+                    <div class="flex items-center space-x-3">
+                        <div class="flex flex-col justify-center leading-none select-none">
+                            <span class="text-lg md:text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 to-blue-600 drop-shadow-sm">
+                                MANGYSTAU
+                            </span>
+                            <span class="text-[8px] md:text-[9px] font-bold tracking-[0.25em] text-slate-500 uppercase mt-0.5 ml-0.5">
+                                Discovery
+                            </span>
                         </div>
                     </div>
-                    <button id="logoutBtn"
-                        class="w-8 h-8 md:w-auto md:px-3 md:py-2 flex items-center justify-center md:space-x-2 hover:bg-rose-500/20 rounded-xl text-rose-400 hover:text-rose-300 font-bold transition-all ml-1 md:ml-2">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        <span class="hidden md:inline text-xs">Выйти</span>
-                    </button>
+
+                    <div class="flex items-center gap-2 md:gap-4">
+                        <div class="hidden xl:block mr-2 border-r border-white/10 pr-4">
+                            <h1 id="liveClockDisplay"
+                                class="text-[11px] font-normal text-slate-300 tracking-wide font-sans whitespace-nowrap"></h1>
+                        </div>
+                        <button id="pricingAdminBtn"
+                            class="hidden w-8 h-8 md:w-10 md:h-10 items-center justify-center hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-all"
+                            title="Цены и акции">
+                            <i class="fa-solid fa-tags text-sm md:text-base"></i>
+                        </button>
+                        <button id="themeToggleBtn"
+                            class="flex w-8 h-8 md:w-10 md:h-10 items-center justify-center hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-all"
+                            title="Светлая/тёмная тема">
+                            <i id="themeIcon" class="fa-solid fa-moon text-sm md:text-base"></i>
+                        </button>
+                        <!-- Кнопка очистки гостей — только на мобиле -->
+                        <button onclick="clearAllTourists()" id="mobileClearBtn"
+                            class="md:hidden flex w-8 h-8 items-center justify-center rounded-full text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 transition-all"
+                            title="Очистить список гостей">
+                            <i class="fa-solid fa-trash-can text-sm"></i>
+                        </button>
+                        <div
+                            class="flex items-center gap-2 md:gap-3 pl-2 sm:border-l sm:border-white/10 cursor-pointer group">
+                            <img id="adminAvatarImg" src="assets/admin_avatar.png" alt="Admin"
+                                class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-transparent group-hover:border-cyan-400 transition-colors shadow-lg">
+                            <div class="hidden sm:block">
+                                <p class="text-xs font-bold text-white leading-tight">Администратор</p>
+                                <p class="text-[9px] text-slate-400">(Admin)</p>
+                            </div>
+                        </div>
+                        <button id="logoutBtn"
+                            class="w-8 h-8 md:w-auto md:px-3 md:py-2 flex items-center justify-center md:space-x-2 hover:bg-rose-500/20 rounded-xl text-rose-400 hover:text-rose-300 font-bold transition-all ml-1 md:ml-2">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            <span class="hidden md:inline text-xs">Выйти</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- BOTTOM ROW: Navigation -->
+                <div class="hidden md:block border-t border-white/5 bg-white/5 px-4 md:px-6">
+                    <nav class="flex items-center space-x-2 justify-center py-2">
+                        <button id="navCalcBtn"
+                            class="flex items-center space-x-2 px-4 py-1.5 bg-white/10 rounded-xl text-white font-bold transition-all border border-white/10 shadow-lg">
+                            <i class="fa-solid fa-calculator text-cyan-400 w-4 text-center"></i>
+                            <span class="text-xs">Калькулятор</span>
+                        </button>
+                        <button id="navDashboardBtn"
+                            class="flex items-center space-x-2 px-4 py-1.5 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white font-medium transition-all">
+                            <i class="fa-solid fa-chart-simple text-emerald-400 w-4 text-center"></i>
+                            <span class="text-xs">Аналитика</span>
+                        </button>
+                        <button id="navDatabaseBtn"
+                            class="flex items-center space-x-2 px-4 py-1.5 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white font-medium transition-all">
+                            <i class="fa-solid fa-database text-amber-400 w-4 text-center"></i>
+                            <span class="text-xs">Заявки</span>
+                        </button>
+                        <a href="client.html" target="_blank"
+                            class="flex items-center space-x-2 px-4 py-1.5 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white font-medium transition-all">
+                            <i class="fa-solid fa-up-right-from-square text-slate-400 w-4 text-center"></i>
+                            <span class="text-xs">Туристам</span>
+                        </a>
+                    </nav>
                 </div>
             </header>
         </div>
@@ -1283,16 +1299,7 @@
                                 <h2 class="text-base font-bold text-white mb-3 flex items-center drop-shadow-md">
                                     <i class="fa-solid fa-file-text text-cyan-400 mr-2"></i> Текстовый ввод гостей
                                 </h2>
-                                <div
-                                    class="glass-stat-box border border-white/5 mb-3 p-3 flex items-start gap-2.5 bg-white/5 rounded-xl">
-                                    <i class="fa-brands fa-whatsapp text-emerald-400 text-base mt-0.5"></i>
-                                    <p class="text-[11px] text-slate-300 leading-relaxed">
-                                        <span class="font-bold text-white block mb-0.5">Автоматический импорт</span>
-                                        Просто скопируйте текст из мессенджера. Система сама извлечет имена, определит
-                                        возраст и отфильтрует лишнюю информацию.
-                                    </p>
-                                </div>
-                                <textarea id="bulkText" class="w-full glass-input p-3 text-xs resize-none mb-3 h-[105px]"
+                                <textarea id="bulkText" class="w-full glass-input p-3 text-xs resize-none mb-3 h-[200px]"
                                     placeholder="Тетис на 06.06&#10;Kossymov Dias 15.04.2017 chld&#10;Otemissova Meruert 18.05.1998 adl"></textarea>
                                 <div class="flex flex-col sm:flex-row gap-2">
                                     <button id="parseBulkBtn"
@@ -1309,10 +1316,10 @@
                     </div>
 
                     <!-- RIGHT COLUMN: Tourist List, Total Price, Text Input (8/12 wide) -->
-                    <div class="lg:col-span-8 space-y-6">
+                    <div class="lg:col-span-8 flex flex-col gap-6">
 
                         <!-- Main Tourist List Card -->
-                        <section class="neon-card-blue p-6 relative min-h-[500px]">
+                        <section class="neon-card-blue p-6 relative min-h-[500px] order-1">
                             <div
                                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                                 <div>
@@ -1348,7 +1355,7 @@
                                 <div
                                     class="bg-black/40 p-1.5 rounded-xl flex items-center w-full sm:w-auto relative mb-2 sm:mb-0 border border-white/10 shadow-inner">
                                     <button id="tabDetailed" onclick="switchCalcMode('detailed')"
-                                        class="flex-1 sm:flex-none justify-center px-5 py-2.5 text-xs font-bold rounded-lg transition-all duration-200 flex items-center gap-1.5 cursor-pointer z-10 bg-blue-600 text-white shadow-[0_4px_14px_rgba(0,118,186,0.5)] border border-blue-400/50 scale-100">
+                                        class="flex-1 sm:flex-none justify-center px-5 py-2.5 text-xs font-bold rounded-lg transition-all duration-200 flex items-center gap-1.5 cursor-pointer z-10 glow-btn-cyan scale-100">
                                         <i class="fa-solid fa-list-ul"></i> Посписочный ввод
                                     </button>
                                     <button id="tabQuick" onclick="switchCalcMode('quick')"
@@ -1517,7 +1524,7 @@
                         </section>
 
                         <!-- Bottom row: Итоговый расчет + Сводная статистика на одном уровне (ОБНОВЛЕННЫЙ БЛОК) -->
-                        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+                        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch order-3">
 
                             <!-- Calculated Estimate Summary (compact & balanced) -->
                             <section
@@ -1578,104 +1585,77 @@
                                         <i class="fa-solid fa-cloud-arrow-down text-sm"></i>
                                         <span>Чек</span>
                                     </button>
-
-                                    <!-- Share Action -->
-                                    <button id="nativeShareBtn"
-                                        class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs flex items-center justify-center transition-all border border-slate-200 active:scale-95"
-                                        title="Поделиться чеком">
-                                        <i class="fa-solid fa-share-nodes text-sm"></i>
-                                    </button>
                                 </div>
                             </section>
 
                             <!-- Dynamic Stats Summary Panel -->
                             <section
-                                class="xl:col-span-7 neon-card-blue p-5 relative rounded-2xl shadow-sm bg-white border border-slate-200 flex flex-col justify-between h-full">
+                                class="xl:col-span-7 neon-card-blue p-4 relative rounded-2xl shadow-sm bg-white border border-slate-200 flex flex-col justify-between h-full">
                                 <h2
                                     class="font-display text-sm font-bold text-slate-800 flex items-center drop-shadow-sm mb-3">
                                     <i class="fa-solid fa-chart-simple text-cyan-500 mr-2"></i>
                                     Сводная статистика
                                 </h2>
 
-                                <div class="grid grid-cols-3 gap-2.5">
+                                <div class="flex flex-wrap gap-2">
                                     <!-- Взрослые -->
-                                    <div
-                                        class="relative overflow-hidden p-2.5 text-center border border-blue-100 bg-blue-50/50 hover:bg-blue-100/50 rounded-xl transition-colors group">
-                                        <i class="fa-solid fa-user text-xs text-blue-500 block mb-1"></i>
-                                        <span
-                                            class="text-[9px] font-extrabold text-blue-600 uppercase tracking-wider block leading-tight break-words">Взрослые</span>
-                                        <span
-                                            class="text-xl font-black text-slate-800 mt-0.5 block font-display tabular-nums"
-                                            id="statAdl">0</span>
+                                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-100 bg-blue-50/60 hover:bg-blue-100/60 transition-colors">
+                                        <i class="fa-solid fa-user text-[10px] text-blue-500"></i>
+                                        <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wide">Взрослые</span>
+                                        <span class="text-sm font-black text-slate-800 tabular-nums ml-0.5" id="statAdl">0</span>
                                     </div>
 
                                     <!-- Дети -->
-                                    <div
-                                        class="relative overflow-hidden p-2.5 text-center border border-teal-100 bg-teal-50/50 hover:bg-teal-100/50 rounded-xl transition-colors group">
-                                        <i class="fa-solid fa-child text-xs text-teal-500 block mb-1"></i>
-                                        <span
-                                            class="text-[9px] font-extrabold text-teal-600 uppercase tracking-wider block leading-tight break-words">Дети</span>
-                                        <span
-                                            class="text-xl font-black text-slate-800 mt-0.5 block font-display tabular-nums"
-                                            id="statChld">0</span>
+                                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-teal-100 bg-teal-50/60 hover:bg-teal-100/60 transition-colors">
+                                        <i class="fa-solid fa-child text-[10px] text-teal-500"></i>
+                                        <span class="text-[10px] font-bold text-teal-600 uppercase tracking-wide">Дети</span>
+                                        <span class="text-sm font-black text-slate-800 tabular-nums ml-0.5" id="statChld">0</span>
                                     </div>
 
                                     <!-- Младенцы -->
-                                    <div
-                                        class="relative overflow-hidden p-2.5 text-center border border-emerald-100 bg-emerald-50/50 hover:bg-emerald-100/50 rounded-xl transition-colors group">
-                                        <i class="fa-solid fa-baby text-xs text-emerald-500 block mb-1"></i>
-                                        <span
-                                            class="text-[9px] font-extrabold text-emerald-600 uppercase tracking-wider block leading-tight break-words">Младенцы</span>
-                                        <span
-                                            class="text-xl font-black text-slate-800 mt-0.5 block font-display tabular-nums"
-                                            id="statInf">0</span>
+                                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-100 bg-emerald-50/60 hover:bg-emerald-100/60 transition-colors">
+                                        <i class="fa-solid fa-baby text-[10px] text-emerald-500"></i>
+                                        <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">Младенцы</span>
+                                        <span class="text-sm font-black text-slate-800 tabular-nums ml-0.5" id="statInf">0</span>
                                     </div>
 
                                     <!-- Пенсионеры -->
-                                    <div
-                                        class="relative overflow-hidden p-2.5 text-center border border-purple-100 bg-purple-50/50 hover:bg-purple-100/50 rounded-xl transition-colors group">
-                                        <i class="fa-solid fa-person-cane text-xs text-purple-500 block mb-1"></i>
-                                        <span
-                                            class="text-[9px] font-extrabold text-purple-600 uppercase tracking-wider block leading-tight break-words">Пенсионеры</span>
-                                        <span
-                                            class="text-xl font-black text-slate-800 mt-0.5 block font-display tabular-nums"
-                                            id="statPens">0</span>
+                                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-purple-100 bg-purple-50/60 hover:bg-purple-100/60 transition-colors">
+                                        <i class="fa-solid fa-person-cane text-[10px] text-purple-500"></i>
+                                        <span class="text-[10px] font-bold text-purple-600 uppercase tracking-wide">Пенсионеры</span>
+                                        <span class="text-sm font-black text-slate-800 tabular-nums ml-0.5" id="statPens">0</span>
                                     </div>
 
                                     <!-- Инвалиды -->
-                                    <div
-                                        class="relative overflow-hidden p-2.5 text-center border border-rose-100 bg-rose-50/50 hover:bg-rose-100/50 rounded-xl transition-colors group">
-                                        <i class="fa-solid fa-wheelchair text-xs text-rose-500 block mb-1"></i>
-                                        <span
-                                            class="text-[9px] font-extrabold text-rose-600 uppercase tracking-wider block leading-tight break-words">Инвалиды</span>
-                                        <span
-                                            class="text-xl font-black text-slate-800 mt-0.5 block font-display tabular-nums"
-                                            id="statInv">0</span>
+                                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-100 bg-rose-50/60 hover:bg-rose-100/60 transition-colors">
+                                        <i class="fa-solid fa-wheelchair text-[10px] text-rose-500"></i>
+                                        <span class="text-[10px] font-bold text-rose-600 uppercase tracking-wide">Инвалиды</span>
+                                        <span class="text-sm font-black text-slate-800 tabular-nums ml-0.5" id="statInv">0</span>
                                     </div>
 
                                     <!-- Именинники -->
-                                    <div
-                                        class="relative overflow-hidden p-2.5 text-center border border-amber-200 bg-amber-50/70 hover:bg-amber-100/70 rounded-xl transition-colors group shadow-sm">
-                                        <i class="fa-solid fa-cake-candles text-xs text-amber-500 block mb-1"></i>
-                                        <span
-                                            class="text-[9px] font-extrabold text-amber-600 uppercase tracking-wider block leading-tight break-words">Именинники</span>
-                                        <span
-                                            class="text-xl font-black text-amber-600 mt-0.5 block font-display tabular-nums"
-                                            id="statBday">0</span>
+                                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-amber-200 bg-amber-50/70 hover:bg-amber-100/70 transition-colors">
+                                        <i class="fa-solid fa-cake-candles text-[10px] text-amber-500"></i>
+                                        <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wide">Именинники</span>
+                                        <span class="text-sm font-black text-amber-600 tabular-nums ml-0.5" id="statBday">0</span>
                                     </div>
                                 </div>
                             </section>
                         </div>
 
-                        <!-- Экспорт (CRM) -->
-                        <section class="neon-card-blue p-5 relative rounded-2xl shadow-sm flex flex-col">
+                        <!-- Текст для почты -->
+                        <section class="neon-card-blue p-5 relative rounded-2xl shadow-sm flex flex-col order-2">
                             <div
                                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-3">
                                 <h2
                                     class="text-sm font-bold text-white flex items-center whitespace-nowrap drop-shadow-md">
-                                    <i class="fa-solid fa-code text-slate-400 mr-2"></i> Экспорт (CRM)
+                                    <i class="fa-solid fa-envelope-open-text text-slate-400 mr-2"></i> Текст для почты
                                 </h2>
                                 <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <button id="aquaparkEmailBtn"
+                                        class="flex-1 sm:flex-none justify-center text-[11px] font-bold text-white bg-blue-500 hover:bg-blue-600 border border-blue-400 px-3 py-2 rounded-xl transition-colors flex items-center whitespace-nowrap shadow-sm shadow-blue-500/20">
+                                        <i class="fa-solid fa-paper-plane sm:mr-1.5"></i> <span class="hidden sm:inline">В аквапарк</span>
+                                    </button>
                                     <button id="emailExportBtn"
                                         class="flex-1 sm:flex-none justify-center text-[11px] font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 px-3 py-2 rounded-xl transition-colors flex items-center whitespace-nowrap">
                                         <i class="fa-solid fa-envelope sm:mr-1.5"></i> <span class="hidden sm:inline">На
@@ -1690,16 +1670,16 @@
                             </div>
                             <textarea id="exportData" readonly
                                 class="w-full min-h-[100px] overflow-hidden glass-input p-3 text-xs font-mono resize-none focus:border-white/20 bg-black/20 text-white cursor-text select-all"
-                                placeholder="Тут появится текст для экспорта в CRM..."></textarea>
+                                placeholder="Тут появится текст для отправки на почту..."></textarea>
                         </section>
 
                     </div>
                 </div>
             </div>
 
-            <!-- View: Database -->
             <div id="view-database"
                 class="app-view hidden w-full neon-card-blue mt-6 md:mt-10 flex-col flex-1 overflow-hidden">
+                <!-- Top toolbar: search + count + export -->
                 <div
                     class="flex items-center justify-between p-3 border-b border-white/10 bg-black/20 shrink-0 flex-wrap gap-2">
                     <div class="relative w-full sm:w-64">
@@ -1710,11 +1690,98 @@
                     </div>
                     <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
                         <span class="text-[11px] text-slate-400 font-medium" id="dbRecordCount">Загрузка...</span>
+                        <input type="file" id="reconciliationFileInput" accept=".xlsx" class="hidden">
+                        <button id="reconciliationBtn"
+                            class="flex items-center gap-2 px-3 py-2 bg-blue-600 text-slate-900 text-xs font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20">
+                            <i class="fa-solid fa-code-compare"></i> <span>Сверка</span>
+                        </button>
+                        <input type="file" id="bankReconciliationFileInput" accept=".xlsx,.csv" class="hidden">
+                        <button id="bankReconciliationBtn"
+                            class="flex items-center gap-2 px-3 py-2 bg-yellow-500 text-slate-900 text-xs font-bold rounded-xl hover:bg-yellow-600 transition-colors shadow-sm shadow-yellow-500/20" title="Сверка с банковской выпиской">
+                            <i class="fa-solid fa-building-columns"></i> <span>Банк</span>
+                        </button>
                         <button id="dbExportBtn"
                             class="flex items-center gap-2 px-3 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition-colors">
-                            <i class="fa-solid fa-file-csv"></i> <span>CSV</span>
+                            <i class="fa-solid fa-file-excel"></i> <span>Excel</span>
                         </button>
                     </div>
+                </div>
+
+                <!-- Filter bar -->
+                <div class="flex flex-wrap items-center gap-2 px-3 py-2 border-b border-white/10 bg-black/30 shrink-0">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">
+                        <i class="fa-solid fa-filter mr-1"></i>Фильтры:
+                    </span>
+
+                    <!-- Date of creation: from / to -->
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] text-slate-400 whitespace-nowrap">Дата заявки:</span>
+                        <div class="relative">
+                            <i class="fa-regular fa-calendar absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[9px] pointer-events-none"></i>
+                            <input type="date" id="dbFilterDateFrom"
+                                class="pl-6 pr-1.5 py-1.5 text-[11px] rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer w-33"
+                                title="С какой даты">
+                        </div>
+                        <span class="text-[10px] text-slate-500">—</span>
+                        <div class="relative">
+                            <i class="fa-regular fa-calendar absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[9px] pointer-events-none"></i>
+                            <input type="date" id="dbFilterDateTo"
+                                class="pl-6 pr-1.5 py-1.5 text-[11px] rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer w-33"
+                                title="По какую дату">
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <span class="text-white/10 select-none">│</span>
+
+                    <!-- Visit date -->
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] text-slate-400 whitespace-nowrap">Визит:</span>
+                        <div class="relative">
+                            <i class="fa-solid fa-umbrella-beach absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[9px] pointer-events-none"></i>
+                            <input type="date" id="dbFilterVisitDate"
+                                class="pl-6 pr-1.5 py-1.5 text-[11px] rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer w-33"
+                                title="Дата визита">
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <span class="text-white/10 select-none">│</span>
+
+                    <!-- Tariff -->
+                    <select id="dbFilterTariff"
+                        class="px-2.5 py-1.5 text-[11px] rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer">
+                        <option value="">Все тарифы</option>
+                        <option value="day">Дневной</option>
+                        <option value="evening">Вечерний</option>
+                    </select>
+
+                    <!-- Client type -->
+                    <select id="dbFilterClient"
+                        class="px-2.5 py-1.5 text-[11px] rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer">
+                        <option value="">Все клиенты</option>
+                        <option value="tourist">Турист</option>
+                        <option value="agent">Турагент</option>
+                    </select>
+
+                    <!-- Divider -->
+                    <span class="text-white/10 select-none">│</span>
+
+                    <!-- Guests count range -->
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] text-slate-400 whitespace-nowrap">Гостей:</span>
+                        <input type="number" id="dbFilterGuestsMin" min="0" placeholder="от"
+                            class="w-11 px-1.5 py-1.5 text-[11px] text-center rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors">
+                        <span class="text-[10px] text-slate-500">—</span>
+                        <input type="number" id="dbFilterGuestsMax" min="0" placeholder="до"
+                            class="w-11 px-1.5 py-1.5 text-[11px] text-center rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors">
+                    </div>
+
+                    <!-- Reset button -->
+                    <button id="dbFilterResetBtn"
+                        class="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-rose-300 bg-rose-500/10 hover:bg-rose-500/25 border border-rose-400/20 rounded-xl transition-colors whitespace-nowrap">
+                        <i class="fa-solid fa-xmark"></i> Сбросить
+                    </button>
                 </div>
                 <div class="flex-1 overflow-auto min-h-0 custom-scrollbar">
                     <table class="w-full text-xs border-collapse min-w-[700px]" id="dbTable">
