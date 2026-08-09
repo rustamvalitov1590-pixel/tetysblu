@@ -1063,7 +1063,7 @@
                 setTimeout(() => {
                     if (currentStep !== i) {
                         el.classList.add('hidden');
-                        el.classList.remove('absolute', 'top-0', 'left-0', 'w-full');
+                        el.classList.remove('absolute', 'top-0', 'left-0', 'w-full', 'px-6', 'sm:px-8');
                     }
                 }, 300);
             }
@@ -1073,7 +1073,7 @@
             // Show current step
             const currentEl = document.getElementById(`step-${currentStep}`);
             currentEl.classList.remove('hidden');
-            currentEl.classList.add('absolute', 'top-0', 'left-0', 'w-full');
+            currentEl.classList.add('absolute', 'top-0', 'left-0', 'w-full', 'px-6', 'sm:px-8');
             
             // Allow browser to render display:block before starting opacity transition
             setTimeout(() => {
@@ -1082,7 +1082,7 @@
                 // После анимации можно снять position absolute для нормального потока
                 setTimeout(() => {
                     if (currentStep === step) {
-                        currentEl.classList.remove('absolute', 'top-0', 'left-0', 'w-full');
+                        currentEl.classList.remove('absolute', 'top-0', 'left-0', 'w-full', 'px-6', 'sm:px-8');
                     }
                 }, 300);
             }, 10);
