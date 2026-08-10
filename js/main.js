@@ -3298,7 +3298,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function transliterate(text) {
         if (!text) return '';
-        return text.toLowerCase().split('').map(char => cyrillicToLatinMap[char] || char).join('').replace(/[^a-z0-9]/g, '');
+        return text.toLowerCase().split('').map(char => cyrillicToLatinMap[char] || char).join('').replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
     }
 
     if (reconciliationBtn && reconciliationFileInput) {
