@@ -1,7 +1,35 @@
 document.addEventListener('DOMContentLoaded', async () => {
     // Регистрация Service Worker для PWA
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').catch(err => console.error('SW registration failed', err));
+        navigator.serviceWorker.register('sw.js').then((reg) => {
+            // Принудительно проверяем, нет ли новой версии sw.js, при каждом заходе —
+            // не полагаемся только на встроенную (иногда отложенную) проверку браузера.
+            reg.update().catch(() => {});
+
+            // Если уже есть SW, ожидающий активации, — не ждём, пока пользователь
+            // сам перезайдёт, а сразу просим его активироваться.
+            if (reg.waiting) {
+                reg.waiting.postMessage('SKIP_WAITING');
+            }
+            reg.addEventListener('updatefound', () => {
+                const newWorker = reg.installing;
+                if (!newWorker) return;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        newWorker.postMessage('SKIP_WAITING');
+                    }
+                });
+            });
+        }).catch(err => console.error('SW registration failed', err));
+
+        // Как только новый Service Worker реально взял управление страницей —
+        // перезагружаем её один раз, чтобы подтянулись новые файлы.
+        let swRefreshed = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (swRefreshed) return;
+            swRefreshed = true;
+            window.location.reload();
+        });
     }
 
     // Вспомогательная функция для всплывающих уведомлений (Toast)
