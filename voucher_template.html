@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voucher Template</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Montserrat & Fredoka One) -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        tetys: {
+                            dark: '#085387',
+                            cyan: '#33D1D4',
+                            light: '#F0FBFF',
+                            text: '#222222',
+                            subtext: '#555555'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #525659;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* A4 Landscape Size: 297mm x 210mm */
+        .voucher-container {
+            width: 297mm;
+            height: 210mm;
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+            background-image: 
+                radial-gradient(circle at 10% 90%, rgba(51, 209, 212, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 10%, rgba(8, 83, 135, 0.05) 0%, transparent 40%);
+        }
+
+        @media print {
+            body { background: none; margin: 0; padding: 0; }
+            .voucher-container {
+                box-shadow: none;
+                width: 297mm;
+                height: 210mm;
+                page-break-after: avoid;
+            }
+            @page {
+                size: A4 landscape;
+                margin: 0;
+            }
+        }
+
+        /* Custom Bullet List */
+        .custom-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .custom-list li {
+            position: relative;
+            padding-left: 1rem;
+            margin-bottom: 0.25rem;
+            font-size: 10px;
+            color: #444;
+            line-height: 1.4;
+        }
+        .custom-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #33D1D4;
+            font-size: 16px;
+            line-height: 0.9;
+        }
+
+        /* Table under lines */
+        .data-row {
+            border-bottom: 1px solid #E5E7EB;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .curve-header {
+            background: #085387;
+            border-bottom-right-radius: 50% 20%;
+            border-bottom-left-radius: 20% 10%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="voucher-container flex flex-col font-sans text-tetys-text relative">
+        
+        <!-- Header Logo (Absolute) -->
+        <div class="absolute top-0 left-0 w-[46%] h-24 sm:h-32 z-0 pointer-events-none">
+            <img src="assets/pdf_logo.png" alt="TETYSBLU" class="w-full h-full object-cover object-left" style="border-bottom-right-radius: 90px;">
+        </div>
+
+        <!-- TWO COLUMNS LAYOUT -->
+        <div class="flex-1 flex px-10 py-6 gap-8 relative z-10">
+            
+            <!-- LEFT COLUMN (Dynamic Data) -->
+            <div class="w-[45%] flex flex-col h-full pt-28">
+                
+                <!-- Data Table -->
+                <div class="w-full mb-8">
+                    <div class="grid grid-cols-2 data-row items-end">
+                        <div class="text-xs font-bold">Компания</div>
+                        <div class="text-lg font-medium outline-none focus:bg-blue-50 focus:ring-2 focus:ring-blue-200 rounded px-1 -mx-1 transition-colors" contenteditable="true" id="valCompany">Mangystau Discovery</div>
+                    </div>
+                    <div class="grid grid-cols-2 data-row items-end">
+                        <div class="text-xs font-bold">Данные гостя</div>
+                        <div class="text-lg font-medium outline-none focus:bg-blue-50 focus:ring-2 focus:ring-blue-200 rounded px-1 -mx-1 transition-colors" contenteditable="true" id="valGuestName">AYTUGANOVA LAZZAT</div>
+                    </div>
+                    <div class="grid grid-cols-2 data-row items-end">
+                        <div class="text-xs font-bold">Дата посещения</div>
+                        <div class="text-lg font-medium outline-none focus:bg-blue-50 focus:ring-2 focus:ring-blue-200 rounded px-1 -mx-1 transition-colors" contenteditable="true" id="valDate">05.08.2026</div>
+                    </div>
+                    <div class="grid grid-cols-2 data-row items-end">
+                        <div class="text-xs font-bold">Количеств взрослых</div>
+                        <div class="text-lg font-medium outline-none focus:bg-blue-50 focus:ring-2 focus:ring-blue-200 rounded px-1 -mx-1 transition-colors" contenteditable="true" id="valAdults">2</div>
+                    </div>
+                    <div class="grid grid-cols-2 data-row items-end">
+                        <div class="text-xs font-bold">Количество детей</div>
+                        <div class="text-lg font-medium outline-none focus:bg-blue-50 focus:ring-2 focus:ring-blue-200 rounded px-1 -mx-1 transition-colors" contenteditable="true" id="valKids">2</div>
+                    </div>
+                    <div class="grid grid-cols-2 data-row items-end">
+                        <div class="text-xs font-bold">Кол-во детей до 4-х лет</div>
+                        <div class="text-lg font-medium outline-none focus:bg-blue-50 focus:ring-2 focus:ring-blue-200 rounded px-1 -mx-1 transition-colors min-h-[28px]" contenteditable="true" id="valToddlers"></div>
+                    </div>
+                    <div class="grid grid-cols-2 data-row items-end">
+                        <div class="text-xs font-bold">ID код</div>
+                        <div class="text-2xl font-black text-black outline-none focus:bg-blue-50 focus:ring-2 focus:ring-blue-200 rounded px-1 -mx-1 transition-colors" contenteditable="true" id="valId">348365</div>
+                    </div>
+                    <div class="grid grid-cols-2 data-row items-end border-b-0 pb-1">
+                        <div class="text-xs font-bold">Коментарий</div>
+                        <div class="text-lg font-medium outline-none focus:bg-blue-50 focus:ring-2 focus:ring-blue-200 rounded px-1 -mx-1 transition-colors min-h-[28px]" contenteditable="true" id="valComment"></div>
+                    </div>
+                    <div class="border-b-2 border-tetys-cyan mt-0 w-full"></div>
+                </div>
+
+                <!-- Services Split -->
+                <div class="flex gap-4 mb-8">
+                    <div class="flex-1">
+                        <h3 class="font-bold text-[11px] mb-2 leading-tight">В стоимость входного<br>билета входит:</h3>
+                        <ul class="custom-list">
+                            <li>Пользование аквапарком и аттракционами</li>
+                            <li>Пляжем</li>
+                            <li>Ленивая река</li>
+                            <li>Волновой бассейн</li>
+                            <li>Комната для переодевания</li>
+                            <li>Комната для молитв (намазхана)</li>
+                        </ul>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-[11px] mb-2 leading-tight">Услуги за<br>дополнительную оплату</h3>
+                        <ul class="custom-list">
+                            <li>Питание</li>
+                            <li>Кабаны и зонт на пляже</li>
+                            <li>Fast track</li>
+                            <li>Магазины</li>
+                            <li>Запрещается приносить с собой пищевые продукты и напитки</li>
+                            <li>Шкафчики в раздевалках</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="text-[10px] text-tetys-subtext leading-snug mt-auto pb-4">
+                    Гости должны предъявить при входе личные документы владельца 
+                    ваучера. ID код является индивидуальным для каждого бронирования 
+                    и не может быть изменен. Внимательно проверьте правильность 
+                    введенных данных. В случае возникновения вопросов просим 
+                    обращаться в турагентство или по месту покупки тура
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN (Rules) -->
+            <div class="w-[55%] flex flex-col z-10 pl-4 border-l border-transparent">
+                
+                <!-- Top Right Contact & Time -->
+                <div class="flex flex-col items-start pt-6 mb-12">
+                    <div class="flex items-center space-x-4 text-[0.95rem] font-bold text-[#0b407a] mb-3">
+                        <span>tetysblu.com</span>
+                        <i class="fa-brands fa-facebook-f hover:text-tetys-cyan cursor-pointer transition-colors"></i>
+                        <i class="fa-brands fa-instagram hover:text-tetys-cyan cursor-pointer transition-colors"></i>
+                        <i class="fa-brands fa-telegram hover:text-tetys-cyan cursor-pointer transition-colors"></i>
+                        <i class="fa-brands fa-youtube hover:text-tetys-cyan cursor-pointer transition-colors"></i>
+                        <i class="fa-brands fa-tiktok hover:text-tetys-cyan cursor-pointer transition-colors"></i>
+                        <span>tetysblu</span>
+                    </div>
+                    <div class="px-8 py-2.5 border-2 border-tetys-cyan rounded-full text-[1.1rem] bg-[#f8fdff] shadow-sm flex items-center justify-center min-w-[320px]">
+                        <span class="text-tetys-cyan font-medium mr-2">Время работы:</span> <span class="font-bold text-[#0b407a]">10:00-00:00</span>
+                    </div>
+                </div>
+
+                <h2 class="font-bold text-xs uppercase mb-2">Общие правила</h2>
+                <ul class="custom-list mb-6">
+                    <li>Входные браслеты в Тематический парк «Tetysblu» используются для входа в парк и выхода из него, а также для оплаты любых дополнительных платных услуг на территории парка. Список бесплатных и платных услуг и аттракционов можно получить в киосках.</li>
+                    <li>Браслеты следует сохранять в исходном состоянии, в котором они были получены. Если браслеты будут повреждены или утеряны, необходимо обратится на кассу парка.</li>
+                    <li>На работу аттракционов в Тематическом парке «Tetysblu» могут влиять погодные условия и ремонтные работы. Информацию о закрытых аттракционах по техническим причинам Вы можете получить на кассе а также по месту приобретения.</li>
+                    <li>Браслеты Тематического парка «Tetysblu» действительны на время посещения в течение рабочего дня «Tetysblu» (1 день).</li>
+                    <li>Браслеты в Тематическом парке «Tetysblu» не подлежат возврату или отмене.</li>
+                    <li>Сопровождающий несет ответственность за лиц, которых он сопровождает. Посетителям в возрасте 16 лет и младше не разрешается входить на территорию самостоятельно. Лицо, сопровождающее посетителя младше 16 лет, не может быть моложе 18 (восемнадцати) лет.</li>
+                    <li>Запрещается приносить в Парк аттракционов «Tetysblu» любую еду, алкогольные или безалкогольные напитки, за исключением бутылки 0,5 литров воды для каждого гостя и детского питания.</li>
+                    <li>Посещение бассейнов, аква-горок и аттракционов обязательно в подходящей одежде (купальных костюмах/водонепроницаемые подгузниках).</li>
+                    <li>Гости несут ответственность за свои вещи. Тематический парк «Tetysblu» не несет ответственности за утерянные или украденные вещи.</li>
+                    <li>Тематический парк «Tetysblu» оставляет за собой право изменять все условия и положения в любое время без предварительного уведомления.</li>
+                    <li>Фото/видео съемка на профессиональную камеру запрещена</li>
+                    <li class="font-bold text-black">15 минут до закрытия парка работа всех аттракционов останавливается.</li>
+                    <li class="font-bold text-black">Возврат денежных средств на браслете осуществляется до закрытия парка.</li>
+                </ul>
+
+                <h2 class="font-bold text-xs uppercase mb-2">Правила по отмене и возврату билета</h2>
+                <ul class="custom-list">
+                    <li>Приобретенный билет не подлежит передачи вторым лицам</li>
+                    <li>Отмена билета не осуществляется после покупки</li>
+                    <li>Перенос билета возможен за 24 часа до предполагаемой даты использования</li>
+                    <li>Перенос билета осуществляется при возникновении непредвиденных обстоятельств, по согласованию с парком</li>
+                    <li>Билеты купленные по акции не подлежат каким либо изменениям</li>
+                    <li>Активированный браслет не подлежит обмену либо возврату</li>
+                    <li>Все вопросы по отмене/перебронирование/переноса напрямую направляется на место приобретение билета</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
