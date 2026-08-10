@@ -12,6 +12,12 @@ const ASSETS_TO_CACHE = [
   './manifest.json'
 ];
 
+self.addEventListener('message', (event) => {
+  if (event.data === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
