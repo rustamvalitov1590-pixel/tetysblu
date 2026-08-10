@@ -104,7 +104,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const adminAvatar = document.getElementById('adminAvatarImg');
     if (adminAvatar) {
         adminAvatar.addEventListener('click', () => {
+            // Защита от повторных кликов: если оверлей уже открыт — не создаём второй
+            // (иначе несколько полноэкранных слоёв могут наложиться друг на друга
+            // и заблокировать клики по всему сайту).
+            if (document.getElementById('avatarZoomOverlay')) return;
+
             const overlay = document.createElement('div');
+            overlay.id = 'avatarZoomOverlay';
             overlay.className = 'fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center cursor-zoom-out opacity-0 transition-opacity duration-300';
             
             const img = document.createElement('img');
@@ -119,13 +125,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             overlay.classList.remove('opacity-0');
             img.classList.remove('scale-90');
             
-            overlay.addEventListener('click', () => {
+            const closeOverlay = () => {
                 overlay.classList.add('opacity-0');
                 img.classList.add('scale-90');
                 setTimeout(() => {
                     overlay.remove();
                 }, 300);
-            });
+            };
+            overlay.addEventListener('click', closeOverlay);
         });
     }
 
