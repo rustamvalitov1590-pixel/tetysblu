@@ -1397,6 +1397,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (currentPromo) {
                 earlyBookingEnabled = true;
                 earlyBookingContainer.classList.remove('hidden');
+                const titleEl = document.getElementById('earlyBookingTitle');
+                const subtitleEl = document.getElementById('earlyBookingSubtitle');
+                if (titleEl) titleEl.textContent = currentPromo.title || 'Акция';
+                if (subtitleEl) subtitleEl.textContent = `Скидка -${currentPromo.discount_percent}%`;
             } else {
                 earlyBookingContainer.classList.add('hidden');
             }
