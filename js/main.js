@@ -761,6 +761,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Parse Bulk Text Input
     parseBulkBtn.addEventListener('click', () => {
+      try {
         const text = bulkText.value.trim();
         if (!text) return;
 
@@ -1216,6 +1217,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             bulkText.value = '';
             lastAttemptedText = '';
         }
+      } catch (e) {
+        alert('ОШИБКА В РАСПОЗНАВАНИИ: ' + e.message + '\n\n' + (e.stack || ''));
+      }
     });
 
     function createId() {
@@ -3298,7 +3302,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function transliterate(text) {
         if (!text) return '';
-        return text.toLowerCase().split('').map(char => cyrillicToLatinMap[char] || char).join('').replace(/[^a-z0-9]/g, '');
+        return text.toLowerCase().split('').map(char => cyrillicToLatinMap[char] || char).join('').replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
     }
 
     if (reconciliationBtn && reconciliationFileInput) {
