@@ -100,42 +100,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     // -------------------
 
-    // Клик по аватару админа (розыгрыш)
-    const adminAvatar = document.getElementById('adminAvatarImg');
-    if (adminAvatar) {
-        adminAvatar.addEventListener('click', () => {
-            // Защита от повторных кликов: если оверлей уже открыт — не создаём второй
-            // (иначе несколько полноэкранных слоёв могут наложиться друг на друга
-            // и заблокировать клики по всему сайту).
-            if (document.getElementById('avatarZoomOverlay')) return;
-
-            const overlay = document.createElement('div');
-            overlay.id = 'avatarZoomOverlay';
-            overlay.className = 'fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center cursor-zoom-out opacity-0 transition-opacity duration-300';
-            
-            const img = document.createElement('img');
-            img.src = 'assets/admin_avatar.png?t=' + Date.now();
-            img.className = 'max-w-[90%] max-h-[90%] rounded-2xl shadow-2xl transition-transform duration-300 scale-90 object-contain';
-            
-            overlay.appendChild(img);
-            document.body.appendChild(overlay);
-            
-            // Запуск анимации
-            overlay.offsetHeight;
-            overlay.classList.remove('opacity-0');
-            img.classList.remove('scale-90');
-            
-            const closeOverlay = () => {
-                overlay.classList.add('opacity-0');
-                img.classList.add('scale-90');
-                setTimeout(() => {
-                    overlay.remove();
-                }, 300);
-            };
-            overlay.addEventListener('click', closeOverlay);
-        });
-    }
-
 
     // Состояние приложения
 
