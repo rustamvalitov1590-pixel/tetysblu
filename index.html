@@ -1731,8 +1731,17 @@
                     </div>
                 </div>
 
+                <!-- Filter bar toggle (mobile only) -->
+                <button id="dbFilterToggleBtn" type="button"
+                    class="sm:hidden flex items-center justify-between gap-2 px-3 py-2.5 border-b border-white/10 bg-black/20 shrink-0 text-left">
+                    <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">
+                        <i class="fa-solid fa-filter mr-1.5"></i>Фильтры
+                    </span>
+                    <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform" id="dbFilterToggleIcon"></i>
+                </button>
+
                 <!-- Filter bar -->
-                <div class="flex flex-wrap items-center gap-2 px-3 py-2 border-b border-white/10 bg-black/30 shrink-0">
+                <div id="dbFilterBar" class="hidden sm:flex flex-wrap items-center gap-2 px-3 py-2 border-b border-white/10 bg-black/30 shrink-0">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">
                         <i class="fa-solid fa-filter mr-1"></i>Фильтры:
                     </span>
