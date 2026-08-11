@@ -3117,6 +3117,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (el) el.addEventListener('change', onDbFilter);
         if (el && el.type === 'number') el.addEventListener('input', onDbFilter);
     });
+
+    // Сворачиваемый блок фильтров на мобильных (на десктопе всегда открыт)
+    const dbFilterToggleBtn = document.getElementById('dbFilterToggleBtn');
+    const dbFilterBar = document.getElementById('dbFilterBar');
+    const dbFilterToggleIcon = document.getElementById('dbFilterToggleIcon');
+    if (dbFilterToggleBtn && dbFilterBar) {
+        dbFilterToggleBtn.addEventListener('click', () => {
+            const isHidden = dbFilterBar.classList.contains('hidden');
+            if (isHidden) {
+                dbFilterBar.classList.remove('hidden');
+                dbFilterBar.classList.add('flex');
+                if (dbFilterToggleIcon) dbFilterToggleIcon.classList.add('rotate-180');
+            } else {
+                dbFilterBar.classList.add('hidden');
+                dbFilterBar.classList.remove('flex');
+                if (dbFilterToggleIcon) dbFilterToggleIcon.classList.remove('rotate-180');
+            }
+        });
+    }
+
     const dbFilterResetBtn = document.getElementById('dbFilterResetBtn');
     if (dbFilterResetBtn) {
         dbFilterResetBtn.addEventListener('click', () => {
