@@ -65,6 +65,23 @@
 })();
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Транслитерация — объявлена САМОЙ ПЕРВОЙ в этой области видимости,
+    // чтобы её точно не вызвали раньше инициализации (была причина
+    // случайных зависаний всего приложения: ReferenceError из-за TDZ у const).
+    const cyrillicToLatinMap = {
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+        'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+        'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+        'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch',
+        'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+        'ә': 'a', 'ғ': 'g', 'қ': 'q', 'ң': 'n', 'ө': 'o', 'ұ': 'u', 'ү': 'u', 'һ': 'h', 'і': 'i'
+    };
+
+    function transliterate(text) {
+        if (!text) return '';
+        return text.toLowerCase().split('').map(char => cyrillicToLatinMap[char] || char).join('').replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+    }
+
     // Регистрация Service Worker для PWA
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').then((reg) => {
@@ -3376,20 +3393,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
     // --- СВЕРКА С АКВАПАРКОМ ---
-    const cyrillicToLatinMap = {
-        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
-        'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
-        'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
-        'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch',
-        'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
-        'ә': 'a', 'ғ': 'g', 'қ': 'q', 'ң': 'n', 'ө': 'o', 'ұ': 'u', 'ү': 'u', 'һ': 'h', 'і': 'i'
-    };
-
-    function transliterate(text) {
-        if (!text) return '';
-        return text.toLowerCase().split('').map(char => cyrillicToLatinMap[char] || char).join('').replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
-    }
-
     if (reconciliationBtn && reconciliationFileInput) {
         reconciliationBtn.addEventListener('click', () => {
             reconciliationFileInput.click();
