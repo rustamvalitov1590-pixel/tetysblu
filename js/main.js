@@ -1,3 +1,69 @@
+// --- ГЛОБАЛЬНЫЙ ПЕРЕХВАТЧИК ОШИБОК ---
+// Показывает на экране понятный баннер при любой непойманной ошибке JS,
+// плюс сохраняет последние ошибки в localStorage — чтобы можно было
+// сфотографировать телефон или прислать текст без открытия консоли.
+(function () {
+    function saveError(info) {
+        try {
+            const list = JSON.parse(localStorage.getItem('tetysErrorLog') || '[]');
+            list.unshift({ ...info, time: new Date().toISOString() });
+            localStorage.setItem('tetysErrorLog', JSON.stringify(list.slice(0, 10)));
+        } catch (e) { /* ignore */ }
+    }
+
+    function showBanner(text) {
+        let banner = document.getElementById('globalErrorBanner');
+        if (banner) banner.remove();
+
+        banner = document.createElement('div');
+        banner.id = 'globalErrorBanner';
+        banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:2147483647;' +
+            'background:#dc2626;color:#fff;font:12px/1.4 monospace;padding:10px 14px;' +
+            'box-shadow:0 2px 8px rgba(0,0,0,.4);white-space:pre-wrap;word-break:break-word;' +
+            'max-height:40vh;overflow:auto;pointer-events:auto;';
+
+        const msg = document.createElement('div');
+        msg.textContent = '⚠️ Ошибка в приложении: ' + text;
+        banner.appendChild(msg);
+
+        const btnRow = document.createElement('div');
+        btnRow.style.cssText = 'margin-top:8px;display:flex;gap:8px;';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = 'Скрыть';
+        closeBtn.style.cssText = 'background:#fff;color:#dc2626;border:none;border-radius:6px;padding:4px 10px;font-weight:bold;cursor:pointer;';
+        closeBtn.onclick = () => banner.remove();
+
+        const copyBtn = document.createElement('button');
+        copyBtn.textContent = 'Скопировать';
+        copyBtn.style.cssText = 'background:#fff;color:#dc2626;border:none;border-radius:6px;padding:4px 10px;font-weight:bold;cursor:pointer;';
+        copyBtn.onclick = () => {
+            navigator.clipboard?.writeText(text).catch(() => {});
+            copyBtn.textContent = 'Скопировано!';
+        };
+
+        btnRow.appendChild(closeBtn);
+        btnRow.appendChild(copyBtn);
+        banner.appendChild(btnRow);
+
+        // Баннер — тонкая полоса сверху, НЕ перекрывает весь экран
+        // и не блокирует клики по остальной части страницы.
+        document.body.appendChild(banner);
+    }
+
+    window.addEventListener('error', (event) => {
+        const text = `${event.message} (${event.filename}:${event.lineno}:${event.colno})`;
+        saveError({ type: 'error', message: event.message, source: event.filename, line: event.lineno, stack: event.error?.stack });
+        showBanner(text);
+    });
+
+    window.addEventListener('unhandledrejection', (event) => {
+        const text = 'Promise: ' + (event.reason?.message || event.reason);
+        saveError({ type: 'unhandledrejection', message: text, stack: event.reason?.stack });
+        showBanner(text);
+    });
+})();
+
 document.addEventListener('DOMContentLoaded', async () => {
     // Регистрация Service Worker для PWA
     if ('serviceWorker' in navigator) {
