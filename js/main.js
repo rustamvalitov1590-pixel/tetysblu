@@ -303,6 +303,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         storeName: "history"
     }) : null;
 
+    let lastSavedFingerprint = null;
+
     async function saveToHistory() {
         if (!supabaseClient) {
             window.showToast('Ошибка: Нет подключения к облаку', 'fa-triangle-exclamation', 'bg-red-500');
@@ -310,6 +312,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (tourists.length === 0 || (!tourists[0].fullName && !tourists[0].dob)) return;
         const total = parseInt(totalPriceEl.textContent.replace(/\D/g, '')) || 0;
+        
+        const currentFingerprint = JSON.stringify(tourists) + '|' + total;
+        if (currentFingerprint === lastSavedFingerprint) {
+            if (window.showToast) window.showToast('Дубликат: заявка уже сохранена', 'fa-info-circle', 'bg-slate-500');
+            return;
+        }
+
         const currentUser = localStorage.getItem('tetysUser') || 'unknown';
 
         const record = {
@@ -368,6 +377,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (window.showToast) window.showToast('Ошибка сохранения в базу', 'fa-triangle-exclamation', 'bg-red-500');
                 throw error;
             } else {
+                lastSavedFingerprint = currentFingerprint;
                 if (window.showToast) window.showToast('Сохранено в облако', 'fa-cloud-check', 'bg-emerald-500');
             }
 
@@ -516,40 +526,80 @@ document.addEventListener('DOMContentLoaded', async () => {
         const topStatRequests = document.getElementById('topStatRequests');
         const topStatAvgCheck = document.getElementById('topStatAvgCheck');
 
-        if (!topStatRevenue || !topStatGuests || !topStatRequests || !topStatAvgCheck) return;
+        const miniStatRevenue = document.getElementById('miniStatRevenue');
+        const miniStatGuests = document.getElementById('miniStatGuests');
+        const miniStatDateInput = document.getElementById('miniStatDate');
 
         try {
             const data = await getHistoryData(0);
 
             const today = new Date();
             today.setHours(0, 0, 0, 0);
+            
+            // Set default date for mini stats if empty
+            if (miniStatDateInput && !miniStatDateInput.value) {
+                const tzOffset = today.getTimezoneOffset() * 60000;
+                miniStatDateInput.value = new Date(Date.now() - tzOffset).toISOString().split('T')[0];
+            }
+            
+            let miniDateStr = miniStatDateInput ? miniStatDateInput.value : '';
+            let miniDateStart = null;
+            let miniDateEnd = null;
+            if (miniDateStr) {
+                miniDateStart = new Date(miniDateStr);
+                miniDateStart.setHours(0, 0, 0, 0);
+                miniDateEnd = new Date(miniDateStr);
+                miniDateEnd.setHours(23, 59, 59, 999);
+            }
 
             let todayRevenue = 0;
             let todayGuests = 0;
             let activeRequests = 0;
             let paidCount = 0;
+            
+            let miniRevenue = 0;
+            let miniGuests = 0;
 
             data.forEach(item => {
                 const itemDate = new Date(item.timestamp);
                 const isToday = itemDate >= today;
+                
+                const isMiniDate = miniDateStart && miniDateEnd && (itemDate >= miniDateStart && itemDate <= miniDateEnd);
 
                 if (item.status === 'Ожидание оплаты') {
                     activeRequests++;
                 }
 
-                if (isToday && (item.status === 'Оплачено' || item.status === 'ЗАВЕРШЕНО' || !item.status)) {
-                    todayRevenue += (item.totalSum || 0);
-                    todayGuests += (item.tourists ? item.tourists.length : 0);
-                    paidCount++;
+                if (item.status === 'Оплачено' || item.status === 'ЗАВЕРШЕНО' || !item.status) {
+                    if (isToday) {
+                        todayRevenue += (item.totalSum || 0);
+                        todayGuests += (item.tourists ? item.tourists.length : 0);
+                        paidCount++;
+                    }
+                    if (isMiniDate) {
+                        miniRevenue += (item.totalSum || 0);
+                        miniGuests += (item.tourists ? item.tourists.length : 0);
+                    }
                 }
             });
 
             const avgCheck = paidCount > 0 ? Math.round(todayRevenue / paidCount) : 0;
 
-            topStatRevenue.textContent = todayRevenue.toLocaleString('ru-RU') + ' ₸';
-            topStatGuests.textContent = todayGuests;
-            topStatRequests.textContent = activeRequests;
-            topStatAvgCheck.textContent = avgCheck.toLocaleString('ru-RU') + ' ₸';
+            if (topStatRevenue) topStatRevenue.textContent = todayRevenue.toLocaleString('ru-RU') + ' ₸';
+            if (topStatGuests) topStatGuests.textContent = todayGuests;
+            if (topStatRequests) topStatRequests.textContent = activeRequests;
+            if (topStatAvgCheck) topStatAvgCheck.textContent = avgCheck.toLocaleString('ru-RU') + ' ₸';
+
+            if (miniStatRevenue) miniStatRevenue.textContent = miniRevenue.toLocaleString('ru-RU') + ' ₸';
+            if (miniStatGuests) miniStatGuests.textContent = miniGuests;
+
+            // Also update mobile copies
+            const miniStatRevenueMob = document.getElementById('miniStatRevenueMob');
+            const miniStatGuestsMob = document.getElementById('miniStatGuestsMob');
+            const miniStatDateMob = document.getElementById('miniStatDateMob');
+            if (miniStatRevenueMob) miniStatRevenueMob.textContent = miniRevenue.toLocaleString('ru-RU') + ' ₸';
+            if (miniStatGuestsMob) miniStatGuestsMob.textContent = miniGuests;
+            if (miniStatDateMob && miniStatDateInput) miniStatDateMob.value = miniStatDateInput.value;
 
         } catch (e) {
             console.error("Error updating top stats:", e);
@@ -1098,11 +1148,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 parsedCategory = 'INF';
             } else if (/(?:^|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])(?:snr|pensioners?|пенсионер[ыов]*|пенс|зейнеткер(?:лер)?|зийнеткер(?:лер)?)(?=$|\s|[^a-zA-Zа-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ])/i.test(lowerLineForCat)) {
                 parsedCategory = 'SNR';
-            } else if (/(?:inv|инвалид[ыов]*|инв|мүгедек(?:тік|тілік|тер)?|мугедек(?:тик|тер)?|\bинвалидн[а-я]+)|(?:\d+[-‐–]?(?:ші|ши|нші|нчи|нши|rd|th|st|nd)\s+(?:топ|группа|group)\s*(?:мүгедектік|инвалидн[а-я]+|мүгедек)?)/i.test(lowerLineForCat)) {
+            } else if (/(?:inv|инвалид[ыов]*|инв|мүгедек(?:тік|тілік|тер)?|мугедек(?:тик|тер)?|\bинвалидн[а-я]+)|(?:\d+[-‐–]?(?:ші|ши|нші|нчи|нши|rd|th|st|nd)?\s+(?:топ|тобы|группа(?:сы)?|group)\s*(?:мүгедектік|инвалидн[а-я]+|мүгедек)?)/i.test(lowerLineForCat)) {
                 parsedCategory = 'INV';
                 // Определяем номер группы инвалидности (1-ші топ, 2-ші топ, 3-ші топ и т.д.)
                 // Значения disability в системе: '1' = 100%, '2' = 15%, '3' = 10%
-                const grpMatch = lowerLineForCat.match(/(\d+)[-‐–]?(?:ші|ши|нші|нчи|нши|rd|th|st|nd)?\s+(?:топ|группа|group)/);
+                const grpMatch = lowerLineForCat.match(/(\d+)[-‐–]?(?:ші|ши|нші|нчи|нши|rd|th|st|nd)?\s+(?:топ|тобы|группа(?:сы)?|group)/);
                 if (grpMatch) {
                     const grpNum = parseInt(grpMatch[1], 10);
                     if (grpNum >= 1 && grpNum <= 3) {
@@ -1191,7 +1241,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             // Убираем текст о группе инвалидности (казахский/русский) из имени
-            namePart = namePart.replace(/\d+[-‐–]?(?:ші|ши|нші|нчи|нши|rd|th|st|nd)?\s+(?:топ|группа|group)\s*(?:мүгедектік|мүгедектілік|мүгедек|инвалидн[а-яёА-ЯЁ]*)?/ig, '');
+            namePart = namePart.replace(/\d+[-‐–]?(?:ші|ши|нші|нчи|нши|rd|th|st|nd)?\s+(?:топ|тобы|группа(?:сы)?|group)\s*(?:мүгедектік|мүгедектілік|мүгедек|инвалидн[а-яёА-ЯЁ]*)?/ig, '');
             namePart = namePart.replace(/мүгедектік(?:тер)?\s+(?:бар|жоқ)?/ig, '');
             namePart = namePart.replace(/мүгедек(?:тік|тілік|тер)?\s*/ig, '');
             namePart = namePart.replace(/\bбар\b/ig, '');
@@ -2875,6 +2925,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderDbTable(query = '') {
         if (!dbTableBody) return;
+        const dbMobileList = document.getElementById('dbMobileList');
         const q = query.toLowerCase().trim();
 
         // Read filter values
@@ -2968,6 +3019,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (filtered.length === 0) {
             dbTableBody.innerHTML = `<tr><td colspan="9" class="text-center py-16 text-slate-400"><i class="fa-solid fa-folder-open mr-2 opacity-50"></i>Нет записей</td></tr>`;
+            if (dbMobileList) dbMobileList.innerHTML = `<div class="text-center py-16 text-slate-400"><i class="fa-solid fa-folder-open text-2xl mb-2 opacity-50 block"></i>Нет записей</div>`;
             return;
         }
 
@@ -2987,33 +3039,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         const dupBanner = dupGroupCount > 0 ? `
             <tr id="dupWarningBanner">
                 <td colspan="9" class="px-4 py-3">
-                    <div class="flex items-center justify-between gap-3 bg-amber-500/15 border border-amber-400/40 rounded-xl px-4 py-3">
+                    <div class="flex items-center justify-between gap-3 bg-amber-500/15 border border-amber-500/30 rounded-xl px-4 py-3">
                         <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-triangle-exclamation text-amber-400 text-base animate-pulse"></i>
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500 text-base animate-pulse"></i>
                             <div>
-                                <p class="text-amber-300 font-bold text-xs">Обнаружены возможные дубликаты!</p>
-                                <p class="text-amber-200/70 text-[11px] mt-0.5">Найдено ${dupGroupCount} группы дублирующихся заявок (выделены цветом). Проверьте и удалите лишние.</p>
+                                <p class="text-[var(--ink)] font-bold text-xs">Обнаружены возможные дубликаты!</p>
+                                <p class="text-[var(--ink-soft)] text-[11px] mt-0.5">Найдено ${dupGroupCount} группы дублирующихся заявок (выделены цветом). Проверьте и удалите лишние.</p>
                             </div>
                         </div>
                         <button onclick="document.getElementById('dupWarningBanner').remove()" 
-                            class="text-amber-400/60 hover:text-amber-300 transition-colors shrink-0" title="Закрыть">
+                            class="text-[var(--ink-faint)] hover:text-amber-500 transition-colors shrink-0" title="Закрыть">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
                 </td>
             </tr>` : '';
+            
+        let mobileHtml = dupGroupCount > 0 ? `
+            <div id="dupWarningBannerMobile" class="flex items-center justify-between gap-3 bg-amber-500/15 border border-amber-500/30 rounded-xl px-4 py-3 mb-2">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500 text-base animate-pulse"></i>
+                    <div>
+                        <p class="text-[var(--ink)] font-bold text-xs">Возможные дубликаты!</p>
+                        <p class="text-[var(--ink-soft)] text-[11px] mt-0.5">Найдено ${dupGroupCount} гр.</p>
+                    </div>
+                </div>
+            </div>` : '';
 
-        dbTableBody.innerHTML = dupBanner + filtered.map((item, idx) => {
+        const desktopRows = filtered.map((item, idx) => {
             const dt = new Date(item.timestamp);
             const dateStr = `${dt.getDate().toString().padStart(2, '0')}.${(dt.getMonth() + 1).toString().padStart(2, '0')}.${dt.getFullYear()}`;
             const timeStr = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}`;
             const clientLabel = item.clientType === 'agent' ? 'Турагент' : 'Турист';
             const tariffLabel = item.tariffType === 'evening' ? 'Вечерний' : 'Дневной';
-
             const isDuplicate = duplicateIds.has(item.id);
             const rowBg = isDuplicate
-                ? 'bg-amber-500/10 border-l-2 border-l-amber-400'
+                ? ''
                 : (idx % 2 === 0 ? 'bg-white/5' : 'bg-transparent');
+            const rowStyle = isDuplicate ? 'style="background-color: var(--canvas-a); border-left: 3px solid var(--brand);"' : '';
 
             // Список гостей — каждый в отдельной строке внутри ячейки
             const tourists = item.tourists || [];
@@ -3046,7 +3109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }).join('');
 
             const dupBadge = isDuplicate
-                ? `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-400/20 text-amber-300 ml-1"><i class="fa-solid fa-copy text-[8px]"></i>Дубль</span>`
+                ? `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-sky-400/20 text-sky-300 ml-1"><i class="fa-solid fa-copy text-[8px]"></i>Дубль</span>`
                 : '';
                 
             const isVoucherTrue = (item.voucher_status === true || item.voucher_status === 'true' || item.voucher_status === 1);
@@ -3059,29 +3122,60 @@ document.addEventListener('DOMContentLoaded', async () => {
                    </div>`
                 : `<div class="mt-1"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-500/20 text-rose-300" title="Ваучер не выписан"><i class="fa-solid fa-ticket"></i>Нет ваучера</span></div>`;
 
-            return `<tr class="${rowBg} border-b border-white/10 hover:bg-white/10 transition-colors align-top">
-                <td class="px-4 py-3 text-slate-500 font-mono text-[10px] whitespace-nowrap">${filtered.length - idx}</td>
-                <td class="px-4 py-3 whitespace-nowrap">
+            // Append to mobile HTML
+            mobileHtml += `
+                <div class="bg-white/5 border border-white/10 rounded-xl p-3.5 flex flex-col gap-3 relative" ${isDuplicate ? 'style="background-color: var(--canvas-a); border-left: 3px solid var(--brand);"' : ''}>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-bold text-white text-xs flex items-center gap-1">${dateStr} <span class="text-[10px] text-slate-400 font-normal ml-1">${timeStr}</span> ${dupBadge}</div>
+                            <div class="text-[10px] text-slate-400 mt-0.5">Визит: <span class="text-white">${item.visitDate || '—'}</span></div>
+                        </div>
+                        <div class="text-right font-black text-emerald-400 text-sm whitespace-nowrap">${(item.totalSum || 0).toLocaleString('ru-RU')} ₸</div>
+                    </div>
+                    
+                    <div class="flex gap-2 text-[10px]">
+                        <span class="px-2 py-0.5 rounded text-[9px] font-bold ${item.clientType === 'agent' ? 'bg-indigo-500/20 text-indigo-300' : 'bg-purple-500/20 text-purple-300'}">${clientLabel}</span>
+                        <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-500/20 text-slate-300">${tariffLabel}</span>
+                        <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-cyan-500/20 text-cyan-300"><i class="fa-solid fa-users mr-1"></i>${tourists.length}</span>
+                    </div>
+                    
+                    <div class="text-xs text-slate-300 bg-black/20 p-2 rounded-lg border border-white/5 max-h-32 overflow-y-auto custom-scrollbar">
+                        ${guestsHtml}
+                    </div>
+                    
+                    <div class="flex gap-2 mt-1">
+                        <button onclick="loadDbRecordToCalculator('${item.id}')" class="flex-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 py-2 rounded-lg hover:bg-cyan-500/20 font-bold transition-colors text-xs flex items-center justify-center"><i class="fa-solid fa-file-import mr-1.5"></i>В калькулятор</button>
+                        ${currentUser === 'admin' ? `<button onclick="deleteHistoryRecord('${item.id}')" class="bg-rose-500/10 border border-rose-500/20 text-rose-400 px-4 rounded-lg hover:bg-rose-500/20 transition-colors flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    </div>
+                </div>
+            `;
+
+            return `<tr class="${rowBg} border-b border-white/10 hover:bg-white/10 transition-colors align-top" ${rowStyle}>
+                <td class="px-2 py-1.5 text-slate-500 font-mono text-[10px] whitespace-nowrap">${filtered.length - idx}</td>
+                <td class="px-2 py-1.5 whitespace-nowrap">
                     <div class="font-semibold text-white text-xs flex items-center gap-1">${dateStr}${dupBadge}</div>
                     <div class="text-[10px] text-slate-400">${timeStr}</div>
                 </td>
-                <td class="px-4 py-3 font-semibold text-white text-xs whitespace-nowrap">
+                <td class="px-2 py-1.5 font-semibold text-white text-xs whitespace-nowrap">
                     ${item.visitDate || '—'}
                     ${voucherBadge}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap">
+                <td class="px-2 py-1.5 whitespace-nowrap">
                     <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${item.clientType === 'agent' ? 'bg-indigo-500/20 text-indigo-300' : 'bg-purple-500/20 text-purple-300'}">${clientLabel}</span>
                 </td>
-                <td class="px-4 py-3 text-slate-300 text-xs whitespace-nowrap">${tariffLabel}</td>
-                <td class="px-4 py-3 text-center font-bold text-white text-xs whitespace-nowrap">${tourists.length}</td>
-                <td class="px-4 py-3 min-w-[220px]">${guestsHtml}</td>
-                <td class="px-4 py-3 text-right font-black text-emerald-400 text-xs whitespace-nowrap">${(item.totalSum || 0).toLocaleString('ru-RU')} ₸</td>
-                <td class="px-4 py-3 text-center whitespace-nowrap">
+                <td class="px-2 py-1.5 text-slate-300 text-xs whitespace-nowrap">${tariffLabel}</td>
+                <td class="px-2 py-1.5 text-center font-bold text-white text-xs whitespace-nowrap">${tourists.length}</td>
+                <td class="px-2 py-1.5 min-w-[220px]">${guestsHtml}</td>
+                <td class="px-2 py-1.5 text-right font-black text-emerald-400 text-xs whitespace-nowrap">${(item.totalSum || 0).toLocaleString('ru-RU')} ₸</td>
+                <td class="px-2 py-1.5 text-center whitespace-nowrap">
                     <button onclick="loadDbRecordToCalculator('${item.id}')" class="text-cyan-400 hover:text-cyan-300 transition-colors mr-3" title="Загрузить в калькулятор"><i class="fa-solid fa-file-import text-sm"></i></button>
                     ${currentUser === 'admin' ? `<button onclick="deleteHistoryRecord('${item.id}')" class="text-slate-400 hover:text-rose-400 transition-colors" title="Удалить"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}
                 </td>
             </tr>`;
-        }).join('');
+        });
+        
+        dbTableBody.innerHTML = dupBanner + desktopRows.join('');
+        if (dbMobileList) dbMobileList.innerHTML = mobileHtml;
     }
 
 
@@ -3102,18 +3196,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     const viewArchive = document.getElementById('view-archive');
 
     async function switchAppView(viewId) {
+        const isV2 = window.location.pathname.includes('2.0');
+
         // Reset desktop sidebar button styles
         [navCalcBtn, navDashboardBtn, navDatabaseBtn, navArchiveBtn].forEach(btn => {
             if (!btn) return;
-            btn.classList.remove('bg-white/10', 'text-white', 'shadow-lg', 'border', 'border-white/10');
-            btn.classList.add('hover:bg-white/5', 'text-slate-300', 'hover:text-white');
+            if (isV2) {
+                btn.classList.remove('bg-[var(--canvas-a)]', 'text-[var(--brand)]', 'border-[var(--line-soft)]', 'shadow-sm', 'bg-[var(--canvas-b)]', 'text-[var(--ink)]');
+                btn.classList.add('hover:bg-[var(--canvas-b)]', 'text-[var(--ink-soft)]', 'hover:text-[var(--ink)]', 'border-transparent');
+            } else {
+                btn.classList.remove('bg-white/10', 'text-white', 'shadow-lg', 'border', 'border-white/10');
+                btn.classList.add('hover:bg-white/5', 'text-slate-300', 'hover:text-white');
+            }
         });
 
         // Reset mobile bottom nav button styles
         [mobNavCalcBtn, mobNavDashboardBtn, mobNavDatabaseBtn, mobNavArchiveBtn].forEach(btn => {
             if (!btn) return;
-            btn.classList.remove('text-cyan-400');
+            btn.classList.remove('text-cyan-400', 'mob-active');
             btn.classList.add('text-slate-400');
+            const icon = btn.querySelector('i');
+            const text = btn.querySelector('span');
+            if (icon) {
+                icon.classList.remove('text-cyan-400', 'scale-125', '-translate-y-1', 'drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]');
+            }
+            if (text) {
+                text.classList.remove('opacity-100', 'translate-y-0');
+                text.classList.add('opacity-0', 'translate-y-4');
+            }
         });
 
         // Hide all views
@@ -3163,13 +3273,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (activeBtn) {
-            activeBtn.classList.remove('hover:bg-white/5', 'text-slate-300', 'hover:text-white');
-            activeBtn.classList.add('bg-white/10', 'text-white', 'shadow-lg', 'border', 'border-white/10');
+            if (isV2) {
+                activeBtn.classList.remove('hover:bg-[var(--canvas-b)]', 'text-[var(--ink-soft)]', 'hover:text-[var(--ink)]', 'border-transparent');
+                activeBtn.classList.add('bg-[var(--canvas-a)]', 'text-[var(--brand)]', 'border-[var(--line-soft)]', 'shadow-sm');
+            } else {
+                activeBtn.classList.remove('hover:bg-white/5', 'text-slate-300', 'hover:text-white');
+                activeBtn.classList.add('bg-white/10', 'text-white', 'shadow-lg', 'border', 'border-white/10');
+            }
         }
 
         if (activeMobBtn) {
             activeMobBtn.classList.remove('text-slate-400');
-            activeMobBtn.classList.add('text-cyan-400');
+            activeMobBtn.classList.add('text-cyan-400', 'mob-active');
+            const icon = activeMobBtn.querySelector('i');
+            const text = activeMobBtn.querySelector('span');
+            if (icon) {
+                icon.classList.add('text-cyan-400', 'scale-125', '-translate-y-1', 'drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]');
+            }
+            if (text) {
+                text.classList.remove('opacity-0', 'translate-y-4');
+                text.classList.add('opacity-100', 'translate-y-0');
+            }
         }
     }
 
@@ -3393,6 +3517,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
     // --- СВЕРКА С АКВАПАРКОМ ---
+    /*
     if (reconciliationBtn && reconciliationFileInput) {
         reconciliationBtn.addEventListener('click', () => {
             reconciliationFileInput.click();
@@ -3699,7 +3824,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-
+    */
     // --- ИСТОРИЯ РАСЧЕТОВ ---
     const historyList = document.getElementById('historyList');
 
@@ -4691,6 +4816,96 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (statsDateFrom) statsDateFrom.addEventListener('change', calculateStatistics);
     if (statsDateTo)   statsDateTo.addEventListener('change', calculateStatistics);
+
+    const statsClearBtn = document.getElementById('statsClearBtn');
+    if (statsClearBtn) {
+        statsClearBtn.addEventListener('click', () => {
+            // Remove active class from presets
+            document.querySelectorAll('.stats-preset-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-blue', 'text-white', 'shadow-sm', 'active-preset');
+                btn.classList.add('text-slate-400');
+            });
+            
+            // Hide custom range inputs
+            const customRange = document.getElementById('statsCustomRange');
+            if (customRange) {
+                customRange.classList.add('hidden');
+                customRange.classList.remove('flex');
+            }
+
+            // Clear inputs
+            if (statsDateFrom) statsDateFrom.value = '';
+            if (statsDateTo) statsDateTo.value = '';
+            
+            const periodText = document.getElementById('statsPeriodText');
+            if (periodText) periodText.textContent = 'За всё время';
+
+            calculateStatistics();
+        });
+    }
+
+    const miniStatDateInput = document.getElementById('miniStatDate');
+    const miniStatPrevDay = document.getElementById('miniStatPrevDay');
+    const miniStatNextDay = document.getElementById('miniStatNextDay');
+    
+    if (miniStatDateInput) {
+        miniStatDateInput.addEventListener('change', updateDashboardTopStats);
+    }
+    
+    if (miniStatPrevDay && miniStatDateInput) {
+        miniStatPrevDay.addEventListener('click', () => {
+            if (miniStatDateInput.value) {
+                const d = new Date(miniStatDateInput.value);
+                d.setDate(d.getDate() - 1);
+                miniStatDateInput.value = d.toISOString().split('T')[0];
+                updateDashboardTopStats();
+            }
+        });
+    }
+
+    if (miniStatNextDay && miniStatDateInput) {
+        miniStatNextDay.addEventListener('click', () => {
+            if (miniStatDateInput.value) {
+                const d = new Date(miniStatDateInput.value);
+                d.setDate(d.getDate() + 1);
+                miniStatDateInput.value = d.toISOString().split('T')[0];
+                updateDashboardTopStats();
+            }
+        });
+    }
+
+    // Mobile miniStat date navigation
+    const miniStatDateMobInput = document.getElementById('miniStatDateMob');
+    const miniStatPrevDayMob = document.getElementById('miniStatPrevDayMob');
+    const miniStatNextDayMob = document.getElementById('miniStatNextDayMob');
+
+    if (miniStatDateMobInput) {
+        miniStatDateMobInput.addEventListener('change', () => {
+            // Sync to desktop input and refresh
+            if (miniStatDateInput) miniStatDateInput.value = miniStatDateMobInput.value;
+            updateDashboardTopStats();
+        });
+    }
+    if (miniStatPrevDayMob && miniStatDateInput) {
+        miniStatPrevDayMob.addEventListener('click', () => {
+            if (miniStatDateInput.value) {
+                const d = new Date(miniStatDateInput.value);
+                d.setDate(d.getDate() - 1);
+                miniStatDateInput.value = d.toISOString().split('T')[0];
+                updateDashboardTopStats();
+            }
+        });
+    }
+    if (miniStatNextDayMob && miniStatDateInput) {
+        miniStatNextDayMob.addEventListener('click', () => {
+            if (miniStatDateInput.value) {
+                const d = new Date(miniStatDateInput.value);
+                d.setDate(d.getDate() + 1);
+                miniStatDateInput.value = d.toISOString().split('T')[0];
+                updateDashboardTopStats();
+            }
+        });
+    }
 
     // Set default period to "today" when analytics view is opened
     const _origSwitchAppView = window.switchAppView;

@@ -254,6 +254,21 @@
             position: relative;
         }
 
+        /* Mobile: cards stretch full width, no side border-radius */
+        @media (max-width: 639px) {
+            #appContent .neon-card-blue,
+            #appContent .glass-panel,
+            #appContent .glass-stat-box,
+            #appContent .neon-card-green,
+            #appContent .neon-card-amber,
+            #appContent .neon-card-rose {
+                border-radius: 0 !important;
+                border-left: none !important;
+                border-right: none !important;
+                box-shadow: 0 1px 0 0 var(--line), 0 -1px 0 0 var(--line) !important;
+            }
+        }
+
         #appContent .glass-panel::before,
         #appContent .neon-card-blue::before,
         #appContent .glass-stat-box::before {
@@ -1117,109 +1132,104 @@
 
     <!-- Main Dashboard Container -->
     <div id="appContent"
-        class="hidden h-screen w-full max-w-[1400px] mx-auto px-0 lg:px-12 xl:px-24 flex flex-col relative z-10 overflow-hidden text-slate-100">
+        class="hidden h-screen w-full flex flex-col md:flex-row relative z-10 overflow-hidden text-slate-100">
 
-        <div class="px-4 md:px-8 pt-3 flex-shrink-0">
-            <!-- TOP NAVBAR -->
-            <header
-                class="bg-transparent backdrop-blur-lg rounded-2xl border border-white/10 flex flex-col z-50 shadow-lg overflow-hidden">
+        <!-- DESKTOP SIDEBAR -->
+        <aside class="hidden md:flex flex-col w-64 xl:w-72 bg-[var(--surface)] border-r border-[var(--line)] z-50 shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-colors duration-300">
+            <!-- Logo area -->
+            <div class="p-6 pb-4">
+                <div class="flex flex-col leading-none select-none">
+                    <span class="text-xl font-black tracking-tight text-[var(--ink)] drop-shadow-sm transition-colors">MANGYSTAU</span>
+                    <span class="text-[9px] font-bold tracking-[0.25em] text-[var(--ink-soft)] uppercase mt-1 ml-0.5 transition-colors">Discovery</span>
+                </div>
+            </div>
 
-                <!-- TOP ROW: Logo & Tools -->
-                <div class="flex items-center justify-between px-4 py-3 md:px-6 w-full">
-                    <div class="flex items-center space-x-3">
-                        <div class="flex flex-col justify-center leading-none select-none">
-                            <span
-                                class="text-lg md:text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 to-blue-600 drop-shadow-sm">
-                                MANGYSTAU
-                            </span>
-                            <span
-                                class="text-[8px] md:text-[9px] font-bold tracking-[0.25em] text-slate-500 uppercase mt-0.5 ml-0.5">
-                                Discovery
-                            </span>
+            <!-- Admin & Tools (Moved UP!) -->
+            <div class="px-4 pb-4 border-b border-[var(--line)] transition-colors">
+                <div class="flex items-center justify-between p-3 bg-[var(--canvas-b)] rounded-xl border border-[var(--line-soft)] transition-colors">
+                    <div class="flex items-center gap-3">
+                        <img id="adminAvatarImg" src="assets/admin_avatar.png" alt="Admin" class="w-9 h-9 rounded-full object-cover border border-[var(--line-soft)]">
+                        <div>
+                            <p class="text-sm font-bold text-[var(--ink)] leading-tight transition-colors">Админ</p>
+                            <p class="text-[10px] text-[var(--ink-soft)] transition-colors">Талгат Ж.</p>
                         </div>
                     </div>
-
-                    <div class="flex items-center gap-2 md:gap-4">
-                        <div class="hidden xl:block mr-2 border-r border-white/10 pr-4">
-                            <h1 id="liveClockDisplay"
-                                class="text-[11px] font-normal text-slate-300 tracking-wide font-sans whitespace-nowrap">
-                            </h1>
-                        </div>
-                        <button id="pricingAdminBtn"
-                            class="hidden w-8 h-8 md:w-10 md:h-10 items-center justify-center hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-all"
-                            title="Цены и акции">
-                            <i class="fa-solid fa-tags text-sm md:text-base"></i>
+                </div>
+                
+                <div class="flex items-center justify-between mt-3 px-1">
+                    <h1 id="liveClockDisplay" class="text-[11px] font-medium text-[var(--ink-soft)] tracking-wide font-sans whitespace-nowrap transition-colors"></h1>
+                    <div class="flex gap-1">
+                        <button id="pricingAdminBtn" class="w-7 h-7 flex items-center justify-center hover:bg-[var(--canvas-a)] rounded-full text-[var(--ink-soft)] hover:text-[var(--brand)] transition-all" title="Цены и акции">
+                            <i class="fa-solid fa-tags text-[11px]"></i>
                         </button>
-                        <button id="themeToggleBtn"
-                            class="flex w-8 h-8 md:w-10 md:h-10 items-center justify-center hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-all"
-                            title="Светлая/тёмная тема">
-                            <i id="themeIcon" class="fa-solid fa-moon text-sm md:text-base"></i>
-                        </button>
-                        <!-- Кнопка очистки гостей — только на мобиле -->
-                        <button onclick="clearAllTourists()" id="mobileClearBtn"
-                            class="md:hidden flex w-8 h-8 items-center justify-center rounded-full text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 transition-all"
-                            title="Очистить список гостей">
-                            <i class="fa-solid fa-trash-can text-sm"></i>
-                        </button>
-                        <div
-                            class="flex items-center gap-2 md:gap-3 pl-2 sm:border-l sm:border-white/10">
-                            <img id="adminAvatarImg" src="assets/admin_avatar.png" alt="Admin"
-                                class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-transparent shadow-lg">
-                            <div class="hidden sm:block">
-                                <p class="text-xs font-bold text-white leading-tight">Админ</p>
-                                <p class="text-[9px] text-slate-400">Талгат Ж.</p>
-                            </div>
-                        </div>
-                        <button id="logoutBtn"
-                            class="w-8 h-8 md:w-auto md:px-3 md:py-2 flex items-center justify-center md:space-x-2 hover:bg-rose-500/20 rounded-xl text-rose-400 hover:text-rose-300 font-bold transition-all ml-1 md:ml-2">
-                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                            <span class="hidden md:inline text-xs">Выйти</span>
+                        <button id="themeToggleBtn" class="w-7 h-7 flex items-center justify-center hover:bg-[var(--canvas-a)] rounded-full text-[var(--ink-soft)] hover:text-[var(--brand)] transition-all" title="Светлая/тёмная тема">
+                            <i id="themeIcon" class="fa-solid fa-moon text-[11px]"></i>
                         </button>
                     </div>
                 </div>
+            </div>
 
-                <!-- BOTTOM ROW: Navigation -->
-                <div class="hidden md:block border-t border-white/5 bg-white/5 px-4 md:px-6">
-                    <nav class="flex items-center space-x-2 justify-center py-2">
-                        <button id="navCalcBtn"
-                            class="flex items-center space-x-2 px-4 py-1.5 bg-white/10 rounded-xl text-white font-bold transition-all border border-white/10 shadow-lg">
-                            <i class="fa-solid fa-calculator text-cyan-400 w-4 text-center"></i>
-                            <span class="text-xs">Калькулятор</span>
-                        </button>
-                        <button id="navDashboardBtn"
-                            class="flex items-center space-x-2 px-4 py-1.5 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white font-medium transition-all">
-                            <i class="fa-solid fa-chart-simple text-emerald-400 w-4 text-center"></i>
-                            <span class="text-xs">Аналитика</span>
-                        </button>
-                        <button id="navDatabaseBtn"
-                            class="flex items-center space-x-2 px-4 py-1.5 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white font-medium transition-all">
-                            <i class="fa-solid fa-database text-amber-400 w-4 text-center"></i>
-                            <span class="text-xs">Заявки</span>
-                        </button>
-                        <a href="client.html" target="_blank"
-                            class="flex items-center space-x-2 px-4 py-1.5 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white font-medium transition-all">
-                            <i class="fa-solid fa-up-right-from-square text-slate-400 w-4 text-center"></i>
-                            <span class="text-xs">Туристам</span>
-                        </a>
-                    </nav>
-                </div>
-            </header>
-        </div>
+            <!-- Navigation -->
+            <nav class="flex-1 flex flex-col gap-1.5 p-4 mt-2">
+                <p class="text-[9px] font-bold tracking-widest text-[var(--ink-faint)] uppercase px-2 mb-2 transition-colors">Меню</p>
+                <button id="navCalcBtn" class="flex items-center space-x-3 px-4 py-2.5 rounded-xl font-bold transition-all justify-start bg-[var(--canvas-a)] text-[var(--brand)] border border-[var(--line-soft)] shadow-sm">
+                    <i class="fa-solid fa-calculator w-5 text-center"></i>
+                    <span class="text-[13px]">Калькулятор</span>
+                </button>
+                <button id="navDashboardBtn" class="flex items-center space-x-3 px-4 py-2.5 hover:bg-[var(--canvas-b)] rounded-xl text-[var(--ink-soft)] hover:text-[var(--ink)] font-medium transition-all justify-start border border-transparent">
+                    <i class="fa-solid fa-chart-simple w-5 text-center"></i>
+                    <span class="text-[13px]">Аналитика</span>
+                </button>
+                <button id="navDatabaseBtn" class="flex items-center space-x-3 px-4 py-2.5 hover:bg-[var(--canvas-b)] rounded-xl text-[var(--ink-soft)] hover:text-[var(--ink)] font-medium transition-all justify-start border border-transparent">
+                    <i class="fa-solid fa-database w-5 text-center"></i>
+                    <span class="text-[13px]">Заявки</span>
+                </button>
+                <a href="client.html" target="_blank" class="flex items-center space-x-3 px-4 py-2.5 hover:bg-[var(--canvas-b)] rounded-xl text-[var(--ink-soft)] hover:text-[var(--ink)] font-medium transition-all justify-start border border-transparent">
+                    <i class="fa-solid fa-up-right-from-square w-5 text-center"></i>
+                    <span class="text-[13px]">Туристам</span>
+                </a>
+            </nav>
+
+            <!-- Bottom Action -->
+            <div class="p-4 border-t border-[var(--line)] transition-colors">
+                <button id="logoutBtn" class="w-full flex items-center space-x-3 px-4 py-2.5 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl text-[var(--ink-soft)] hover:text-rose-500 font-medium transition-all justify-start border border-transparent">
+                    <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
+                    <span class="text-[13px]">Выйти</span>
+                </button>
+            </div>
+        </aside>
 
         <!-- MAIN CONTENT AREA -->
-        <main class="flex-1 flex flex-col min-h-0 overflow-hidden px-4 md:px-8 pb-24 md:pb-8 hide-scrollbar">
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+            <!-- MOBILE HEADER (visible only on sm/mobile) -->
+            <header class="md:hidden bg-transparent backdrop-blur-lg border-b border-white/10 flex items-center justify-between px-4 py-3 z-50">
+                <div class="flex items-center space-x-3">
+                    <div class="flex flex-col justify-center leading-none select-none">
+                        <span class="text-lg font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-sm">MANGYSTAU</span>
+                        <span class="text-[8px] font-bold tracking-[0.25em] text-slate-400 uppercase mt-1 ml-0.5">Discovery</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="clearAllTourists()" id="mobileClearBtn" class="w-8 h-8 flex items-center justify-center rounded-full text-rose-400 hover:bg-rose-500/20 transition-all">
+                        <i class="fa-solid fa-trash-can text-sm"></i>
+                    </button>
+                    <img id="adminAvatarImgMobile" src="assets/admin_avatar.png" alt="Admin" class="w-8 h-8 rounded-full border border-transparent shadow-lg object-cover">
+                </div>
+            </header>
+
+            <div class="flex-1 flex flex-col overflow-y-auto px-0 sm:px-4 md:px-8 pb-24 md:pb-8 pt-0 sm:pt-2 md:pt-4 hide-scrollbar">
 
             <!-- SPA Views Container -->
             <div id="view-calculator"
-                class="app-view flex-1 flex flex-col w-full overflow-y-auto hide-scrollbar pt-6 md:pt-10">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                class="app-view flex-1 flex flex-col w-full overflow-y-auto hide-scrollbar">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-0 sm:gap-4 md:gap-6 items-start">
 
-                    <!-- LEFT COLUMN: "Your Visit Details" & Stats (4/12 wide) -->
+                    <!-- LEFT COLUMN: 4/12 wide on desktop, full width on mobile -->
                     <div class="lg:col-span-4 relative">
-                        <div class="flex flex-col gap-6 pb-4">
+                        <div class="flex flex-col gap-0 sm:gap-4 lg:gap-6 lg:pb-4">
 
                             <!-- Visit Details Form -->
-                            <section class="neon-card-blue p-6 relative shrink-0">
+                            <section class="neon-card-blue p-4 sm:p-5 md:p-6 relative shrink-0">
                                 <h2 class="text-base font-bold text-white mb-5 flex items-center drop-shadow-md">
                                     <i class="fa-solid fa-circle-info text-cyan-400 mr-2"></i> Параметры посещения
                                 </h2>
@@ -1252,25 +1262,23 @@
                                                     class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                                                 <input type="date" id="visitDate" autocomplete="off"
                                                     class="w-full pl-9 pr-2 py-3 glass-input text-xs sm:text-sm "
-                                                    style="max-width: 100%; box-sizing: border-box;" />
+                                                    onfocus="this.showPicker()">
                                             </div>
                                             <p id="dateWarning"
-                                                class="text-xs text-rose-400 font-semibold mt-1.5 hidden drop-shadow-sm">
-                                                <i class="fa-solid fa-triangle-exclamation mr-1"></i>Тариф не найден
-                                            </p>
+                                                class="hidden text-[10px] text-amber-400 mt-1.5 font-medium ml-1">Дата в
+                                                прошлом!</p>
                                         </div>
 
                                         <div>
                                             <label
-                                                class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 drop-shadow-sm">Тип
-                                                тарифа</label>
+                                                class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 drop-shadow-sm">Тариф</label>
                                             <div class="relative w-full overflow-hidden rounded-xl">
                                                 <i
                                                     class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                                                 <select id="tariffType"
                                                     class="w-full pl-9 pr-8 py-3 glass-input text-xs sm:text-sm appearance-none cursor-pointer text-ellipsis">
-                                                    <option value="day">Дневной</option>
-                                                    <option value="evening">Вечерний</option>
+                                                    <option value="day">Дневной (10:00 - 17:00)</option>
+                                                    <option value="evening">Вечерний (18:00 - 22:00)</option>
                                                 </select>
                                                 <i
                                                     class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
@@ -1278,27 +1286,12 @@
                                         </div>
                                     </div>
 
-                                    <div id="earlyBookingContainer"
-                                        class="hidden bg-blue-900/30 border border-blue-400/30 rounded-xl p-3 flex items-center justify-between transition-all backdrop-blur-sm">
-                                        <div class="flex items-center gap-2.5">
-                                            <i
-                                                class="fa-solid fa-percent text-blue-400 bg-white/10 w-8 h-8 rounded-full flex items-center justify-center shadow-sm"></i>
-                                            <div>
-                                                <p id="earlyBookingTitle" class="text-xs font-bold text-white drop-shadow-sm">Раннее
-                                                    бронирование</p>
-                                                <p id="earlyBookingSubtitle" class="text-[10px] text-blue-200">Скидка -15% (на август)</p>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center justify-center bg-emerald-500/20 border border-emerald-400/30 text-emerald-400 rounded-full w-6 h-6"
-                                            title="Акция применена автоматически">
-                                            <i class="fa-solid fa-check text-xs"></i>
-                                        </div>
-                                    </div>
+
                                 </div>
                             </section>
 
                             <!-- Bulk Add Form -->
-                            <section class="neon-card-blue p-6 relative flex flex-col shrink-0 h-auto">
+                            <section class="neon-card-blue p-4 sm:p-5 md:p-6 relative flex flex-col shrink-0 h-auto">
                                 <h2 class="text-base font-bold text-white mb-3 flex items-center drop-shadow-md shrink-0">
                                     <i class="fa-solid fa-file-text text-cyan-400 mr-2"></i> Текстовый ввод гостей
                                 </h2>
@@ -1308,23 +1301,49 @@
                                     placeholder="Тетис на 06.06&#10;Kossymov Dias 15.04.2017 chld&#10;Otemissova Meruert 18.05.1998 adl"></textarea>
                                 <div class="flex flex-col sm:flex-row gap-2">
                                     <button id="parseBulkBtn"
-                                        class="w-full sm:flex-1 glow-btn-cyan py-2.5 rounded-xl text-xs font-bold order-2 sm:order-2 transition-all">
+                                        class="w-full sm:flex-1 glow-btn-cyan py-2.5 rounded-xl text-xs font-bold transition-all">
                                         Распознать
                                     </button>
                                     <button id="clearBulkTextBtn" onclick="document.getElementById('bulkText').value=''"
-                                        class="w-full sm:w-auto justify-center px-4 py-2.5 text-xs font-bold text-rose-400 bg-rose-500/10 hover:bg-rose-500 hover:text-white rounded-xl transition-colors border border-rose-500/30 hover:border-rose-500 flex items-center shadow-sm order-3 sm:order-1 whitespace-nowrap">
+                                        class="w-full sm:w-auto justify-center px-4 py-2.5 text-xs font-bold text-rose-400 bg-rose-500/10 hover:bg-rose-500 hover:text-white rounded-xl transition-colors border border-rose-500/30 hover:border-rose-500 flex items-center shadow-sm whitespace-nowrap">
                                         <i class="fa-solid fa-trash-can mr-1.5"></i> Очистить
                                     </button>
                                 </div>
                             </section>
+
+                            <!-- Моя смена (DESKTOP ONLY - no JS ids) -->
+                            <section class="hidden sm:flex flex-col neon-card-blue p-4 sm:p-5 md:p-6 relative shrink-0 h-auto">
+                                <div class="flex items-center justify-between mb-3 shrink-0">
+                                    <h2 class="text-base font-bold text-white flex items-center drop-shadow-md">
+                                        <i class="fa-solid fa-chart-pie text-emerald-400 mr-2"></i> Моя смена
+                                    </h2>
+                                    <div class="flex items-center gap-1">
+                                        <button id="miniStatPrevDay" class="w-7 h-7 flex items-center justify-center bg-[var(--canvas-b)] hover:bg-[var(--line)] border border-[var(--line)] rounded-lg text-slate-400 hover:text-[var(--ink)] transition-colors"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+                                        <input type="date" id="miniStatDate" class="bg-[var(--canvas-b)] text-[var(--ink)] border border-[var(--line)] rounded-lg px-2 py-1 text-xs outline-none" title="Выберите дату">
+                                        <button id="miniStatNextDay" class="w-7 h-7 flex items-center justify-center bg-[var(--canvas-b)] hover:bg-[var(--line)] border border-[var(--line)] rounded-lg text-slate-400 hover:text-[var(--ink)] transition-colors"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between bg-[var(--canvas-b)] p-3 rounded-xl border border-[var(--line)]">
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Гостей</span>
+                                        <span id="miniStatGuests" class="text-lg font-black text-[var(--ink)]">0</span>
+                                    </div>
+                                    <div class="w-px h-8 bg-[var(--line)]"></div>
+                                    <div class="flex flex-col text-right">
+                                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Выручка</span>
+                                        <span id="miniStatRevenue" class="text-lg font-black text-emerald-500">0 ₸</span>
+                                    </div>
+                                </div>
+                            </section>
+
                         </div>
                     </div>
 
-                    <!-- RIGHT COLUMN: Tourist List, Total Price, Text Input (8/12 wide) -->
-                    <div class="lg:col-span-8 flex flex-col gap-6">
+                    <!-- RIGHT COLUMN: 8/12 wide on desktop, full width on mobile -->
+                    <div class="lg:flex lg:flex-col lg:col-span-8 gap-0 sm:gap-4 md:gap-6">
 
                         <!-- Main Tourist List Card -->
-                        <section class="neon-card-blue p-6 relative min-h-[500px] order-1">
+                        <section class="neon-card-blue p-4 sm:p-5 md:p-6 relative min-h-[500px]">
                             <div
                                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                                 <div>
@@ -1529,11 +1548,11 @@
                         </section>
 
                         <!-- Bottom row: Итоговый расчет + Сводная статистика на одном уровне (ОБНОВЛЕННЫЙ БЛОК) -->
-                        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch order-3">
+                        <div class="grid grid-cols-1 xl:grid-cols-12 gap-3 md:gap-6 items-stretch">
 
                             <!-- Calculated Estimate Summary (compact & balanced) -->
                             <section
-                                class="xl:col-span-5 neon-card-blue p-5 rounded-2xl relative overflow-hidden shadow-sm border border-cyan-500/30 bg-white flex flex-col justify-between">
+                                class="xl:col-span-5 neon-card-blue p-4 sm:p-5 rounded-2xl relative overflow-hidden shadow-sm border border-cyan-500/30 bg-white flex flex-col justify-between">
                                 <!-- Concept Background Waves Inside Card -->
                                 <svg class="absolute inset-0 w-full h-full text-cyan-500/5 pointer-events-none"
                                     viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -1667,7 +1686,7 @@
                         </div>
 
                         <!-- Текст для почты -->
-                        <section class="neon-card-blue p-5 relative rounded-2xl shadow-sm flex flex-col order-2">
+                        <section class="neon-card-blue p-4 sm:p-5 relative rounded-2xl shadow-sm flex flex-col">
                             <div
                                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-3">
                                 <h2
@@ -1697,12 +1716,37 @@
                                 placeholder="Тут появится текст для отправки на почту..."></textarea>
                         </section>
 
+                        <!-- Моя смена (MOBILE ONLY) -->
+                        <section class="sm:hidden neon-card-blue p-4 relative flex flex-col shrink-0 h-auto">
+                            <div class="flex items-center justify-between mb-3 shrink-0">
+                                <h2 class="text-base font-bold text-white flex items-center drop-shadow-md">
+                                    <i class="fa-solid fa-chart-pie text-emerald-400 mr-2"></i> Моя смена
+                                </h2>
+                                <div class="flex items-center gap-1">
+                                    <button id="miniStatPrevDayMob" class="w-7 h-7 flex items-center justify-center bg-[var(--canvas-b)] hover:bg-[var(--line)] border border-[var(--line)] rounded-lg text-slate-400 hover:text-[var(--ink)] transition-colors"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+                                    <input type="date" id="miniStatDateMob" class="bg-[var(--canvas-b)] text-[var(--ink)] border border-[var(--line)] rounded-lg px-2 py-1 text-xs outline-none" title="Выберите дату">
+                                    <button id="miniStatNextDayMob" class="w-7 h-7 flex items-center justify-center bg-[var(--canvas-b)] hover:bg-[var(--line)] border border-[var(--line)] rounded-lg text-slate-400 hover:text-[var(--ink)] transition-colors"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between bg-[var(--canvas-b)] p-3 rounded-xl border border-[var(--line)]">
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Гостей</span>
+                                    <span id="miniStatGuestsMob" class="text-lg font-black text-[var(--ink)]">0</span>
+                                </div>
+                                <div class="w-px h-8 bg-[var(--line)]"></div>
+                                <div class="flex flex-col text-right">
+                                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Выручка</span>
+                                    <span id="miniStatRevenueMob" class="text-lg font-black text-emerald-500">0 ₸</span>
+                                </div>
+                            </div>
+                        </section>
+
                     </div>
                 </div>
             </div>
 
             <div id="view-database"
-                class="app-view hidden w-full neon-card-blue mt-2 md:mt-3 flex-col flex-1 overflow-hidden">
+                class="app-view hidden w-full flex-col flex-1 overflow-y-auto hide-scrollbar">
                 <!-- Top toolbar: search + count + export -->
                 <div
                     class="flex items-center justify-between px-3 py-1.5 border-b border-white/10 bg-black/20 shrink-0 flex-wrap gap-2">
@@ -1810,8 +1854,15 @@
                         <i class="fa-solid fa-xmark"></i> Сбросить
                     </button>
                 </div>
-                <div class="flex-1 overflow-auto min-h-0 custom-scrollbar">
-                    <table class="w-full text-xs border-collapse min-w-[700px]" id="dbTable">
+                <div class="flex-1 overflow-auto min-h-0 custom-scrollbar relative bg-[#0b172a]/50">
+                    
+                    <!-- Mobile Cards Container (hidden on sm+) -->
+                    <div id="dbMobileList" class="sm:hidden flex flex-col gap-3 p-3 pb-24">
+                        <div class="text-center py-16 text-slate-400"><i class="fa-solid fa-spinner fa-spin text-2xl mb-3 block text-cyan-500"></i> Загрузка заявок...</div>
+                    </div>
+
+                    <!-- Desktop Table (hidden on mobile) -->
+                    <table class="hidden sm:table w-full text-xs border-collapse min-w-[700px]" id="dbTable">
                         <thead class="sticky top-0 z-20">
                             <tr class="bg-[#0b172a] uppercase text-[9px] font-bold tracking-wide shadow-md">
                                 <th class="px-2 py-2 text-left whitespace-nowrap" style="color: white !important;">#
@@ -1851,37 +1902,41 @@
 
             <!-- View: Dashboard (Statistics / Analytics) -->
             <div id="view-dashboard"
-                class="app-view hidden w-full neon-card-blue mt-6 md:mt-10 flex-col flex-1 overflow-hidden">
+                class="app-view hidden w-full flex-col flex-1 overflow-y-auto hide-scrollbar pt-2">
                 <div class="flex flex-col gap-3 p-4 border-b border-white/10 shrink-0">
                     <!-- Date preset pills + date inputs row -->
                     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
 
                         <!-- Preset pills -->
-                        <div class="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-xl p-1">
+                        <div class="flex items-center overflow-x-auto hide-scrollbar w-full sm:w-auto gap-1.5 bg-white/5 border border-white/10 rounded-xl p-1 shrink-0">
                             <button onclick="setStatsPeriod('today')" id="preset-today"
-                                class="stats-preset-btn active-preset px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 bg-brand-blue text-white shadow-sm">
+                                class="stats-preset-btn active-preset shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 bg-brand-blue text-white shadow-sm whitespace-nowrap">
                                 Сегодня
                             </button>
                             <button onclick="setStatsPeriod('yesterday')" id="preset-yesterday"
-                                class="stats-preset-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10">
+                                class="stats-preset-btn shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10 whitespace-nowrap">
                                 Вчера
                             </button>
                             <button onclick="setStatsPeriod('7days')" id="preset-7days"
-                                class="stats-preset-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10">
+                                class="stats-preset-btn shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10 whitespace-nowrap">
                                 7 дней
                             </button>
                             <button onclick="setStatsPeriod('30days')" id="preset-30days"
-                                class="stats-preset-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10">
+                                class="stats-preset-btn shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10 whitespace-nowrap">
                                 30 дней
                             </button>
                             <button onclick="setStatsPeriod('custom')" id="preset-custom"
-                                class="stats-preset-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10">
+                                class="stats-preset-btn shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10 whitespace-nowrap">
                                 <i class="fa-solid fa-calendar-days mr-1"></i>Диапазон
                             </button>
                         </div>
 
                         <!-- Right side: date inputs (shown only in custom mode) + Export -->
                         <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <button id="statsClearBtn" 
+                                class="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-500/10 hover:bg-rose-500 hover:!text-white text-rose-500 border border-rose-500/30 transition-colors" title="Сбросить фильтр дат">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
                             <div id="statsCustomRange" class="hidden items-center gap-2">
                                 <input type="date" id="statsDateFrom"
                                     class="glass-input px-2.5 py-1.5 text-xs rounded-lg focus:outline-none focus:border-cyan-400 bg-white/5 border border-white/10 text-white w-[130px]">
@@ -1903,7 +1958,7 @@
                     </div>
                 </div>
 
-                <div class="flex-1 overflow-y-auto p-5 space-y-4 pt-4 custom-scrollbar" id="statisticsContent">
+                <div class="flex-1 overflow-y-auto p-5 pb-24 sm:pb-5 space-y-4 pt-4 custom-scrollbar" id="statisticsContent">
                     <div class="text-center text-slate-400 py-10"><i
                             class="fa-solid fa-spinner fa-spin text-3xl mb-3 opacity-50"></i>
                         <p class="text-sm font-semibold">Загрузка статистики...</p>
@@ -1911,6 +1966,7 @@
                 </div>
             </div>
 
+            </div>
         </main>
 
         <!-- Receipt Print Container -->
@@ -1947,20 +2003,20 @@
 
         <!-- MOBILE BOTTOM NAV -->
         <nav
-            class="md:hidden fixed bottom-0 left-0 right-0 bg-[#0d1e36]/95 backdrop-blur-xl border-t border-white/10 flex items-center justify-around pb-safe z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
-            <button id="mobNavCalcBtn" class="flex flex-col items-center justify-center py-2 px-1 w-16 text-cyan-400">
-                <i class="fa-solid fa-calculator text-lg mb-1"></i>
-                <span class="text-[9px] font-medium">Кальк</span>
+            class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-[#0d1e36]/95 backdrop-blur-xl border-t border-slate-200 dark:border-white/10 flex items-center justify-around pb-safe z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] dark:shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
+            <button id="mobNavCalcBtn" class="flex flex-col items-center justify-center py-2 px-1 w-16 text-cyan-400 relative h-14">
+                <i class="fa-solid fa-calculator text-lg transition-all duration-300 transform scale-125 -translate-y-1 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]"></i>
+                <span class="text-[9px] font-medium absolute bottom-1 transition-all duration-300 opacity-100 translate-y-0">Кальк</span>
             </button>
             <button id="mobNavDashboardBtn"
-                class="flex flex-col items-center justify-center py-2 px-1 w-16 text-slate-400 hover:text-emerald-400 transition-colors">
-                <i class="fa-solid fa-chart-simple text-lg mb-1"></i>
-                <span class="text-[9px] font-medium">Аналитика</span>
+                class="flex flex-col items-center justify-center py-2 px-1 w-16 text-slate-400 relative h-14">
+                <i class="fa-solid fa-chart-simple text-lg transition-all duration-300 transform"></i>
+                <span class="text-[9px] font-medium absolute bottom-1 transition-all duration-300 opacity-0 translate-y-4">Аналитика</span>
             </button>
             <button id="mobNavDatabaseBtn"
-                class="flex flex-col items-center justify-center py-2 px-1 w-16 text-slate-400 hover:text-amber-400 transition-colors">
-                <i class="fa-solid fa-database text-lg mb-1"></i>
-                <span class="text-[9px] font-medium">Заявки</span>
+                class="flex flex-col items-center justify-center py-2 px-1 w-16 text-slate-400 relative h-14">
+                <i class="fa-solid fa-database text-lg transition-all duration-300 transform"></i>
+                <span class="text-[9px] font-medium absolute bottom-1 transition-all duration-300 opacity-0 translate-y-4">Заявки</span>
             </button>
         </nav>
     </div>
