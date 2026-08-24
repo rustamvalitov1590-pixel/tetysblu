@@ -1676,7 +1676,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (category === 'INF') catBadgeClass = 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30';
             if (category === 'INV') catBadgeClass = 'bg-rose-500/20 text-rose-300 border border-rose-400/30';
 
-            let catSelectClass = 'border-transparent text-slate-300 bg-white/5';
+            let catSelectClass = 'border-transparent text-slate-600 dark:text-slate-300 bg-white/5';
             if (category === 'ADL') catSelectClass = 'bg-blue-500/20 text-blue-400 border-blue-400/20';
             if (category === 'SNR') catSelectClass = 'bg-purple-500/20 text-purple-400 border-purple-400/20';
             if (category === 'CHLD') catSelectClass = 'bg-teal-500/20 text-teal-400 border-teal-400/20';
@@ -1695,13 +1695,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span class="text-[10px] font-bold text-slate-500 shrink-0">#${index + 1}</span>
                         <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
                             onblur="updateTourist('${t.id}', 'fullName', this.value)"
-                            class="flex-1 min-w-0 bg-transparent text-white border-b ${!t.fullName ? 'border-rose-500' : 'border-transparent'} hover:border-white/30 focus:border-cyan-400 focus:outline-none py-0.5 text-xs font-semibold transition-colors placeholder:text-slate-600">
+                            class="flex-1 min-w-0 bg-transparent text-slate-800 dark:text-white border-b ${!t.fullName ? 'border-rose-500' : 'border-transparent'} hover:border-slate-300 dark:hover:border-white/30 focus:border-cyan-400 focus:outline-none py-0.5 text-xs font-semibold transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600">
                         ${discountInfo.isBirthday ? '<span class="text-amber-400 text-xs shrink-0" title="Именинник"><i class="fa-solid fa-cake-candles"></i></span>' : ''}
                         <div class="shrink-0 w-[90px]">
                             <input type="text" value="${displayDob}" 
                                 placeholder="дд.мм.гггг"
                                 onblur="updateTouristDobDirect('${t.id}', this.value)"
-                                class="w-full bg-transparent text-slate-300 border-b ${(!t.dob && t.age === undefined && t.year === undefined) ? 'border-rose-500' : 'border-transparent'} hover:border-white/30 focus:border-cyan-400 focus:outline-none py-0.5 text-xs text-right transition-colors placeholder:text-slate-600">
+                                class="w-full bg-transparent text-slate-800 dark:text-white border-b ${(!t.dob && t.age === undefined && t.year === undefined) ? 'border-rose-500' : 'border-transparent'} hover:border-slate-300 dark:hover:border-white/30 focus:border-cyan-400 focus:outline-none py-0.5 text-xs text-right transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600">
                         </div>
                         <button onclick="removeTourist('${t.id}', this)" class="btn-danger shrink-0 ml-1 p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/20 transition-colors" title="Удалить">
                             <i class="fa-solid fa-trash-can text-[11px] pointer-events-none"></i>
@@ -1773,7 +1773,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="col-span-3 relative">
                         <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
                             onblur="updateTourist('${t.id}', 'fullName', this.value)"
-                            class="w-full text-left bg-transparent text-white border ${!t.fullName ? 'border-rose-500 bg-rose-500/20' : 'border-transparent'} hover:border-white/20 focus:border-cyan-400 focus:bg-black/20 focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors ${discountInfo.isBirthday ? 'pr-7' : ''}">
+                            class="w-full text-left bg-transparent text-slate-800 dark:text-white border ${!t.fullName ? 'border-rose-500 bg-rose-50 dark:bg-rose-500/20' : 'border-transparent'} hover:border-slate-200 dark:hover:border-white/20 focus:border-cyan-400 focus:bg-slate-50 dark:focus:bg-black/20 focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors ${discountInfo.isBirthday ? 'pr-7' : ''}">
                         ${discountInfo.isBirthday ? '<div class="absolute right-2 top-1/2 -translate-y-1/2 text-amber-400 text-[10px]" title="Именинник"><i class="fa-solid fa-cake-candles"></i></div>' : ''}
                     </div>
                     <!-- DOB -->
@@ -3025,11 +3025,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const CAT_LABELS = { ADL: 'Взр', CHLD: 'Дет', INF: 'Инф', INV: 'Инв', SNR: 'Пенс' };
         const CAT_COLORS = {
-            ADL: 'bg-blue-500/20 text-blue-300',
-            CHLD: 'bg-emerald-500/20 text-emerald-300',
-            INF: 'bg-purple-500/20 text-purple-300',
-            INV: 'bg-rose-500/20 text-rose-300',
-            SNR: 'bg-amber-500/20 text-amber-300'
+            ADL: 'bg-blue-100 text-blue-700',
+            CHLD: 'bg-emerald-100 text-emerald-700',
+            INF: 'bg-purple-100 text-purple-700',
+            INV: 'bg-rose-100 text-rose-700',
+            SNR: 'bg-amber-100 text-amber-700'
         };
         const DIS_LABELS = { '1': '100%', '2': '15%', '3': '10%' };
 
@@ -3073,10 +3073,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const clientLabel = item.clientType === 'agent' ? 'Турагент' : 'Турист';
             const tariffLabel = item.tariffType === 'evening' ? 'Вечерний' : 'Дневной';
             const isDuplicate = duplicateIds.has(item.id);
-            const rowBg = isDuplicate
-                ? ''
-                : (idx % 2 === 0 ? 'bg-white/5' : 'bg-transparent');
-            const rowStyle = isDuplicate ? 'style="background-color: var(--canvas-a); border-left: 3px solid var(--brand);"' : '';
+            const rowBg = isDuplicate ? '' : (idx % 2 === 0 ? '' : 'bg-[var(--surface-soft)]');
+            const rowStyle = isDuplicate ? 'style="border-left: 3px solid var(--brand);"' : '';
 
             // Список гостей — каждый в отдельной строке внутри ячейки
             const tourists = item.tourists || [];
@@ -3097,19 +3095,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                     let disStr = '';
                     if (t.disability && t.disability !== 'none' && DIS_LABELS[t.disability]) {
-                        disStr = `<span class="ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300">Инв ${DIS_LABELS[t.disability]}</span>`;
+                        disStr = `<span class="ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-700">Инв ${DIS_LABELS[t.disability]}</span>`;
                     }
-                    const divider = ti < tourists.length - 1 ? ' border-b border-white/5 pb-1.5 mb-1.5' : '';
+                    const divider = ti < tourists.length - 1 ? ' border-b border-[var(--line)] pb-1.5 mb-1.5' : '';
                     return `<div class="flex items-start gap-2 flex-wrap${divider}">
                         <span class="px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 ${catColor}">${catLabel}</span>
-                        <span class="font-semibold text-white text-[11px]">${name}</span>
-                        ${dob ? `<span class="text-slate-400 text-[10px]">${dob}</span>` : ''}
+                        <span class="font-semibold text-[var(--ink)] text-[11px]">${name}</span>
+                        ${dob ? `<span class="text-[var(--ink-soft)] text-[10px]">${dob}</span>` : ''}
                         ${disStr}
                     </div>`;
                 }).join('');
 
             const dupBadge = isDuplicate
-                ? `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-sky-400/20 text-sky-300 ml-1"><i class="fa-solid fa-copy text-[8px]"></i>Дубль</span>`
+                ? `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-sky-100 text-sky-700 ml-1"><i class="fa-solid fa-copy text-[8px]"></i>Дубль</span>`
                 : '';
                 
             const isVoucherTrue = (item.voucher_status === true || item.voucher_status === 'true' || item.voucher_status === 1);
@@ -3150,23 +3148,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
 
-            return `<tr class="${rowBg} border-b border-white/10 hover:bg-white/10 transition-colors align-top" ${rowStyle}>
-                <td class="px-2 py-1.5 text-slate-500 font-mono text-[10px] whitespace-nowrap">${filtered.length - idx}</td>
+            return `<tr class="${rowBg} border-b border-[var(--line)] hover:bg-[var(--surface-soft)] transition-colors align-top" ${rowStyle}>
+                <td class="px-2 py-1.5 text-[var(--ink-soft)] font-mono text-[10px] whitespace-nowrap">${filtered.length - idx}</td>
                 <td class="px-2 py-1.5 whitespace-nowrap">
-                    <div class="font-semibold text-white text-xs flex items-center gap-1">${dateStr}${dupBadge}</div>
-                    <div class="text-[10px] text-slate-400">${timeStr}</div>
+                    <div class="font-semibold text-[var(--ink)] text-xs flex items-center gap-1">${dateStr}${dupBadge}</div>
+                    <div class="text-[10px] text-[var(--ink-soft)]">${timeStr}</div>
                 </td>
-                <td class="px-2 py-1.5 font-semibold text-white text-xs whitespace-nowrap">
+                <td class="px-2 py-1.5 font-semibold text-[var(--ink)] text-xs whitespace-nowrap">
                     ${item.visitDate || '—'}
                     ${voucherBadge}
                 </td>
                 <td class="px-2 py-1.5 whitespace-nowrap">
-                    <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${item.clientType === 'agent' ? 'bg-indigo-500/20 text-indigo-300' : 'bg-purple-500/20 text-purple-300'}">${clientLabel}</span>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${item.clientType === 'agent' ? 'bg-indigo-100 text-indigo-700' : 'bg-purple-100 text-purple-700'}">${clientLabel}</span>
                 </td>
-                <td class="px-2 py-1.5 text-slate-300 text-xs whitespace-nowrap">${tariffLabel}</td>
-                <td class="px-2 py-1.5 text-center font-bold text-white text-xs whitespace-nowrap">${tourists.length}</td>
+                <td class="px-2 py-1.5 text-[var(--ink-soft)] text-xs whitespace-nowrap">${tariffLabel}</td>
+                <td class="px-2 py-1.5 text-center font-bold text-[var(--ink)] text-xs whitespace-nowrap">${tourists.length}</td>
                 <td class="px-2 py-1.5 min-w-[220px]">${guestsHtml}</td>
-                <td class="px-2 py-1.5 text-right font-black text-emerald-400 text-xs whitespace-nowrap">${(item.totalSum || 0).toLocaleString('ru-RU')} ₸</td>
+                <td class="px-2 py-1.5 text-right font-bold text-emerald-600 text-xs whitespace-nowrap">${(item.totalSum || 0).toLocaleString('ru-RU')} ₸</td>
                 <td class="px-2 py-1.5 text-center whitespace-nowrap">
                     <button onclick="loadDbRecordToCalculator('${item.id}')" class="text-cyan-400 hover:text-cyan-300 transition-colors mr-3" title="Загрузить в калькулятор"><i class="fa-solid fa-file-import text-sm"></i></button>
                     ${currentUser === 'admin' ? `<button onclick="deleteHistoryRecord('${item.id}')" class="text-slate-400 hover:text-rose-400 transition-colors" title="Удалить"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}
