@@ -48,26 +48,22 @@
     <style>
         /* ============================================================
            TETYS BLUE — Design System v2.0 (Shadcn/Linear Aesthetic)
-           Inspired by: shadcn/ui, Vercel, Linear, Efferd Dashboard
-           Philosophy: Zero noise. Maximum clarity. Sharp borders over
-           soft shadows. Monochromatic base with accent pops.
            ============================================================ */
         :root {
-            /* --- Core Palette (Light) --- */
-            --ink: #09090b;           /* zinc-950 — primary text */
-            --ink-soft: #52525b;      /* zinc-600 — secondary text */
-            --ink-faint: #a1a1aa;     /* zinc-400 — placeholder/muted */
-            --surface: #ffffff;       /* pure white card bg */
-            --surface-soft: #f4f4f5;  /* zinc-100 — input bg / hover */
-            --canvas-a: #fafafa;      /* zinc-50 — page background */
-            --canvas-b: #f4f4f5;      /* zinc-100 — nav/sidebar bg */
-            --brand: #0070f3;         /* Vercel blue — primary action */
-            --brand-dark: #0050b3;    /* hover state */
-            --aqua: #06b6d4;          /* cyan-500 — icon accents */
-            --coral: #ef4444;         /* red-500 — danger */
-            --sun: #f59e0b;           /* amber-500 — warning */
-            --line: #e4e4e7;          /* zinc-200 — borders */
-            --line-soft: #f4f4f5;     /* zinc-100 — inner dividers */
+            --ink: #09090b;
+            --ink-soft: #52525b;
+            --ink-faint: #a1a1aa;
+            --surface: #ffffff;
+            --surface-soft: #f4f4f5;
+            --canvas-a: #fafafa;
+            --canvas-b: #f4f4f5;
+            --brand: #0070f3;
+            --brand-dark: #0050b3;
+            --aqua: #06b6d4;
+            --coral: #ef4444;
+            --sun: #f59e0b;
+            --line: #e4e4e7;
+            --line-soft: #f4f4f5;
             --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
             --shadow-lift: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             --radius-lg: 12px;
@@ -81,24 +77,20 @@
             --ink: #fafafa;
             --ink-soft: #a1a1aa;
             --ink-faint: #52525b;
-            --surface: #18181b;       /* zinc-900 */
-            --surface-soft: #27272a;  /* zinc-800 */
-            --canvas-a: #09090b;      /* zinc-950 */
-            --canvas-b: #18181b;      /* zinc-900 */
-            --brand: #60a5fa;         /* blue-400 */
-            --brand-dark: #93c5fd;    /* blue-300 */
+            --surface: #18181b;
+            --surface-soft: #27272a;
+            --canvas-a: #09090b;
+            --canvas-b: #18181b;
+            --brand: #60a5fa;
+            --brand-dark: #93c5fd;
             --aqua: #22d3ee;
             --coral: #f87171;
             --sun: #fbbf24;
-            --line: #27272a;          /* zinc-800 */
-            --line-soft: #3f3f46;     /* zinc-700 */
+            --line: #27272a;
+            --line-soft: #3f3f46;
             --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.4);
             --shadow-lift: 0 4px 6px -1px rgb(0 0 0 / 0.4);
         }
-
-        /* ============================================================
-           BASE ELEMENTS
-           ============================================================ */
 
         * { box-sizing: border-box; }
 
@@ -107,33 +99,35 @@
             background-color: var(--canvas-a);
             color: var(--ink);
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
-        /* ============================================================
-           APP CONTENT OVERRIDES
-           Map all old glassmorphism/neon classes to the new flat system
-           ============================================================ */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
 
-        /* Page background */
         #appContent {
             background-color: var(--canvas-a) !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
         }
 
-        /* Sidebar */
         #appContent aside {
             background-color: var(--surface) !important;
             border-right-color: var(--line) !important;
             box-shadow: none !important;
         }
 
-        /* Header */
         #appContent header {
             background: var(--surface) !important;
             border-bottom: 1px solid var(--line) !important;
             box-shadow: none !important;
         }
 
-        /* Cards / Panels: all old neon/glass classes → clean border cards */
         #appContent .glass-panel,
         #appContent .glass-panel-light,
         #appContent .dark-glass-panel,
@@ -152,34 +146,16 @@
             transition: box-shadow 0.15s ease, border-color 0.15s ease !important;
         }
 
-        #appContent .glass-panel:hover,
-        #appContent .neon-card-blue:hover,
-        #appContent .glass-stat-box:hover {
-            transform: none !important;
-            box-shadow: var(--shadow-lift) !important;
-            border-color: var(--line) !important;
-        }
-
-        /* Remove the old glossy top-highlight pseudo-element */
         #appContent .glass-panel::before,
         #appContent .neon-card-blue::before,
         #appContent .glass-stat-box::before {
             display: none !important;
         }
 
-        /* Section cards in calculator view */
-        #view-calculator section {
-            background: var(--surface) !important;
-            border: 1px solid var(--line) !important;
-            border-radius: var(--radius-lg) !important;
-            box-shadow: var(--shadow-card) !important;
-        }
-
-        /* Inputs */
         #appContent .glass-input,
         #appContent .underwater-input {
             background: var(--surface-soft) !important;
-            border: 1px solid var(--line) !important;
+            border: 1.5px solid var(--line) !important;
             border-radius: var(--radius-sm) !important;
             color: var(--ink) !important;
             font-weight: 500 !important;
@@ -198,7 +174,7 @@
             color: var(--ink-faint) !important;
         }
 
-        /* Text color normalization */
+        /* Normalization of texts */
         #appContent .text-white,
         #appContent .text-slate-100,
         #appContent .text-slate-200,
@@ -223,205 +199,7 @@
             color: var(--ink-faint) !important;
         }
 
-        /* Accent colors — keep them vivid, just ensure readability */
-        #appContent .text-cyan-400,
-        #appContent .text-cyan-500 { color: #0891b2 !important; }
-        #appContent .text-emerald-500 { color: #059669 !important; }
-        #appContent .text-blue-500 { color: #2563eb !important; }
-        #appContent .text-purple-500 { color: #7c3aed !important; }
-        #appContent .text-rose-500 { color: #e11d48 !important; }
-        #appContent .text-amber-500 { color: #d97706 !important; }
-        #appContent .text-teal-500 { color: #0f766e !important; }
-
-        /* Background normalization */
-        #appContent .bg-white\/10,
-        #appContent .bg-white\/5,
-        #appContent .bg-black\/30,
-        #appContent .bg-black\/20,
-        #appContent .bg-black\/40,
-        #appContent .bg-black\/50,
-        #appContent .bg-black\/60 {
-            background-color: var(--surface-soft) !important;
-        }
-        #appContent .bg-white\/20 {
-            background-color: var(--line-soft) !important;
-        }
-
-        /* Border normalization */
-        #appContent .border-white\/20,
-        #appContent .border-white\/10,
-        #appContent .border-white\/5,
-        #appContent .border-white\/50 {
-            border-color: var(--line) !important;
-        }
-
-        /* Hover states */
-        #appContent .hover\:bg-white\/20:hover,
-        #appContent .hover\:bg-white\/10:hover,
-        #appContent .hover\:bg-white\/5:hover {
-            background-color: var(--surface-soft) !important;
-        }
-
-        /* Navigation */
-        #appContent nav.fixed.bottom-0 {
-            background-color: var(--surface) !important;
-            border-top: 1px solid var(--line) !important;
-        }
-
-        /* Sidebar nav buttons */
-        #appContent #navCalcBtn,
-        #appContent #navDashboardBtn,
-        #appContent #navDatabaseBtn {
-            color: var(--ink-soft) !important;
-        }
-
-        /* Orbs & bubbles on login screen only */
-        #appContent .glass-orb,
-        #appContent .glass-bubble {
-            background: var(--surface) !important;
-            border: 1px solid var(--line) !important;
-            box-shadow: var(--shadow-card) !important;
-        }
-
-        #appContent .text-glow { text-shadow: none !important; }
-        #appContent .light-rays { display: none !important; }
-
-        /* ============================================================
-           CALCULATOR VIEW WRAPPER
-           ============================================================ */
-        #view-calculator {
-            padding: 0.75rem;
-        }
-        @media (min-width: 640px) {
-            #view-calculator { padding: 1rem; }
-        }
-        @media (min-width: 768px) {
-            #view-calculator { padding: 1.5rem; }
-        }
-
-        /* Tab switcher active state override */
-        #tabDetailed[class*="bg-"],
-        #tabQuick[class*="bg-"] {
-            background: none !important;
-        }
-        #tabDetailed.bg-\\[var\\(--surface\\)\\],
-        #tabQuick.bg-\\[var\\(--surface\\)\\] {
-            background: var(--surface) !important;
-            color: var(--ink) !important;
-        }
-
-        /* Quick mode counter rows */
-        #quickModeContainer > div > div {
-            background: var(--surface) !important;
-            border: 1px solid var(--line) !important;
-            border-radius: var(--radius-md) !important;
-            color: var(--ink) !important;
-        }
-
-        /* Zaявки (Bookings) table: fix dark row #73 hover/selected bg */
-        #view-bookings table tbody tr,
-        #view-orders table tbody tr,
-        #ordersTableBody tr {
-            background: var(--surface) !important;
-            color: var(--ink) !important;
-        }
-        #view-bookings table tbody tr:hover,
-        #ordersTableBody tr:hover {
-            background: var(--surface-soft) !important;
-        }
-        /* Remove any hard-coded dark/glass backgrounds from booking rows */
-        #view-bookings table tbody tr td,
-        #ordersTableBody tr td {
-            color: var(--ink) !important;
-        }
-
-        /* ============================================================
-           PRIMARY BUTTON — Shadcn style
-           ============================================================ */
-        .glow-btn-cyan {
-            background: var(--ink) !important;
-            border: 1px solid var(--ink) !important;
-            color: var(--canvas-a) !important;
-            font-weight: 600 !important;
-            letter-spacing: 0.01em;
-            transition: opacity 0.15s ease, background 0.15s ease !important;
-            border-radius: var(--radius-sm) !important;
-            box-shadow: none !important;
-        }
-        .glow-btn-cyan:hover {
-            opacity: 0.85 !important;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-        body.dark-mode .glow-btn-cyan {
-            background: #fafafa !important;
-            border-color: #fafafa !important;
-            color: #09090b !important;
-        }
-
-        /* ============================================================
-           QUICK MODE COUNTER CARDS
-           ============================================================ */
-        #quickModeContainer .flex.flex-col.p-4 {
-            background: var(--surface) !important;
-            border: 1px solid var(--line) !important;
-            border-radius: var(--radius-md) !important;
-        }
-        #quickModeContainer .flex.flex-col.p-4:hover {
-            border-color: var(--brand) !important;
-            background: var(--surface-soft) !important;
-        }
-        #quickModeContainer .w-8.h-8.rounded-lg {
-            background: var(--surface-soft) !important;
-            border: 1px solid var(--line) !important;
-            color: var(--ink) !important;
-        }
-        #quickModeContainer .w-8.h-8.rounded-lg:hover {
-            background: var(--ink) !important;
-            color: var(--surface) !important;
-        }
-        /* ============================================================
-           MISC UTILITY
-           ============================================================ */
-        .hover-lift {
-            transition: box-shadow 0.15s ease, border-color 0.15s ease !important;
-        }
-        .hover-lift:hover {
-            transform: none !important;
-            box-shadow: var(--shadow-lift) !important;
-        }
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.001ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.001ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
-
-        #appContent {
-            font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
-        }
-
-        .font-display,
-        #totalPrice,
-        #statAdl,
-        #statChld,
-        #statInf,
-        #statPens,
-        #statInv,
-        #statBday {
-            font-family: -apple-system, BlinkMacSystemFont, 'Manrope', 'Inter', sans-serif;
-            font-variant-numeric: tabular-nums;
-            letter-spacing: -0.01em;
-        }
-
-        :root {
-            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
+        /* Micro interactions */
         #appContent button,
         #appContent .hover-lift,
         #appContent .glow-btn-cyan,
@@ -438,19 +216,36 @@
             transform: scale(0.96) !important;
         }
 
-        #appContent button:disabled:active {
-            transform: none !important;
+        .glow-btn-cyan {
+            background: var(--ink) !important;
+            border: 1px solid var(--ink) !important;
+            color: var(--canvas-a) !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.01em;
+            border-radius: var(--radius-sm) !important;
+            box-shadow: none !important;
         }
 
-        body {
-            overflow-x: hidden;
+        .glow-btn-cyan:hover {
+            opacity: 0.85 !important;
+            box-shadow: none !important;
         }
 
-        body.daylight-bg {
-            background: linear-gradient(180deg, var(--canvas-a) 0%, var(--canvas-b) 55%, var(--canvas-b) 100%) fixed;
-            color: var(--ink);
+        body.dark-mode .glow-btn-cyan {
+            background: #fafafa !important;
+            border-color: #fafafa !important;
+            color: #09090b !important;
         }
 
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Underwater auth visual */
         .underwater-bg {
             background: radial-gradient(circle at 50% -20%, rgba(0, 180, 216, 0.6) 0%, rgba(3, 40, 77, 1) 70%, rgba(1, 15, 33, 1) 100%);
             position: relative;
@@ -459,15 +254,8 @@
 
         .light-rays {
             position: absolute;
-            top: -50%;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(10deg,
-                    rgba(255, 255, 255, 0.05) 0px,
-                    rgba(255, 255, 255, 0.05) 100px,
-                    transparent 100px,
-                    transparent 200px);
+            top: -50%; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(10deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 100px, transparent 100px, transparent 200px);
             filter: blur(40px);
             opacity: 0.6;
             animation: wave-light 15s infinite alternate ease-in-out;
@@ -485,860 +273,111 @@
         .glass-bubble {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 2px 10px rgba(255, 255, 255, 0.15);
             animation: float 6s infinite ease-in-out;
         }
 
-        .underwater-input {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        .btn-coral {
+            background: linear-gradient(135deg, #ff7a59 0%, #ff5252 100%);
             color: white;
-            backdrop-filter: blur(8px);
-            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 82, 82, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .underwater-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(2deg); } }
+        @keyframes wave-light { 0% { transform: translateX(-5%) skewX(-5deg); opacity: 0.4; } 100% { transform: translateX(5%) skewX(5deg); opacity: 0.7; } }
+        @keyframes bubble-rise { 0% { transform: translateY(100px) scale(0.5); opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translateY(-100px) scale(1.2); opacity: 0; } }
 
-        .underwater-input:focus {
-            outline: none;
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.7);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-        }
+        /* ============================================================
+           ФИКС ЦВЕТОВ: ТАБЫ, ТЕКСТОВЫЙ ВВОД И ПОЛЕ ФИО
+           ============================================================ */
 
-        .text-glow {
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 220, 255, 0.4);
-        }
-
-        #themeIcon.theme-icon-active {
-            color: var(--sun) !important;
-        }
-
-        #appContent header {
-            background: rgba(255, 255, 255, 0.72) !important;
-            border: 1px solid var(--line) !important;
-            box-shadow: var(--shadow-card);
-        }
-
-        body.dark-mode #appContent header {
-            background: rgba(14, 39, 64, 0.72) !important;
-        }
-
-        #appContent .glass-panel,
-        #appContent .glass-panel-light,
-        #appContent .dark-glass-panel,
-        #appContent .neon-card-blue,
-        #appContent .neon-card-green,
-        #appContent .neon-card-amber,
-        #appContent .neon-card-rose,
-        #appContent .glass-stat-box {
-            background: var(--surface) !important;
-            border: 1px solid var(--line) !important;
-            box-shadow: var(--shadow-card) !important;
-            color: var(--ink) !important;
-            border-radius: var(--radius-lg) !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-            transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out), border-color 0.25s ease;
-            position: relative;
-        }
-
-        /* Mobile: cards stretch full width, no side border-radius */
-        @media (max-width: 639px) {
-            #appContent .neon-card-blue,
-            #appContent .glass-panel,
-            #appContent .glass-stat-box,
-            #appContent .neon-card-green,
-            #appContent .neon-card-amber,
-            #appContent .neon-card-rose {
-                border-radius: 0 !important;
-                border-left: none !important;
-                border-right: none !important;
-                box-shadow: 0 1px 0 0 var(--line), 0 -1px 0 0 var(--line) !important;
-            }
-        }
-
-        #appContent .glass-panel::before,
-        #appContent .neon-card-blue::before,
-        #appContent .glass-stat-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 12%;
-            right: 12%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
-            pointer-events: none;
-        }
-
-        body.dark-mode #appContent .glass-panel::before,
-        body.dark-mode #appContent .neon-card-blue::before,
-        body.dark-mode #appContent .glass-stat-box::before {
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
-        }
-
-        #appContent .glass-panel:hover,
-        #appContent .neon-card-blue:hover,
-        #appContent .glass-stat-box:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lift) !important;
-            border-color: var(--aqua) !important;
-        }
-
-        #appContent .glass-input,
-        #appContent .underwater-input {
-            background: var(--surface-soft) !important;
-            border: 1.5px solid var(--line) !important;
-            border-radius: var(--radius-sm) !important;
-            color: var(--ink) !important;
-            font-weight: 500 !important;
+        /* 1. Переключатель режимов ("Посписочный" / "Быстрый") */
+        #tabDetailed,
+        #tabQuick {
+            color: #52525b !important;
+            font-weight: 600 !important;
             transition: all 0.2s ease !important;
         }
 
-        #appContent .glass-input:focus {
-            outline: none !important;
-            border-color: var(--aqua) !important;
-            box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.18) !important;
+        #tabDetailed.bg-\[var\(--surface\)\],
+        #tabQuick.bg-\[var\(--surface\)\],
+        #tabDetailed.glow-btn-cyan,
+        #tabQuick.glow-btn-cyan,
+        #tabDetailed.bg-white,
+        #tabQuick.bg-white {
+            color: #0284c7 !important;          /* Яркий читаемый синий акцент */
+            background-color: #ffffff !important;
+            border-color: #e4e4e7 !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
         }
 
-        #appContent .glass-input::placeholder {
-            color: var(--ink-faint) !important;
+        /* 2. Поле "Текстовый ввод" */
+        #bulkText {
+            color: #09090b !important;          /* Четкий темный текст */
+            background-color: #ffffff !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
         }
 
-        #appContent .text-white,
-        #appContent .text-slate-100,
-        #appContent .text-slate-200,
-        #appContent .text-slate-300 {
-            color: var(--ink) !important;
+        #bulkText::placeholder {
+            color: #a1a1aa !important;          /* Мягкий серый плейсхолдер */
+            opacity: 1 !important;
         }
 
-        #appContent .text-slate-400 {
-            color: var(--ink-soft) !important;
+        /* 3. Поле ввода ФИО в списке гостей */
+        #touristList input[placeholder="ФИО туриста"] {
+            color: #09090b !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            text-transform: capitalize !important;
         }
 
-        #appContent .text-cyan-100,
-        #appContent .text-cyan-200,
-        #appContent .text-cyan-300,
-        #appContent .text-cyan-400,
-        #appContent .text-teal-100,
-        #appContent .text-teal-200,
-        #appContent .text-teal-300,
-        #appContent .text-teal-400 {
-            color: #0f766e !important;
+        #touristList input[placeholder="ФИО туриста"]::placeholder {
+            color: #a1a1aa !important;
+            font-weight: 400 !important;
+            text-transform: none !important;
         }
 
-        #appContent .text-blue-100,
-        #appContent .text-blue-200,
-        #appContent .text-blue-300,
-        #appContent .text-blue-400 {
-            color: var(--brand-dark) !important;
+        /* 4. Тёмная тема */
+        body.dark-mode #tabDetailed,
+        body.dark-mode #tabQuick {
+            color: #a1a1aa !important;
         }
 
-        #appContent .text-emerald-100,
-        #appContent .text-emerald-200,
-        #appContent .text-emerald-300,
-        #appContent .text-emerald-400,
-        #appContent .text-green-100,
-        #appContent .text-green-200,
-        #appContent .text-green-300,
-        #appContent .text-green-400 {
-            color: #047857 !important;
+        body.dark-mode #tabDetailed.bg-\[var\(--surface\)\],
+        body.dark-mode #tabQuick.bg-\[var\(--surface\)\],
+        body.dark-mode #tabDetailed.glow-btn-cyan,
+        body.dark-mode #tabQuick.glow-btn-cyan,
+        body.dark-mode #tabDetailed.bg-white,
+        body.dark-mode #tabQuick.bg-white {
+            color: #38bdf8 !important;          /* Голубой в тёмной теме */
+            background-color: #27272a !important;
+            border-color: #3f3f46 !important;
         }
 
-        #appContent .text-purple-100,
-        #appContent .text-purple-200,
-        #appContent .text-purple-300,
-        #appContent .text-purple-400 {
-            color: #6d28d9 !important;
+        body.dark-mode #bulkText {
+            color: #fafafa !important;
+            background-color: #18181b !important;
         }
 
-        #appContent .text-rose-100,
-        #appContent .text-rose-200,
-        #appContent .text-rose-300,
-        #appContent .text-rose-400 {
-            color: #be123c !important;
+        body.dark-mode #bulkText::placeholder {
+            color: #71717a !important;
         }
 
-        #appContent .text-amber-100,
-        #appContent .text-amber-200,
-        #appContent .text-amber-300,
-        #appContent .text-amber-400,
-        #appContent .text-yellow-100,
-        #appContent .text-yellow-200,
-        #appContent .text-yellow-300,
-        #appContent .text-yellow-400 {
-            color: #b45309 !important;
+        body.dark-mode #touristList input[placeholder="ФИО туриста"] {
+            color: #fafafa !important;
         }
 
-        #appContent .glass-orb,
-        #appContent .glass-bubble {
-            background: var(--surface) !important;
-            border: 1px solid var(--line) !important;
-            box-shadow: var(--shadow-card) !important;
-        }
-
-        #appContent .text-glow {
-            text-shadow: none !important;
-        }
-
-        #appContent .light-rays {
-            display: none !important;
-        }
-
-        #appContent .bg-white\/10 {
-            background-color: var(--surface-soft) !important;
-        }
-
-        #appContent .bg-white\/5 {
-            background-color: var(--surface-soft) !important;
-        }
-
-        #appContent .bg-white\/20 {
-            background-color: var(--line-soft) !important;
-        }
-
-        #appContent .bg-black\/30 {
-            background-color: var(--surface-soft) !important;
-        }
-
-        #appContent .border-white\/20 {
-            border-color: var(--line) !important;
-        }
-
-        #appContent .border-white\/10,
-        #appContent .border-white\/5 {
-            border-color: var(--line-soft) !important;
-        }
-
-        #appContent .border-white\/50 {
-            border-color: var(--line) !important;
-        }
-
-        #appContent .hover\:bg-white\/20:hover,
-        #appContent .hover\:bg-white\/10:hover,
-        #appContent .hover\:bg-white\/5:hover {
-            background-color: var(--line-soft) !important;
-        }
-
-        #appContent .hover\:border-white\/20:hover {
-            border-color: var(--aqua) !important;
-        }
-
-        #appContent .text-slate-300.hover\:text-white:hover,
-        #appContent .text-slate-400.hover\:text-white:hover,
-        #appContent #themeToggleBtn.hover\:text-white:hover {
-            color: var(--ink) !important;
-        }
-
-        #appContent nav.fixed.bottom-0 {
-            background-color: var(--surface) !important;
-            border-top-color: var(--line) !important;
-        }
-
-        #appContent .bg-black\/20,
-        #appContent .bg-black\/40,
-        #appContent .bg-black\/50,
-        #appContent .bg-black\/60 {
-            background-color: var(--surface-soft) !important;
-        }
-
-        #appContent #navCalcBtn.bg-white\/10 {
-            background: var(--line-soft) !important;
-            border: 1px solid var(--line) !important;
-        }
-
-        #appContent #navCalcBtn,
-        #appContent #navDashboardBtn,
-        #appContent #navDatabaseBtn,
-        #appContent a[href="client.html"] {
-            color: var(--ink-soft) !important;
-        }
-
-        body.dark-mode #appContent .glass-input,
-        body.dark-mode #appContent select.glass-input option {
-            background-color: var(--surface-soft) !important;
-            border-color: var(--line) !important;
-            color: var(--ink) !important;
-        }
-
-        .glow-btn-cyan {
-            background: linear-gradient(135deg, var(--aqua) 0%, var(--brand) 100%) !important;
-            border: 1px solid rgba(34, 211, 238, 0.5) !important;
-            color: white !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.03em;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            border-radius: var(--radius-sm) !important;
-            box-shadow: 0 6px 18px rgba(0, 180, 216, 0.35) !important;
-        }
-
-        .glow-btn-cyan:hover {
-            box-shadow: 0 10px 24px rgba(0, 180, 216, 0.5) !important;
-            transform: translateY(-2px);
-        }
-
-        .hover-lift {
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: var(--shadow-lift) !important;
-        }
-
-        .hover-lift:active {
-            transform: translateY(0) !important;
-        }
-
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .pill-emerald {
-            background-color: #10b981 !important;
-            color: white !important;
-            font-weight: bold;
-            border-radius: 999px;
-        }
-
-        .pill-cyan {
-            background-color: var(--aqua) !important;
-            color: white !important;
-            font-weight: bold;
-            border-radius: 999px;
-        }
-
-        .pill-amber {
-            background-color: var(--sun) !important;
-            color: white !important;
-            font-weight: bold;
-            border-radius: 999px;
-        }
-
-        .pill-rose {
-            background-color: #f43f5e !important;
-            color: white !important;
-            font-weight: bold;
-            border-radius: 999px;
-        }
-
-        .pill-slate {
-            background-color: #64748b !important;
-            color: white !important;
-            font-weight: bold;
-            border-radius: 999px;
-        }
-
-        .glass-stat-box {
-            position: relative;
-            overflow: hidden;
-        }
-
-        #appContent .kpi-card {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-card);
-            padding: 22px 24px;
-            transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
-        }
-
-        #appContent .kpi-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lift);
-        }
-
-        #appContent .kpi-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 999px;
-            display: inline-block;
-        }
-
-        #appContent .kpi-icon {
-            color: var(--ink-faint);
-            font-size: 15px;
-        }
-
-        #appContent .kpi-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--ink-soft);
-            margin-bottom: 6px;
-        }
-
-        #appContent .kpi-value {
-            font-family: -apple-system, BlinkMacSystemFont, 'Manrope', 'Inter', sans-serif;
-            font-variant-numeric: tabular-nums;
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            color: var(--ink);
-            margin-bottom: 14px;
-            line-height: 1.15;
-        }
-
-        #appContent .kpi-unit {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--ink-soft);
-        }
-
-        #appContent .kpi-pill {
-            display: inline-block;
-            font-size: 10.5px;
-            font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 999px;
-        }
-
-        #appContent .chart-card {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-card);
-            padding: 22px 24px;
-        }
-
-        #appContent .chart-card-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--ink);
-        }
-
-        #appContent .chart-card-subtitle {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--ink-soft);
-        }
-
-        @keyframes shimmer {
-            0% {
-                background-position: -1000px 0;
-            }
-
-            100% {
-                background-position: 1000px 0;
-            }
-        }
-
-        .skeleton {
-            animation: shimmer 2s infinite linear;
-            background: linear-gradient(to right, rgba(0, 0, 0, 0.04) 4%, rgba(0, 0, 0, 0.08) 25%, rgba(0, 0, 0, 0.04) 36%);
-            background-size: 1000px 100%;
-        }
-
-        .skeleton-light {
-            animation: shimmer 2s infinite linear;
-            background: linear-gradient(to right, #f1f5f9 4%, #e2e8f0 25%, #f1f5f9 36%);
-            background-size: 1000px 100%;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in-up {
-            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        body.dark-mode ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        body.dark-mode ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0) rotate(0deg);
-            }
-
-            50% {
-                transform: translateY(-15px) rotate(2deg);
-            }
-        }
-
-        @keyframes wave-light {
-            0% {
-                transform: translateX(-5%) skewX(-5deg);
-                opacity: 0.4;
-            }
-
-            100% {
-                transform: translateX(5%) skewX(5deg);
-                opacity: 0.7;
-            }
-        }
-
-        @keyframes bubble-rise {
-            0% {
-                transform: translateY(100px) scale(0.5);
-                opacity: 0;
-            }
-
-            50% {
-                opacity: 0.8;
-            }
-
-            100% {
-                transform: translateY(-100px) scale(1.2);
-                opacity: 0;
-            }
-        }
-
-        .date-left-align::-webkit-date-and-time-value {
-            text-align: left !important;
-        }
-
-        .date-left-align::-webkit-datetime-edit {
-            text-align: left !important;
-            padding: 0;
-        }
-
-        input[type="date"]::-webkit-date-and-time-value {
-            text-align: left !important;
-        }
-
-        input[type="date"]::-webkit-datetime-edit {
-            text-align: left !important;
-            display: block;
-            padding: 0;
-        }
-
-        @keyframes toast-slide-up {
-            0% {
-                transform: translate(-50%, 20px) scale(0.95);
-                opacity: 0;
-            }
-
-            15% {
-                transform: translate(-50%, 0) scale(1);
-                opacity: 1;
-            }
-
-            85% {
-                transform: translate(-50%, 0) scale(1);
-                opacity: 1;
-            }
-
-            100% {
-                transform: translate(-50%, 20px) scale(0.95);
-                opacity: 0;
-            }
-        }
-
-        .toast-notification {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            pointer-events: none;
-            animation: toast-slide-up 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @keyframes row-fade-in {
-            from {
-                opacity: 0;
-                transform: translateY(-10px) scale(0.98);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .animate-row-in {
-            animation: row-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @keyframes row-fade-out {
-            from {
-                opacity: 1;
-                transform: translateY(0) scale(0.98);
-            }
-
-            to {
-                opacity: 0;
-                transform: translateX(20px) scale(0.95);
-            }
-        }
-
-        .animate-row-out {
-            animation: row-fade-out 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            20%,
-            60% {
-                transform: translateX(-6px);
-            }
-
-            40%,
-            80% {
-                transform: translateX(6px);
-            }
-        }
-
-        /* ------------------------------------------------------------
-           "Wow" micro-interactions for the calculator: a number pulse
-           when a value changes, and a soft light-sweep on the total
-           price card, plus a staggered entrance for the page cards.
-           ------------------------------------------------------------ */
-        @keyframes value-pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            35% {
-                transform: scale(1.12);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .value-pulse {
-            display: inline-block;
-            animation: value-pulse 0.4s var(--ease-spring);
-        }
-
-        @keyframes price-flash {
-            0% {
-                box-shadow: 0 0 0 0 rgba(0, 180, 216, 0.55), var(--shadow-card);
-            }
-
-            60% {
-                box-shadow: 0 0 0 10px rgba(0, 180, 216, 0), var(--shadow-card);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(0, 180, 216, 0), var(--shadow-card);
-            }
-        }
-
-        .price-flash {
-            animation: price-flash 0.7s ease-out;
-        }
-
-        @keyframes card-enter {
-            from {
-                opacity: 0;
-                transform: translateY(14px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        #view-calculator.stagger-in>div>* {
-            animation: card-enter 0.5s var(--ease-out) both;
-        }
-
-        #view-calculator.stagger-in>div>*:nth-child(1) {
-            animation-delay: 0.02s;
-        }
-
-        #view-calculator.stagger-in>div>*:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-
-        #view-calculator.stagger-in .lg\:col-span-4>div>section,
-        #view-calculator.stagger-in .lg\:col-span-8>section,
-        #view-calculator.stagger-in .lg\:col-span-8>div {
-            animation: card-enter 0.5s var(--ease-out) both;
-        }
-
-        #view-calculator.stagger-in .lg\:col-span-4>div>section:nth-child(1) {
-            animation-delay: 0.08s;
-        }
-
-        #view-calculator.stagger-in .lg\:col-span-4>div>section:nth-child(2) {
-            animation-delay: 0.16s;
-        }
-
-        #view-calculator.stagger-in .lg\:col-span-8>*:nth-child(1) {
-            animation-delay: 0.14s;
-        }
-
-        #view-calculator.stagger-in .lg\:col-span-8>*:nth-child(2) {
-            animation-delay: 0.22s;
-        }
-
-        #view-calculator.stagger-in .lg\:col-span-8>*:nth-child(3) {
-            animation-delay: 0.3s;
-        }
-
-        @keyframes popIn {
-            from {
-                opacity: 0;
-                transform: scale(0.98);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        /* Pricing & Promotions admin modal — plain light modal, same
-           convention as #manualPriceModal (lives outside #appContent). */
-        .pricing-tab-btn {
-            padding: 10px 14px;
-            font-size: 12.5px;
-            font-weight: 700;
-            color: #64748b;
-            border-bottom: 2px solid transparent;
-            transition: color 0.2s ease, border-color 0.2s ease;
-        }
-
-        .pricing-tab-btn:hover {
-            color: #0f172a;
-        }
-
-        .pricing-tab-btn.active {
-            color: #0284c7;
-            border-bottom-color: #0284c7;
-        }
-
-        .price-input {
-            width: 100%;
-            padding: 4px 6px;
-            font-size: 12px;
-            font-weight: 700;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            color: #0f172a;
-            text-align: center;
-        }
-
-        .price-input:focus {
-            outline: none;
-            border-color: #0284c7;
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
-        }
-
-        /* --- Dark Mode Overrides for Pricing Admin Modal --- */
-        body.dark-mode #pricingAdminModal>div {
-            background-color: var(--surface);
-            border-color: var(--line);
-        }
-
-        body.dark-mode #pricingAdminModal h2,
-        body.dark-mode #pricingAdminModal h3 {
-            color: var(--ink);
-        }
-
-        body.dark-mode #pricingAdminModal .text-slate-900,
-        body.dark-mode #pricingAdminModal .text-slate-600,
-        body.dark-mode #pricingAdminModal .text-slate-500 {
-            color: var(--ink-soft) !important;
-        }
-
-        body.dark-mode #pricingAdminModal .text-slate-400,
-        body.dark-mode #pricingAdminModal .text-slate-300 {
-            color: var(--ink-faint) !important;
-        }
-
-        body.dark-mode #pricingAdminModal .border-slate-100 {
-            border-color: var(--line-soft) !important;
-        }
-
-        body.dark-mode .price-input {
-            background-color: var(--surface-soft);
-            color: var(--ink);
-            border-color: var(--line);
-        }
-
-        body.dark-mode .price-input:focus {
-            border-color: var(--brand);
-            background-color: var(--surface);
-        }
-
-        body.dark-mode .pricing-tab-btn {
-            color: var(--ink-faint);
-        }
-
-        body.dark-mode .pricing-tab-btn:hover {
-            color: var(--ink);
-        }
-
-        body.dark-mode .pricing-tab-btn.active {
-            color: var(--brand);
-            border-bottom-color: var(--brand);
-        }
-
-        /* --- Global Dark Mode Text Overrides for #appContent --- */
-        body.dark-mode #appContent .text-slate-900,
-        body.dark-mode #appContent .text-slate-800,
-        body.dark-mode #appContent .text-slate-700 {
-            color: var(--ink) !important;
-        }
-
-        body.dark-mode #appContent .text-slate-600,
-        body.dark-mode #appContent .text-slate-500 {
-            color: var(--ink-soft) !important;
-        }
-
-        body.dark-mode #appContent .text-slate-400,
-        body.dark-mode #appContent .text-slate-300 {
-            color: var(--ink-faint) !important;
+        body.dark-mode #touristList input[placeholder="ФИО туриста"]::placeholder {
+            color: #71717a !important;
         }
     </style>
 </head>
 
 <body class="min-h-screen relative flex flex-col underwater-bg">
 
-    <!-- Underwater Auth Screen (Marine Glassmorphism) -->
+    <!-- Underwater Auth Screen -->
     <div id="authScreen"
         class="fixed inset-0 z-[5000] flex items-center justify-center p-4 underwater-bg transition-opacity duration-300">
         <div class="light-rays"></div>
@@ -1361,32 +400,14 @@
             <i class="fa-solid fa-tornado text-4xl opacity-80"></i>
         </div>
 
-        <div class="absolute right-10 md:right-32 top-1/3 glass-bubble rounded-full flex flex-col items-center justify-center text-white hidden sm:flex"
-            style="width: 110px; height: 110px; animation: float-delay-2 8s infinite ease-in-out;">
-            <span class="text-[8px] uppercase tracking-widest opacity-80">Park Capacity</span>
-            <div class="relative mt-1">
-                <svg class="w-12 h-12 transform -rotate-90">
-                    <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"></circle>
-                    <circle cx="24" cy="24" r="20" stroke="#ff5252" stroke-width="3" fill="none" stroke-dasharray="125"
-                        stroke-dashoffset="30"></circle>
-                </svg>
-                <span class="absolute inset-0 flex items-center justify-center text-sm font-bold">78%</span>
-            </div>
-        </div>
-
-        <div
-            class="glass-orb relative z-10 w-[90vw] max-w-[420px] aspect-square rounded-full flex flex-col items-center justify-center p-8 md:p-10">
+        <div class="glass-orb relative z-10 w-[90vw] max-w-[420px] aspect-square rounded-full flex flex-col items-center justify-center p-8 md:p-10">
             <div class="text-center mb-6 w-full">
                 <div class="mb-2 relative flex justify-center">
-                    <i
-                        class="fa-solid fa-dolphin absolute -top-4 -left-2 text-cyan-300 text-xl transform -rotate-12 opacity-80"></i>
-                    <i
-                        class="fa-solid fa-dolphin absolute -top-2 -right-1 text-cyan-300 text-lg transform rotate-45 opacity-80 scale-x-[-1]"></i>
-                    <h2 class="font-display text-3xl md:text-4xl font-black text-white tracking-wider text-glow mt-2">
-                        TETYS BLUE</h2>
+                    <i class="fa-solid fa-dolphin absolute -top-4 -left-2 text-cyan-300 text-xl transform -rotate-12 opacity-80"></i>
+                    <i class="fa-solid fa-dolphin absolute -top-2 -right-1 text-cyan-300 text-lg transform rotate-45 opacity-80 scale-x-[-1]"></i>
+                    <h2 class="font-display text-3xl md:text-4xl font-black text-white tracking-wider mt-2">TETYS BLUE</h2>
                 </div>
-                <p class="text-[9px] md:text-[10px] font-bold text-cyan-100 uppercase tracking-widest mt-1 opacity-90">
-                    Панель расчетов</p>
+                <p class="text-[9px] md:text-[10px] font-bold text-cyan-100 uppercase tracking-widest mt-1 opacity-90">Панель расчетов</p>
                 <p class="text-[8px] font-medium text-cyan-200 uppercase tracking-widest opacity-70">Сезон 2026</p>
             </div>
 
@@ -1395,27 +416,21 @@
                     <input type="text" id="authLogin" placeholder="ЛОГИН"
                         class="w-full pl-6 pr-10 py-3 rounded-full underwater-input text-xs font-bold tracking-widest"
                         autocomplete="off">
-                    <i
-                        class="fa-solid fa-fish absolute right-4 top-1/2 -translate-y-1/2 text-cyan-200 text-sm opacity-80"></i>
+                    <i class="fa-solid fa-fish absolute right-4 top-1/2 -translate-y-1/2 text-cyan-200 text-sm opacity-80"></i>
                 </div>
                 <div class="relative">
                     <input type="password" id="authPin" placeholder="ПАРОЛЬ"
                         class="w-full pl-6 pr-10 py-3 rounded-full underwater-input text-xs font-bold tracking-widest">
-                    <i
-                        class="fa-solid fa-key absolute right-4 top-1/2 -translate-y-1/2 text-cyan-200 text-sm opacity-80"></i>
+                    <i class="fa-solid fa-key absolute right-4 top-1/2 -translate-y-1/2 text-cyan-200 text-sm opacity-80"></i>
                 </div>
 
                 <div id="authFormBody" class="pt-2 w-full text-center">
-                    <p id="authError"
-                        class="text-red-400 text-xs font-semibold hidden transition-opacity duration-300 text-center pb-2 text-glow">
-                        Неверный логин или пароль</p>
-                    <button id="authBtn"
-                        class="w-full btn-coral rounded-full py-3 text-sm font-bold tracking-widest uppercase mb-4">
+                    <p id="authError" class="text-red-400 text-xs font-semibold hidden transition-opacity duration-300 text-center pb-2">Неверный логин или пароль</p>
+                    <button id="authBtn" class="w-full btn-coral rounded-full py-3 text-sm font-bold tracking-widest uppercase mb-4">
                         Войти в систему
                     </button>
 
-                    <a href="client.html"
-                        class="inline-block mt-2 text-xs font-bold text-cyan-200 hover:text-white transition-colors pb-0.5 border-b border-transparent hover:border-cyan-200">
+                    <a href="client.html" class="inline-block mt-2 text-xs font-bold text-cyan-200 hover:text-white transition-colors pb-0.5 border-b border-transparent hover:border-cyan-200">
                         Я клиент. Перейти к покупке билетов <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
                     </a>
                 </div>
@@ -1437,7 +452,7 @@
                 </div>
             </div>
 
-            <!-- Admin & Tools (Moved UP!) -->
+            <!-- Admin & Tools -->
             <div class="px-4 pb-4 border-b border-[var(--line)] transition-colors">
                 <div class="flex items-center justify-between p-3 bg-[var(--canvas-b)] rounded-xl border border-[var(--line-soft)] transition-colors">
                     <div class="flex items-center gap-3">
@@ -1494,7 +509,7 @@
 
         <!-- MAIN CONTENT AREA -->
         <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-            <!-- MOBILE HEADER (visible only on sm/mobile) -->
+            <!-- MOBILE HEADER -->
             <header class="md:hidden bg-transparent backdrop-blur-lg border-b border-white/10 flex items-center justify-between px-4 py-3 z-50">
                 <div class="flex items-center space-x-3">
                     <div class="flex flex-col justify-center leading-none select-none">
@@ -1513,11 +528,10 @@
             <div class="flex-1 flex flex-col overflow-y-auto px-0 sm:px-4 md:px-8 pb-24 md:pb-8 pt-0 sm:pt-2 md:pt-4 hide-scrollbar">
 
             <!-- SPA Views Container -->
-            <div id="view-calculator"
-                class="app-view flex-1 flex flex-col w-full overflow-y-auto hide-scrollbar">
+            <div id="view-calculator" class="app-view flex-1 flex flex-col w-full overflow-y-auto hide-scrollbar">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-0 sm:gap-4 md:gap-6 items-start">
 
-                    <!-- LEFT COLUMN: 4/12 wide on desktop, full width on mobile -->
+                    <!-- LEFT COLUMN -->
                     <div class="lg:col-span-4 relative">
                         <div class="border border-[var(--line)] bg-[var(--surface)] rounded-xl overflow-hidden divide-y divide-[var(--line)]">
 
@@ -1532,8 +546,7 @@
                                     <div>
                                         <label class="block text-xs font-medium text-[var(--ink-soft)] mb-1.5">Тип клиента</label>
                                         <div class="relative">
-                                            <select id="clientType"
-                                                class="w-full px-3 py-2 text-sm font-medium glass-input appearance-none cursor-pointer">
+                                            <select id="clientType" class="w-full px-3 py-2 text-sm font-medium glass-input appearance-none cursor-pointer">
                                                 <option value="tourist">Турист (Прямые продажи)</option>
                                                 <option value="agent">Агент (Оптовые продажи)</option>
                                             </select>
@@ -1544,19 +557,14 @@
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label class="block text-xs font-medium text-[var(--ink-soft)] mb-1.5">Дата визита</label>
-                                            <input type="date" id="visitDate" autocomplete="off"
-                                                class="w-full px-3 py-2 text-sm font-medium glass-input"
-                                                onfocus="this.showPicker()">
-                                            <p id="dateWarning"
-                                                class="hidden text-[10px] text-amber-500 mt-1 font-medium">Дата в
-                                                прошлом!</p>
+                                            <input type="date" id="visitDate" autocomplete="off" class="w-full px-3 py-2 text-sm font-medium glass-input" onfocus="this.showPicker()">
+                                            <p id="dateWarning" class="hidden text-[10px] text-amber-500 mt-1 font-medium">Дата в прошлом!</p>
                                         </div>
 
                                         <div>
                                             <label class="block text-xs font-medium text-[var(--ink-soft)] mb-1.5">Тариф</label>
                                             <div class="relative">
-                                                <select id="tariffType"
-                                                    class="w-full px-3 py-2 text-sm font-medium glass-input appearance-none cursor-pointer">
+                                                <select id="tariffType" class="w-full px-3 py-2 text-sm font-medium glass-input appearance-none cursor-pointer">
                                                     <option value="day">Дневной (10:00–17:00)</option>
                                                     <option value="evening">Вечерний (18:00–22:00)</option>
                                                 </select>
@@ -1566,7 +574,6 @@
                                     </div>
                                 </div>
                             </section>
-                            <!-- Divider removed in new style -->
 
                             <!-- Bulk Add Form -->
                             <section class="relative flex flex-col shrink-0 h-auto mb-4 p-4 sm:p-5">
@@ -1576,7 +583,7 @@
                                 </div>
                                 <div class="relative group/textarea">
                                     <textarea id="bulkText" rows="4"
-                                        class="w-full px-3 py-2 border border-[var(--line)] rounded-lg text-xs font-medium bg-[var(--canvas-a)] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/20 resize-none mb-3"
+                                        class="w-full px-3 py-2 border border-[var(--line)] rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/20 resize-none mb-3"
                                         oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"
                                         placeholder="Тетис на 06.06&#10;Kossymov Dias 15.04.2017 chld&#10;Otemissova Meruert 18.05.1998 adl"></textarea>
                                 </div>
@@ -1592,7 +599,7 @@
                                 </div>
                             </section>
 
-                            <!-- Моя смена (DESKTOP ONLY) -->
+                            <!-- Моя смена -->
                             <section class="hidden sm:flex flex-col relative shrink-0 h-auto p-4 sm:p-5">
                                 <div class="flex items-center justify-between mb-4 shrink-0">
                                     <div class="flex items-center gap-2">
@@ -1620,13 +627,12 @@
                         </div>
                     </div>
 
-                    <!-- RIGHT COLUMN: 8/12 wide on desktop, full width on mobile -->
+                    <!-- RIGHT COLUMN -->
                     <div class="lg:flex lg:flex-col lg:col-span-8 gap-3 lg:pl-4">
 
                         <!-- Main Tourist List Card -->
                         <section class="relative min-h-[400px] flex flex-col border border-[var(--line)] bg-[var(--surface)] rounded-xl overflow-hidden">
-                            <div
-                                class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-4 sm:px-5 py-4 border-b border-[var(--line)]">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-4 sm:px-5 py-4 border-b border-[var(--line)]">
                                 <div>
                                     <h2 class="text-sm font-semibold text-[var(--ink)] flex items-center gap-2">
                                         <i class="fa-solid fa-users text-[var(--ink-soft)] text-xs"></i>
@@ -1636,8 +642,7 @@
                                 </div>
 
                                 <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                                    <div id="detailedActionButtons"
-                                        class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                                    <div id="detailedActionButtons" class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                                         <button id="addTouristBtn"
                                             class="flex-1 sm:flex-none justify-center bg-[var(--ink)] text-[var(--surface)] hover:opacity-85 px-4 py-2 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-opacity">
                                             <i class="fa-solid fa-plus text-[11px]"></i> Добавить
@@ -1655,15 +660,14 @@
                                 </div>
                             </div>
 
-                            <div
-                                class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-4 sm:px-5 py-3 border-b border-[var(--line)]">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-4 sm:px-5 py-3 border-b border-[var(--line)]">
                                 <div class="flex items-center gap-1 bg-[var(--surface-soft)] border border-[var(--line)] p-1 rounded-md w-full sm:w-auto">
                                     <button id="tabDetailed" onclick="switchCalcMode('detailed')"
                                         class="flex-1 sm:flex-none justify-center px-4 py-1.5 text-xs font-medium rounded transition-all flex items-center gap-1.5 cursor-pointer bg-[var(--surface)] text-[var(--ink)] shadow-sm border border-[var(--line)]">
-                                        <i class="fa-solid fa-list-ul text-[var(--ink-soft)] text-[10px]"></i> Посписочный
+                                        <i class="fa-solid fa-list-ul text-[10px]"></i> Посписочный
                                     </button>
                                     <button id="tabQuick" onclick="switchCalcMode('quick')"
-                                        class="flex-1 sm:flex-none justify-center px-4 py-1.5 text-xs font-medium rounded transition-all flex items-center gap-1.5 cursor-pointer text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--surface)]">
+                                        class="flex-1 sm:flex-none justify-center px-4 py-1.5 text-xs font-medium rounded transition-all flex items-center gap-1.5 cursor-pointer text-[var(--ink-soft)] hover:text-[var(--ink)]">
                                         <i class="fa-solid fa-calculator text-[10px]"></i> Быстрый
                                     </button>
                                 </div>
@@ -1678,7 +682,6 @@
                             </div>
 
                             <div id="detailedModeContainer" class="w-full">
-                                <!-- Table header -->
                                 <div class="hidden md:grid grid-cols-12 gap-3 px-4 py-2.5 border-b border-[var(--line)] text-[10px] font-semibold text-[var(--ink-faint)] uppercase tracking-wider">
                                     <div class="col-span-3">ФИО</div>
                                     <div class="col-span-2">Дата рожд.</div>
@@ -1694,120 +697,47 @@
                                 </div>
                             </div>
 
-                            <div id="quickModeContainer" class="hidden space-y-4">
+                            <div id="quickModeContainer" class="hidden space-y-4 p-4">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div
-                                        class="flex flex-col p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10 hover:border-white/20">
+                                    <div class="flex flex-col p-4 bg-white/5 border border-white/10 rounded-2xl">
                                         <div class="flex items-center justify-between">
                                             <div class="flex items-center gap-3">
-                                                <div
-                                                    class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-sm border border-blue-400/20">
-                                                    ВЗР</div>
+                                                <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-sm border border-blue-400/20">ВЗР</div>
                                                 <div>
-                                                    <div class="text-xs font-bold text-white drop-shadow-sm">Взрослые
-                                                        (ADL)</div>
+                                                    <div class="text-xs font-bold text-white">Взрослые (ADL)</div>
                                                     <div class="text-[10px] text-slate-400">От 12 лет</div>
                                                 </div>
                                             </div>
                                             <div class="flex items-center gap-3">
-                                                <button onclick="changeQuickCount('adl', -1)"
-                                                    class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all font-bold text-lg">-</button>
-                                                <input type="number" id="quick_adl" value="0" min="0"
-                                                    onchange="updateQuickCount('adl', parseInt(this.value) || 0)"
-                                                    class="w-12 text-center bg-transparent font-bold text-white text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                                <button onclick="changeQuickCount('adl', 1)"
-                                                    class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all font-bold text-lg">+</button>
+                                                <button onclick="changeQuickCount('adl', -1)" class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 font-bold text-lg">-</button>
+                                                <input type="number" id="quick_adl" value="0" min="0" onchange="updateQuickCount('adl', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-white text-sm focus:outline-none" />
+                                                <button onclick="changeQuickCount('adl', 1)" class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 font-bold text-lg">+</button>
                                             </div>
                                         </div>
-                                        <div id="quick_statuses_adl" class="mt-3 flex flex-col gap-2 empty:hidden">
-                                        </div>
+                                        <div id="quick_statuses_adl" class="mt-3 flex flex-col gap-2 empty:hidden"></div>
                                     </div>
 
-                                    <div
-                                        class="flex flex-col p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10 hover:border-white/20">
+                                    <div class="flex flex-col p-4 bg-white/5 border border-white/10 rounded-2xl">
                                         <div class="flex items-center justify-between">
                                             <div class="flex items-center gap-3">
-                                                <div
-                                                    class="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-sm border border-teal-400/20">
-                                                    ДЕТ</div>
+                                                <div class="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-sm border border-teal-400/20">ДЕТ</div>
                                                 <div>
-                                                    <div class="text-xs font-bold text-white drop-shadow-sm">Дети (CHLD)
-                                                    </div>
+                                                    <div class="text-xs font-bold text-white">Дети (CHLD)</div>
                                                     <div class="text-[10px] text-slate-400">От 4 до 11 лет</div>
                                                 </div>
                                             </div>
                                             <div class="flex items-center gap-3">
-                                                <button onclick="changeQuickCount('chld', -1)"
-                                                    class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all font-bold text-lg">-</button>
-                                                <input type="number" id="quick_chld" value="0" min="0"
-                                                    onchange="updateQuickCount('chld', parseInt(this.value) || 0)"
-                                                    class="w-12 text-center bg-transparent font-bold text-white text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                                <button onclick="changeQuickCount('chld', 1)"
-                                                    class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all font-bold text-lg">+</button>
+                                                <button onclick="changeQuickCount('chld', -1)" class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 font-bold text-lg">-</button>
+                                                <input type="number" id="quick_chld" value="0" min="0" onchange="updateQuickCount('chld', parseInt(this.value) || 0)" class="w-12 text-center bg-transparent font-bold text-white text-sm focus:outline-none" />
+                                                <button onclick="changeQuickCount('chld', 1)" class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 font-bold text-lg">+</button>
                                             </div>
                                         </div>
-                                        <div id="quick_statuses_chld" class="mt-3 flex flex-col gap-2 empty:hidden">
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        class="flex flex-col p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10 hover:border-white/20">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-3">
-                                                <div
-                                                    class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-sm border border-purple-400/20">
-                                                    ПЕН</div>
-                                                <div>
-                                                    <div class="text-xs font-bold text-white drop-shadow-sm">Пенсионеры
-                                                        (SNR)</div>
-                                                    <div class="text-[10px] text-slate-400">Скидка 50%</div>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center gap-3">
-                                                <button onclick="changeQuickCount('pens', -1)"
-                                                    class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all font-bold text-lg">-</button>
-                                                <input type="number" id="quick_pens" value="0" min="0"
-                                                    onchange="updateQuickCount('pens', parseInt(this.value) || 0)"
-                                                    class="w-12 text-center bg-transparent font-bold text-white text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                                <button onclick="changeQuickCount('pens', 1)"
-                                                    class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all font-bold text-lg">+</button>
-                                            </div>
-                                        </div>
-                                        <div id="quick_statuses_pens" class="mt-3 flex flex-col gap-2 empty:hidden">
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        class="flex flex-col p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10 hover:border-white/20">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-3">
-                                                <div
-                                                    class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm border border-emerald-400/20">
-                                                    МЛД</div>
-                                                <div>
-                                                    <div class="text-xs font-bold text-white drop-shadow-sm">Младенцы
-                                                        (INF)</div>
-                                                    <div class="text-[10px] text-slate-400">До 3 лет (бесплатно)</div>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center gap-3">
-                                                <button onclick="changeQuickCount('inf', -1)"
-                                                    class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all font-bold text-lg">-</button>
-                                                <input type="number" id="quick_inf" value="0" min="0"
-                                                    onchange="updateQuickCount('inf', parseInt(this.value) || 0)"
-                                                    class="w-12 text-center bg-transparent font-bold text-white text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                                                <button onclick="changeQuickCount('inf', 1)"
-                                                    class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all font-bold text-lg">+</button>
-                                            </div>
-                                        </div>
-                                        <div id="quick_statuses_inf" class="mt-3 flex flex-col gap-2 empty:hidden">
-                                        </div>
+                                        <div id="quick_statuses_chld" class="mt-3 flex flex-col gap-2 empty:hidden"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div id="emptyState"
-                                class="hidden flex flex-col items-center justify-center py-16 text-[var(--ink-faint)] text-center">
+                            <div id="emptyState" class="hidden flex flex-col items-center justify-center py-16 text-[var(--ink-faint)] text-center">
                                 <div class="w-12 h-12 mb-4 flex items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface-soft)]">
                                     <i class="fa-solid fa-users text-[var(--ink-faint)] text-lg"></i>
                                 </div>
@@ -1824,39 +754,30 @@
                             <!-- Calculated Estimate Summary -->
                             <section class="xl:col-span-5 border border-[var(--line)] bg-[var(--surface)] rounded-xl p-4 sm:p-5 flex flex-col justify-between">
                                 <div>
-                                    <!-- Header row -->
                                     <div class="flex items-center justify-between mb-3">
                                         <div class="flex items-center gap-2">
                                             <span class="text-xs font-medium text-[var(--ink-soft)]">Итоговый расчет</span>
-                                            <!-- Early Booking Badge -->
-                                            <div id="earlyBookingBadge"
-                                                class="hidden items-center gap-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-200">
+                                            <div id="earlyBookingBadge" class="hidden items-center gap-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-200">
                                                 <i class="fa-solid fa-bolt text-[9px]"></i><span id="earlyBookingBadgeText">-15%</span>
                                             </div>
                                         </div>
-                                        <!-- Guests count badge -->
-                                        <span id="totalGuestsBadge"
-                                            class="text-[10px] font-medium px-2 py-1 rounded-md bg-[var(--surface-soft)] text-[var(--ink-soft)] border border-[var(--line)]">
+                                        <span id="totalGuestsBadge" class="text-[10px] font-medium px-2 py-1 rounded-md bg-[var(--surface-soft)] text-[var(--ink-soft)] border border-[var(--line)]">
                                             0 гостей
                                         </span>
                                     </div>
 
-                                    <!-- Big Price Display -->
                                     <div class="flex items-baseline gap-1.5 my-4">
                                         <span class="text-4xl font-bold text-[var(--ink)] tabular-nums" id="totalPrice">0</span>
                                         <span class="text-xl font-semibold text-[var(--ink-soft)]">₸</span>
                                     </div>
                                 </div>
 
-                                <!-- Action Buttons -->
                                 <div class="flex items-center gap-2 pt-4 border-t border-[var(--line)]">
-                                    <button id="whatsappShareBtn"
-                                        class="flex-1 justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 rounded-md text-xs flex items-center gap-1.5 transition-colors">
+                                    <button id="whatsappShareBtn" class="flex-1 justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 rounded-md text-xs flex items-center gap-1.5 transition-colors">
                                         <i class="fa-brands fa-whatsapp"></i>
                                         <span>WhatsApp</span>
                                     </button>
-                                    <button id="downloadReceiptBtn"
-                                        class="flex-1 justify-center text-[var(--ink)] bg-[var(--surface-soft)] hover:bg-[var(--line)] font-semibold px-3 py-2 rounded-md text-xs flex items-center gap-1.5 transition-colors border border-[var(--line)]">
+                                    <button id="downloadReceiptBtn" class="flex-1 justify-center text-[var(--ink)] bg-[var(--surface-soft)] hover:bg-[var(--line)] font-semibold px-3 py-2 rounded-md text-xs flex items-center gap-1.5 transition-colors border border-[var(--line)]">
                                         <i class="fa-solid fa-cloud-arrow-down"></i>
                                         <span>Чек</span>
                                     </button>
@@ -1915,426 +836,119 @@
                         </div>
 
                         <!-- Текст для почты -->
-                        <section class="relative group mt-6 bg-white dark:bg-slate-800/40 rounded-3xl shadow-[0_2px_40px_rgba(0,0,0,0.04)] p-4 sm:p-6 border border-slate-100 dark:border-white/5">
-                            <!-- Subtle Divider -->
-                            <div class="w-full h-px bg-gradient-to-r from-transparent via-slate-300 dark:via-slate-700 to-transparent opacity-50 mb-6 mt-2"></div>
-                            
-                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                                <h2 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white flex items-center tracking-tight transition-transform group-hover:translate-x-1 duration-300">
-                                    <span class="w-8 h-8 rounded-full bg-gradient-to-tr from-slate-400 to-slate-600 flex items-center justify-center shadow-inner mr-3 shrink-0">
-                                        <i class="fa-solid fa-envelope-open-text text-white text-[13px]"></i>
-                                    </span>
+                        <section class="relative group mt-4 bg-white dark:bg-slate-800/40 rounded-xl p-4 sm:p-5 border border-[var(--line)]">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
+                                <h2 class="text-sm font-semibold text-[var(--ink)] flex items-center gap-2">
+                                    <i class="fa-solid fa-envelope-open-text text-[var(--ink-soft)] text-xs"></i>
                                     Текст для почты
                                 </h2>
-                                <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                                    <button id="aquaparkEmailBtn"
-                                        class="flex-1 sm:flex-none justify-center px-4 py-2 text-xs font-bold text-white bg-blue-500 hover:bg-blue-600 rounded-xl transition-all duration-300 flex items-center shadow-sm hover:-translate-y-0.5">
-                                        <i class="fa-solid fa-paper-plane sm:mr-2"></i> <span class="hidden sm:inline">В аквапарк</span>
+                                <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                                    <button id="aquaparkEmailBtn" class="flex-1 sm:flex-none justify-center px-3 py-1.5 text-xs font-semibold text-white bg-blue-500 hover:bg-blue-600 rounded-md transition-colors flex items-center gap-1.5">
+                                        <i class="fa-solid fa-paper-plane text-[10px]"></i> <span>В аквапарк</span>
                                     </button>
-                                    <button id="emailExportBtn"
-                                        class="flex-1 sm:flex-none justify-center px-4 py-2 text-xs font-bold text-slate-700 dark:text-white bg-white dark:bg-white/10 hover:bg-slate-50 dark:hover:bg-white/20 border border-slate-200 dark:border-white/10 rounded-xl transition-all duration-300 flex items-center shadow-sm hover:-translate-y-0.5">
-                                        <i class="fa-solid fa-envelope sm:mr-2"></i> <span class="hidden sm:inline">На почту</span>
+                                    <button id="emailExportBtn" class="flex-1 sm:flex-none justify-center px-3 py-1.5 text-xs font-semibold text-[var(--ink)] bg-[var(--surface-soft)] hover:bg-[var(--line)] border border-[var(--line)] rounded-md transition-colors flex items-center gap-1.5">
+                                        <i class="fa-solid fa-envelope text-[10px]"></i> <span>На почту</span>
                                     </button>
-                                    <button id="copyExportBtn"
-                                        class="flex-1 sm:flex-none justify-center px-4 py-2 text-xs font-bold text-blue-500 hover:text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 rounded-xl transition-all duration-300 flex items-center shadow-sm hover:-translate-y-0.5">
-                                        <i class="fa-regular fa-copy sm:mr-2"></i> <span class="hidden sm:inline">Копировать</span>
+                                    <button id="copyExportBtn" class="flex-1 sm:flex-none justify-center px-3 py-1.5 text-xs font-semibold text-[var(--brand)] bg-[var(--canvas-a)] hover:bg-[var(--surface-soft)] border border-[var(--line)] rounded-md transition-colors flex items-center gap-1.5">
+                                        <i class="fa-regular fa-copy text-[10px]"></i> <span>Копировать</span>
                                     </button>
                                 </div>
                             </div>
 
                             <textarea id="exportData" readonly
-                                class="w-full min-h-[100px] overflow-hidden p-4 text-xs font-mono resize-none rounded-2xl shadow-sm transition-all duration-300 border-0 ring-1 ring-inset ring-slate-200 dark:ring-white/10 focus:ring-2 focus:ring-slate-400 bg-white/50 dark:bg-black/20 backdrop-blur-md group-hover:shadow-md text-slate-700 dark:text-slate-300 cursor-text select-all"
+                                class="w-full min-h-[100px] overflow-hidden p-3 text-xs font-mono resize-none rounded-lg border border-[var(--line)] bg-[var(--surface-soft)] text-[var(--ink)] cursor-text select-all"
                                 placeholder="Тут появится текст для отправки на почту..."></textarea>
-                        </section>
-
-                        <!-- Моя смена (MOBILE ONLY) -->
-                        <section class="sm:hidden relative flex flex-col shrink-0 h-auto group mb-6 mt-6 bg-white dark:bg-slate-800/40 rounded-3xl shadow-[0_2px_40px_rgba(0,0,0,0.04)] p-4 sm:p-6 border border-slate-100 dark:border-white/5">
-                            <!-- Subtle Divider -->
-                            <div class="w-full h-px bg-gradient-to-r from-transparent via-slate-300 dark:via-slate-700 to-transparent opacity-50 mb-6"></div>
-                            
-                            <div class="flex items-center justify-between mb-4 shrink-0">
-                                <h2 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white flex items-center tracking-tight transition-transform group-hover:translate-x-1 duration-300">
-                                    <span class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-400 to-teal-500 flex items-center justify-center shadow-inner mr-3 shrink-0">
-                                        <i class="fa-solid fa-chart-pie text-white text-[13px]"></i>
-                                    </span>
-                                    Моя смена
-                                </h2>
-                                <div class="flex items-center gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
-                                    <button id="miniStatPrevDayMob" class="w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all duration-300 hover:scale-105"><i class="fa-solid fa-chevron-left text-[11px]"></i></button>
-                                    <input type="date" id="miniStatDateMob" class="bg-slate-100 dark:bg-white/5 text-slate-800 dark:text-white rounded-xl px-3 py-1.5 text-xs font-bold outline-none border-0 focus:ring-2 focus:ring-emerald-500 transition-all cursor-pointer" title="Выберите дату">
-                                    <button id="miniStatNextDayMob" class="w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all duration-300 hover:scale-105"><i class="fa-solid fa-chevron-right text-[11px]"></i></button>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between bg-gradient-to-br from-slate-50 to-slate-100 dark:from-white/5 dark:to-transparent p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 shadow-sm transition-all duration-300 group-hover:shadow-md">
-                                <div class="flex flex-col">
-                                    <span class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest mb-1">Гостей</span>
-                                    <span id="miniStatGuestsMob" class="text-3xl font-black text-slate-800 dark:text-white leading-none tracking-tighter">0</span>
-                                </div>
-                                <div class="w-px h-12 bg-slate-200 dark:bg-white/10"></div>
-                                <div class="flex flex-col text-right">
-                                    <span class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest mb-1">Выручка</span>
-                                    <span id="miniStatRevenueMob" class="text-3xl font-black text-emerald-500 leading-none tracking-tighter drop-shadow-sm">0 ₸</span>
-                                </div>
-                            </div>
                         </section>
 
                     </div>
                 </div>
             </div>
 
-            <div id="view-database"
-                class="app-view hidden w-full flex-col flex-1 overflow-y-auto hide-scrollbar">
-                <!-- Top toolbar: search + count + export -->
-                <div
-                    class="flex items-center justify-between px-3 py-1.5 border-b border-white/10 bg-black/20 shrink-0 flex-wrap gap-2">
+            <!-- View: Database / Requests -->
+            <div id="view-database" class="app-view hidden w-full flex-col flex-1 overflow-y-auto hide-scrollbar">
+                <div class="flex items-center justify-between px-3 py-2 border-b border-white/10 bg-black/20 shrink-0 flex-wrap gap-2">
                     <div class="relative w-full sm:w-64">
-                        <i
-                            class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                         <input type="text" id="dbSearchInput" placeholder="Поиск по имени, дате..."
                             class="w-full pl-8 pr-4 py-1.5 text-xs border border-transparent rounded-lg bg-white/5 text-white focus:outline-none focus:border-cyan-400 transition-colors">
                     </div>
                     <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
                         <span class="text-[10px] text-slate-400 font-medium mr-2" id="dbRecordCount">Загрузка...</span>
-
-                        <button id="dbExportBtn"
-                            class="flex items-center gap-1.5 px-2 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 transition-colors">
+                        <button id="dbExportBtn" class="flex items-center gap-1.5 px-2.5 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 transition-colors">
                             <i class="fa-solid fa-file-excel"></i> <span>Excel</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Filter bar toggle (mobile only) -->
-                <button id="dbFilterToggleBtn" type="button"
-                    class="sm:hidden flex items-center justify-between gap-2 px-3 py-2.5 border-b border-white/10 bg-black/20 shrink-0 text-left">
-                    <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">
-                        <i class="fa-solid fa-filter mr-1.5"></i>Фильтры
-                    </span>
-                    <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform" id="dbFilterToggleIcon"></i>
-                </button>
-
-                <!-- Filter bar -->
-                <div id="dbFilterBar" class="hidden sm:flex flex-wrap items-center gap-2 px-3 py-1 border-b border-white/10 bg-black/30 shrink-0">
-                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">
-                        <i class="fa-solid fa-filter mr-1"></i>Фильтры:
-                    </span>
-
-                    <!-- Date of creation: from / to -->
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-[9px] text-slate-400 whitespace-nowrap">Дата заявки:</span>
-                        <div class="relative">
-                            <i
-                                class="fa-regular fa-calendar absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[9px] pointer-events-none"></i>
-                            <input type="date" id="dbFilterDateFrom"
-                                class="pl-6 pr-1 py-1 text-[10px] rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer w-32"
-                                title="С какой даты">
-                        </div>
-                        <span class="text-[9px] text-slate-500">—</span>
-                        <div class="relative">
-                            <i
-                                class="fa-regular fa-calendar absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[9px] pointer-events-none"></i>
-                            <input type="date" id="dbFilterDateTo"
-                                class="pl-6 pr-1 py-1 text-[10px] rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer w-32"
-                                title="По какую дату">
-                        </div>
-                    </div>
-
-                    <!-- Divider -->
-                    <span class="text-white/10 select-none">│</span>
-
-                    <!-- Visit date -->
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-[9px] text-slate-400 whitespace-nowrap">Визит:</span>
-                        <div class="relative">
-                            <i
-                                class="fa-solid fa-umbrella-beach absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[9px] pointer-events-none"></i>
-                            <input type="date" id="dbFilterVisitDate"
-                                class="pl-6 pr-1 py-1 text-[10px] rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer w-32"
-                                title="Дата визита">
-                        </div>
-                    </div>
-
-                    <!-- Divider -->
-                    <span class="text-white/10 select-none">│</span>
-
-                    <!-- Tariff -->
-                    <select id="dbFilterTariff"
-                        class="px-2 py-1 text-[10px] rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer">
-                        <option value="">Все тарифы</option>
-                        <option value="day">Дневной</option>
-                        <option value="evening">Вечерний</option>
-                    </select>
-
-                    <!-- Client type -->
-                    <select id="dbFilterClient"
-                        class="px-2 py-1 text-[10px] rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer">
-                        <option value="">Все клиенты</option>
-                        <option value="tourist">Турист</option>
-                        <option value="agent">Турагент</option>
-                    </select>
-
-                    <!-- Divider -->
-                    <span class="text-white/10 select-none">│</span>
-
-                    <!-- Guests count range -->
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-[9px] text-slate-400 whitespace-nowrap">Гостей:</span>
-                        <input type="number" id="dbFilterGuestsMin" min="0" placeholder="от"
-                            class="w-10 px-1.5 py-1 text-[10px] text-center rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors">
-                        <span class="text-[9px] text-slate-500">—</span>
-                        <input type="number" id="dbFilterGuestsMax" min="0" placeholder="до"
-                            class="w-10 px-1.5 py-1 text-[10px] text-center rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-400 transition-colors">
-                    </div>
-
-                    <!-- Reset button -->
-                    <button id="dbFilterResetBtn"
-                        class="ml-auto flex items-center gap-1 px-2 py-1 text-[10px] font-bold text-rose-300 bg-rose-500/10 hover:bg-rose-500/25 border border-rose-400/20 rounded-lg transition-colors whitespace-nowrap">
-                        <i class="fa-solid fa-xmark"></i> Сбросить
-                    </button>
-                </div>
                 <div class="flex-1 overflow-auto min-h-0 custom-scrollbar relative bg-[#0b172a]/50">
-                    
-                    <!-- Mobile Cards Container (hidden on sm+) -->
                     <div id="dbMobileList" class="sm:hidden flex flex-col gap-3 p-3 pb-24">
                         <div class="text-center py-16 text-slate-400"><i class="fa-solid fa-spinner fa-spin text-2xl mb-3 block text-cyan-500"></i> Загрузка заявок...</div>
                     </div>
 
-                    <!-- Desktop Table (hidden on mobile) -->
                     <table class="hidden sm:table w-full text-xs border-collapse min-w-[700px]" id="dbTable">
                         <thead class="sticky top-0 z-20">
                             <tr class="bg-[#0b172a] uppercase text-[9px] font-bold tracking-wide shadow-md">
-                                <th class="px-2 py-2 text-left whitespace-nowrap" style="color: white !important;">#
-                                </th>
-                                <th class="px-2 py-2 text-left whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors"
-                                    style="color: white !important;" onclick="sortDbTable('date')">Дата / Время <i
-                                        class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-date"></i></th>
-                                <th class="px-2 py-2 text-left whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors"
-                                    style="color: white !important;" onclick="sortDbTable('visit')">Визит <i
-                                        class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-visit"></i></th>
-                                <th class="px-2 py-2 text-left whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors"
-                                    style="color: white !important;" onclick="sortDbTable('client')">Клиент <i
-                                        class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-client"></i></th>
-                                <th class="px-2 py-2 text-left whitespace-nowrap" style="color: white !important;">Тариф
-                                </th>
-                                <th class="px-2 py-2 text-center whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors"
-                                    style="color: white !important;" onclick="sortDbTable('guests')">Гостей <i
-                                        class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-guests"></i></th>
-                                <th class="px-2 py-2 text-left whitespace-nowrap" style="color: white !important;">
-                                    Список гостей (ФИО · дата рождения · кат.)</th>
-                                <th class="px-2 py-2 text-right whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors"
-                                    style="color: white !important;" onclick="sortDbTable('sum')">Сумма <i
-                                        class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-sum"></i></th>
-                                <th class="px-2 py-2 text-center whitespace-nowrap" style="color: white !important;">
-                                </th>
+                                <th class="px-2 py-2 text-left text-white">#</th>
+                                <th class="px-2 py-2 text-left text-white cursor-pointer hover:bg-white/10" onclick="sortDbTable('date')">Дата / Время <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-date"></i></th>
+                                <th class="px-2 py-2 text-left text-white cursor-pointer hover:bg-white/10" onclick="sortDbTable('visit')">Визит <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-visit"></i></th>
+                                <th class="px-2 py-2 text-left text-white cursor-pointer hover:bg-white/10" onclick="sortDbTable('client')">Клиент <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-client"></i></th>
+                                <th class="px-2 py-2 text-left text-white">Тариф</th>
+                                <th class="px-2 py-2 text-center text-white cursor-pointer hover:bg-white/10" onclick="sortDbTable('guests')">Гостей <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-guests"></i></th>
+                                <th class="px-2 py-2 text-left text-white">Список гостей</th>
+                                <th class="px-2 py-2 text-right text-white cursor-pointer hover:bg-white/10" onclick="sortDbTable('sum')">Сумма <i class="fa-solid fa-sort ml-1 opacity-50" id="sortIcon-sum"></i></th>
+                                <th class="px-2 py-2 text-center text-white"></th>
                             </tr>
                         </thead>
                         <tbody id="dbTableBody">
                             <tr>
-                                <td colspan="9" class="text-center py-16 text-slate-400"><i
-                                        class="fa-solid fa-spinner fa-spin mr-2"></i>Загрузка...</td>
+                                <td colspan="9" class="text-center py-16 text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Загрузка...</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- View: Dashboard (Statistics / Analytics) -->
-            <div id="view-dashboard"
-                class="app-view hidden w-full flex-col flex-1 overflow-y-auto hide-scrollbar pt-2">
+            <!-- View: Dashboard -->
+            <div id="view-dashboard" class="app-view hidden w-full flex-col flex-1 overflow-y-auto hide-scrollbar pt-2">
                 <div class="flex flex-col gap-3 p-4 border-b border-white/10 shrink-0">
-                    <!-- Date preset pills + date inputs row -->
                     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
-
-                        <!-- Preset pills -->
                         <div class="flex items-center overflow-x-auto hide-scrollbar w-full sm:w-auto gap-1.5 bg-white/5 border border-white/10 rounded-xl p-1 shrink-0">
-                            <button onclick="setStatsPeriod('today')" id="preset-today"
-                                class="stats-preset-btn active-preset shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 bg-brand-blue text-white shadow-sm whitespace-nowrap">
-                                Сегодня
-                            </button>
-                            <button onclick="setStatsPeriod('yesterday')" id="preset-yesterday"
-                                class="stats-preset-btn shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10 whitespace-nowrap">
-                                Вчера
-                            </button>
-                            <button onclick="setStatsPeriod('7days')" id="preset-7days"
-                                class="stats-preset-btn shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10 whitespace-nowrap">
-                                7 дней
-                            </button>
-                            <button onclick="setStatsPeriod('30days')" id="preset-30days"
-                                class="stats-preset-btn shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10 whitespace-nowrap">
-                                30 дней
-                            </button>
-                            <button onclick="setStatsPeriod('custom')" id="preset-custom"
-                                class="stats-preset-btn shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-150 text-slate-400 hover:text-white hover:bg-white/10 whitespace-nowrap">
-                                <i class="fa-solid fa-calendar-days mr-1"></i>Диапазон
-                            </button>
+                            <button onclick="setStatsPeriod('today')" id="preset-today" class="stats-preset-btn active-preset shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg bg-brand-blue text-white shadow-sm whitespace-nowrap">Сегодня</button>
+                            <button onclick="setStatsPeriod('yesterday')" id="preset-yesterday" class="stats-preset-btn shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg text-slate-400 hover:text-white whitespace-nowrap">Вчера</button>
+                            <button onclick="setStatsPeriod('7days')" id="preset-7days" class="stats-preset-btn shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg text-slate-400 hover:text-white whitespace-nowrap">7 дней</button>
+                            <button onclick="setStatsPeriod('30days')" id="preset-30days" class="stats-preset-btn shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg text-slate-400 hover:text-white whitespace-nowrap">30 дней</button>
+                            <button onclick="setStatsPeriod('custom')" id="preset-custom" class="stats-preset-btn shrink-0 px-3 py-1.5 text-[11px] font-bold rounded-lg text-slate-400 hover:text-white whitespace-nowrap"><i class="fa-solid fa-calendar-days mr-1"></i>Диапазон</button>
                         </div>
-
-                        <!-- Right side: date inputs (shown only in custom mode) + Export -->
                         <div class="flex items-center gap-2 w-full sm:w-auto">
-                            <button id="statsClearBtn" 
-                                class="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-500/10 hover:bg-rose-500 hover:!text-white text-rose-500 border border-rose-500/30 transition-colors" title="Сбросить фильтр дат">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                            <div id="statsCustomRange" class="hidden items-center gap-2">
-                                <input type="date" id="statsDateFrom"
-                                    class="glass-input px-2.5 py-1.5 text-xs rounded-lg focus:outline-none focus:border-cyan-400 bg-white/5 border border-white/10 text-white w-[130px]">
-                                <span class="text-slate-500 text-xs">—</span>
-                                <input type="date" id="statsDateTo"
-                                    class="glass-input px-2.5 py-1.5 text-xs rounded-lg focus:outline-none focus:border-cyan-400 bg-white/5 border border-white/10 text-white w-[130px]">
-                            </div>
-                            <button id="exportCsvBtn"
-                                class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold shadow-md hover:bg-emerald-700 transition-all flex items-center justify-center ml-auto sm:ml-0 whitespace-nowrap">
+                            <button id="exportCsvBtn" class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold shadow-md hover:bg-emerald-700 flex items-center justify-center ml-auto sm:ml-0 whitespace-nowrap">
                                 <i class="fa-solid fa-file-excel mr-1.5"></i> Excel
                             </button>
                         </div>
                     </div>
-
-                    <!-- Period label -->
-                    <div id="statsPeriodLabel" class="text-[11px] text-slate-400 font-medium flex items-center gap-1.5">
-                        <i class="fa-regular fa-clock text-cyan-400"></i>
-                        <span id="statsPeriodText">Сегодня</span>
-                    </div>
                 </div>
 
                 <div class="flex-1 overflow-y-auto p-5 pb-24 sm:pb-5 space-y-4 pt-4 custom-scrollbar" id="statisticsContent">
-                    <div class="text-center text-slate-400 py-10"><i
-                            class="fa-solid fa-spinner fa-spin text-3xl mb-3 opacity-50"></i>
-                        <p class="text-sm font-semibold">Загрузка статистики...</p>
-                    </div>
+                    <div class="text-center text-slate-400 py-10"><i class="fa-solid fa-spinner fa-spin text-3xl mb-3 opacity-50"></i><p class="text-sm font-semibold">Загрузка статистики...</p></div>
                 </div>
             </div>
 
             </div>
         </main>
-
-        <!-- Receipt Print Container -->
-        <div id="receiptContainer" class="fixed top-[-9999px] left-[-9999px] opacity-0 pointer-events-none">
-            <div id="receiptContent" class="w-[420px] text-slate-800 p-8 rounded-3xl font-sans bg-white relative">
-                <div class="text-center mb-8 mt-2">
-                    <h1 class="text-[32px] font-black text-[#1e293b] tracking-wider mb-1">TETYS BLU</h1>
-                </div>
-                <div class="mb-6 space-y-2.5 text-[14px]" id="receiptMeta"></div>
-                <div class="space-y-3 mb-8" id="receiptTourists"></div>
-                <div class="pt-5 border-t border-dashed border-slate-300 flex justify-between items-center mb-6"
-                    id="receiptTotalContainer">
-                    <span class="text-sm font-extrabold text-slate-500 uppercase tracking-wider">Итого к оплате:</span>
-                    <span class="text-2xl font-black text-[#1e293b]"><span id="receiptTotalValue">0</span> <span
-                            class="text-[#0076ba] font-bold">₸</span></span>
-                </div>
-                <div
-                    class="mt-8 text-center text-[11px] text-slate-500 border-t border-dashed border-slate-300 pt-5 relative">
-                    <div class="absolute right-0 -top-5 bg-white pl-3 text-[#1e293b]">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 7V5a2 2 0 0 1 2-2h2"></path>
-                            <path d="M4 17v2a2 2 0 0 0 2 2h2"></path>
-                            <path d="M16 3h2a2 2 0 0 1 2 2v2"></path>
-                            <path d="M16 21h2a2 2 0 0 0 2-2v-2"></path>
-                            <line x1="7" y1="12" x2="17" y2="12"></line>
-                            <line x1="12" y1="7" x2="12" y2="17"></line>
-                        </svg>
-                    </div>
-                    <p class="font-semibold">Ждем вас в тематическом парке Tetys Blu!</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- MOBILE BOTTOM NAV -->
-        <nav
-            class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-[#0d1e36]/95 backdrop-blur-xl border-t border-slate-200 dark:border-white/10 flex items-center justify-around pb-safe z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] dark:shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
-            <button id="mobNavCalcBtn" class="flex flex-col items-center justify-center py-2 px-1 w-16 text-cyan-400 relative h-14">
-                <i class="fa-solid fa-calculator text-lg transition-all duration-300 transform scale-125 -translate-y-1 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]"></i>
-                <span class="text-[9px] font-medium absolute bottom-1 transition-all duration-300 opacity-100 translate-y-0">Кальк</span>
-            </button>
-            <button id="mobNavDashboardBtn"
-                class="flex flex-col items-center justify-center py-2 px-1 w-16 text-slate-400 relative h-14">
-                <i class="fa-solid fa-chart-simple text-lg transition-all duration-300 transform"></i>
-                <span class="text-[9px] font-medium absolute bottom-1 transition-all duration-300 opacity-0 translate-y-4">Аналитика</span>
-            </button>
-            <button id="mobNavDatabaseBtn"
-                class="flex flex-col items-center justify-center py-2 px-1 w-16 text-slate-400 relative h-14">
-                <i class="fa-solid fa-database text-lg transition-all duration-300 transform"></i>
-                <span class="text-[9px] font-medium absolute bottom-1 transition-all duration-300 opacity-0 translate-y-4">Заявки</span>
-            </button>
-        </nav>
     </div>
 
-    <!-- Share Preview Modal -->
-    <div id="shareModal"
-        class="fixed inset-0 z-[7000] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 opacity-0 p-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl flex flex-col overflow-hidden transform scale-95 transition-transform duration-300"
-            id="shareModalContent">
-            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h2 class="text-base font-bold text-slate-800">Предпросмотр чека</h2>
-                <button id="closeShareBtn"
-                    class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
+    <!-- Pricing Admin Modal -->
+    <div id="pricingAdminModal" class="fixed inset-0 z-[8000] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[96vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center shrink-0">
+                <h2 class="text-lg font-black text-slate-900 dark:text-white"><i class="fa-solid fa-tags text-cyan-600 mr-2"></i>Цены и акции</h2>
+                <button onclick="window.closePricingAdminModal()" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
-            <div class="p-4 bg-slate-100/50 flex justify-center items-center">
-                <img id="sharePreviewImg" src=""
-                    class="max-h-[50vh] object-contain shadow-lg rounded-xl border border-slate-200">
-            </div>
-            <div class="p-5 space-y-3">
-                <button id="finalShareBtn"
-                    class="w-full justify-center bg-brand-blue hover:bg-blue-600 text-white py-3.5 rounded-xl text-[15px] font-bold flex items-center transition-all shadow-md">
-                    <i class="fa-solid fa-share-nodes mr-2 text-xl leading-none"></i> Выбрать способ отправки
-                </button>
-                <button id="downloadPdfBtn"
-                    class="w-full justify-center bg-rose-600 hover:bg-rose-700 text-white py-3.5 rounded-xl text-[15px] font-bold flex items-center transition-all shadow-md">
-                    <i class="fa-solid fa-file-pdf text-lg mr-2"></i> Скачать PDF чек
-                </button>
-                <p class="text-[10px] text-slate-400 text-center mt-3">WhatsApp, Почта, Telegram и другие приложения</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Manual Price Modal -->
-    <div id="manualPriceModal"
-        class="fixed inset-0 z-[8000] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-fade-in">
-            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-amber-50">
-                <h2 class="text-base font-bold text-amber-800"><i class="fa-solid fa-pencil mr-2"></i>Индивидуальная
-                    цена</h2>
-                <button onclick="window.closeManualPriceModal()"
-                    class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-amber-200 text-amber-600 transition-colors">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            <div class="p-6">
-                <label class="block text-xs font-bold text-slate-500 mb-2">Новая итоговая цена (₸)</label>
-                <input type="number" id="manualPriceInput" min="0"
-                    class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-lg font-bold focus:border-amber-400 focus:bg-white focus:outline-none transition-colors"
-                    placeholder="Например: 15000">
-
-                <div class="mt-6 flex gap-3">
-                    <button onclick="window.resetManualPrice()"
-                        class="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors text-sm">Сбросить</button>
-                    <button onclick="window.saveManualPrice()"
-                        class="flex-[2] py-3 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 transition-colors shadow-md shadow-amber-500/30 text-sm">Применить</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pricing & Promotions Admin Modal -->
-    <div id="pricingAdminModal"
-        class="fixed inset-0 z-[8000] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-4xl max-h-[96vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex justify-between items-center shrink-0">
-                <h2 class="text-lg font-black text-slate-900"><i class="fa-solid fa-tags text-cyan-600 mr-2"></i>Цены
-                    и акции</h2>
-                <button onclick="window.closePricingAdminModal()"
-                    class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            <div class="flex border-b border-slate-100 px-5 gap-1 shrink-0 overflow-x-auto">
-                <button id="pricingTabPricesBtn" onclick="window.switchPricingTab('prices')"
-                    class="pricing-tab-btn active whitespace-nowrap">Цены тарифов</button>
-                <button id="pricingTabPromosBtn" onclick="window.switchPricingTab('promos')"
-                    class="pricing-tab-btn whitespace-nowrap">Акции раннего бронирования</button>
-                <button id="pricingTabDiscountsBtn" onclick="window.switchPricingTab('discounts')"
-                    class="pricing-tab-btn whitespace-nowrap">Льготы и скидки</button>
+            <div class="flex border-b border-slate-100 dark:border-slate-800 px-5 gap-1 shrink-0 overflow-x-auto">
+                <button id="pricingTabPricesBtn" onclick="window.switchPricingTab('prices')" class="pricing-tab-btn active whitespace-nowrap text-xs font-bold py-3 px-4">Цены тарифов</button>
+                <button id="pricingTabPromosBtn" onclick="window.switchPricingTab('promos')" class="pricing-tab-btn whitespace-nowrap text-xs font-bold py-3 px-4">Акции раннего бронирования</button>
+                <button id="pricingTabDiscountsBtn" onclick="window.switchPricingTab('discounts')" class="pricing-tab-btn whitespace-nowrap text-xs font-bold py-3 px-4">Льготы и скидки</button>
             </div>
             <div class="flex-1 overflow-y-auto p-5">
                 <div id="pricingPricesPanel"></div>
@@ -2344,18 +958,16 @@
         </div>
     </div>
 
-    <!-- Script Import -->
+    <!-- Logic scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Logic scripts -->
     <script src="js/config.js?v=18"></script>
     <script src="js/utils.js?v=18"></script>
     <script src="js/pricing.js?v=18"></script>
     <script src="js/main.js?v=2"></script>
     <script>
-        // Theme Toggle Logic
         const themeBtn = document.getElementById('themeToggleBtn');
         const themeIcon = document.getElementById('themeIcon');
 
@@ -2363,15 +975,12 @@
             if (document.body.classList.contains('dark-mode')) {
                 themeIcon.classList.remove('fa-moon');
                 themeIcon.classList.add('fa-sun');
-                themeIcon.classList.add('theme-icon-active');
             } else {
                 themeIcon.classList.remove('fa-sun');
                 themeIcon.classList.add('fa-moon');
-                themeIcon.classList.remove('theme-icon-active');
             }
         }
 
-        // Initialize theme from localStorage
         if (localStorage.getItem('tetysBluTheme') === 'dark') {
             document.body.classList.add('dark-mode');
         }
