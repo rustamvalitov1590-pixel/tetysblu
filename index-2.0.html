@@ -34,10 +34,10 @@
                     },
                     colors: {
                         brand: {
-                            blue: '#0076ba',     /* Tetysblu Brand Main Blue */
-                            sky: '#0ea5e9',      /* Caspian Aqua Sky Blue */
-                            sand: '#fef3c7',     /* Caspian Gold Beach Sand */
-                            dark: '#0f172a'      /* Slate 900 for dark texts */
+                            blue: '#0076ba',
+                            sky: '#0ea5e9',
+                            sand: '#fef3c7',
+                            dark: '#0f172a'
                         }
                     }
                 }
@@ -46,9 +46,6 @@
     </script>
 
     <style>
-        /* ============================================================
-           TETYS BLUE — Design System v2.0 (Shadcn/Linear Aesthetic)
-           ============================================================ */
         :root {
             --ink: #09090b;
             --ink-soft: #52525b;
@@ -102,17 +99,9 @@
             overflow-x: hidden;
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.001ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.001ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
-
         #appContent {
             background-color: var(--canvas-a) !important;
+            color: var(--ink) !important;
             font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
         }
 
@@ -128,92 +117,141 @@
             box-shadow: none !important;
         }
 
-        #appContent .glass-panel,
-        #appContent .glass-panel-light,
-        #appContent .dark-glass-panel,
-        #appContent .neon-card-blue,
-        #appContent .neon-card-green,
-        #appContent .neon-card-amber,
-        #appContent .neon-card-rose,
-        #appContent .glass-stat-box {
-            background: var(--surface) !important;
-            border: 1px solid var(--line) !important;
-            box-shadow: var(--shadow-card) !important;
-            color: var(--ink) !important;
-            border-radius: var(--radius-lg) !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-            transition: box-shadow 0.15s ease, border-color 0.15s ease !important;
-        }
-
-        #appContent .glass-panel::before,
-        #appContent .neon-card-blue::before,
-        #appContent .glass-stat-box::before {
-            display: none !important;
-        }
-
         #appContent .glass-input,
         #appContent .underwater-input {
             background: var(--surface-soft) !important;
-            border: 1.5px solid var(--line) !important;
+            border: 1px solid var(--line) !important;
             border-radius: var(--radius-sm) !important;
             color: var(--ink) !important;
             font-weight: 500 !important;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
         }
 
-        #appContent .glass-input:focus,
-        #appContent .underwater-input:focus {
-            outline: none !important;
-            border-color: var(--brand) !important;
-            box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.12) !important;
+        /* 1. Стилизация поля "Текстовый ввод" */
+        #bulkText {
+            color: #09090b !important;
+            background-color: #ffffff !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
         }
 
-        #appContent .glass-input::placeholder,
-        #appContent .underwater-input::placeholder {
-            color: var(--ink-faint) !important;
+        #bulkText::placeholder {
+            color: #a1a1aa !important;
+            opacity: 1 !important;
         }
 
-        /* Normalization of texts */
-        #appContent .text-white,
-        #appContent .text-slate-100,
-        #appContent .text-slate-200,
-        #appContent .text-slate-300 {
-            color: var(--ink) !important;
-        }
-        #appContent .text-slate-400,
-        #appContent .text-slate-500 {
-            color: var(--ink-soft) !important;
-        }
-        body.dark-mode #appContent .text-slate-900,
-        body.dark-mode #appContent .text-slate-800,
-        body.dark-mode #appContent .text-slate-700 {
-            color: var(--ink) !important;
-        }
-        body.dark-mode #appContent .text-slate-600,
-        body.dark-mode #appContent .text-slate-500 {
-            color: var(--ink-soft) !important;
-        }
-        body.dark-mode #appContent .text-slate-400,
-        body.dark-mode #appContent .text-slate-300 {
-            color: var(--ink-faint) !important;
+        /* 2. Стилизация переключателя режимов ("Посписочный" / "Быстрый") */
+        #tabDetailed,
+        #tabQuick {
+            color: #52525b !important;
+            font-weight: 600 !important;
+            transition: all 0.15s ease !important;
         }
 
-        /* Micro interactions */
-        #appContent button,
-        #appContent .hover-lift,
-        #appContent .glow-btn-cyan,
-        #appContent select.glass-input,
-        #appContent .tourist-row {
-            transition: transform 0.18s var(--ease-spring),
-                box-shadow 0.25s var(--ease-out),
-                background-color 0.2s ease,
-                border-color 0.2s ease,
-                color 0.2s ease !important;
+        #tabDetailed.bg-\[var\(--surface\)\],
+        #tabQuick.bg-\[var\(--surface\)\],
+        #tabDetailed.glow-btn-cyan,
+        #tabQuick.glow-btn-cyan,
+        #tabDetailed.bg-white,
+        #tabQuick.bg-white {
+            color: #0284c7 !important;
+            background-color: #ffffff !important;
+            border-color: #e4e4e7 !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
         }
 
-        #appContent button:active {
-            transform: scale(0.96) !important;
+        /* 3. Стилизация поля ФИО туриста */
+        #touristList input[placeholder="ФИО туриста"] {
+            color: #09090b !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            text-transform: capitalize !important;
+        }
+
+        #touristList input[placeholder="ФИО туриста"]::placeholder {
+            color: #a1a1aa !important;
+            font-weight: 400 !important;
+            text-transform: none !important;
+        }
+
+        /* 4. Восстановление стилей карточек аналитики */
+        #view-dashboard .kpi-card,
+        #view-dashboard #statisticsContent > div > div > div {
+            background-color: #ffffff !important;
+            border: 1px solid #e4e4e7 !important;
+            border-radius: 12px !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+            padding: 16px 20px !important;
+        }
+
+        #view-dashboard .chart-card,
+        #view-dashboard #statisticsContent .bg-white,
+        #view-dashboard #statisticsContent .border-slate-200 {
+            background-color: #ffffff !important;
+            border: 1px solid #e4e4e7 !important;
+            border-radius: 12px !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+            padding: 18px 20px !important;
+        }
+
+        #view-dashboard #statisticsContent h3 {
+            color: #09090b !important;
+            font-weight: 700 !important;
+        }
+
+        /* 5. Тёмная тема */
+        body.dark-mode #bulkText {
+            color: #fafafa !important;
+            background-color: #18181b !important;
+        }
+
+        body.dark-mode #bulkText::placeholder {
+            color: #71717a !important;
+        }
+
+        body.dark-mode #tabDetailed,
+        body.dark-mode #tabQuick {
+            color: #a1a1aa !important;
+        }
+
+        body.dark-mode #tabDetailed.bg-\[var\(--surface\)\],
+        body.dark-mode #tabQuick.bg-\[var\(--surface\)\],
+        body.dark-mode #tabDetailed.glow-btn-cyan,
+        body.dark-mode #tabQuick.glow-btn-cyan,
+        body.dark-mode #tabDetailed.bg-white,
+        body.dark-mode #tabQuick.bg-white {
+            color: #38bdf8 !important;
+            background-color: #27272a !important;
+            border-color: #3f3f46 !important;
+        }
+
+        body.dark-mode #touristList input[placeholder="ФИО туриста"] {
+            color: #fafafa !important;
+        }
+
+        body.dark-mode #touristList input[placeholder="ФИО туриста"]::placeholder {
+            color: #71717a !important;
+        }
+
+        body.dark-mode #view-dashboard .kpi-card,
+        body.dark-mode #view-dashboard #statisticsContent > div > div > div,
+        body.dark-mode #view-dashboard .chart-card,
+        body.dark-mode #view-dashboard #statisticsContent .bg-white {
+            background-color: #18181b !important;
+            border-color: #27272a !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4) !important;
+        }
+
+        body.dark-mode #view-dashboard #statisticsContent h3 {
+            color: #fafafa !important;
+        }
+
+        /* Scrollbars & Micro-interactions */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         .glow-btn-cyan {
@@ -221,28 +259,13 @@
             border: 1px solid var(--ink) !important;
             color: var(--canvas-a) !important;
             font-weight: 600 !important;
-            letter-spacing: 0.01em;
             border-radius: var(--radius-sm) !important;
-            box-shadow: none !important;
-        }
-
-        .glow-btn-cyan:hover {
-            opacity: 0.85 !important;
-            box-shadow: none !important;
         }
 
         body.dark-mode .glow-btn-cyan {
             background: #fafafa !important;
             border-color: #fafafa !important;
             color: #09090b !important;
-        }
-
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
         }
 
         /* Underwater auth visual */
@@ -265,7 +288,6 @@
         .glass-orb {
             background: radial-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.03) 100%);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 0 50px rgba(0, 220, 255, 0.2), inset 0 0 40px rgba(255, 255, 255, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.2);
         }
@@ -275,6 +297,12 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.25);
             animation: float 6s infinite ease-in-out;
+        }
+
+        .underwater-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
         }
 
         .btn-coral {
@@ -287,91 +315,6 @@
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(2deg); } }
         @keyframes wave-light { 0% { transform: translateX(-5%) skewX(-5deg); opacity: 0.4; } 100% { transform: translateX(5%) skewX(5deg); opacity: 0.7; } }
         @keyframes bubble-rise { 0% { transform: translateY(100px) scale(0.5); opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translateY(-100px) scale(1.2); opacity: 0; } }
-
-        /* ============================================================
-           ФИКС ЦВЕТОВ: ТАБЫ, ТЕКСТОВЫЙ ВВОД И ПОЛЕ ФИО
-           ============================================================ */
-
-        /* 1. Переключатель режимов ("Посписочный" / "Быстрый") */
-        #tabDetailed,
-        #tabQuick {
-            color: #52525b !important;
-            font-weight: 600 !important;
-            transition: all 0.2s ease !important;
-        }
-
-        #tabDetailed.bg-\[var\(--surface\)\],
-        #tabQuick.bg-\[var\(--surface\)\],
-        #tabDetailed.glow-btn-cyan,
-        #tabQuick.glow-btn-cyan,
-        #tabDetailed.bg-white,
-        #tabQuick.bg-white {
-            color: #0284c7 !important;          /* Яркий читаемый синий акцент */
-            background-color: #ffffff !important;
-            border-color: #e4e4e7 !important;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
-        }
-
-        /* 2. Поле "Текстовый ввод" */
-        #bulkText {
-            color: #09090b !important;          /* Четкий темный текст */
-            background-color: #ffffff !important;
-            font-size: 13px !important;
-            font-weight: 500 !important;
-        }
-
-        #bulkText::placeholder {
-            color: #a1a1aa !important;          /* Мягкий серый плейсхолдер */
-            opacity: 1 !important;
-        }
-
-        /* 3. Поле ввода ФИО в списке гостей */
-        #touristList input[placeholder="ФИО туриста"] {
-            color: #09090b !important;
-            font-weight: 600 !important;
-            font-size: 13px !important;
-            text-transform: capitalize !important;
-        }
-
-        #touristList input[placeholder="ФИО туриста"]::placeholder {
-            color: #a1a1aa !important;
-            font-weight: 400 !important;
-            text-transform: none !important;
-        }
-
-        /* 4. Тёмная тема */
-        body.dark-mode #tabDetailed,
-        body.dark-mode #tabQuick {
-            color: #a1a1aa !important;
-        }
-
-        body.dark-mode #tabDetailed.bg-\[var\(--surface\)\],
-        body.dark-mode #tabQuick.bg-\[var\(--surface\)\],
-        body.dark-mode #tabDetailed.glow-btn-cyan,
-        body.dark-mode #tabQuick.glow-btn-cyan,
-        body.dark-mode #tabDetailed.bg-white,
-        body.dark-mode #tabQuick.bg-white {
-            color: #38bdf8 !important;          /* Голубой в тёмной теме */
-            background-color: #27272a !important;
-            border-color: #3f3f46 !important;
-        }
-
-        body.dark-mode #bulkText {
-            color: #fafafa !important;
-            background-color: #18181b !important;
-        }
-
-        body.dark-mode #bulkText::placeholder {
-            color: #71717a !important;
-        }
-
-        body.dark-mode #touristList input[placeholder="ФИО туриста"] {
-            color: #fafafa !important;
-        }
-
-        body.dark-mode #touristList input[placeholder="ФИО туриста"]::placeholder {
-            color: #71717a !important;
-        }
     </style>
 </head>
 
@@ -383,21 +326,9 @@
         <div class="light-rays"></div>
 
         <div class="absolute inset-0 pointer-events-none overflow-hidden">
-            <div class="absolute w-3 h-3 bg-white/20 rounded-full left-1/4 bottom-0"
-                style="animation: bubble-rise 4s infinite ease-in;"></div>
-            <div class="absolute w-5 h-5 bg-white/10 rounded-full left-1/2 bottom-10"
-                style="animation: bubble-rise 6s infinite ease-in 1s;"></div>
-            <div class="absolute w-2 h-2 bg-white/20 rounded-full right-1/4 bottom-20"
-                style="animation: bubble-rise 5s infinite ease-in 2s;"></div>
-        </div>
-
-        <div class="absolute left-4 md:left-20 top-1/4 glass-bubble rounded-full p-4 hidden sm:flex items-center justify-center text-cyan-300"
-            style="width: 80px; height: 80px; animation-delay: 0s;">
-            <i class="fa-solid fa-ticket text-3xl opacity-80"></i>
-        </div>
-        <div class="absolute left-10 md:left-32 bottom-1/4 glass-bubble rounded-full p-3 hidden sm:flex items-center justify-center text-cyan-300"
-            style="width: 100px; height: 100px; animation: float-delay-1 7s infinite ease-in-out; animation-delay: 1s;">
-            <i class="fa-solid fa-tornado text-4xl opacity-80"></i>
+            <div class="absolute w-3 h-3 bg-white/20 rounded-full left-1/4 bottom-0" style="animation: bubble-rise 4s infinite ease-in;"></div>
+            <div class="absolute w-5 h-5 bg-white/10 rounded-full left-1/2 bottom-10" style="animation: bubble-rise 6s infinite ease-in 1s;"></div>
+            <div class="absolute w-2 h-2 bg-white/20 rounded-full right-1/4 bottom-20" style="animation: bubble-rise 5s infinite ease-in 2s;"></div>
         </div>
 
         <div class="glass-orb relative z-10 w-[90vw] max-w-[420px] aspect-square rounded-full flex flex-col items-center justify-center p-8 md:p-10">
@@ -440,11 +371,10 @@
 
     <!-- Main Dashboard Container -->
     <div id="appContent"
-        class="hidden h-screen w-full flex flex-col md:flex-row relative z-10 overflow-hidden text-slate-900 bg-slate-50/50 dark:bg-transparent">
+        class="hidden h-screen w-full flex flex-col md:flex-row relative z-10 overflow-hidden bg-slate-50/50 dark:bg-transparent">
 
         <!-- DESKTOP SIDEBAR -->
         <aside class="hidden md:flex flex-col w-64 xl:w-72 bg-[var(--surface)] border-r border-[var(--line)] z-50 shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-colors duration-300">
-            <!-- Logo area -->
             <div class="p-6 pb-4">
                 <div class="flex flex-col leading-none select-none">
                     <span class="text-xl font-black tracking-tight text-[var(--ink)] drop-shadow-sm transition-colors">MANGYSTAU</span>
@@ -452,7 +382,6 @@
                 </div>
             </div>
 
-            <!-- Admin & Tools -->
             <div class="px-4 pb-4 border-b border-[var(--line)] transition-colors">
                 <div class="flex items-center justify-between p-3 bg-[var(--canvas-b)] rounded-xl border border-[var(--line-soft)] transition-colors">
                     <div class="flex items-center gap-3">
@@ -498,7 +427,6 @@
                 </a>
             </nav>
 
-            <!-- Bottom Action -->
             <div class="p-4 border-t border-[var(--line)] transition-colors">
                 <button id="logoutBtn" class="w-full flex items-center space-x-3 px-4 py-2.5 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl text-[var(--ink-soft)] hover:text-rose-500 font-medium transition-all justify-start border border-transparent">
                     <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
@@ -509,7 +437,6 @@
 
         <!-- MAIN CONTENT AREA -->
         <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-            <!-- MOBILE HEADER -->
             <header class="md:hidden bg-transparent backdrop-blur-lg border-b border-white/10 flex items-center justify-between px-4 py-3 z-50">
                 <div class="flex items-center space-x-3">
                     <div class="flex flex-col justify-center leading-none select-none">
@@ -527,7 +454,7 @@
 
             <div class="flex-1 flex flex-col overflow-y-auto px-0 sm:px-4 md:px-8 pb-24 md:pb-8 pt-0 sm:pt-2 md:pt-4 hide-scrollbar">
 
-            <!-- SPA Views Container -->
+            <!-- Calculator View -->
             <div id="view-calculator" class="app-view flex-1 flex flex-col w-full overflow-y-auto hide-scrollbar">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-0 sm:gap-4 md:gap-6 items-start">
 
@@ -583,7 +510,7 @@
                                 </div>
                                 <div class="relative group/textarea">
                                     <textarea id="bulkText" rows="4"
-                                        class="w-full px-3 py-2 border border-[var(--line)] rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/20 resize-none mb-3"
+                                        class="w-full px-3 py-2 border border-[var(--line)] rounded-lg text-xs font-medium text-slate-900 dark:text-white bg-white dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/20 resize-none mb-3"
                                         oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"
                                         placeholder="Тетис на 06.06&#10;Kossymov Dias 15.04.2017 chld&#10;Otemissova Meruert 18.05.1998 adl"></textarea>
                                 </div>
@@ -692,9 +619,7 @@
                                     <div class="col-span-1"></div>
                                 </div>
 
-                                <div id="touristList" class="space-y-3">
-                                    <!-- Injected dynamically in app.js -->
-                                </div>
+                                <div id="touristList" class="space-y-3"></div>
                             </div>
 
                             <div id="quickModeContainer" class="hidden space-y-4 p-4">
