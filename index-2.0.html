@@ -120,7 +120,7 @@
         #appContent .glass-input,
         #appContent .underwater-input {
             background: var(--surface-soft) !important;
-            border: 1px solid var(--line) !important;
+            border: 1.5px solid var(--line) !important;
             border-radius: var(--radius-sm) !important;
             color: var(--ink) !important;
             font-weight: 500 !important;
@@ -173,33 +173,34 @@
             text-transform: none !important;
         }
 
-        /* 4. Восстановление стилей карточек аналитики */
-        #view-dashboard .grid-cols-2 > div,
-        #view-dashboard #statisticsContent > div > div > div {
-            background-color: var(--surface) !important;
-            border: 1px solid var(--line) !important;
-            border-radius: var(--radius-lg) !important;
-            box-shadow: var(--shadow-card) !important;
-            padding: 20px !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            position: relative;
+        /* 4. Восстановление стилей карточек аналитики (Dashboard) */
+        #view-dashboard #statisticsContent .grid-cols-2 > div {
+            border-radius: 20px !important;
+            padding: 22px 24px !important;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04) !important;
+            border: 1px solid rgba(228, 228, 231, 0.8) !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
         }
+
+        #view-dashboard #statisticsContent .grid-cols-2 > div:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        #view-dashboard #statisticsContent .grid-cols-2 > div:nth-child(1) { background: linear-gradient(135deg, #fffaf5 0%, #fff5eb 100%) !important; }
+        #view-dashboard #statisticsContent .grid-cols-2 > div:nth-child(2) { background: linear-gradient(135deg, #f4fbf7 0%, #ebf8f0 100%) !important; }
+        #view-dashboard #statisticsContent .grid-cols-2 > div:nth-child(3) { background: linear-gradient(135deg, #f7f9fc 0%, #f0f4f9 100%) !important; }
+        #view-dashboard #statisticsContent .grid-cols-2 > div:nth-child(4) { background: linear-gradient(135deg, #fff7f7 0%, #fef0f0 100%) !important; }
+        #view-dashboard #statisticsContent .grid-cols-2 > div:nth-child(5) { background: linear-gradient(135deg, #f8f6fc 0%, #f3effa 100%) !important; }
+        #view-dashboard #statisticsContent .grid-cols-2 > div:nth-child(6) { background: linear-gradient(135deg, #f6f8fc 0%, #eff3f9 100%) !important; }
 
         #view-dashboard .chart-card,
-        #view-dashboard #statisticsContent .bg-white,
-        #view-dashboard #statisticsContent .border-slate-200 {
+        #view-dashboard #statisticsContent .bg-white {
             background-color: var(--surface) !important;
             border: 1px solid var(--line) !important;
-            border-radius: var(--radius-lg) !important;
-            box-shadow: var(--shadow-card) !important;
-            padding: 20px !important;
-        }
-
-        #view-dashboard #statisticsContent h3 {
-            color: var(--ink) !important;
-            font-weight: 700 !important;
+            border-radius: 20px !important;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04) !important;
+            padding: 22px 24px !important;
         }
 
         /* 5. Тёмная тема */
@@ -236,17 +237,11 @@
             color: #71717a !important;
         }
 
-        body.dark-mode #view-dashboard .grid-cols-2 > div,
-        body.dark-mode #view-dashboard #statisticsContent > div > div > div,
+        body.dark-mode #view-dashboard #statisticsContent .grid-cols-2 > div,
         body.dark-mode #view-dashboard .chart-card,
         body.dark-mode #view-dashboard #statisticsContent .bg-white {
-            background-color: var(--surface) !important;
-            border-color: var(--line) !important;
-            box-shadow: var(--shadow-card) !important;
-        }
-
-        body.dark-mode #view-dashboard #statisticsContent h3 {
-            color: var(--ink) !important;
+            background: #18181b !important;
+            border-color: #27272a !important;
         }
 
         /* Scrollbars & Micro-interactions */
