@@ -174,27 +174,31 @@
         }
 
         /* 4. Восстановление стилей карточек аналитики */
-        #view-dashboard .kpi-card,
+        #view-dashboard .grid-cols-2 > div,
         #view-dashboard #statisticsContent > div > div > div {
-            background-color: #ffffff !important;
-            border: 1px solid #e4e4e7 !important;
-            border-radius: 12px !important;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
-            padding: 16px 20px !important;
+            background-color: var(--surface) !important;
+            border: 1px solid var(--line) !important;
+            border-radius: var(--radius-lg) !important;
+            box-shadow: var(--shadow-card) !important;
+            padding: 20px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            position: relative;
         }
 
         #view-dashboard .chart-card,
         #view-dashboard #statisticsContent .bg-white,
         #view-dashboard #statisticsContent .border-slate-200 {
-            background-color: #ffffff !important;
-            border: 1px solid #e4e4e7 !important;
-            border-radius: 12px !important;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
-            padding: 18px 20px !important;
+            background-color: var(--surface) !important;
+            border: 1px solid var(--line) !important;
+            border-radius: var(--radius-lg) !important;
+            box-shadow: var(--shadow-card) !important;
+            padding: 20px !important;
         }
 
         #view-dashboard #statisticsContent h3 {
-            color: #09090b !important;
+            color: var(--ink) !important;
             font-weight: 700 !important;
         }
 
@@ -232,17 +236,17 @@
             color: #71717a !important;
         }
 
-        body.dark-mode #view-dashboard .kpi-card,
+        body.dark-mode #view-dashboard .grid-cols-2 > div,
         body.dark-mode #view-dashboard #statisticsContent > div > div > div,
         body.dark-mode #view-dashboard .chart-card,
         body.dark-mode #view-dashboard #statisticsContent .bg-white {
-            background-color: #18181b !important;
-            border-color: #27272a !important;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4) !important;
+            background-color: var(--surface) !important;
+            border-color: var(--line) !important;
+            box-shadow: var(--shadow-card) !important;
         }
 
         body.dark-mode #view-dashboard #statisticsContent h3 {
-            color: #fafafa !important;
+            color: var(--ink) !important;
         }
 
         /* Scrollbars & Micro-interactions */
