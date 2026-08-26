@@ -1773,7 +1773,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="col-span-3 relative">
                         <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
                             onblur="updateTourist('${t.id}', 'fullName', this.value)"
-                            class="w-full text-left bg-transparent text-slate-800 dark:text-white border ${!t.fullName ? 'border-rose-500 bg-rose-50 dark:bg-rose-500/20' : 'border-transparent'} hover:border-slate-200 dark:hover:border-white/20 focus:border-cyan-400 focus:bg-slate-50 dark:focus:bg-black/20 focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors ${discountInfo.isBirthday ? 'pr-7' : ''}">
+                            class="w-full text-left bg-transparent text-slate-800 dark:text-black border ${!t.fullName ? 'border-rose-500 bg-rose-50 dark:bg-rose-500/20' : 'border-transparent'} hover:border-slate-200 dark:hover:border-white/20 focus:border-cyan-400 focus:bg-slate-50 dark:focus:bg-black/20 focus:outline-none rounded-lg px-2 py-1 text-xs font-medium transition-colors ${discountInfo.isBirthday ? 'pr-7' : ''}">
                         ${discountInfo.isBirthday ? '<div class="absolute right-2 top-1/2 -translate-y-1/2 text-amber-400 text-[10px]" title="Именинник"><i class="fa-solid fa-cake-candles"></i></div>' : ''}
                     </div>
                     <!-- DOB -->
