@@ -1695,7 +1695,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span class="text-[10px] font-bold text-slate-500 shrink-0">#${index + 1}</span>
                         <input type="text" placeholder="ФИО туриста" value="${t.fullName}" 
                             onblur="updateTourist('${t.id}', 'fullName', this.value)"
-                            class="flex-1 min-w-0 bg-transparent text-slate-800 dark:text-white border-b ${!t.fullName ? 'border-rose-500' : 'border-transparent'} hover:border-slate-300 dark:hover:border-white/30 focus:border-cyan-400 focus:outline-none py-0.5 text-xs font-semibold transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600">
+                            class="flex-1 min-w-0 bg-transparent text-slate-800 border-b ${!t.fullName ? 'border-rose-500' : 'border-transparent'} hover:border-slate-300 dark:hover:border-white/30 focus:border-cyan-400 focus:outline-none py-0.5 text-xs font-semibold transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600">
                         ${discountInfo.isBirthday ? '<span class="text-amber-400 text-xs shrink-0" title="Именинник"><i class="fa-solid fa-cake-candles"></i></span>' : ''}
                         <div class="shrink-0 w-[90px]">
                             <input type="text" value="${displayDob}" 
